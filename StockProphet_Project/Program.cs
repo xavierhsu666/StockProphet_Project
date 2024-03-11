@@ -1,8 +1,12 @@
+using Microsoft.EntityFrameworkCore;
+using StockProphet_Project.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddDbContext<StocksContext>(
+      options => options.UseSqlServer(builder.Configuration.GetConnectionString("StocksConnstring")));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -17,6 +21,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=StockModel}/{action=predictindex}/{id?}");
 
 app.Run();

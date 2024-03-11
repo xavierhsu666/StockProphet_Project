@@ -1,0 +1,293 @@
+﻿<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<h3>第一步:選定股票</h3>
+<label for="stockid">股票代號</label>
+<input type="text" id="stockid" name="SnCode" onchange="stockinput()">
+<br>
+<br>
+<div style="display: flex;">
+    <label>股票名稱:</label>
+    <div id="stockname"></div>
+</div>
+<h3>第二步:選定投資偏好</h3>
+<div style="display: flex;">投資偏好:
+    <button id="longterm">長期</button>
+    <button id="shortterm">短期</button>
+</div>
+<br><br>
+<div id="form1">
+    <h3>第三步:設定參數並建置模型預測</h3>
+    <label>參數選擇:</label>
+    <input type="checkbox" id="param1" name="SteOpen">
+    <label for="param1">開盤價</label>
+    <input type="checkbox" id="param2" name="SteClose">
+    <label for="param2">收盤價</label>
+    <input type="checkbox" id="param3" name="SteMax">
+    <label for="param3">最高價</label>
+    <input type="checkbox" id="param4" name="SteMin">
+    <label for="param4">最低價</label>
+    <input type="checkbox" id="param5" name="SteSpreadRatio">
+    <label for="param5">震幅</label>
+    <input type="checkbox" id="param6" name="SteTradeMoney">
+    <label for="param6">當日交易額</label>
+    <input type="checkbox" id="param7" name="SteTradeQuantity">
+    <label for="param7">當日交易量</label>
+    <br>
+    <label>使用幾天前的數據進行預測:</label>
+    <input type="radio" id="param8_5" name="interval" value="5">
+    <label for="param8_5">5天(周)</label>
+
+    <input type="radio" id="param8_30" name="interval" value="30">
+    <label for="param8_30">30天(月)</label>
+
+    <input type="radio" id="param8_365" name="interval" value="365">
+    <label for="param8_365">365天(年)</label>
+    <br>
+    <label>Step1:</label>
+    <button id="Okbutton1">確認參數</button>
+    <br><br>
+    <label>Step2:</label>
+    <button id="predict1">LSTM預測</button>
+    <button id="save1">儲存預測</button>
+    <br>
+    <label for="predict1">明天收盤價預測結果:</label>
+    <div id="predictionResult1"></div>
+
+</div>
+<div id="form2">
+    <h3>第三步:設定參數並建置模型預測</h3>
+    <label>參數選擇:</label>
+    <input type="checkbox" id="param9" name="SteOpen">
+    <label for="param9">開盤價</label>
+    <input type="checkbox" id="param10" name="SteClose">
+    <label for="param10">收盤價</label>
+    <input type="checkbox" id="param11" name="SteMax">
+    <label for="param11">最高價</label>
+    <input type="checkbox" id="param12" name="SteMin">
+    <label for="param12">最低價</label>
+    <input type="checkbox" id="param13" name="SteSpreadRatio">
+    <label for="param13">震幅</label>
+    <input type="checkbox" id="param14" name="SteTradeMoney">
+    <label for="param14">當日交易額</label>
+    <input type="checkbox" id="param15" name="SteTradeQuantity">
+    <label for="param15">當日交易量</label>
+    <br>
+    <label>使用幾天前的數據進行預測:</label>
+    <input type="radio" id="param16_5" name="interval" value="5">
+    <label for="param16_5">5天(周)</label>
+
+    <input type="radio" id="param16_30" name="interval" value="30">
+    <label for="param16_30">30天(月)</label>
+
+    <input type="radio" id="param16_365" name="interval" value="365">
+    <label for="param8_365">365天(年)</label>
+    <br>
+    <label>Step1:</label>
+    <button id="Okbutton2">確認參數</button>
+    <br><br>
+    <label>Step2:</label>
+    <button id="predict2">FNN預測</button>
+    <br>
+    <label for="predict2">明天收盤價預測結果:</label>
+    <div id="predictionResult2"></div>
+</div>
+<div id="chart">
+    <label>Step3:</label>
+    <button id="chart1">查看走勢圖</button>
+</div>
+
+
+<script>
+    //初始化:不需要的東西先隱藏
+    $("#form1,#form2,#chart").css("display", "none");
+    $("#longterm,#shortterm,#predict1,#predict2,#save1").prop("disabled", true);
+
+    $(document).ready(function () {
+
+        var prediction
+        var predicturl;
+        var sncode;
+        var predictday;
+        var userselectparams;
+        var functionurl = ["LSTMpredict", "FNNpredict"]
+        var prefertype;
+        var createmodelTime;
+
+
+          $("#longterm").on("click", function () {
+            $("#form2").css("display", "none");
+            $("#form1").css("display", "block");
+            prefertype=2;
+        })
+        $("#shortterm").on("click", function () {
+
+            $("#form1").css("display", "none");
+            $("#form2").css("display", "block");
+            prefertype=1;
+        })
+
+        //確定送出參數
+        $("#Okbutton1,#Okbutton2").on("click", function (event) {
+            var buttonId = $(this).prop("id"); // 獲取按鈕的 ID
+            var number = parseInt(buttonId.match(/\d+/)[0]); // 從 ID 中提取數字部分
+            sncode = $("#stockid").val();
+            predictday = 5;
+            userselectparams = {};
+
+            if (number === 1) {
+        // 檢查至少兩個參數是否被選中
+        const atLeastTwoChecked = $("input[type=checkbox]:checked").length > 1;
+        if (!atLeastTwoChecked) {
+            alert("請至少選擇2個參數");
+            return false;
+        }
+    } else if (number === 2) {
+        // 檢查至少一個參數是否被選中
+        const atLeastOneChecked = $("input[type=checkbox]:checked").length > 0;
+        if (!atLeastOneChecked) {
+            alert("請至少選擇1個參數");
+            return false;
+        }
+    }
+            // 檢查區間是否被選擇
+            var atLeastoneInterval = $("input[name=interval]:checked").length > 0;
+            if (!atLeastoneInterval) {
+                alert("請選擇一個區間");
+                return false;
+            }
+            //獲取用戶選擇的預測區間
+            var interval = $("input[name=interval]:checked").val();
+            if (interval > 0) {
+                predictday = parseInt(interval);
+            }
+
+            //判斷選取區間是否超過DB有的數字
+            $.ajax({
+                url: "/StockModel/predictdatacount",
+                method: "GET",
+                data: { sncode: sncode, predictday: predictday },
+                success: function (response) {
+                    if (response.success === false) {
+                        alert("股票資料數不夠，請重新選擇區間")
+                    } else {
+                        //獲取用戶選擇的參數
+                        $("input[type=checkbox]:checked").each(function () {
+                            var paramName = $(this).attr("name");
+                            userselectparams[paramName] = true;
+                        });
+                        $(`#predict${number}`).prop("disabled", false);
+
+                    }
+
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+
+
+        $("#predict1,#predict2").on("click", function (event) {
+            var buttonId = $(this).prop("id"); // 獲取按鈕的 ID
+            var number = parseInt(buttonId.match(/\d+/)[0]); // 從 ID 中提取數字部分
+            createmodelTime=new Date();
+            $.ajax({
+                url: `/StockModel/${functionurl[number - 1]}`,
+                type: "Post",
+                data: {
+                    sncode: sncode,
+                    predictday: predictday,
+                    selectedParams: userselectparams
+                },
+                beforeSend: function () {
+                    // 在發送請求前顯示訓練中的訊息
+                    $(`#predictionResult${number}`).text("模型訓練中...");
+                },
+                success: function (rep) {
+                    // 在成功後更新預測結果
+                    prediction = parseFloat(rep);
+                    if (prediction < 0) {
+                        prediction = -prediction;
+                    }
+                    prediction = prediction.toFixed(2);
+                    $(`#predictionResult${number}`).text(prediction);
+                    $("#chart").css("display", "block");
+                    $("#save1").prop("disabled", false);
+                    var predictedData = prediction;
+
+                    // 在這裡將 predictedData 傳遞到 predictphoto 頁面
+                    predicturl = "/StockModel/predictphoto?predictedData=" + predictedData;
+
+                },
+                error: function (xhr, status, error) {
+                    // 處理錯誤
+                    console.error('Error occurred: ' + error); // 處理錯誤
+                    var errorMessage = xhr.responseText;
+                    alert(errorMessage);
+                    $(`#predictionResult${number}`).text("");
+                }
+            });
+
+
+
+        });
+
+
+        $("#save1").on("click", function(){
+            var isoString = createmodelTime.toISOString();
+            console.log(isoString)
+            var datatoserver={
+                PStock:sncode,
+                PVariable:JSON.stringify(userselectparams),
+                PLabel:prediction,
+                PPrefer:prefertype,
+                PBuildTime:isoString
+
+            }
+
+            $.ajax({
+                method:"Post",
+                url:"StockModel/Predictsavedata",
+                data:datatoserver,
+                success:function(e){
+                    alert("save OK")
+                },
+                 error: function (xhr, status, error) {
+                    // 處理錯誤
+                    console.error(xhr.responseText); // 處理錯誤
+                    var errorMessage = xhr.responseText;
+                    alert(errorMessage);
+                }
+            })
+
+
+         })
+
+
+
+
+        $("#chart1").on("click", function () {
+            window.location.href = predicturl
+
+        })
+
+
+
+    });
+    function stockinput() {
+        var stockId = $("#stockid").val();
+        $("#stockname").text("");
+        if (stockId.trim() !== "") {
+            $.get("/StockModel/checkstock", { sncode: stockId },
+                function (element) {
+                    if (element.stockexist) {
+                        $("#longterm,#shortterm").prop("disabled", false);
+                        $("#stockname").text(element.stockname);
+                    } else {
+                        alert("請選擇其他股票");
+                        $("#longterm,#shortterm").prop("disabled", true);
+                    }
+                }
+            );
+        }
+    }
+</script>
