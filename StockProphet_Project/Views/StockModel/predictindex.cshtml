@@ -215,7 +215,7 @@
                     var predictedData = prediction;
 
                     // 在這裡將 predictedData 傳遞到 predictphoto 頁面
-                    predicturl = "/StockModel/predictphoto?predictedData=" + predictedData;
+                    predicturl = "/StockModel/predictphoto?predictedData=" + predictedData+ "&snCode=" + sncode;
 
                 },
                 error: function (xhr, status, error) {

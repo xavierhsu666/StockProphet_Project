@@ -451,10 +451,10 @@ namespace StockProphet_Project.Controllers
         {
             return View();
         }
-        public IActionResult predictphoto(double predicteddata)
+        public IActionResult predictphoto(double predicteddata, string sncode)
         {
             // 檢索資料庫中的資料筆數
-            int dataCount = _context.Stocks.Count();
+            int dataCount = _context.Stocks.Where(x => x.SnCode == sncode).Count();
 
             // 接收 predictedData 的值
             double predictedData = predicteddata;
@@ -464,7 +464,7 @@ namespace StockProphet_Project.Controllers
             ViewBag.PredictedData = predictedData;
 
             // 檢索資料庫中的股票資料
-            var stockData = _context.Stocks.ToList();
+            var stockData = _context.Stocks.Where(x => x.SnCode == sncode).ToList();
 
             // 將股票資料傳遞到視圖
             ViewBag.ChartData = stockData;
