@@ -19,6 +19,7 @@ using Tensorflow.Train;
 using static Tensorflow.ApiDef.Types;
 using System.Security.Cryptography.Xml;
 using StockProphet_Project.Models;
+using System.Diagnostics;
 
 namespace StockProphet_Project.Controllers
 {
@@ -34,7 +35,7 @@ namespace StockProphet_Project.Controllers
         // GET: Stockinfoes
         public async Task<IActionResult> Index()
         {   
-            return View(await _context.Stocks.ToListAsync());
+            return View(await _context.Stock.ToListAsync());
         }
         [HttpPost]
         public IActionResult LSTMpredict(string sncode, int predictday, Dictionary<string, bool> selectedParams)
@@ -56,7 +57,7 @@ namespace StockProphet_Project.Controllers
 
             //撈出所選股票
 
-            var stockData = _context.Stocks
+            var stockData = _context.Stock
                     .Where(x => x.SnCode == sncode)
                     .OrderBy(x => x.StDate)
                     .ToList();
@@ -196,29 +197,32 @@ namespace StockProphet_Project.Controllers
                 model.add(keras.layers.LSTM(50, keras.activations.Relu));
                 model.add(keras.layers.Dense(1));
                 model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
-                // 測試Xnumpy的樣子
-                //string xString1 = x.ToString();
-                //string filePathx1 = "x_array1.txt";
-                //System.IO.File.WriteAllText(filePathx1, xString1);
-                //Console.WriteLine("X NumPy array written to file: " + filePathx1);
+				// 測試Xnumpy的樣子
+				//string xString1 = x.ToString();
+				//string filePathx1 = "x_array1.txt";
+				//System.IO.File.WriteAllText(filePathx1, xString1);
+				//Console.WriteLine("X NumPy array written to file: " + filePathx1);
 
-                string xString2 = x.ToString();
-                string filePathx2 = "x_array2.txt";
-                System.IO.File.WriteAllText(filePathx2, xString2);
-                Console.WriteLine("X NumPy array written to file: " + filePathx2);
+				//string xString2 = x.ToString();
+				//string filePathx2 = "x_array2.txt";
+				//System.IO.File.WriteAllText(filePathx2, xString2);
+				//Console.WriteLine("X NumPy array written to file: " + filePathx2);
 
-                //string yString2 = y.ToString();
-                //string filePathy2 = "y_array2.txt";
-                //System.IO.File.WriteAllText(filePathy2, yString2);
-                //Console.WriteLine("y NumPy array written to file: " + filePathy2);
-                //return Ok("Some result");
-                model.fit(x, y, epochs: 200, verbose: 0);
+				//string yString2 = y.ToString();
+				//string filePathy2 = "y_array2.txt";
+				//System.IO.File.WriteAllText(filePathy2, yString2);
+				//Console.WriteLine("y NumPy array written to file: " + filePathy2);
+				//return Ok("Some result");
+				
+				//模型
+                model.fit(x, y, epochs: 10, verbose: 0);
+                
+				
 
 
+				//提取最後 predictday 天的特徵 X 的數據進行預測
 
-                //提取最後 predictday 天的特徵 X 的數據進行預測
-
-                var lastData = new List<float[]>();
+				var lastData = new List<float[]>();
                 for (int i = stockData.Count - predictday; i < stockData.Count; i++)
                 {
                     float[] lastDataRow = new float[features.Count];
@@ -241,8 +245,8 @@ namespace StockProphet_Project.Controllers
                 var prediction = model.predict(reshapedData);
 
 
-                // 輸出預測結果
-                predictionResult = prediction[0].numpy()[0, 0];
+				// 輸出預測結果
+				predictionResult = prediction[0].numpy()[0, 0];
 
             }
             return Content(predictionResult.ToString());
@@ -269,7 +273,7 @@ namespace StockProphet_Project.Controllers
 
             //撈出所選股票
 
-            var stockData = _context.Stocks
+            var stockData = _context.Stock  
                     .Where(x => x.SnCode == sncode)
                     .OrderBy(x => x.StDate)
                     .ToList();
@@ -451,37 +455,39 @@ namespace StockProphet_Project.Controllers
         {
             return View();
         }
-        public IActionResult predictphoto(double predicteddata, string sncode)
+        public IActionResult predictphoto(string predicteddata, string sncode)
         {
             // 檢索資料庫中的資料筆數
-            int dataCount = _context.Stocks.Where(x => x.SnCode == sncode).Count();
+            int dataCount = _context.Stock.Where(x => x.SnCode == sncode).Count();
 
             // 接收 predictedData 的值
-            double predictedData = predicteddata;
+            double predictedData = Convert.ToDouble(predicteddata);
 
-            // 將資料傳遞到視圖
-            ViewBag.DataCount = dataCount;
+            
+			// 將資料傳遞到視圖
+			ViewBag.DataCount = dataCount;
             ViewBag.PredictedData = predictedData;
 
             // 檢索資料庫中的股票資料
-            var stockData = _context.Stocks.Where(x => x.SnCode == sncode).ToList();
-
+            var stockData = _context.Stock.Where(x => x.SnCode == sncode).ToList();
             // 將股票資料傳遞到視圖
             ViewBag.ChartData = stockData;
 
             return View();
         }
+
         [HttpGet]
         public IActionResult predictdatacount(string sncode, int predictday)
 
         {
             //撈出所選股票
-            var stockData = _context.Stocks
+            var stockData = _context.Stock
                 .Where(x => x.SnCode == sncode)
                 .OrderBy(x => x.StDate)
                 .ToList();
             bool result;
-            //判斷客戶所選區間資料是否足夠
+            
+            
             if (stockData.Count < predictday)
             {
                 result = false;
@@ -495,7 +501,7 @@ namespace StockProphet_Project.Controllers
         }
         public IActionResult checkstock(string sncode)
         {
-            var stockData = _context.Stocks
+            var stockData = _context.Stock
                     .Where(x => x.SnCode == sncode)
                     .OrderBy(x => x.StDate)
                     .ToList();

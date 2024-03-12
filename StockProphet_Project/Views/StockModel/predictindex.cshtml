@@ -1,9 +1,11 @@
 ﻿<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <h3>第一步:選定股票</h3>
 <label for="stockid">股票代號</label>
 <input type="text" id="stockid" name="SnCode" onchange="stockinput()">
 <br>
 <br>
+
 <div style="display: flex;">
     <label>股票名稱:</label>
     <div id="stockname"></div>
@@ -15,6 +17,7 @@
 </div>
 <br><br>
 <div id="form1">
+    
     <h3>第三步:設定參數並建置模型預測</h3>
     <label>參數選擇:</label>
     <input type="checkbox" id="param1" name="SteOpen">
@@ -42,6 +45,7 @@
     <input type="radio" id="param8_365" name="interval" value="365">
     <label for="param8_365">365天(年)</label>
     <br>
+   
     <label>Step1:</label>
     <button id="Okbutton1">確認參數</button>
     <br><br>
@@ -51,11 +55,15 @@
     <br>
     <label for="predict1">明天收盤價預測結果:</label>
     <div id="predictionResult1"></div>
+	<div class="progress">
+	    <div class="progress-bar progress-bar-striped progress-bar-animated" id="progress1" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+	</div>   
 
 </div>
 <div id="form2">
     <h3>第三步:設定參數並建置模型預測</h3>
     <label>參數選擇:</label>
+
     <input type="checkbox" id="param9" name="SteOpen">
     <label for="param9">開盤價</label>
     <input type="checkbox" id="param10" name="SteClose">
@@ -89,6 +97,9 @@
     <br>
     <label for="predict2">明天收盤價預測結果:</label>
     <div id="predictionResult2"></div>
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" id="progress2" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+    </div>  
 </div>
 <div id="chart">
     <label>Step3:</label>
@@ -186,50 +197,63 @@
         });
 
 
-        $("#predict1,#predict2").on("click", function (event) {
-            var buttonId = $(this).prop("id"); // 獲取按鈕的 ID
-            var number = parseInt(buttonId.match(/\d+/)[0]); // 從 ID 中提取數字部分
-            createmodelTime=new Date();
-            $.ajax({
-                url: `/StockModel/${functionurl[number - 1]}`,
-                type: "Post",
-                data: {
-                    sncode: sncode,
-                    predictday: predictday,
-                    selectedParams: userselectparams
-                },
-                beforeSend: function () {
-                    // 在發送請求前顯示訓練中的訊息
-                    $(`#predictionResult${number}`).text("模型訓練中...");
-                },
-                success: function (rep) {
-                    // 在成功後更新預測結果
-                    prediction = parseFloat(rep);
-                    if (prediction < 0) {
-                        prediction = -prediction;
+            $("#predict1,#predict2").on("click", function (event) {
+                var buttonId = $(this).prop("id"); // 獲取按鈕的 ID
+                var number = parseInt(buttonId.match(/\d+/)[0]); // 從 ID 中提取數字部分
+                var createmodelTime = new Date();
+                $.ajax({
+                    url: `/StockModel/${functionurl[number - 1]}`,
+                    type: "Post",
+                    data: {
+                        sncode: sncode,
+                        predictday: predictday,
+                        selectedParams: userselectparams
+                    },
+                    beforeSend: function () {
+                        // 在發送請求前顯示訓練中的訊息
+                        $(`#predictionResult${number}`).text("模型訓練中...");
+                        var progress = 0; // 初始化進度
+                        var increaseProgress = function () {
+                            if (progress <= 80) {
+                                progress += 5; // 每次增加 5%
+                                $(`#progress${number}`).css("width", progress + "%"); // 加上百分比符號
+                                setTimeout(increaseProgress, 900); // 1000 毫秒為 1 秒
+                            }
+                        };
+                        increaseProgress(); // 開始增加進度
+                    }, 
+               
+                    success: function (rep) {
+                        $(`#progress${number}`).css("width", '100%');
+                        // 在成功後更新預測結果
+                        var prediction = parseFloat(rep);
+                        if (prediction < 0) {
+                            prediction = -prediction;
+                        }
+                        prediction = prediction.toFixed(2);
+                        $(`#predictionResult${number}`).text(prediction);
+                        $("#chart").css("display", "block");
+                        $("#save1").prop("disabled", false);
+                        var predictedData = prediction;
+
+
+            
+            
+                        // 在這裡將 predictedData 傳遞到 predictphoto 頁面
+                        predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&snCode=" + sncode;
+                            console.log(predicturl)
+                        // 使用 predicturl
+
+                    },
+                    error: function (xhr, status, error) {
+                        // 處理錯誤
+                        console.error('Error occurred: ' + error); // 處理錯誤
+                        var errorMessage = xhr.responseText;
+                        alert(errorMessage);
+                        $(`#predictionResult${number}`).text("");
                     }
-                    prediction = prediction.toFixed(2);
-                    $(`#predictionResult${number}`).text(prediction);
-                    $("#chart").css("display", "block");
-                    $("#save1").prop("disabled", false);
-                    var predictedData = prediction;
-
-                    // 在這裡將 predictedData 傳遞到 predictphoto 頁面
-                    predicturl = "/StockModel/predictphoto?predictedData=" + predictedData+ "&snCode=" + sncode;
-
-                },
-                error: function (xhr, status, error) {
-                    // 處理錯誤
-                    console.error('Error occurred: ' + error); // 處理錯誤
-                    var errorMessage = xhr.responseText;
-                    alert(errorMessage);
-                    $(`#predictionResult${number}`).text("");
-                }
-            });
-
-
-
-        });
+                });
+            }); 
 
 
         $("#save1").on("click", function(){
@@ -267,6 +291,7 @@
 
         $("#chart1").on("click", function () {
             window.location.href = predicturl
+
 
         })
 
