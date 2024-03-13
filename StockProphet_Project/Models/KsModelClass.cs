@@ -12,9 +12,8 @@ using System.Xml.Linq;
 
 namespace StockProphet_Project.Models {
 
+
 	public class KsModelClass {
-	}
-	public class ModelClass {
 		public class Prediction {
 			[ColumnName("Score")]
 			public float STe_Close { get; set; }
