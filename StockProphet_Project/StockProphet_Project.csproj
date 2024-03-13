@@ -12,6 +12,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.ML" Version="3.0.1" />
+    <PackageReference Include="Microsoft.ML.LightGbm" Version="3.0.1" />
+    <PackageReference Include="Microsoft.ML.TimeSeries" Version="3.0.1" />
     <PackageReference Include="SciSharp.TensorFlow.Redist" Version="2.11.4" />
     <PackageReference Include="TensorFlow.Keras" Version="0.11.4" />
     <PackageReference Include="TensorFlow.NET" Version="0.110.4" />

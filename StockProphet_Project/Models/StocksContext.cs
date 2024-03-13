@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace StockProphet_Project.Models;
 
+
 public partial class StocksContext : DbContext
 {
     public StocksContext()
