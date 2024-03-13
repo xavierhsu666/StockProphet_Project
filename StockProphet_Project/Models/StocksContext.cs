@@ -4,6 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace StockProphet_Project.Models;
 
+public class KsStockContext : DbContext {
+	public KsStockContext( DbContextOptions<KsStockContext> options )
+	: base(options) {
+	}
+
+	public DbSet<StockDB> Stock { get; set; }
+}
 public partial class StocksContext : DbContext
 {
     public StocksContext()
