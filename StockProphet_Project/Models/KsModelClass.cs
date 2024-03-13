@@ -9,6 +9,7 @@ using Microsoft.ML.Transforms.TimeSeries;
 using System.Data.SqlClient;
 using static Microsoft.ML.ForecastingCatalog;
 using System.Xml.Linq;
+using static StockProphet_Project.Models.TimeSerialModel;
 
 namespace StockProphet_Project.Models {
 
@@ -17,6 +18,8 @@ namespace StockProphet_Project.Models {
 		public class Prediction {
 			[ColumnName("Score")]
 			public float STe_Close { get; set; }
+			public double Output_M_MAE { get; set; }
+			public double Output_M_RMSE { get; set; }
 		}
 		public Prediction MLModeling( List<Stock> input_untrans ) {
 			MLContext mlContext = new MLContext();
@@ -42,13 +45,33 @@ namespace StockProphet_Project.Models {
 
 			// 3. Train model
 			var model = pipeline.Fit(trainingData);
-
+			// 模型評估
+			var modelEV = Evaluate(trainingData, model, mlContext);
 			// 4. Make a prediction
 			var x = input[input.Count - 1];
 			var close = mlContext.Model.CreatePredictionEngine<StockDBA, Prediction>(model).Predict(x);
+			close.Output_M_MAE = modelEV[0];
+			close.Output_M_RMSE = modelEV[1];
 			// 5. 評估誤差
 			return close;
 			// Predicted price for size: 2500 sq ft= $261.98k
+		}
+		public double[] Evaluate( IDataView testData, ITransformer model, MLContext mlContext ) {
+			IDataView predictions = model.Transform(testData);
+			IEnumerable<float> actual =
+			mlContext.Data.CreateEnumerable<StockDBA>(testData, true)
+				.Select(observed => observed.STe_Close);
+			IEnumerable<float> forecast =
+			mlContext.Data.CreateEnumerable<Prediction>(predictions, true)
+				.Select(prediction => prediction.STe_Close);
+			var metrics = actual.Zip(forecast, ( actualValue, forecastValue ) => actualValue - forecastValue);
+			var MAE = metrics.Average(error => Math.Abs(error)); // Mean Absolute Error
+			var RMSE = Math.Sqrt(metrics.Average(error => Math.Pow(error, 2))); // Root Mean Squared Error
+			Console.WriteLine("Evaluation Metrics");
+			Console.WriteLine("---------------------");
+			Console.WriteLine($"Mean Absolute Error: {MAE:F3}");
+			Console.WriteLine($"Root Mean Squared Error: {RMSE:F3}\n");
+			return new double[] { (double)MAE, RMSE };
 		}
 		public List<StockDBA> TransferToInput( List<Stock> input ) {
 			List<StockDBA> output = new List<StockDBA>();
