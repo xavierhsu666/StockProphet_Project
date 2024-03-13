@@ -3,7 +3,80 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace StockProphet_Project.Models;
-
+public class StockDB {
+	// 根據SCRIPT，新的
+	[Key]
+	[Display(Name = "PK")]
+	public string S_PK { get; set; }
+	[Display(Name = "日期")]
+	public DateTime ST_Date { get; set; }
+	[Display(Name = "年季")]
+	public string ST_Year_Quarter { get; set; }
+	[Display(Name = "季")]
+	public string ST_Quarter { get; set; }
+	[Display(Name = "年")]
+	public string ST_Year { get; set; }
+	[Display(Name = "股票代號")]
+	public string SN_Code { get; set; }
+	[Display(Name = "股票名稱")]
+	public string SN_Name { get; set; }
+	[Display(Name = "收盤價")]
+	public decimal STe_Close { get; set; }
+	[Display(Name = "開盤價")]
+	public decimal STe_Open { get; set; }
+	[Display(Name = "最高價")]
+	public decimal STe_Max { get; set; }
+	[Display(Name = "最低價")]
+	public decimal STe_Min { get; set; }
+	[Display(Name = "震幅")]
+	public double STe_SpreadRatio { get; set; }
+	[Display(Name = "交易額")]
+	public long STe_TradeMoney { get; set; }
+	[Display(Name = "交易量")]
+	public int STe_TradeQuantity { get; set; }
+	[Display(Name = "交易動作")]
+	public int STe_TransActions { get; set; }
+	[Display(Name = "拆分年")]
+	public byte STe_Dividend_Year { get; set; }
+	[Display(Name = "營收")]
+	public decimal SB_Yield { get; set; }
+	[Display(Name = "PBR比例")]
+	public double SB_PBRatio { get; set; }
+	[Display(Name = "EPS")]
+	public double SB_EPS { get; set; }
+	[Display(Name = "業內收入")]
+	public long SB_BussinessIncome { get; set; }
+	[Display(Name = "五日移動平均")]
+	public double SI_MovingAverage_5 { get; set; }
+	[Display(Name = "三十日移動平均")]
+	public double SI_MovingAverage_30 { get; set; }
+	[Display(Name = "五日RSV")]
+	public double SI_RSV_5 { get; set; }
+	[Display(Name = "三十日RSV")]
+	public double SI_RSV_30 { get; set; }
+	[Display(Name = "五日K")]
+	public double SI_K_5 { get; set; }
+	[Display(Name = "三十日K")]
+	public double SI_K_30 { get; set; }
+	[Display(Name = "五日D")]
+	public double SI_D_5 { get; set; }
+	[Display(Name = "三十日D")]
+	public double SI_D_30 { get; set; }
+	[Display(Name = "長期EMA")]
+	public double SI_LongEMA { get; set; }
+	[Display(Name = "短期EMA")]
+	public double SI_ShortEMA { get; set; }
+	[Display(Name = "DIF")]
+	public double SI_Dif { get; set; }
+	[Display(Name = "MACD")]
+	public double SI_MACD { get; set; }
+	[Display(Name = "OSC")]
+	public double SI_OSC { get; set; }
+	[Display(Name = "PE")]
+	public double SI_PE { get; set; }
+	[Display(Name = "MA")]
+	public double SI_MA { get; set; }
+}
 public partial class Stock
 {
     public string SPk { get; set; } = null!;
