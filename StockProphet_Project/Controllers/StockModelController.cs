@@ -59,7 +59,16 @@ namespace StockProphet_Project.Controllers {
 			switch (form["modelPick"].ToString()) {
 				case "regression":
 					log = "Regression Building...";
-					ViewBag.result = RegessionBuild(q).STe_Close;
+					// 建立model input 的參數
+					string[] inputVar = new string[]{"STe_Open","STe_Close","STe_Max","STe_Min","STe_SpreadRatio"};
+					KsModelClass.ModelInput mi = new KsModelClass.ModelInput() { 
+						inputPara = inputVar ,
+						maximumNumberOfIterations=100
+					};	
+					
+					var mo = RegessionBuild(q, mi);
+					//mo.output_F_Forcast,mo.output_M_RMSE,mo.output_M_MSE
+					ViewBag.result = new double[] { mo.output_F_Forcast, mo.output_M_RMSE, mo.output_M_MSE };
 					log += "Regression Builded. ";
 
 					break;
@@ -103,9 +112,9 @@ namespace StockProphet_Project.Controllers {
 			return ModelReturn;
 		}
 
-		public KsModelClass.Prediction RegessionBuild( IQueryable<Stock> q ) {// 获取表单中的所有输入值
+		public KsModelClass.ModelOutput RegessionBuild( IQueryable<Stock> q , KsModelClass.ModelInput mi) {// 获取表单中的所有输入值
 			KsModelClass mc = new KsModelClass();
-			var a = mc.MLModeling(q.ToList());
+			var a = mc.MLModeling(q.ToList(),mi);
 			return a;
 		}
 		// <功能開發測試區>
