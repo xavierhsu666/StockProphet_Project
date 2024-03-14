@@ -1,0 +1,108 @@
+﻿@{
+	ViewData["Title"] = "Model Page";
+}
+<div class="text-center">
+	<h1 class="display-4">Model Building</h1>
+	<a href="/model/timeserial">TimeSerial Test</a>
+	<hr />
+	<form asp-action="Build" method="post" enctype="multipart/form-data">
+
+		<div id="step1">
+			<input type="text" id="stockCode" name="stockCode" placeholder="請輸入股票代號" onchange="showNextStep(2)" />
+			<p id="checkLatest"></p>
+		</div>
+
+		<hr />
+		<div id="step2" style="visibility:hidden">
+			<select class="selectpicker" id="modelPick" name="modelPick" onchange="showNextStep(3)">
+				<option value="">--請選擇預測模型--</option>
+				<option value="regression">回歸模型</option>
+				<option value="TimeSerial">時間序列模型</option>
+			</select>
+			<hr />
+		</div>
+		<div id="step3" style="visibility:hidden">
+			<select class="selectpicker" id="InvestPreferPick" name="InvestPreferPick" onchange="showNextStep(4)">
+				<option value="">--請選擇您的投資偏好--</option>
+				<option value="long">長期投資</option>
+				<option value="short">短期投資</option>
+			</select>
+			<hr />
+		</div>
+		<div id="step4" style="visibility:hidden">
+			<select class="selectpicker" id="xPick" name="xPick" onchange="showNextStep(5)">
+				<option value="">--請選擇預測自變數--</option>
+				<option value="x1">自變數1</option>
+				<option value="x2">自變數2</option>
+			</select>
+			<hr />
+		</div>
+		<div id="step5" style="visibility:hidden">
+			<select class="selectpicker" id="ParameterPick" name="ParameterPick" onchange="showNextStep(6)">
+				<option value="">--請調整您模型的參數--</option>
+				<option value="p1">參數1</option>
+				<option value="p2">參數2</option>
+			</select>
+			<hr />
+		</div>
+		<div id="step6" style="visibility:hidden">
+			<h1>以下為您的設定</h1>
+			<h1 id="Stock"></h1>
+			<h1 id="Model"></h1>
+			<h1 id="Prefer"></h1>
+			<h1 id="x"></h1>
+			<h1 id="p"></h1>
+
+		</div>
+		<button type="submit">Build</button>
+	</form>
+
+</div>
+<script>
+	function showNextStep(i) {
+		if (i == 6) {
+			console.log($("#ParameterPick").val());
+			$("#Stock").text($("#stockCode").val());
+			$("#Model").text($("#modelPick").val());
+			$("#Prefer").text($("#InvestPreferPick").val());
+			$("#x").text($("#xPick").val());
+			$("#p").text($("#ParameterPick").val());
+			$("#step" + i).css("visibility", "");
+
+
+		} else if (i == 2) {
+			CallAjax($("#stockCode").val());
+			$("#step" + i).css("visibility", "");
+		} else {
+			$("#step" + i).css("visibility", "");
+
+		}
+	}
+	function CallAjax(stockCode) {
+		var data = {
+			stockCode: stockCode
+		}
+		$.ajax({
+			type: "post",
+			url: "/stockmodel/getStock",
+			data: data,
+			success: function (e) {
+				console.group("CallAjax");
+				console.log(`stockCode = ${e.stockCode} `);
+				console.log(`InputLatestDate = ${e.inputLatestDate}`);
+				console.log(`ThisStockCount = ${e.thisStockCount} `);
+				console.log(`ThisStockLatestDataCount = ${e.thisStockLatestDataCount}`);
+				console.log(`log = ${e.log}`);
+				console.groupEnd();
+				if (e.thisStockLatestDataCount == 1) {
+					$("#checkLatest").text("Checked OK.");
+				} else if (e.thisStockLatestDataCount == 0 && e.thisStockCount > 0) {
+					$("#checkLatest").text("Data need update.");
+				} else if (e.thisStockLatestDataCount == 0 && e.thisStockCount == 0) {
+					$("#checkLatest").text("Data need Download.");
+
+				}
+			}
+		})
+	}
+</script>
