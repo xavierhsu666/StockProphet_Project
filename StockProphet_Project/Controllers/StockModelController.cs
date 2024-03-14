@@ -34,7 +34,7 @@ namespace StockProphet_Project.Controllers {
 		// ------------------------------------------------------------------------------<KAZUO>------------------------------------------------------------------------------
 
 		// <參數區>改過需要調整的地方
-		public string InputLatestDate = DateTime.Parse("2024-1-22").ToString("yyyy-MM-dd");
+		public string InputLatestDate = DateTime.Parse("2024-3-8").ToString("yyyy-MM-dd");
 		public int InputMinCount = 30;
 		// <參數區>改過需要調整的地方
 
@@ -48,7 +48,7 @@ namespace StockProphet_Project.Controllers {
 			// 先看一下DB內的資料是否最新
 
 			var q = from o in _context.Stock
-					where o.StDate < DateOnly.Parse(InputLatestDate) &&
+					where o.StDate <= DateOnly.Parse(InputLatestDate) &&
 						  o.SnCode == form["stockCode"].ToString()
 					select o;
 			string log = "";
@@ -59,13 +59,39 @@ namespace StockProphet_Project.Controllers {
 			switch (form["modelPick"].ToString()) {
 				case "regression":
 					log = "Regression Building...";
-					ViewBag.result = RegessionBuild(q).STe_Close;
+					// 建立model input 的參數
+					string[] inputVar = new string[]{"STe_Open","STe_Close","STe_Max","STe_Min","STe_SpreadRatio"};
+					KsModelClass.ModelInput mi = new KsModelClass.ModelInput() { 
+						inputPara = inputVar ,
+						maximumNumberOfIterations=100
+					};	
+					
+					var mo = RegessionBuild(q, mi);
+					//mo.output_F_Forcast,mo.output_M_RMSE,mo.output_M_MSE
+					ViewBag.result = new double[] { mo.output_F_Forcast, mo.output_M_RMSE, mo.output_M_MSE };
 					log += "Regression Builded. ";
 
 					break;
 				case "TimeSerial":
 					log = "TimeSerial Building...";
-					ViewBag.result = TimeSerialBuild().Output_F_estimate;
+					TimeSerialModel.ModelInput mp = new TimeSerialModel.ModelInput() {
+						windowSize = 7,
+						seriesLength = 30,
+						trainSize = 365,
+						confidenceLevel = 0.95f,
+						focastDate = DateTime.Parse(InputLatestDate)
+
+					};
+
+					var tmo = TimeSerialBuild(q,mp);
+					ViewBag.result = new double[] {
+						tmo.Output_F_estimate ,
+						tmo.Output_M_RMSE,
+						tmo.Output_M_MAE,
+						tmo.Output_F_upperEstimate,
+						tmo.Output_F_lowerEstimate
+					};
+
 					log += "TimeSerial Builded. ";
 
 
@@ -85,27 +111,16 @@ namespace StockProphet_Project.Controllers {
 		}
 		// <view頁面區>
 		// <功能開發測試區>
-		public TimeSerialModel.ModelPara TimeSerialBuild() {// 获取表单中的所有输入值
+		public TimeSerialModel.ModelOutput TimeSerialBuild( IQueryable<Stock> q, TimeSerialModel.ModelInput mp ) {// 获取表单中的所有输入值
 			TimeSerialModel t = new TimeSerialModel();
-			TimeSerialModel.ModelPara mp = new TimeSerialModel.ModelPara() {
-				windowSize = 7,
-				seriesLength = 30,
-				trainSize = 365,
-				confidenceLevel = 0.95f,
-				focastDate = DateTime.Parse("2024/3/8")
-
-			};
-
-			var q = from o in _context.Stock.ToList()
-					where o.SnCode == "2330"
-					select o;
+			
 			var ModelReturn = t.KsMLModeling(q.ToList(), mp);
 			return ModelReturn;
 		}
 
-		public KsModelClass.Prediction RegessionBuild( IQueryable<Stock> q ) {// 获取表单中的所有输入值
+		public KsModelClass.ModelOutput RegessionBuild( IQueryable<Stock> q , KsModelClass.ModelInput mi) {// 获取表单中的所有输入值
 			KsModelClass mc = new KsModelClass();
-			var a = mc.MLModeling(q.ToList());
+			var a = mc.MLModeling(q.ToList(),mi);
 			return a;
 		}
 		// <功能開發測試區>

@@ -12,8 +12,11 @@
 <br>
 @log
 <br>
-@result
-<br>
+@foreach (var item in result) {
+
+	@item
+	<br>
+}
 @foreach (var item in Model) {
 	@(item)
 	<br>

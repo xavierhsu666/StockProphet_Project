@@ -15,13 +15,23 @@ namespace StockProphet_Project.Models {
 
 
 	public class KsModelClass {
+
+		public class ModelInput {
+			public int maximumNumberOfIterations { get; set; }
+			public string[] inputPara { get; set; }
+
+		}
+		public class ModelOutput {
+			public float output_F_Forcast { get; set; }
+			public double output_M_MSE { get; set; }
+			public double output_M_RMSE { get; set; }
+
+		}
 		public class Prediction {
 			[ColumnName("Score")]
 			public float STe_Close { get; set; }
-			public double Output_M_MAE { get; set; }
-			public double Output_M_RMSE { get; set; }
 		}
-		public Prediction MLModeling( List<Stock> input_untrans ) {
+		public ModelOutput MLModeling( List<Stock> input_untrans, ModelInput MI ) {
 			MLContext mlContext = new MLContext();
 			var input = TransferToInput(input_untrans);
 			// 1. Import or create training data
@@ -34,9 +44,8 @@ namespace StockProphet_Project.Models {
 			//    "SI_K_5","SI_K_30","SI_D_5","SI_D_30","SI_EMA","SI_ShortEMA","SI_Dif","SI_MACD", "SI_OSC", "SI_PE"  })
 			//    .Append(mlContext.Regression.Trainers.Sdca(labelColumnName: "STe_Close", maximumNumberOfIterations: 100));
 			// 線性回歸
-			var pipeline = mlContext.Transforms.Concatenate("Features", new[] { "STe_Open","STe_Close","STe_Max",
-				"STe_Min","STe_SpreadRatio"})
-				.Append(mlContext.Regression.Trainers.Sdca(labelColumnName: "STe_Close", maximumNumberOfIterations: 100));
+			var pipeline = mlContext.Transforms.Concatenate("Features", MI.inputPara)
+				.Append(mlContext.Regression.Trainers.Sdca(labelColumnName: "STe_Close", maximumNumberOfIterations: MI.maximumNumberOfIterations));//100
 
 			// 決策樹(二元預測)
 			//        var pipeline = mlContext.Transforms.Concatenate("Features", new[] { "STe_Open", "STe_Close", "STe_Max",
@@ -50,10 +59,15 @@ namespace StockProphet_Project.Models {
 			// 4. Make a prediction
 			var x = input[input.Count - 1];
 			var close = mlContext.Model.CreatePredictionEngine<StockDBA, Prediction>(model).Predict(x);
-			close.Output_M_MAE = modelEV[0];
-			close.Output_M_RMSE = modelEV[1];
+			//close.Output_M_MAE = modelEV[0];
+			//close.Output_M_RMSE = modelEV[1];
+			ModelOutput mo = new ModelOutput() {
+				output_F_Forcast = close.STe_Close,
+				output_M_MSE = modelEV[0],
+				output_M_RMSE = modelEV[1]
+			};
 			// 5. 評估誤差
-			return close;
+			return mo;
 			// Predicted price for size: 2500 sq ft= $261.98k
 		}
 		public double[] Evaluate( IDataView testData, ITransformer model, MLContext mlContext ) {
@@ -63,7 +77,7 @@ namespace StockProphet_Project.Models {
 				.Select(observed => observed.STe_Close);
 			IEnumerable<float> forecast =
 			mlContext.Data.CreateEnumerable<Prediction>(predictions, true)
-				.Select(prediction => prediction.STe_Close);
+				.Select(prediction1 => prediction1.STe_Close);
 			var metrics = actual.Zip(forecast, ( actualValue, forecastValue ) => actualValue - forecastValue);
 			var MAE = metrics.Average(error => Math.Abs(error)); // Mean Absolute Error
 			var RMSE = Math.Sqrt(metrics.Average(error => Math.Pow(error, 2))); // Root Mean Squared Error
@@ -122,19 +136,15 @@ namespace StockProphet_Project.Models {
 	}
 	public class TimeSerialModel {
 
-		public class ModelOutput {
+		public class ModelEVOutput {
 			public float[] ForecastedRentals { get; set; }
 
 			public float[] LowerBoundRentals { get; set; }
 
 			public float[] UpperBoundRentals { get; set; }
 		}
-		public class ModelPara {
-			public DateTime focastDate { get; set; }
-			public int windowSize { get; set; }
-			public int seriesLength { get; set; }
-			public int trainSize { get; set; }
-			public Single confidenceLevel { get; set; }
+		public class ModelOutput {
+
 			public double Output_M_MAE { get; set; }
 			public double Output_M_RMSE { get; set; }
 			public float Output_F_actualRentals { get; set; }
@@ -143,8 +153,17 @@ namespace StockProphet_Project.Models {
 			public float Output_F_upperEstimate { get; set; }
 
 		}
+		public class ModelInput {
 
-		public ModelPara KsMLModeling( List<Stock> input_untrans, ModelPara mp ) {
+			public DateTime focastDate { get; set; }
+			public int windowSize { get; set; }
+			public int seriesLength { get; set; }
+			public int trainSize { get; set; }
+			public Single confidenceLevel { get; set; }
+		}
+
+
+		public ModelOutput KsMLModeling( List<Stock> input_untrans, ModelInput mp ) {
 
 			// 建立需要使用的物件
 			MLContext mlContext = new MLContext();
@@ -177,16 +196,22 @@ namespace StockProphet_Project.Models {
 			// 模型評估
 			var modelEV = Evaluate(dataView, forecaster, mlContext);
 			// 轉成固態模型
-			var forecastEngine = forecaster.CreateTimeSeriesEngine<StockDBA, ModelOutput>(mlContext);
+			var forecastEngine = forecaster.CreateTimeSeriesEngine<StockDBA, ModelEVOutput>(mlContext);
 			// 調整預測用input值
 			var q = from o in input
 					where o.ST_Date == mp.focastDate
-			select o;
+					select o;
 
+			//Console.WriteLine("!!!!!!!!!!!!!!q.count = " + mp.focastDate.ToString());
+			//Console.WriteLine("!!!!!!!!!!!!!!q.count = " + q.Count().ToString());
+			//foreach (var item in q) {
+
+			//	Console.WriteLine(item.ST_Date);
+			//}
 			IDataView dataView1 = mlContext.Data.LoadFromEnumerable(q);
 			// 進行預測
 			var forcastEV = Forecast(dataView1, 7, forecastEngine, mlContext);
-			return new ModelPara() {
+			return new ModelOutput() {
 				Output_M_MAE = modelEV[0],
 				Output_M_RMSE = modelEV[1],
 				Output_F_actualRentals = forcastEV[0],
@@ -202,7 +227,7 @@ namespace StockProphet_Project.Models {
 			mlContext.Data.CreateEnumerable<StockDBA>(testData, true)
 				.Select(observed => observed.STe_Close);
 			IEnumerable<float> forecast =
-			mlContext.Data.CreateEnumerable<ModelOutput>(predictions, true)
+			mlContext.Data.CreateEnumerable<ModelEVOutput>(predictions, true)
 				.Select(prediction => prediction.ForecastedRentals[0]);
 			var metrics = actual.Zip(forecast, ( actualValue, forecastValue ) => actualValue - forecastValue);
 			var MAE = metrics.Average(error => Math.Abs(error)); // Mean Absolute Error
@@ -213,8 +238,8 @@ namespace StockProphet_Project.Models {
 			Console.WriteLine($"Root Mean Squared Error: {RMSE:F3}\n");
 			return new double[] { (double)MAE, RMSE };
 		}
-		public float[] Forecast( IDataView testData, int horizon, TimeSeriesPredictionEngine<StockDBA, ModelOutput> forecaster, MLContext mlContext ) {
-			ModelOutput forecast = forecaster.Predict();
+		public float[] Forecast( IDataView testData, int horizon, TimeSeriesPredictionEngine<StockDBA, ModelEVOutput> forecaster, MLContext mlContext ) {
+			ModelEVOutput forecast = forecaster.Predict();
 			float actualRentals = 0;
 			float lowerEstimate = 0;
 			float upperEstimate = 0;
@@ -236,8 +261,10 @@ namespace StockProphet_Project.Models {
 				});
 			Console.WriteLine("Rental Forecast");
 			Console.WriteLine("---------------------");
+			int i = 0;
 			foreach (var prediction in forecastOutput) {
-				Console.WriteLine(prediction);
+				Console.WriteLine(i.ToString()+prediction);
+				i++;
 			}
 			return new float[] { actualRentals, lowerEstimate, estimate, upperEstimate };
 		}
