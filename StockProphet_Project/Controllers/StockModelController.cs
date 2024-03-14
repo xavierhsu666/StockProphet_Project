@@ -93,37 +93,121 @@ namespace StockProphet_Project.Controllers
                         float[] featureColumn;
                         switch (item.Key)
                         {
-                            case "SteOpen":
-                                featureColumn = stockData.Select(data => Convert.ToSingle(data.SteOpen ?? 0)).ToArray();
-                                features.Add(featureColumn);
-                                break;
-                            case "SteClose":
-                                featureColumn = stockData.Select(data => Convert.ToSingle(data.SteClose ?? 0)).ToArray();
-                                features.Add(featureColumn);
-                                break;
-                            case "SteMax":
-                                featureColumn = stockData.Select(data => Convert.ToSingle(data.SteMax ?? 0)).ToArray();
-                                features.Add(featureColumn);
-                                break;
-                            case "SteMin":
-                                featureColumn = stockData.Select(data => Convert.ToSingle(data.SteMin ?? 0)).ToArray();
-                                features.Add(featureColumn);
-                                break;
-                            case "SteSpreadRatio":
-                                featureColumn = stockData.Select(data => Convert.ToSingle(data.SteSpreadRatio ?? 0)).ToArray();
-                                features.Add(featureColumn);
-                                break;
-                            case "SteTradeMoney":
-                                featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTradeMoney ?? 0)).ToArray();
-                                features.Add(featureColumn);
-                                break;
-                            case "SteTradeQuantity":
-                                featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTradeQuantity ?? 0)).ToArray();
-                                features.Add(featureColumn);
-                                break;
-                            default:
-                                break;
-                        }
+							case "SteOpen":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteOpen ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SteClose":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteClose ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SteMax":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteMax ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SteMin":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteMin ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SteSpreadRatio":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteSpreadRatio ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SteTradeMoney":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTradeMoney ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SteTradeQuantity":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTradeQuantity ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SteTransActions":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTransActions ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SteDividendYear":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteDividendYear ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SbYield":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SbYield ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SbPbratio":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SbPbratio ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SbEps":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SbEps ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SbBussinessIncome":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SbBussinessIncome ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiMovingAverage5":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiMovingAverage5 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiMovingAverage30":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiMovingAverage30 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiRsv5":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiRsv5 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiRsv30":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiRsv30 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiK5":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiK5 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiK30":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiK30 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiD5":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiD5 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiD30":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiD30 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiLongEma":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiLongEma ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiShortEma":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiShortEma ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiDif":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiDif ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiMacd":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiMacd ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiOsc":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiOsc ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiPe":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiPe ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiMa":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiMa ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							default:
+								break;
+						}
                     }
                 }
 
@@ -215,7 +299,7 @@ namespace StockProphet_Project.Controllers
 				//return Ok("Some result");
 				
 				//模型
-                model.fit(x, y, epochs: 10, verbose: 0);
+                model.fit(x, y, epochs: 200, verbose: 0);
                 
 				
 
@@ -309,37 +393,122 @@ namespace StockProphet_Project.Controllers
                         float[] featureColumn;
                         switch (item.Key)
                         {
-                            case "SteOpen":
-                                featureColumn = stockData.Select(data => Convert.ToSingle(data.SteOpen ?? 0)).ToArray();
-                                features.Add(featureColumn);
-                                break;
-                            case "SteClose":
-                                featureColumn = stockData.Select(data => Convert.ToSingle(data.SteClose ?? 0)).ToArray();
-                                features.Add(featureColumn);
-                                break;
-                            case "SteMax":
-                                featureColumn = stockData.Select(data => Convert.ToSingle(data.SteMax ?? 0)).ToArray();
-                                features.Add(featureColumn);
-                                break;
-                            case "SteMin":
-                                featureColumn = stockData.Select(data => Convert.ToSingle(data.SteMin ?? 0)).ToArray();
-                                features.Add(featureColumn);
-                                break;
-                            case "SteSpreadRatio":
-                                featureColumn = stockData.Select(data => Convert.ToSingle(data.SteSpreadRatio ?? 0)).ToArray();
-                                features.Add(featureColumn);
-                                break;
-                            case "SteTradeMoney":
-                                featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTradeMoney ?? 0)).ToArray();
-                                features.Add(featureColumn);
-                                break;
-                            case "SteTradeQuantity":
-                                featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTradeQuantity ?? 0)).ToArray();
-                                features.Add(featureColumn);
-                                break;
-                            default:
-                                break;
-                        }
+							case "SteOpen":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteOpen ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SteClose":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteClose ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SteMax":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteMax ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SteMin":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteMin ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SteSpreadRatio":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteSpreadRatio ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SteTradeMoney":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTradeMoney/10000 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								
+								break;
+							case "SteTradeQuantity":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTradeQuantity ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SteTransActions":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTransActions ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SteDividendYear":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteDividendYear ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SbYield":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SbYield ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SbPbratio":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SbPbratio ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SbEps":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SbEps ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SbBussinessIncome":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SbBussinessIncome ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiMovingAverage5":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiMovingAverage5 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiMovingAverage30":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiMovingAverage30 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiRsv5":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiRsv5 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiRsv30":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiRsv30 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiK5":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiK5 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiK30":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiK30 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiD5":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiD5 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiD30":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiD30 ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiLongEma":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiLongEma ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiShortEma":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiShortEma ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiDif":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiDif ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiMacd":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiMacd ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiOsc":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiOsc ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiPe":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiPe ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							case "SiMa":
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiMa ?? 0)).ToArray();
+								features.Add(featureColumn);
+								break;
+							default:
+								break;
+						}
                     }
                 }
 
@@ -353,10 +522,14 @@ namespace StockProphet_Project.Controllers
                 //    Console.WriteLine();
                 //}
                 //return Ok("Some result");
+                foreach (var item in features) {
+					System.Diagnostics.Debug.WriteLine("swith" + item);
 
+				}
+                
 
-                // 將數據轉換為 NumPy格式
-                int rowcount = stockData.Count;//資料庫幾筆資料 8
+				// 將數據轉換為 NumPy格式
+				int rowcount = stockData.Count;//資料庫幾筆資料 8
                 int colcount = features.Count;//客人選中幾個參數
 
                 //測試區
@@ -378,7 +551,7 @@ namespace StockProphet_Project.Controllers
 
                 // 測試Xnumpy的樣子
                 //string xString = x.ToString();
-                //string filePath = "x_array.txt";
+                //string filePath = "x_array1.txt";
                 //System.IO.File.WriteAllText(filePath, xString);
                 //Console.WriteLine("X NumPy array written to file: " + filePath);
 
@@ -413,7 +586,7 @@ namespace StockProphet_Project.Controllers
                 //編譯模型
                 model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
                 //訓練模型
-                model.fit(x, y, epochs: 50, verbose: 0);
+                model.fit(x, y, epochs: 200, verbose: 0);
 
 
 
@@ -460,10 +633,11 @@ namespace StockProphet_Project.Controllers
             // 檢索資料庫中的資料筆數
             int dataCount = _context.Stock.Where(x => x.SnCode == sncode).Count();
 
-            // 接收 predictedData 的值
+			// 接收 predictedData 的值
+			System.Diagnostics.Debug.WriteLine("lookhere"+predicteddata);
             double predictedData = Convert.ToDouble(predicteddata);
+			Console.WriteLine(predictedData);
 
-            
 			// 將資料傳遞到視圖
 			ViewBag.DataCount = dataCount;
             ViewBag.PredictedData = predictedData;
@@ -527,15 +701,17 @@ namespace StockProphet_Project.Controllers
         {
             var query = new StocksContext();
             DateTime buildTime = DateTime.Parse(PBuildTime);
+            
+			//System.Diagnostics.Debug.WriteLine($"PLabel: {PLabel}");
             var newdata = new DbModel
             {
                 Pstock = PStock,
                 Pvariable = PVariable,
-                Plabel = PLabel,
+				Plabel = PLabel,
                 Pprefer = PPrefer,
                 PbulidTime = buildTime
             };
-            System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
+            //System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
             query.DbModels.Add(newdata);
             query.SaveChanges();
 
