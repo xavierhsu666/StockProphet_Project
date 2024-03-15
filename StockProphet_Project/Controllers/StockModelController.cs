@@ -20,6 +20,10 @@ using static Tensorflow.ApiDef.Types;
 using System.Security.Cryptography.Xml;
 using StockProphet_Project.Models;
 using System.Diagnostics;
+using Serilog;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Tensorflow.NumPy.Pickle;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace StockProphet_Project.Controllers {
 	public class StockModelController : Controller {
@@ -122,7 +126,7 @@ namespace StockProphet_Project.Controllers {
 			var a = mc.MLModeling(q.ToList(), mi);
 			return a;
 		}
-		public string[] tagidToColumnName( string[] input )  {
+		public string[] tagidToColumnName( string[] input ) {
 			string[] output = new string[] { };
 
 			var mapping = new[] { "S_PK","ST_Date",
@@ -130,7 +134,7 @@ namespace StockProphet_Project.Controllers {
 				"STe_TradeMoney","STe_TradeQuantity","SB_EPS","SB_BussinessIncome","SB_NonBussinessIncome",
 				"SB_NonBussinessIncomeRatio","SI_MovingAverage_5","SI_MovingAverage_30","SI_RSV_5","SI_RSV_30",
 				"SI_K_5","SI_K_30","SI_D_5","SI_D_30","SI_EMA","SI_ShortEMA","SI_Dif","SI_MACD", "SI_OSC", "SI_PE"  };
-			foreach ( var key in input) {
+			foreach (var key in input) {
 				int keyint = Convert.ToInt32(key);
 				output.add(mapping[keyint]);
 			}
@@ -179,25 +183,67 @@ namespace StockProphet_Project.Controllers {
 			};
 			return Json(returnData);
 		}
+
+		[HttpPost]
+		//public IActionResult ModelInputPack( int CheckCode, string stockCode, string[] InputColumnName, string usingModel, int? R_maximumNumberOfIterations, int? T_windowSize, int? T_seriesLength, int? T_trainSize, int? T_confidenceLevel ) {
+		public IActionResult ModelInputPack( WebInput wi ) {
+			// 增加檢查碼、stockCode
+			var data = new {
+				stockCode = wi.stockCode,
+				InputColumnName = wi.InputColumnName,
+				R_maximumNumberOfIterations = wi.R_maximumNumberOfIterations ?? -1,
+				T_windowSize = wi.T_windowSize ?? -1,
+				T_seriesLength = wi.T_seriesLength ?? -1,
+				T_trainSize = wi.T_trainSize ?? -1,
+				T_confidenceLevel = wi.T_confidenceLevel ?? -1,
+				usingModel = wi.usingModel,
+				userPrefer = wi.userPrefer
+			};
+			// 摳算存
+			switch (data.usingModel) {
+				case "R":
+					break;
+				case "T":
+					break;
+				default:
+					break;
+			}
+
+			return Json(data);
+		}
+
+
 		// <WEB API 區>
 		// <類別區>
 		public class APIClass {
 			public string stockCode { get; set; }
 		}
+		public class WebInput {
+			public string stockCode { get; set; }
+			public string[] InputColumnName { get; set; }
+			public int? R_maximumNumberOfIterations { get; set; }
+			public int? T_windowSize { get; set; }
+			public int? T_seriesLength { get; set; }
+			public int? T_trainSize { get; set; }
+			public int? T_confidenceLevel { get; set; }
+			public string usingModel { get; set; }
+			public int? userPrefer { get; set; }
+			
+		}
+
 		// <類別區>
 		// ------------------------------------------------------------------------------<KAZUO>------------------------------------------------------------------------------
-		
-		
-		
-		
-	
+
+
+
+
+
 		// GET: Stockinfoes
 		public async Task<IActionResult> Index() {
 			return View(await _context.Stock.ToListAsync());
 		}
 		[HttpPost]
-		public IActionResult LSTMpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams )
-		{
+		public IActionResult LSTMpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams ) {
 			//測試區
 			// 在控制台輸出收到的資料以進行檢查
 			//Console.WriteLine("Received data:");
@@ -232,13 +278,10 @@ namespace StockProphet_Project.Controllers {
 
 
 			var features = new List<float[]>();
-			foreach (var item in selectedParams)
-			{
-				if (item.Value)
-				{
+			foreach (var item in selectedParams) {
+				if (item.Value) {
 					float[] featureColumn;
-					switch (item.Key)
-					{
+					switch (item.Key) {
 						case "SteOpen":
 							featureColumn = stockData.Select(data => Convert.ToSingle(data.SteOpen ?? 0)).ToArray();
 							features.Add(featureColumn);
@@ -382,11 +425,9 @@ namespace StockProphet_Project.Controllers {
 			var x = np.zeros(new Shape(rowcount, colcount), dtype: np.float32);
 
 			// 將客戶選擇的特徵添加到 X 的 NumPy 數組中
-			for (int i = 0; i < colcount; i++)
-			{
+			for (int i = 0; i < colcount; i++) {
 				var feature = features[i];
-				for (int j = 0; j < rowcount; j++)
-				{
+				for (int j = 0; j < rowcount; j++) {
 					x[j, i] = feature[j]; // 將特徵數據填入 X 的 NumPy 數組中
 				}
 			}
@@ -401,14 +442,10 @@ namespace StockProphet_Project.Controllers {
 
 			// Close 列作目標值 Y
 			var yList = new List<float>();
-			foreach (var data in stockData)
-			{
-				if (data.SteClose.HasValue)
-				{
+			foreach (var data in stockData) {
+				if (data.SteClose.HasValue) {
 					yList.Add(Convert.ToSingle(data.SteClose));
-				}
-				else
-				{
+				} else {
 					continue;
 				}
 			}
@@ -454,20 +491,16 @@ namespace StockProphet_Project.Controllers {
 			//提取最後 predictday 天的特徵 X 的數據進行預測
 
 			var lastData = new List<float[]>();
-			for (int i = stockData.Count - stockDatafromtime; i < stockData.Count; i++)
-			{
+			for (int i = stockData.Count - stockDatafromtime; i < stockData.Count; i++) {
 				float[] lastDataRow = new float[features.Count];
-				for (int j = 0; j < features.Count; j++)
-				{
+				for (int j = 0; j < features.Count; j++) {
 					lastDataRow[j] = features[j][i];
 				}
 				lastData.Add(lastDataRow);
 			}
 			var reshapedData = np.zeros(new Shape(stockDatafromtime, features.Count, 1), dtype: np.float32);
-			for (int i = 0; i < stockDatafromtime; i++)
-			{
-				for (int j = 0; j < features.Count; j++)
-				{
+			for (int i = 0; i < stockDatafromtime; i++) {
+				for (int j = 0; j < features.Count; j++) {
 					reshapedData[i, j, 0] = lastData[i][j];
 				}
 			}
@@ -484,8 +517,7 @@ namespace StockProphet_Project.Controllers {
 
 		}
 
-		private int predictdatacount(string sncode, int predictday)
-		{
+		private int predictdatacount( string sncode, int predictday ) {
 			DateTime currentday = DateTime.Parse("2024-03-08");
 			DateTime previousdateTime = currentday.AddDays(-predictday);
 			DateOnly previousdateOnly = DateOnly.Parse(previousdateTime.ToString("yyyy-MM-dd"));
@@ -546,233 +578,230 @@ namespace StockProphet_Project.Controllers {
 			//return Ok("Some result");
 
 
-                var features = new List<float[]>();
-                foreach (var item in selectedParams)
-                {
-                    if (item.Value)
-                    {
-                        float[] featureColumn;
-                        switch (item.Key)
-                        {
-							case "SteOpen":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteOpen ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SteClose":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteClose ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SteMax":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteMax ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SteMin":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteMin ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SteSpreadRatio":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteSpreadRatio ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SteTradeMoney":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTradeMoney / 10000 ?? 0)).ToArray();
-								features.Add(featureColumn);
+			var features = new List<float[]>();
+			foreach (var item in selectedParams) {
+				if (item.Value) {
+					float[] featureColumn;
+					switch (item.Key) {
+						case "SteOpen":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SteOpen ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SteClose":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SteClose ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SteMax":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SteMax ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SteMin":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SteMin ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SteSpreadRatio":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SteSpreadRatio ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SteTradeMoney":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTradeMoney / 10000 ?? 0)).ToArray();
+							features.Add(featureColumn);
 
-								break;
-							case "SteTradeQuantity":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTradeQuantity ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SteTransActions":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTransActions ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SteDividendYear":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteDividendYear ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SbYield":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SbYield ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SbPbratio":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SbPbratio ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SbEps":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SbEps ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SbBussinessIncome":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SbBussinessIncome ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SiMovingAverage5":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiMovingAverage5 ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SiMovingAverage30":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiMovingAverage30 ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SiRsv5":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiRsv5 ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SiRsv30":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiRsv30 ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SiK5":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiK5 ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SiK30":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiK30 ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SiD5":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiD5 ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SiD30":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiD30 ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SiLongEma":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiLongEma ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SiShortEma":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiShortEma ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SiDif":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiDif ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SiMacd":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiMacd ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SiOsc":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiOsc ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SiPe":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiPe ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							case "SiMa":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SiMa ?? 0)).ToArray();
-								features.Add(featureColumn);
-								break;
-							default:
-								break;
-						}
+							break;
+						case "SteTradeQuantity":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTradeQuantity ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SteTransActions":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTransActions ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SteDividendYear":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SteDividendYear ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SbYield":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SbYield ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SbPbratio":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SbPbratio ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SbEps":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SbEps ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SbBussinessIncome":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SbBussinessIncome ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SiMovingAverage5":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SiMovingAverage5 ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SiMovingAverage30":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SiMovingAverage30 ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SiRsv5":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SiRsv5 ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SiRsv30":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SiRsv30 ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SiK5":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SiK5 ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SiK30":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SiK30 ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SiD5":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SiD5 ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SiD30":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SiD30 ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SiLongEma":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SiLongEma ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SiShortEma":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SiShortEma ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SiDif":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SiDif ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SiMacd":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SiMacd ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SiOsc":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SiOsc ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SiPe":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SiPe ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						case "SiMa":
+							featureColumn = stockData.Select(data => Convert.ToSingle(data.SiMa ?? 0)).ToArray();
+							features.Add(featureColumn);
+							break;
+						default:
+							break;
 					}
 				}
+			}
 
-				//測試區
-				//foreach (var feature in features)
-				//{
-				//    foreach (var value in feature)
-				//    {
-				//        Console.Write(value + " ");
-				//    }
-				//    Console.WriteLine();
-				//}
-				//return Ok("Some result");
-				foreach (var item in features) {
-					System.Diagnostics.Debug.WriteLine("swith" + item);
+			//測試區
+			//foreach (var feature in features)
+			//{
+			//    foreach (var value in feature)
+			//    {
+			//        Console.Write(value + " ");
+			//    }
+			//    Console.WriteLine();
+			//}
+			//return Ok("Some result");
+			foreach (var item in features) {
+				System.Diagnostics.Debug.WriteLine("swith" + item);
 
+			}
+
+
+			// 將數據轉換為 NumPy格式
+			int rowcount = stockData.Count;//資料庫幾筆資料 8
+			int colcount = features.Count;//客人選中幾個參數
+
+			//測試區
+			//Console.WriteLine(rowcount);
+			//Console.WriteLine(colcount);
+
+			// 創建 X 的 NumPy 數組，行數為股票數據的行數，列數為客戶選擇的特徵數量
+			var x = np.zeros(new Shape(rowcount, colcount), dtype: np.float32);
+
+			// 將客戶選擇的特徵添加到 X 的 NumPy 數組中
+			for (int i = 0; i < colcount; i++) {
+				var feature = features[i];
+				for (int j = 0; j < rowcount; j++) {
+					x[j, i] = feature[j]; // 將特徵數據填入 X 的 NumPy 數組中
 				}
+			}
+
+			// 測試Xnumpy的樣子
+			//string xString = x.ToString();
+			//string filePath = "x_array1.txt";
+			//System.IO.File.WriteAllText(filePath, xString);
+			//Console.WriteLine("X NumPy array written to file: " + filePath);
 
 
-				// 將數據轉換為 NumPy格式
-				int rowcount = stockData.Count;//資料庫幾筆資料 8
-				int colcount = features.Count;//客人選中幾個參數
 
-				//測試區
-				//Console.WriteLine(rowcount);
-				//Console.WriteLine(colcount);
-
-				// 創建 X 的 NumPy 數組，行數為股票數據的行數，列數為客戶選擇的特徵數量
-				var x = np.zeros(new Shape(rowcount, colcount), dtype: np.float32);
-
-				// 將客戶選擇的特徵添加到 X 的 NumPy 數組中
-				for (int i = 0; i < colcount; i++) {
-					var feature = features[i];
-					for (int j = 0; j < rowcount; j++) {
-						x[j, i] = feature[j]; // 將特徵數據填入 X 的 NumPy 數組中
-					}
+			// Close 列作目標值 Y
+			var yList = new List<float>();
+			foreach (var data in stockData) {
+				if (data.SteClose.HasValue) {
+					yList.Add(Convert.ToSingle(data.SteClose));
+				} else {
+					continue;
 				}
+			}
+			var y = np.array(yList.ToArray());
 
-				// 測試Xnumpy的樣子
-				//string xString = x.ToString();
-				//string filePath = "x_array1.txt";
-				//System.IO.File.WriteAllText(filePath, xString);
-				//Console.WriteLine("X NumPy array written to file: " + filePath);
+			//測試y
+			//string yString = y.ToString();
+			//string filePath = "y_array.txt";
+			//System.IO.File.WriteAllText(filePath, yString);
+			//Console.WriteLine("y NumPy array written to file: " + filePath);
+			//return Ok("Some result");
+			// 模型構造
+			//Feedforward Neural Network
+			var model = keras.Sequential();
+			model.add(keras.layers.Dense(64, activation: "relu", input_shape: new Shape(colcount)));
+			model.add(keras.layers.Dense(1));
+			//編譯模型
+			model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
+			//訓練模型
+			model.fit(x, y, epochs: 200, verbose: 0);
 
 
+			int stockDatafromtime = predictdatacount(sncode, predictday);
 
-				// Close 列作目標值 Y
-				var yList = new List<float>();
-				foreach (var data in stockData) {
-					if (data.SteClose.HasValue) {
-						yList.Add(Convert.ToSingle(data.SteClose));
-					} else {
-						continue;
-					}
+			Console.WriteLine(stockDatafromtime);
+
+			// 提取最後 predictday 天的特徵 X 的數據進行預測
+			var lastData = new List<float[]>();
+			for (int i = stockData.Count - stockDatafromtime; i < stockData.Count; i++) {
+				float[] lastDataRow = new float[features.Count];
+				for (int j = 0; j < features.Count; j++) {
+					lastDataRow[j] = features[j][i];
 				}
-				var y = np.array(yList.ToArray());
-
-				//測試y
-				//string yString = y.ToString();
-				//string filePath = "y_array.txt";
-				//System.IO.File.WriteAllText(filePath, yString);
-				//Console.WriteLine("y NumPy array written to file: " + filePath);
-				//return Ok("Some result");
-				// 模型構造
-				//Feedforward Neural Network
-				var model = keras.Sequential();
-				model.add(keras.layers.Dense(64, activation: "relu", input_shape: new Shape(colcount)));
-				model.add(keras.layers.Dense(1));
-				//編譯模型
-				model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
-				//訓練模型
-				model.fit(x, y, epochs: 200, verbose: 0);
+				lastData.Add(lastDataRow);
+			}
 
 
-				int stockDatafromtime = predictdatacount(sncode, predictday);
-
-				Console.WriteLine(stockDatafromtime);
-
-				// 提取最後 predictday 天的特徵 X 的數據進行預測
-				var lastData = new List<float[]>();
-				for (int i = stockData.Count - stockDatafromtime; i < stockData.Count; i++) {
-					float[] lastDataRow = new float[features.Count];
-					for (int j = 0; j < features.Count; j++) {
-						lastDataRow[j] = features[j][i];
-					}
-					lastData.Add(lastDataRow);
+			// 創建預測數據的 numpy array
+			var reshapedData = np.zeros(new Shape(1, stockDatafromtime, features.Count), dtype: np.float32);
+			for (int i = 0; i < stockDatafromtime; i++) {
+				for (int j = 0; j < features.Count; j++) {
+					reshapedData[0, i, j] = lastData[i][j];
 				}
+			}
+
+			// 進行預測
+			var prediction = model.predict(reshapedData);
+			// 輸出預測結果
+			predictionResult = prediction[0].numpy()[0, 0];
 
 
-				// 創建預測數據的 numpy array
-				var reshapedData = np.zeros(new Shape(1, stockDatafromtime, features.Count), dtype: np.float32);
-				for (int i = 0; i < stockDatafromtime; i++) {
-					for (int j = 0; j < features.Count; j++) {
-						reshapedData[0, i, j] = lastData[i][j];
-					}
-				}
-
-				// 進行預測
-				var prediction = model.predict(reshapedData);
-				// 輸出預測結果
-				predictionResult = prediction[0].numpy()[0, 0];
-
-			
 			return Content(predictionResult.ToString());
 
 		}
@@ -787,7 +816,7 @@ namespace StockProphet_Project.Controllers {
 
 			// 接收 predictedData 的值
 			//System.Diagnostics.Debug.WriteLine("lookhere"+predicteddata);
-            double predictedData = Convert.ToDouble(predicteddata);
+			double predictedData = Convert.ToDouble(predicteddata);
 			//Console.WriteLine(predictedData);
 
 			// 將資料傳遞到視圖
@@ -821,25 +850,23 @@ namespace StockProphet_Project.Controllers {
 			return Json(result);
 		}
 
-        [HttpPost]
-        public IActionResult Predictsavedata(string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime)
-        {
-            var query = new StocksContext();
-            DateTime buildTime = DateTime.Parse(PBuildTime);
+		[HttpPost]
+		public IActionResult Predictsavedata( string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime ) {
+			var query = new StocksContext();
+			DateTime buildTime = DateTime.Parse(PBuildTime);
 			DateTime finishTime = DateTime.Parse(PfinishTime);
 			//System.Diagnostics.Debug.WriteLine($"PLabel: {PLabel}");
-			var newdata = new DbModel
-            {
-                Pstock = PStock,
-                Pvariable = PVariable,
+			var newdata = new DbModel {
+				Pstock = PStock,
+				Pvariable = PVariable,
 				Plabel = PLabel,
-                Pprefer = PPrefer,
-                PbulidTime = buildTime,
+				Pprefer = PPrefer,
+				PbulidTime = buildTime,
 				PfinishTime = finishTime
 			};
-            //System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
-            query.DbModels.Add(newdata);
-            query.SaveChanges();
+			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
+			query.DbModels.Add(newdata);
+			query.SaveChanges();
 
 			return View();
 		}

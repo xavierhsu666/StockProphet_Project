@@ -13,7 +13,7 @@
 <h3>第二步:選定投資偏好及選擇模型</h3>
 <div style="display: flex;">
 	投資偏好:
-	<button id="longterm">長期</button>
+	<button id="longterm" >長期</button>
 	<button id="shortterm">短期</button>
 </div>
 <label>選擇模型(灰底請選擇一個):</label>
@@ -307,25 +307,18 @@
 	<br>
 	<h5>使用幾天前的數據進行預測:</h5>
 	<div id="ModelParaInputArea">
-
-
 	</div>
 	<br>
-
-	<label>Step1:</label>
-	<button id="ksOkbutton2">確認參數</button>
+	<hr>
+	<button id="ksOkbutton2">Build</button>
 	<br>
-	<br>
-	<label>Step2:</label>
-	<button id="ksOkbutton3">建立模型</button>
 	<br>
 	<div id="predictionResult2"></div>
-	<div class="progress">
-		<div class="progress-bar progress-bar-striped progress-bar-animated" id="progress2" role="progressbar"
+	<div class="progress" id="ksprogressOuter">
+		<div class="progress-bar progress-bar-striped progress-bar-animated" id="ksprogress" role="progressbar"
 			 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
 	</div>
 </div>
-
 
 
 <script>
@@ -347,28 +340,104 @@
 		var prefertype;
 		var createmodelTime;
 		// <ks area--------------------->
-		var InputColumnName = [];
-		var InputModelPara = [];
-		$("#ksOkbutton2").on("click", function () {
+		function CallAjax(stockCode) {
+			var data = {
+				stockCode: stockCode
+			}
+			$.ajax({
+				type: "post",
+				url: "/stockmodel/getStock",
+				data: data,
+				success: function (e) {
+					console.group("CallAjax");
+					console.log(`stockCode = ${e.stockCode} `);
+					console.log(`InputLatestDate = ${e.inputLatestDate}`);
+					console.log(`ThisStockCount = ${e.thisStockCount} `);
+					console.log(`ThisStockLatestDataCount = ${e.thisStockLatestDataCount}`);
+					console.log(`log = ${e.log}`);
+					console.groupEnd();
+					if (e.thisStockLatestDataCount == 1) {
+						$("#checkLatest").text("Checked OK.");
+					} else if (e.thisStockLatestDataCount == 0 && e.thisStockCount > 0) {
+						$("#checkLatest").text("Data need update.");
+					} else if (e.thisStockLatestDataCount == 0 && e.thisStockCount == 0) {
+						$("#checkLatest").text("Data need Download.");
 
+					}
+				}
+			})
+		}
+
+		function increaseProgress(val) {
+			$(`#ksprogress`).css("width", val + "%");
+		}
+
+		$("#ksOkbutton2").on("click", function () {
+			// 抓表單上的資料
+			var InputColumnName = [];
+			var InputModelPara = [];
+			// 抓選擇變數
 			var ksArea = $(`div#ksParaArea>input[type=checkbox]:checked`);
 			$.each(ksArea, function (i, str) {
 				InputColumnName.push($(str).attr("name"));
 
 				// console.log($(str).attr("name"));
 			})
-			var ModelParaInputAreaArea = $(`div#ModelParaInputArea>input`);
-			$.each(ModelParaInputAreaArea, function (i, str) {
-				InputColumnName.push($(str).attr("name"));
+			// 抓選擇模型參數
+			InputModelPara[0] = $("#R_maximumNumberOfIterations").val();
+			InputModelPara[1] = $("#T_windowSize").val();
+			InputModelPara[2] = $("#T_seriesLength").val();
+			InputModelPara[3] = $("#T_trainSize").val();
+			InputModelPara[4] = $("#T_confidenceLevel").val();
+			var choosewhichmodel = $("#selectmodel option:selected").val();
+			// 根據不同模型做不同事情
+			var data = {
+				InputColumnName: InputColumnName,
+				R_maximumNumberOfIterations: InputModelPara[0],
+				T_windowSize: InputModelPara[1],
+				T_seriesLength: InputModelPara[2],
+				T_trainSize: InputModelPara[3],
+				T_confidenceLevel: InputModelPara[4],
+				usingModel: (choosewhichmodel == 3) ? "R" : "T",
+				stockCode: $("#stockid").val(),
+				userPrefer: prefertype
+			};
 
-				// console.log($(str).attr("name"));
+			$.ajax({
+				method: "Post",
+				url: "/StockModel/ModelInputPack",
+				data: data,
+				beforeSend: function () {
+					var progress = 0; // 初始化進度
+					$("#ksprogressOuter>div,#ksprogressOuter").css("display", "flex");// 初始化進度
+					increaseProgress(10); // 開始增加進度
+					// 檢查參數設定是否正確
+					increaseProgress(30); // 開始增加進度
+				},
+				success: function (e) {
+					console.log(e);
+					increaseProgress(50); // 開始增加進度
+					// alert("OKOK" + e);
+					increaseProgress(70); // 開始增加進度
+				}
 			})
-			console.log(InputColumnName);
 
 		})
-		$("#ksOkbutton3").on("click", function () {
-		})
-
+		function ModelInputCheck(data) {
+			console.log(data);
+			switch (data.usingModel) {
+				case "R":
+					console.log("Regression check go");
+					break;
+				case "T":
+					console.log("Timeserial check go");
+					break;
+				default:
+					window.location.href = "/stockmodel/index";
+					break;
+			}
+			return true;
+		}
 		// <ks area--------------------->
 
 		$("#longterm").on("click", function () {
@@ -423,15 +492,15 @@
 						break;
 					case "3":
 						$(`#kazuoform3`).css("display", "block");
-						var R_maximumNumberOfIterations = $("<label for='R_maximumNumberOfIterations'>最大迭代數<input id='R_maximumNumberOfIterations' name='R_maximumNumberOfIterations' type ='number' value=100 /></label>");
+						var R_maximumNumberOfIterations = $("<label for='R_maximumNumberOfIterations'>最大迭代數<input id='R_maximumNumberOfIterations' name='R_maximumNumberOfIterations' type ='number' value=100  max='365' min='1'/></label>");
 						$("#ModelParaInputArea").append(R_maximumNumberOfIterations);
 						break;
 					case "4":
 						$(`#kazuoform3`).css("display", "block");
-						var windowSize = $("<label for='T_windowSize'>視窗週期(周)<input id='T_windowSize' name='T_windowSize' type ='number' value=100 /></label>");
-						var seriesLength = $("<label for='T_seriesLength'>系列週期(月)<input id='T_seriesLength' name='T_seriesLength' type ='number' value=100 /></label>");
-						var trainSize = $("<label for='T_trainSize'>訓練資料筆數<input id='T_trainSize' name='T_trainSize' type ='number' value=100 /></label>");
-						var confidenceLevel = $("<label for='T_confidenceLevel'>信心水準<input id='T_confidenceLevel' name='T_confidenceLevel' type ='number' value=100 /></label>");
+						var windowSize = $("<label for='T_windowSize'>視窗週期(周)<input id='T_windowSize' name='T_windowSize' type ='number' value=7  min='1' /></label>");
+						var seriesLength = $("<label for='T_seriesLength'>系列週期(月)<input id='T_seriesLength' name='T_seriesLength' type ='number' value=30  min='1' /></label>");
+						var trainSize = $("<label for='T_trainSize'>訓練資料筆數<input id='T_trainSize' name='T_trainSize' type ='number' value=365   min='1' /></label>");
+						var confidenceLevel = $("<label for='T_confidenceLevel'>信心水準%<input id='T_confidenceLevel' name='T_confidenceLevel' type ='number' value=95 max='100' min='1' /></label>");
 						$("#ModelParaInputArea").append(windowSize);
 						$("#ModelParaInputArea").append(seriesLength);
 						$("#ModelParaInputArea").append(trainSize);
@@ -452,48 +521,48 @@
 
 
 
-        //確定送出參數
-        $("#Okbutton1,#Okbutton2").on("click", function (event) {
-            var buttonId = $(this).prop("id"); // 獲取按鈕的 ID
-            var number = parseInt(buttonId.match(/\d+/)[0]); // 從 ID 中提取數字部分
-            sncode = $("#stockid").val();
-            userselectparams = {};
-            
-                if (number === 1) {
-            // 檢查至少兩個參數是否被選中
-            const atLeastTwoChecked = $("input[type=checkbox]:checked").length > 1;
-            if (!atLeastTwoChecked) {
-                alert("請至少選擇2個參數");
-                return false;
-            }
-        } else if (number === 2) {
-            // 檢查至少一個參數是否被選中
-            const atLeastOneChecked = $("input[type=checkbox]:checked").length > 0;
-            if (!atLeastOneChecked) {
-                alert("請至少選擇1個參數");
-                return false;
-            }
-        }
-            // 檢查區間是否被選擇
-            var atLeastoneInterval = $("input[name=interval]:checked").length > 0;
-            if (!atLeastoneInterval) {
-                alert("請選擇一個區間");
-                return false;
-            }
-            //獲取用戶選擇的預測區間
-            var interval = $("input[name=interval]:checked").val();
-            if (interval > 0) {
-                predictday = parseInt(interval);
+		//確定送出參數
+		$("#Okbutton1,#Okbutton2").on("click", function (event) {
+			var buttonId = $(this).prop("id"); // 獲取按鈕的 ID
+			var number = parseInt(buttonId.match(/\d+/)[0]); // 從 ID 中提取數字部分
+			sncode = $("#stockid").val();
+			userselectparams = {};
 
-            }
-            //獲取用戶選擇的參數
-            $("input[type=checkbox]:checked").each(function () {
-                var paramName = $(this).attr("name");
-                userselectparams[paramName] = true;
-            });
-            $(`#predict${number}`).prop("disabled", false);
+			if (number === 1) {
+				// 檢查至少兩個參數是否被選中
+				const atLeastTwoChecked = $("input[type=checkbox]:checked").length > 1;
+				if (!atLeastTwoChecked) {
+					alert("請至少選擇2個參數");
+					return false;
+				}
+			} else if (number === 2) {
+				// 檢查至少一個參數是否被選中
+				const atLeastOneChecked = $("input[type=checkbox]:checked").length > 0;
+				if (!atLeastOneChecked) {
+					alert("請至少選擇1個參數");
+					return false;
+				}
+			}
+			// 檢查區間是否被選擇
+			var atLeastoneInterval = $("input[name=interval]:checked").length > 0;
+			if (!atLeastoneInterval) {
+				alert("請選擇一個區間");
+				return false;
+			}
+			//獲取用戶選擇的預測區間
+			var interval = $("input[name=interval]:checked").val();
+			if (interval > 0) {
+				predictday = parseInt(interval);
 
-        });
+			}
+			//獲取用戶選擇的參數
+			$("input[type=checkbox]:checked").each(function () {
+				var paramName = $(this).attr("name");
+				userselectparams[paramName] = true;
+			});
+			$(`#predict${number}`).prop("disabled", false);
+
+		});
 
 
 		$("#predict1,#predict2").on("click", function (event) {
@@ -539,49 +608,49 @@
 
 
 
-                    //存數據
-                    var isoString = createmodelTime.toISOString();
-                    var finishDate = new Date(isoString); // 將 ISO 字符串轉換為 Date 物件
+					//存數據
+					var isoString = createmodelTime.toISOString();
+					var finishDate = new Date(isoString); // 將 ISO 字符串轉換為 Date 物件
 
-                    if (prefertype == 1) {
-                        finishDate.setDate(finishDate.getDate() + 5); // 添加 5 天
-                    } else {
-                        finishDate.setDate(finishDate.getDate() + 30); // 添加 30 天
-                    }
+					if (prefertype == 1) {
+						finishDate.setDate(finishDate.getDate() + 5); // 添加 5 天
+					} else {
+						finishDate.setDate(finishDate.getDate() + 30); // 添加 30 天
+					}
 
-                    var finishString = finishDate.toISOString(); // 將 Date 物件轉換回 ISO 字符串
-                    
+					var finishString = finishDate.toISOString(); // 將 Date 物件轉換回 ISO 字符串
 
-                        var keysWithoutBrackets = Object.keys(userselectparams).map(function (key) {
-                            return key;
-                        }).join(",");
-                        // console.log(borisprediction)
 
-                        var datatoserver = {
-                            PStock: sncode,
-                            PVariable: keysWithoutBrackets,
-                            PLabel: borisprediction,
-                            PPrefer: prefertype,
-                            PBuildTime: isoString,
-                            PfinishTime: finishString
-                        }
+					var keysWithoutBrackets = Object.keys(userselectparams).map(function (key) {
+						return key;
+					}).join(",");
+					// console.log(borisprediction)
 
-                        $.ajax({
-                            method: "Post",
-                            url: "StockModel/Predictsavedata",
-                            data: datatoserver,
-                            success: function (e) {
-                                // alert("save OK")
-                            },
-                            error: function (xhr, status, error) {
-                                // 處理錯誤
-                                console.error(xhr.responseText); // 處理錯誤
-                                var errorMessage = xhr.responseText;
-                                alert(errorMessage);
-                            }
-                        })
-                    console.log(borisprediction)
-                    var predictedData = borisprediction;
+					var datatoserver = {
+						PStock: sncode,
+						PVariable: keysWithoutBrackets,
+						PLabel: borisprediction,
+						PPrefer: prefertype,
+						PBuildTime: isoString,
+						PfinishTime: finishString
+					}
+
+					$.ajax({
+						method: "Post",
+						url: "StockModel/Predictsavedata",
+						data: datatoserver,
+						success: function (e) {
+							// alert("save OK")
+						},
+						error: function (xhr, status, error) {
+							// 處理錯誤
+							console.error(xhr.responseText); // 處理錯誤
+							var errorMessage = xhr.responseText;
+							alert(errorMessage);
+						}
+					})
+					console.log(borisprediction)
+					var predictedData = borisprediction;
 
 
 
