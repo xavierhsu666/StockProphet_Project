@@ -453,7 +453,7 @@
 			}
 			else {
 				var choosewhichmodel = $("#selectmodel option:selected").val();
-				// $(`#borisform${choosewhichmodel}`).css("display", "block");
+				$(`#borisform${choosewhichmodel}`).css("display", "block");
 				$("#longterm,#shortterm,#checkmodel,#selectmodel").prop("disabled", true);
 				var borislist = [];
 				switch (choosewhichmodel) {
