@@ -183,6 +183,9 @@
 			 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
 	</div>
 </div>
+<br>
+<br>
+<button id="testButton">嘉澤的 Test Button</button>
 
 
 <script>
@@ -241,18 +244,18 @@
 			$.each(technicalParam, function (key, value) {
 				$(`#${formid} .technicalparamlist`).append(
 					`<input type="checkbox" id="${formid + key}" name="${key}">
-												<label for="${formid + key}">${value}</label>`
+																<label for="${formid + key}">${value}</label>`
 				)
 			});
 			$.each(foundmentParam, function (key, value) {
 				$(`#${formid} .foundmentalparamlist`).append(`
-												<input type="checkbox" id="${formid + key}" name="${key}">
-												<label for="${formid + key}">${value}</label>`)
+																<input type="checkbox" id="${formid + key}" name="${key}">
+																<label for="${formid + key}">${value}</label>`)
 			});
 			$.each(otherParam, function (key, value) {
 				$(`#${formid} .otherparamlist`).append(`
-											<input type="checkbox" id="${formid + key}" name="${key}">
-												<label for="${formid + key}">${value}</label>`)
+															<input type="checkbox" id="${formid + key}" name="${key}">
+																<label for="${formid + key}">${value}</label>`)
 			});
 
 
@@ -263,8 +266,8 @@
 				console.log(key);
 				console.log(value);
 				$(`#${formid} .predicintervallist`).append(`
-											<input type="radio" id="${formid + value}" name="interval" value="${value}">
-											<label for="${formid + value}">${key}</label>`)
+															<input type="radio" id="${formid + value}" name="interval" value="${value}">
+															<label for="${formid + value}">${key}</label>`)
 			});
 
 		}
@@ -277,6 +280,133 @@
 		var prefertype;
 		var createmodelTime;
 		// <ks area--------------------->
+
+		// ####<預設值待更新-------------------------------------->
+		var account = "testUser";
+		// ####<預設值待更新-------------------------------------->
+
+		// ####<main-------------------------------------->
+		$("#ksOkbutton2").on("click", function () {
+			// 抓選擇模型參數
+			var paras = GetPageAllNeedValue();
+			// 根據不同模型做不同事情
+			switch (paras.usingModel) { 
+				case "R":
+					RegModelBuilding(paras);
+					break;
+				case "T":
+					break;
+				default:
+					break;
+			}
+		})
+		// ####<main-------------------------------------->
+
+		$("#testButton").on("click", function () {
+
+			GetPageAllNeedValue();
+		})
+
+		// ####<funcs-------------------------------------->
+		function RegModelBuilding(paras) {
+
+			increaseProgress(10);
+			var data = {
+				InputColumnName: paras.InputColumnName,
+				R_maximumNumberOfIterations: paras.InputModelPara[0],
+				T_windowSize: paras.InputModelPara[1],
+				T_seriesLength: paras.InputModelPara[2],
+				T_trainSize: paras.InputModelPara[3],
+				T_confidenceLevel: paras.InputModelPara[4],
+				usingModel: paras.usingModel,
+				stockCode: paras.stockCode,
+				userPrefer: paras.prefertype
+			};
+			$.ajax({
+				method: "Post",
+				url: "/StockModel/ModelInputPack",
+				data: data,
+				beforeSend: function () {
+					var progress = 0; // 初始化進度
+					increaseProgress(20);
+					$("#ksprogressOuter>div,#ksprogressOuter").css("display", "flex");// 初始化進度
+					increaseProgress(30);
+
+				},
+				success: function (e) {
+					increaseProgress(50);
+					var datatoserver = {
+						PStock: data.stockCode,
+						PVariable: data.InputColumnName,
+						PLabel: e.output_F_Forcast,
+						PPrefer: data.userPrefer,
+						PBuildTime: paras.currentDate,
+						PfinishTime: paras.finishDate,
+						dummyblock: "{MSE:" + e.output_M_MSE + ",RMSE:" + e.output_M_RMSE + "}",
+						Paccount: paras.account
+					}
+
+					SaveModelResultToDB(datatoserver)
+					console.log(e);
+					increaseProgress(70);
+					increaseProgress(100);
+					window.location.href = "/stockmodel/predictphoto?predictedData=" + e.output_F_Forcast + "&snCode=" + data.stockCode;
+					// alert("OKOK" + e);
+				}
+			})
+		}
+		function GetPageAllNeedValue() {
+			var Paras = new Object();
+			Paras.InputModelPara = InputModelPara;
+			var InputModelPara = [];
+			InputModelPara[0] = $("#R_maximumNumberOfIterations").val();
+			InputModelPara[1] = $("#T_windowSize").val();
+			InputModelPara[2] = $("#T_seriesLength").val();
+			InputModelPara[3] = $("#T_trainSize").val();
+			InputModelPara[4] = $("#T_confidenceLevel").val();
+			Paras.InputModelPara = InputModelPara;
+
+			Paras.choosewhichmodel = $("#selectmodel option:selected").val();
+			// 抓表單上的資料
+			var InputColumnName = [];
+			// 抓選擇變數
+			var ksArea = $(`div#ksParaArea>input[type=checkbox]:checked`);
+			$.each(ksArea, function (i, str) {
+				InputColumnName.push($(str).attr("name"));
+
+				// console.log($(str).attr("name"));
+			})
+			Paras.InputColumnName = InputColumnName;
+
+			var currentDate = new Date();
+			Paras.currentDate = currentDate.toISOString();
+			var finishDate = new Date(currentDate);
+
+			if (Paras.choosewhichmodel == 1) {
+				finishDate.setDate(finishDate.getDate() + 5);
+			} else {
+				finishDate.setDate(finishDate.getDate() + 30);
+			}
+			Paras.finishDate = finishDate.toISOString();
+			
+			Paras.stockCode = $("#stockid").val();
+			Paras.prefertype = prefertype;
+			Paras.usingModel = (Paras.choosewhichmodel == 3) ? "R" : "T";
+
+			Paras.account = account;
+			console.log(Paras);
+			return Paras;
+		}
+		function GetInputModelPara() {
+			var InputModelPara = [];
+			InputModelPara[0] = $("#R_maximumNumberOfIterations").val();
+			InputModelPara[1] = $("#T_windowSize").val();
+			InputModelPara[2] = $("#T_seriesLength").val();
+			InputModelPara[3] = $("#T_trainSize").val();
+			InputModelPara[4] = $("#T_confidenceLevel").val();
+			return InputModelPara;
+
+		}
 		function CallAjax(stockCode) {
 			var data = {
 				stockCode: stockCode
@@ -308,78 +438,6 @@
 		function increaseProgress(val) {
 			$(`#ksprogress`).css("width", val + "%");
 		}
-
-		$("#ksOkbutton2").on("click", function () {
-			var currentDate = new Date();
-			var finishDate = new Date(currentDate);
-			// 抓表單上的資料
-			var InputColumnName = [];
-			var InputModelPara = [];
-			// 抓選擇變數
-			var ksArea = $(`div#ksParaArea>input[type=checkbox]:checked`);
-			$.each(ksArea, function (i, str) {
-				InputColumnName.push($(str).attr("name"));
-
-				// console.log($(str).attr("name"));
-			})
-			// 抓選擇模型參數
-			InputModelPara[0] = $("#R_maximumNumberOfIterations").val();
-			InputModelPara[1] = $("#T_windowSize").val();
-			InputModelPara[2] = $("#T_seriesLength").val();
-			InputModelPara[3] = $("#T_trainSize").val();
-			InputModelPara[4] = $("#T_confidenceLevel").val();
-			var choosewhichmodel = $("#selectmodel option:selected").val();
-			// 根據不同模型做不同事情
-
-			var data = {
-				InputColumnName: InputColumnName,
-				R_maximumNumberOfIterations: InputModelPara[0],
-				T_windowSize: InputModelPara[1],
-				T_seriesLength: InputModelPara[2],
-				T_trainSize: InputModelPara[3],
-				T_confidenceLevel: InputModelPara[4],
-				usingModel: (choosewhichmodel == 3) ? "R" : "T",
-				stockCode: $("#stockid").val(),
-				userPrefer: prefertype
-			};
-			$.ajax({
-				method: "Post",
-				url: "/StockModel/ModelInputPack",
-				data: data,
-				beforeSend: function () {
-					var progress = 0; // 初始化進度
-					increaseProgress(10);
-					$("#ksprogressOuter>div,#ksprogressOuter").css("display", "flex");// 初始化進度
-					increaseProgress(30);
-
-				},
-				success: function (e) {
-					increaseProgress(50);
-					if (data.userPrefer == 1) {
-						finishDate.setDate(finishDate.getDate() + 5);
-					} else {
-						finishDate.setDate(finishDate.getDate() + 30);
-					}
-					var datatoserver = {
-						PStock: data.stockCode,
-						PVariable: data.InputColumnName,
-						PLabel: e.output_F_Forcast,
-						PPrefer: data.userPrefer,
-						PBuildTime: currentDate.toISOString(),
-						PfinishTime: finishDate.toISOString(),
-						dummyblock: "{MSE:" + e.output_M_MSE + ",RMSE:" + e.output_M_RMSE + "}"
-					}
-
-					var finishString = finishDate.toISOString(); // 將 Date 物件轉換回 ISO 字符串
-					SaveModelResultToDB(datatoserver)
-					console.log(e);
-					increaseProgress(100);
-					window.location.href = "/stockmodel/predictphoto?predictedData=" + e.output_F_Forcast + "&snCode=" + data.stockCode ;
-					// alert("OKOK" + e);
-				}
-			})
-
-		})
 		function ModelInputCheck(data) {
 			console.log(data);
 			switch (data.usingModel) {
@@ -396,15 +454,6 @@
 			return true;
 		}
 		function SaveModelResultToDB(datatoserver) {
-			// var datatoserver = {
-			// 	PStock: sncode,
-			// 	PVariable: keysWithoutBrackets,
-			// 	PLabel: borisprediction,
-			// 	PPrefer: prefertype,
-			// 	PBuildTime: isoString,
-			// 	PfinishTime: finishString
-			// }
-
 			console.log("Enter the Save Webapi~~~");
 			$.ajax({
 				method: "Post",
@@ -414,13 +463,13 @@
 					console.log(e);
 				},
 				error: function (xhr, status, error) {
-					// 處理錯誤
 					console.error(xhr.responseText); // 處理錯誤
 					var errorMessage = xhr.responseText;
 					alert(errorMessage);
 				}
 			})
 		}
+		// ####<funcs-------------------------------------->
 		// <ks area--------------------->
 
 
