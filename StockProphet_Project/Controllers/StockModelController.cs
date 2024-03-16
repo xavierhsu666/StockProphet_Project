@@ -44,7 +44,6 @@ namespace StockProphet_Project.Controllers {
 		}
 		public IActionResult Build( [FromForm] IFormCollection form ) {// 获取表单中的所有输入值
 
-
 			// 先看一下DB內的資料是否最新
 
 			var q = from o in _context.Stock
@@ -60,12 +59,12 @@ namespace StockProphet_Project.Controllers {
 				case "regression":
 					log = "Regression Building...";
 					// 建立model input 的參數
-					string[] inputVar = new string[]{"STe_Open","STe_Close","STe_Max","STe_Min","STe_SpreadRatio"};
-					KsModelClass.ModelInput mi = new KsModelClass.ModelInput() { 
-						inputPara = inputVar ,
-						maximumNumberOfIterations=100
-					};	
-					
+					string[] inputVar = new string[] { "STe_Open", "STe_Close", "STe_Max", "STe_Min", "STe_SpreadRatio" };
+					KsModelClass.ModelInput mi = new KsModelClass.ModelInput() {
+						inputPara = inputVar,
+						maximumNumberOfIterations = 100
+					};
+
 					var mo = RegessionBuild(q, mi);
 					//mo.output_F_Forcast,mo.output_M_RMSE,mo.output_M_MSE
 					ViewBag.result = new double[] { mo.output_F_Forcast, mo.output_M_RMSE, mo.output_M_MSE };
@@ -83,7 +82,7 @@ namespace StockProphet_Project.Controllers {
 
 					};
 
-					var tmo = TimeSerialBuild(q,mp);
+					var tmo = TimeSerialBuild(q, mp);
 					ViewBag.result = new double[] {
 						tmo.Output_F_estimate ,
 						tmo.Output_M_RMSE,
@@ -113,15 +112,29 @@ namespace StockProphet_Project.Controllers {
 		// <功能開發測試區>
 		public TimeSerialModel.ModelOutput TimeSerialBuild( IQueryable<Stock> q, TimeSerialModel.ModelInput mp ) {// 获取表单中的所有输入值
 			TimeSerialModel t = new TimeSerialModel();
-			
+
 			var ModelReturn = t.KsMLModeling(q.ToList(), mp);
 			return ModelReturn;
 		}
 
-		public KsModelClass.ModelOutput RegessionBuild( IQueryable<Stock> q , KsModelClass.ModelInput mi) {// 获取表单中的所有输入值
+		public KsModelClass.ModelOutput RegessionBuild( IQueryable<Stock> q, KsModelClass.ModelInput mi ) {// 获取表单中的所有输入值
 			KsModelClass mc = new KsModelClass();
-			var a = mc.MLModeling(q.ToList(),mi);
+			var a = mc.MLModeling(q.ToList(), mi);
 			return a;
+		}
+		public string[] tagidToColumnName( string[] input )  {
+			string[] output = new string[] { };
+
+			var mapping = new[] { "S_PK","ST_Date",
+				"ST_Quarter","ST_Year","SN_Code","SN_Name","STe_Open","STe_Close","STe_Max","STe_Min","STe_SpreadRatio",
+				"STe_TradeMoney","STe_TradeQuantity","SB_EPS","SB_BussinessIncome","SB_NonBussinessIncome",
+				"SB_NonBussinessIncomeRatio","SI_MovingAverage_5","SI_MovingAverage_30","SI_RSV_5","SI_RSV_30",
+				"SI_K_5","SI_K_30","SI_D_5","SI_D_30","SI_EMA","SI_ShortEMA","SI_Dif","SI_MACD", "SI_OSC", "SI_PE"  };
+			foreach ( var key in input) {
+				int keyint = Convert.ToInt32(key);
+				output.add(mapping[keyint]);
+			}
+			return output;
 		}
 		// <功能開發測試區>
 
@@ -562,9 +575,9 @@ namespace StockProphet_Project.Controllers {
 								features.Add(featureColumn);
 								break;
 							case "SteTradeMoney":
-								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTradeMoney/10000 ?? 0)).ToArray();
+								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTradeMoney / 10000 ?? 0)).ToArray();
 								features.Add(featureColumn);
-								
+
 								break;
 							case "SteTradeQuantity":
 								featureColumn = stockData.Select(data => Convert.ToSingle(data.SteTradeQuantity ?? 0)).ToArray();
@@ -657,28 +670,28 @@ namespace StockProphet_Project.Controllers {
 							default:
 								break;
 						}
-                    }
-                }
+					}
+				}
 
-                //測試區
-                //foreach (var feature in features)
-                //{
-                //    foreach (var value in feature)
-                //    {
-                //        Console.Write(value + " ");
-                //    }
-                //    Console.WriteLine();
-                //}
-                //return Ok("Some result");
-                foreach (var item in features) {
+				//測試區
+				//foreach (var feature in features)
+				//{
+				//    foreach (var value in feature)
+				//    {
+				//        Console.Write(value + " ");
+				//    }
+				//    Console.WriteLine();
+				//}
+				//return Ok("Some result");
+				foreach (var item in features) {
 					System.Diagnostics.Debug.WriteLine("swith" + item);
 
 				}
-                
+
 
 				// 將數據轉換為 NumPy格式
 				int rowcount = stockData.Count;//資料庫幾筆資料 8
-                int colcount = features.Count;//客人選中幾個參數
+				int colcount = features.Count;//客人選中幾個參數
 
 				//測試區
 				//Console.WriteLine(rowcount);
@@ -695,11 +708,11 @@ namespace StockProphet_Project.Controllers {
 					}
 				}
 
-                // 測試Xnumpy的樣子
-                //string xString = x.ToString();
-                //string filePath = "x_array1.txt";
-                //System.IO.File.WriteAllText(filePath, xString);
-                //Console.WriteLine("X NumPy array written to file: " + filePath);
+				// 測試Xnumpy的樣子
+				//string xString = x.ToString();
+				//string filePath = "x_array1.txt";
+				//System.IO.File.WriteAllText(filePath, xString);
+				//Console.WriteLine("X NumPy array written to file: " + filePath);
 
 
 
@@ -714,21 +727,21 @@ namespace StockProphet_Project.Controllers {
 				}
 				var y = np.array(yList.ToArray());
 
-                //測試y
-                //string yString = y.ToString();
-                //string filePath = "y_array.txt";
-                //System.IO.File.WriteAllText(filePath, yString);
-                //Console.WriteLine("y NumPy array written to file: " + filePath);
-                //return Ok("Some result");
-                // 模型構造
-                //Feedforward Neural Network
-                var model = keras.Sequential();
-                model.add(keras.layers.Dense(64, activation: "relu", input_shape: new Shape(colcount)));
-                model.add(keras.layers.Dense(1));
-                //編譯模型
-                model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
-                //訓練模型
-                model.fit(x, y, epochs: 200, verbose: 0);
+				//測試y
+				//string yString = y.ToString();
+				//string filePath = "y_array.txt";
+				//System.IO.File.WriteAllText(filePath, yString);
+				//Console.WriteLine("y NumPy array written to file: " + filePath);
+				//return Ok("Some result");
+				// 模型構造
+				//Feedforward Neural Network
+				var model = keras.Sequential();
+				model.add(keras.layers.Dense(64, activation: "relu", input_shape: new Shape(colcount)));
+				model.add(keras.layers.Dense(1));
+				//編譯模型
+				model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
+				//訓練模型
+				model.fit(x, y, epochs: 200, verbose: 0);
 
 
 				int stockDatafromtime = predictdatacount(sncode, predictday);
