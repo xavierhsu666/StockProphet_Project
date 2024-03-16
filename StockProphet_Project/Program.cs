@@ -21,7 +21,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",
-	//pattern: "{controller=StockModel}/{action=predictindex}/{id?}");
+
 	pattern: "{controller=StockModel}/{action=predictindex}");
 
 app.Run();
