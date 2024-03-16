@@ -126,20 +126,42 @@ namespace StockProphet_Project.Controllers {
 			var a = mc.MLModeling(q.ToList(), mi);
 			return a;
 		}
-		public string[] tagidToColumnName( string[] input ) {
-			string[] output = new string[] { };
+		public List<string> TransferToColumnName( string[] input ) {
+			List<string> output = new List<string>();
 
-			var mapping = new[] { "S_PK","ST_Date",
-				"ST_Quarter","ST_Year","SN_Code","SN_Name","STe_Open","STe_Close","STe_Max","STe_Min","STe_SpreadRatio",
-				"STe_TradeMoney","STe_TradeQuantity","SB_EPS","SB_BussinessIncome","SB_NonBussinessIncome",
-				"SB_NonBussinessIncomeRatio","SI_MovingAverage_5","SI_MovingAverage_30","SI_RSV_5","SI_RSV_30",
-				"SI_K_5","SI_K_30","SI_D_5","SI_D_30","SI_EMA","SI_ShortEMA","SI_Dif","SI_MACD", "SI_OSC", "SI_PE"  };
+			var mapping = new[] { "S_PK", "ST_Date", "ST_Year_Quarter", "ST_Quarter", "ST_Year", "SN_Code", "SN_Name", "STe_Open", "STe_Close", "STe_Max", "STe_Min", "STe_SpreadRatio", "STe_TradeMoney", "STe_TradeQuantity", "STe_TransActions", "STe_Dividend_Year", "SB_Yield", "SB_PBRatio", "SB_EPS", "SB_BussinessIncome", "SI_MovingAverage_5", "SI_MovingAverage_30", "SI_RSV_5", "SI_RSV_30", "SI_K_5", "SI_K_30", "SI_D_5", "SI_D_30", "SI_LongEMA", "SI_ShortEMA", "SI_Dif", "SI_MACD", "SI_OSC", "SI_PE", "SI_MA" };
+			var mapping2 = new[] { "SPk", "StDate", "StYearQuarter", "StQuarter", "StYear", "SnCode", "SnName", "SteOpen", "SteClose", "SteMax", "SteMin", "SteSpreadRatio", "SteTradeMoney", "SteTradeQuantity", "SteTransActions", "SteDividendYear", "SbYield", "SbPbratio", "SbEps", "SbBussinessIncome", "SiMovingAverage5", "SiMovingAverage30", "SiRsv5", "SiRsv30", "SiK5", "SiK30", "SiD5", "SiD30", "SiLongEma", "SiShortEma", "SiDif", "SiMacd", "SiOsc", "SiPe", "SiMa" };
 			foreach (var key in input) {
-				int keyint = Convert.ToInt32(key);
-				output.add(mapping[keyint]);
+				Console.WriteLine("TransferToColumnName");
+				Console.WriteLine("_ index of = " + input[0].IndexOf("_"));
+				var q = (from o in (input[0].IndexOf("_") >= 0) ? mapping2 : mapping
+						 where o.Replace("_", "").ToLower() == key.Replace("_", "").ToLower()
+						 select o).FirstOrDefault();
+				Console.WriteLine("key = " + key);
+				Console.WriteLine("search result = " + q);
+				Console.WriteLine("_____________________________");
+				output.add(q);
 			}
+
 			return output;
 		}
+		public bool checkStockData_Latest( string stockCode ) {
+			var query = from o in _context.Stock
+						where o.SnCode == stockCode
+						orderby o.StDate descending
+						select o;
+			if (DateTime.Parse(query.FirstOrDefault().StDate.ToString()) == DateTime.Parse(InputLatestDate)) {
+				Console.WriteLine(DateTime.Parse(query.FirstOrDefault().StDate.ToString()));
+				Console.WriteLine(DateTime.Parse(InputLatestDate));
+				return true;
+			} else {
+				Console.WriteLine(DateTime.Parse(query.FirstOrDefault().StDate.ToString()));
+				Console.WriteLine(DateTime.Parse(InputLatestDate));
+				return false;
+			}
+
+		}
+
 		// <功能開發測試區>
 
 		// <WEB API 區>
@@ -202,16 +224,67 @@ namespace StockProphet_Project.Controllers {
 			// 摳算存
 			switch (data.usingModel) {
 				case "R":
+					Console.WriteLine("Regression Building...............");
+					Console.WriteLine("Check Input data is latest?...............");
+
+					if (!checkStockData_Latest(wi.stockCode))
+						return View("predictIndex");
+
+					Console.WriteLine("Check Input data OK...............");
+					var q = from o in _context.Stock
+							where o.SnCode == wi.stockCode
+							select o;
+					// 建立model input 的參數
+					//string[] inputVar = wi.InputColumnName;
+					string[] inputVar = TransferToColumnName(wi.InputColumnName).ToArray();
+					//new string[] { "STe_Open", "STe_Close", "STe_Max", "STe_Min", "STe_SpreadRatio" };
+					KsModelClass.ModelInput mi = new KsModelClass.ModelInput() {
+						inputPara = inputVar,
+						maximumNumberOfIterations = (int)wi.R_maximumNumberOfIterations
+					};
+
+					var mo = RegessionBuild(q, mi);
+					//mo.output_F_Forcast,mo.output_M_RMSE,mo.output_M_MSE
+					var jmo = new {
+						output_F_Forcast = mo.output_F_Forcast,
+						output_M_RMSE = mo.output_M_RMSE,
+						output_M_MSE = mo.output_M_MSE
+					};
+					ViewBag.result = new double[] { mo.output_F_Forcast, mo.output_M_RMSE, mo.output_M_MSE };
+					Console.WriteLine("Regression Builded................");
+					return Json(jmo);
 					break;
 				case "T":
+					return Json(data);
 					break;
 				default:
+					return Json(data);
 					break;
 			}
 
-			return Json(data);
-		}
 
+		}
+		[HttpPost]
+		public IActionResult SaveModelResult( ModelResult mr ) {
+			var query = new StocksContext();
+			DateTime buildTime = DateTime.Parse(mr.PBuildTime);
+			DateTime finishTime = DateTime.Parse(mr.PfinishTime);
+			//System.Diagnostics.Debug.WriteLine($"PLabel: {PLabel}");
+			var newdata = new DbModel {
+				Pstock = mr.PStock,
+				Pvariable = mr.PVariable,
+				Plabel = mr.PLabel,
+				Pprefer = mr.PPrefer,
+				PbulidTime = buildTime,
+				PfinishTime = finishTime,
+				Dummyblock = mr.dummyblock
+			};
+			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
+			query.DbModels.Add(newdata);
+			query.SaveChanges();
+
+			return Json(newdata);
+		}
 
 		// <WEB API 區>
 		// <類別區>
@@ -228,7 +301,16 @@ namespace StockProphet_Project.Controllers {
 			public int? T_confidenceLevel { get; set; }
 			public string usingModel { get; set; }
 			public int? userPrefer { get; set; }
-			
+
+		}
+		public class ModelResult {
+			public string PStock { get; set; }
+			public string PVariable { get; set; }
+			public decimal PLabel { get; set; }
+			public byte PPrefer { get; set; }
+			public string PBuildTime { get; set; }
+			public string PfinishTime { get; set; }
+			public string dummyblock { get; set; }
 		}
 
 		// <類別區>

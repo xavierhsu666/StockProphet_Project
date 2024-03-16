@@ -92,7 +92,7 @@ namespace StockProphet_Project.Models {
 
 			foreach (var item in input) {
 				output.Add(new StockDBA() {
-					SB_BussinessIncome = Convert.ToInt64(item.SbBussinessIncome),
+					SB_BussinessIncome = Convert.ToSingle(item.SbBussinessIncome),
 					SB_EPS = Convert.ToSingle(item.SbEps),
 					SB_PBRatio = Convert.ToSingle(item.SbPbratio),
 					SB_Yield = Convert.ToSingle(item.SbYield),
@@ -119,9 +119,9 @@ namespace StockProphet_Project.Models {
 					STe_Min = Convert.ToSingle(item.SteMin),
 					STe_Open = Convert.ToSingle(item.SteOpen),
 					STe_SpreadRatio = Convert.ToSingle(item.SteSpreadRatio),
-					STe_TradeMoney = Convert.ToInt64(item.SteTradeMoney),
-					STe_TradeQuantity = Convert.ToInt32(item.SteTradeQuantity),
-					STe_TransActions = Convert.ToInt32(item.SteTransActions),
+					STe_TradeMoney = Convert.ToSingle(item.SteTradeMoney),
+					STe_TradeQuantity = Convert.ToSingle(item.SteTradeQuantity),
+					STe_TransActions = Convert.ToSingle(item.SteTransActions),
 					ST_Date = DateTime.Parse(item.StDate.ToString()),
 					ST_Quarter = item.StQuarter,
 					ST_Year = item.StYear,

@@ -177,11 +177,11 @@ public class StockDBA {
 	[Display(Name = "震幅")]
 	public Single STe_SpreadRatio { get; set; }
 	[Display(Name = "交易額")]
-	public long STe_TradeMoney { get; set; }
+	public Single STe_TradeMoney { get; set; }
 	[Display(Name = "交易量")]
-	public int STe_TradeQuantity { get; set; }
+	public Single STe_TradeQuantity { get; set; }
 	[Display(Name = "交易動作")]
-	public int STe_TransActions { get; set; }
+	public Single STe_TransActions { get; set; }
 	[Display(Name = "拆分年")]
 	public Single STe_Dividend_Year { get; set; }
 	[Display(Name = "營收")]
@@ -191,7 +191,7 @@ public class StockDBA {
 	[Display(Name = "EPS")]
 	public Single SB_EPS { get; set; }
 	[Display(Name = "業內收入")]
-	public long SB_BussinessIncome { get; set; }
+	public Single SB_BussinessIncome { get; set; }
 	[Display(Name = "五日移動平均")]
 	public Single SI_MovingAverage_5 { get; set; }
 	[Display(Name = "三十日移動平均")]
