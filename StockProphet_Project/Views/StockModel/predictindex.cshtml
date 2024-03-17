@@ -243,21 +243,21 @@
 		function appendCheckbox(formid) {
 			$.each(technicalParam, function (key, value) {
 				$(`#${formid} .technicalparamlist`).append(
-					`<input type="checkbox" id="${formid + key}" name="${key}">
-																<label for="${formid + key}">${value}</label>`
+					`<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check" >
+																	<label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`
 				)
 			});
 			$.each(foundmentParam, function (key, value) {
 				$(`#${formid} .foundmentalparamlist`).append(`
-																<input type="checkbox" id="${formid + key}" name="${key}">
-																<label for="${formid + key}">${value}</label>`)
+																	<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
+																	<label for="${formid + key}" class="btn btn-outline-secondary" >${value}</label>`)
 			});
 			$.each(otherParam, function (key, value) {
 				$(`#${formid} .otherparamlist`).append(`
-															<input type="checkbox" id="${formid + key}" name="${key}">
-																<label for="${formid + key}">${value}</label>`)
+																<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
+																	<label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`)
 			});
-
+			
 
 		};
 		function appendradio(formid) {
