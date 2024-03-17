@@ -1,0 +1,178 @@
+﻿@* <h1>會員註冊頁面</h1> *@
+<div style="background-color:lightpink">
+    <p> <b>Session傳值1:</b> @Context.Session.GetString("MID")</p><br>
+    <p> <b>Session傳值2:</b> @Context.Session.GetString("MEmail")</p>
+    <p> <b>Session傳值3:</b> @Context.Session.GetString("Mlevel")</p>
+</div>
+
+<h2>請填寫註冊資料</h2>
+
+<div id="RegisterData">
+    <div>
+        <label for="Account">帳號:</label>
+        <input type="text" pattern="[\w]{8,20}" size="20" maxlength="20" name="MAccoMnt" id="Account" title="限輸入英數字，請設定8碼以上" value="">
+        <div id="checkName"></div>@* 檢查帳戶名稱是否重複 *@
+    </div>
+    <div>
+        <label for="Password">密碼:</label>
+        <input type="password" pattern="" size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼" value="">
+    </div>
+    <div>
+        <label for="Password">請再次輸入密碼:</label>
+        <input type="password" pattern="" size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="">
+        @* 再次輸入密碼不同時，顯示提示字 *@
+        <div id="pwdnoteword"><p style="color:red; ">您輸入的密碼不相同</p></div>
+    </div>
+    <label for="MEmail">信箱:</label>
+    <input type="email" pattern="" name="MEmail" id="Email" value="">
+    <br>
+
+    <label for="MTrueName">姓名:</label>
+    <input type="text" name="MTrueName" id="UserName" value="">
+    <br>
+
+    <label for="Birthday">生日:</label>
+    <input type="date" name="MBirthday" id="Birthday" value="">
+    <br>
+
+    <label for="MGender">性別:</label>
+    <input type="radio" name="MGender" id="Male" value="男">
+    <label for="Male">男</label>
+    <input type="radio" name="MGender" id="Female" value="女">
+    <label for="Female">女</label>
+    <br>
+
+    <label for="MInvestYear">您的投資年數:</label>
+    <select name="MInvestYear" id="InvestYear">
+        <option value="1">未滿1年</option>
+        <option value="1-3">1-3年</option>
+        <option value="3-5">3-5年</option>
+        <option value="5">5年以上</option>
+    </select>
+    <br>
+
+    <label for="MLevel">會員等級:</label>
+    <select name="MLevel" id="MLevel" size="1">
+        <option value="一般會員">一般會員</option>
+        <option value="高級會員">高級會員</option>
+    </select>
+    <br>
+    <button id="RegisterSubmit">立即註冊</button>
+    <button id="Reset">取消填寫</button>
+
+</div>
+
+
+
+<script>
+
+    $('#checkName').hide();
+    $('#pwdnoteword').hide();
+
+
+    $(function () {
+
+        // 1.判斷帳戶名是否有重複
+        $('#Account').on("change", function () {
+            var checkAccount = $('#Account').val()
+            // console.log(checkAccount);
+
+            $.ajax({
+                url: "/Member/RegisterA",
+                method: "get",
+                data: { MAccoMnt: checkAccount },
+                success: function (e) {
+                    console.log(e)
+                    if (e) {
+                        $('#checkName').show();
+                        $('#checkName').text("帳號名稱已被註冊")
+                    } else {
+
+                        $('#checkName').show();
+                        $('#checkName').text("帳號名稱尚未被使用")
+
+                        if (checkAccount == "") {
+                            $('#checkName').hide();
+                        }
+                    }
+                    // alert(e);
+                }
+            })
+        })
+
+        //2.檢查兩次輸入的密碼是否一致
+        $('#Password2').on("change", function () {
+            var MPassword1 = $('#Password1').val();
+            var MPassword2 = $('#Password2').val();
+            if (MPassword1 != MPassword2) {
+                $('#pwdnoteword').show();
+            }
+            else {
+                $('#pwdnoteword').hide();
+                console.log("ok");
+            }
+            if (MPassword2 == "") {
+                $('#pwdnoteword').hide();
+            }
+        })
+
+        //3.按下立即註冊=>將註冊的資料存至Server
+        $('#RegisterSubmit').on("click", function () {
+            var GetCurrentTime = new Date();
+
+            // console.log(GetCurrentTime.getFullYear())
+            // console.log(GetCurrentTime.getMonth()+1);
+            // console.log(GetCurrentTime.getDate());
+
+            var dataToServer = {
+                MAccoMnt: $('#Account').val(),
+                MPassword: $('#Password1').val(),
+                MEmail: $('#Email').val(),
+                MTrueName: $('#UserName').val(),
+                MBirthday: $('#Birthday').val(),
+                MGender: $('input[name="MGender"]:checked').val(),
+                MInvestYear: $('#InvestYear').val(),
+                MLevel: $('#MLevel').val(),
+                registerTime: GetCurrentTime.toISOString()
+            }
+
+            console.log(dataToServer);
+
+
+            $.ajax({
+                url: "/Member/Register",
+                method: "post",
+                data: dataToServer,
+                success: function (e) {
+                    console.log("註冊成功!");
+                }
+            })
+        })
+
+        //4.按下取消註冊=>清空input的值
+        $('#Reset').on("click", function () {
+            $('#Account').val("");
+            $('#Password1').val("");
+            $('#Password2').val("");
+            $('#Email').val("");
+            $('#UserName').val("");
+            $('#Birthday').val("");
+            $('input[name="MGender"]').prop('checked', false);
+            var checkAccount = $('#Account').val()
+            var MPassword2 = $('#Password2').val();
+            if (checkAccount == "") {
+                $('#checkName').hide();
+            }
+            if (MPassword2 == "") {
+                $('#pwdnoteword').hide();
+            }
+        })
+
+        // ---end of function
+    })
+
+
+
+
+
+</script>
