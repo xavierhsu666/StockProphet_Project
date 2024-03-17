@@ -946,11 +946,7 @@ namespace StockProphet_Project.Controllers {
 		public IActionResult predictindex() {
 			return View();
 		}
-		public IActionResult test()
-		{
-			return View();
-		}
-		public IActionResult predictphoto( string predicteddata, string sncode ) {
+		public IActionResult predictphoto( string predicteddata, string sncode, string predictedloss) {
 			// 檢索資料庫中的資料筆數
 			int dataCount = _context.Stock.Where(x => x.SnCode == sncode).Count();
 
