@@ -24,6 +24,7 @@ using Serilog;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using Tensorflow.NumPy.Pickle;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.ComponentModel;
 
 namespace StockProphet_Project.Controllers {
 	public class StockModelController : Controller {
@@ -161,6 +162,33 @@ namespace StockProphet_Project.Controllers {
 			}
 
 		}
+		public double[] ModelOutputCheck( string stockCode,float esti, float u = 0, float l = 0 ) {
+			var q = from o in _context.Stock
+					where o.SnCode == stockCode
+					orderby o.StDate descending
+					select o;
+			var e = (float)(q.FirstOrDefault().SteClose);
+
+			Console.WriteLine("Adjust the Usable price");
+			Console.WriteLine("e = " + e);
+			Console.WriteLine("esti = " + esti);
+			Console.WriteLine("esti/e = " + esti / e);
+			if (esti / e > 1.0 || esti/e   < 0.9) {
+				var spread = esti / e;
+				if (spread > 1) {
+					u = u - (esti - (e * (float)1.1));
+					l = l - (esti - (e * (float)1.1));
+					esti = e * (float)1.1;
+				} else {
+					u = u - (esti - (e * (float)0.9));
+					l = l - (esti - (e * (float)0.9));
+					esti = e * (float)0.9;
+				}
+				return new double[]{ esti, u, l };
+			} else {
+				return new double[] { esti, u, l };
+			}
+		}
 
 		// <功能開發測試區>
 
@@ -222,6 +250,11 @@ namespace StockProphet_Project.Controllers {
 				userPrefer = wi.userPrefer
 			};
 			// 摳算存
+
+			var q = from o in _context.Stock
+					where o.SnCode == wi.stockCode
+					select o;
+
 			switch (data.usingModel) {
 				case "R":
 					Console.WriteLine("Regression Building...............");
@@ -231,13 +264,10 @@ namespace StockProphet_Project.Controllers {
 						return View("predictIndex");
 
 					Console.WriteLine("Check Input data OK...............");
-					var q = from o in _context.Stock
-							where o.SnCode == wi.stockCode
-							select o;
 					// 建立model input 的參數
 					//string[] inputVar = wi.InputColumnName;
-					string[] inputVar = TransferToColumnName(wi.InputColumnName).ToArray();
 					//new string[] { "STe_Open", "STe_Close", "STe_Max", "STe_Min", "STe_SpreadRatio" };
+					string[] inputVar = TransferToColumnName(wi.InputColumnName).ToArray();
 					KsModelClass.ModelInput mi = new KsModelClass.ModelInput() {
 						inputPara = inputVar,
 						maximumNumberOfIterations = (int)wi.R_maximumNumberOfIterations
@@ -245,18 +275,40 @@ namespace StockProphet_Project.Controllers {
 
 					var mo = RegessionBuild(q, mi);
 					//mo.output_F_Forcast,mo.output_M_RMSE,mo.output_M_MSE
+					var moo = ModelOutputCheck(wi.stockCode,mo.output_F_Forcast);
 					var jmo = new {
-						output_F_Forcast = mo.output_F_Forcast,
+						output_F_Forcast = moo[0],
 						output_M_RMSE = mo.output_M_RMSE,
 						output_M_MSE = mo.output_M_MSE
 					};
 					ViewBag.result = new double[] { mo.output_F_Forcast, mo.output_M_RMSE, mo.output_M_MSE };
 					Console.WriteLine("Regression Builded................");
 					return Json(jmo);
-					break;
 				case "T":
-					return Json(data);
-					break;
+					Console.WriteLine("Regression Building...............");
+					Console.WriteLine("Check Input data is latest?...............");
+
+					if (!checkStockData_Latest(wi.stockCode))
+						return View("predictIndex");
+					Console.WriteLine("Check Input data OK...............");
+					TimeSerialModel.ModelInput tmi = new TimeSerialModel.ModelInput() {
+						focastDate = DateTime.Parse(InputLatestDate),
+						confidenceLevel = (float)(data.T_confidenceLevel / 100),
+						windowSize = data.T_windowSize,
+						seriesLength = data.T_seriesLength,
+						trainSize = data.T_trainSize
+					};
+					var tmo = TimeSerialBuild(q, tmi);
+					var qoo = ModelOutputCheck(wi.stockCode, tmo.Output_F_estimate,tmo.Output_F_upperEstimate,tmo.Output_F_lowerEstimate);
+					ViewBag.result = new double[] {
+						tmo.Output_M_MAE,
+						tmo.Output_M_RMSE,
+						qoo[0],
+						qoo[2],
+						qoo[1]
+					};
+
+					return Json(tmo);
 				default:
 					return Json(data);
 					break;
