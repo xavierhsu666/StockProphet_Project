@@ -277,7 +277,8 @@ namespace StockProphet_Project.Controllers {
 				Pprefer = mr.PPrefer,
 				PbulidTime = buildTime,
 				PfinishTime = finishTime,
-				Dummyblock = mr.dummyblock
+				Dummyblock = mr.dummyblock,
+				Paccount = mr.Paccount
 			};
 			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
 			query.DbModels.Add(newdata);
@@ -311,6 +312,7 @@ namespace StockProphet_Project.Controllers {
 			public string PBuildTime { get; set; }
 			public string PfinishTime { get; set; }
 			public string dummyblock { get; set; }
+			public string Paccount { get; set; }
 		}
 
 		// <類別區>
