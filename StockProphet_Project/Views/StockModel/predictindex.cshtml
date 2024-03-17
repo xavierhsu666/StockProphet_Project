@@ -1,5 +1,14 @@
 ﻿<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+@{
+	var customerlevel = @Context.Session.GetString("Mlevel");
+}
+@* session傳值 *@
+<div style="background-color:lightpink">
+	<p> <b>Session傳值1:</b> @Context.Session.GetString("MID")</p><br>
+	<p> <b>Session傳值2:</b> @Context.Session.GetString("MEmail")</p>
+	<p> <b>Session傳值3:</b> @Context.Session.GetString("Mlevel")</p>
+	<p> <b>Session傳值3:</b> @Context.Session.GetString("MaccoMnt")</p>
+</div>
 <h3 class="display-6">第一步:選定股票</h3>
 <div class="input-group mb-3">
 	<span class="input-group-text" id="inputGroup-sizing-default">股票代號</span>
@@ -31,8 +40,8 @@
 
 <br>
 <br>
-<p>test</p>
 
+<p>testforboris</p>
 <div id="borisform1" class="modelformforBoris">
 	<h3 class="display-6">第三步:設定參數並建置模型預測</h3>
 	<h4>參數選擇:</h4>
@@ -243,21 +252,21 @@
 		function appendCheckbox(formid) {
 			$.each(technicalParam, function (key, value) {
 				$(`#${formid} .technicalparamlist`).append(
-					`<input type="checkbox" id="${formid + key}" name="${key}">
-																<label for="${formid + key}">${value}</label>`
+					`<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check" >
+					<label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`
 				)
 			});
 			$.each(foundmentParam, function (key, value) {
 				$(`#${formid} .foundmentalparamlist`).append(`
-																<input type="checkbox" id="${formid + key}" name="${key}">
-																<label for="${formid + key}">${value}</label>`)
+				<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
+			    <label for="${formid + key}" class="btn btn-outline-secondary" >${value}</label>`)
 			});
 			$.each(otherParam, function (key, value) {
 				$(`#${formid} .otherparamlist`).append(`
-															<input type="checkbox" id="${formid + key}" name="${key}">
-																<label for="${formid + key}">${value}</label>`)
+				<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
+			 <label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`)
 			});
-
+			
 
 		};
 		function appendradio(formid) {
@@ -266,8 +275,8 @@
 				console.log(key);
 				console.log(value);
 				$(`#${formid} .predicintervallist`).append(`
-															<input type="radio" id="${formid + value}" name="interval" value="${value}">
-															<label for="${formid + value}">${key}</label>`)
+				<input type="radio" id="${formid + value}" name="interval" value="${value}">
+                <label for="${formid + value}">${key}</label>`)
 			});
 
 		}
@@ -472,29 +481,69 @@
 		// ####<funcs-------------------------------------->
 		// <ks area--------------------->
 
+		if ("@customerlevel" == "high") {
+			$("#longterm").on("click", function () {
+				$("#longterm").css("color", "black")
+				$("#shortterm").css("color", "white")
+				$("#selectmodel").prop("disabled", false);
+				$("#selectmodel option[value='1']").prop("selected", true);
+				$("#selectmodel option[value='2']").prop("selected", false);
+				$("#selectmodel option[value='3']").prop("selected", true);
+				$("#selectmodel option[value='4']").prop("selected", false);
+				$("#checkmodel").prop("disabled", false);
+				$(".progress").hide();
+				console.log("@customerlevel");
+				prefertype = 2;
+			})
+			$("#shortterm").on("click", function () {
+				$("#shortterm").css("color", "black")
+				$("#longterm").css("color", "white")
+				$("#selectmodel").prop("disabled", false);
+				$("#selectmodel option[value='1']").prop("selected", false);
+				$("#selectmodel option[value='2']").prop("selected", true);
+				$("#selectmodel option[value='3']").prop("selected", false);
+				$("#selectmodel option[value='4']").prop("selected", true);
 
-		$("#longterm").on("click", function () {
-			$("#longterm").css("color", "black")
-			$("#shortterm").css("color", "white")
-			$("#selectmodel").prop("disabled", false);
-			$("#selectmodel option[value='1']").prop("selected", true);
-			$("#selectmodel option[value='2']").prop("selected", false);
-			$("#selectmodel option[value='3']").prop("selected", true);
-			$("#checkmodel").prop("disabled", false);
-			$(".progress").hide();
-			prefertype = 2;
-		})
-		$("#shortterm").on("click", function () {
-			$("#shortterm").css("color", "black")
-			$("#longterm").css("color", "white")
-			$("#selectmodel").prop("disabled", false);
-			$("#selectmodel option[value='1']").prop("selected", false);
-			$("#selectmodel option[value='2']").prop("selected", true);
-			$("#selectmodel option[value='3']").prop("selected", false);
-			$("#checkmodel").prop("disabled", false);
-			$(".progress").hide();
-			prefertype = 1;
-		})
+				$("#checkmodel").prop("disabled", false);
+				$(".progress").hide();
+				prefertype = 1;
+			})
+		} else {
+			$("#longterm").on("click", function () {
+				$("#longterm").css("color", "black")
+				$("#shortterm").css("color", "white")
+				$("#selectmodel").prop("disabled", false);
+				$("#selectmodel option[value='1']").prop("selected", true);
+				$("#selectmodel option[value='2']").prop("disabled", true);
+				$("#selectmodel option[value='3']").prop("selected", true);
+				$("#selectmodel option[value='4']").prop("selected", false);
+				$("#checkmodel").prop("disabled", false);
+				$(".progress").hide();
+				console.log("@customerlevel");
+				prefertype = 2;
+			})
+			$("#shortterm").on("click", function () {
+				$("#shortterm").css("color", "black")
+				$("#longterm").css("color", "white")
+				$("#selectmodel").prop("disabled", false);
+				$("#selectmodel option[value='1']").prop("disabled", true);
+				$("#selectmodel option[value='2']").prop("disabled", true);
+				$("#selectmodel option[value='3']").prop("selected", false);
+				$("#selectmodel option[value='4']").prop("selected", true);
+				$("#checkmodel").prop("disabled", false);
+				$(".progress").hide();
+				prefertype = 1;
+			})
+		
+		
+		
+		}
+
+
+
+
+		
+
 		$("#checkmodel").on("click", function () {
 
 			if ($("#selectmodel option:selected").length > 1) {
@@ -629,14 +678,14 @@
 					increaseProgress(); // 開始增加進度
 				},
 
-				success: function (rep) {
+				success: function (response) {
 					$(`#progress${number}`).css("width", '100%');
-
+					
 					setTimeout(function () {
 						$(`.progress`).hide();
 					}, 1000);
-
-					borisprediction = parseFloat(rep);
+					var values = response.split(','); // 拆分字符串为数组
+					borisprediction = parseFloat(values[0]);
 					if (borisprediction < 0) {
 						borisprediction = -borisprediction;
 					}
@@ -660,39 +709,41 @@
 					var keysWithoutBrackets = Object.keys(userselectparams).map(function (key) {
 						return key;
 					}).join(",");
-					// console.log(borisprediction)
 
+					
 					var datatoserver = {
 						PStock: sncode,
 						PVariable: keysWithoutBrackets,
 						PLabel: borisprediction,
 						PPrefer: prefertype,
 						PBuildTime: isoString,
-						PfinishTime: finishString
+						PfinishTime: finishString,
+						PAccount: "@Context.Session.GetString("MaccoMnt")"
 					}
 
 					$.ajax({
 						method: "Post",
-						url: "StockModel/Predictsavedata",
+						url: "/StockModel/Predictsavedata",
 						data: datatoserver,
 						success: function (e) {
-							// alert("save OK")
+							alert("save OK")
 						},
 						error: function (xhr, status, error) {
 							// 處理錯誤
-							console.error(xhr.responseText); // 處理錯誤
-							var errorMessage = xhr.responseText;
-							alert(errorMessage);
+							// console.error(xhr.responseText); // 處理錯誤
+							// var errorMessage = xhr.responseText;
+							// alert(errorMessage);
 						}
 					})
 					console.log(borisprediction)
 					var predictedData = borisprediction;
+					var predictedloss = values[1];
 
 
 
 
 					// 在這裡將 predictedData 傳遞到 predictphoto 頁面
-					predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&snCode=" + sncode;
+					predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode;
 
 					//跳轉
 					window.location.href = predicturl
