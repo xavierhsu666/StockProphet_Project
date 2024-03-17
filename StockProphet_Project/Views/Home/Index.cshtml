@@ -6,3 +6,9 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+<p>網站首頁</p>
+<div style="background-color:lightpink">
+    <p> <b>Session傳值1:</b> @Context.Session.GetString("MID")</p><br>
+    <p> <b>Session傳值2:</b> @Context.Session.GetString("MEmail")</p>
+    <p> <b>Session傳值3:</b> @Context.Session.GetString("Mlevel")</p>
+</div>

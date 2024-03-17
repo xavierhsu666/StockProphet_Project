@@ -1,0 +1,82 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@* <h1>會員登入頁面</h1><hr> *@
+@* 占版面1/3 *@
+<div class="row">
+    <div class="col-md-4">
+
+        <div id="LoginForm">
+            <h2>歡迎登入</h2>
+            <p id="WrongMsg" style="color:red">帳號/密碼 輸入錯誤</p>
+            <div class="form-floating mb-3">
+                @* 想要讓使用者在登入時，可以輸入帳號名稱/Email，這個欄位的name??  MAccoMnt MEmail*@
+                <input id="Account" class="form-control" aria-required="true" name="MAccoMnt" value="" />
+                <label class="form-label">帳號名稱/Email</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input id="Password" class="form-control" aria-required="true" name="MPassword" value="" />
+                <label class="form-label">密碼</label>
+            </div>
+            <div>
+                <div id="LoginSubmit" class="w-100 btn btn-lg btn-primary">登入</div>
+            </div>
+            <div>
+                <a href="~/Member/ForgotPassword">忘記密碼?</a>&nbsp&nbsp&nbsp
+                <a href="~/Member/Register">我要註冊</a>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+<script>
+    $('#WrongMsg').hide();
+
+    $(function () {
+        //按下登入按鈕需驗證身分別
+        $('#LoginSubmit').on("click", function () {
+            var Account = $('#Account').val()
+            if (Account == "") {
+                alert("未輸入登入帳號");
+            }
+            else {
+                var dataToServer = {
+                    MAccoMnt: $('#Account').val(),
+                    MPassword: $('#Password').val()
+                }
+                $.ajax({
+                    url: "/Member/checkLogin",
+                    method: "get",
+                    data: dataToServer,
+                    success: function (e) {
+                        // alert(e);
+                        if (e === "會員名稱錯誤" || e === "輸入的密碼不正確") {
+                            alert(e);
+                        }
+                        else {
+                            window.location.href = "/Home/Index";
+                        }
+
+                        //使用sessionStorage進行跨頁面傳值
+                        //  sessionStorage.setItem("Account", "MAccoMnt");
+                        //  sessionStorage.setItem("MemberLevel", "e");
+
+                        //  window.location.href = "/Home/Index";
+                    }
+                })
+
+            }
+
+
+
+
+        })
+
+
+    })
+</script>
