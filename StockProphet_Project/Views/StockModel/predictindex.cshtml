@@ -244,18 +244,18 @@
 			$.each(technicalParam, function (key, value) {
 				$(`#${formid} .technicalparamlist`).append(
 					`<input type="checkbox" id="${formid + key}" name="${key}">
-																<label for="${formid + key}">${value}</label>`
+																								<label for="${formid + key}">${value}</label>`
 				)
 			});
 			$.each(foundmentParam, function (key, value) {
 				$(`#${formid} .foundmentalparamlist`).append(`
-																<input type="checkbox" id="${formid + key}" name="${key}">
-																<label for="${formid + key}">${value}</label>`)
+																								<input type="checkbox" id="${formid + key}" name="${key}">
+																								<label for="${formid + key}">${value}</label>`)
 			});
 			$.each(otherParam, function (key, value) {
 				$(`#${formid} .otherparamlist`).append(`
-															<input type="checkbox" id="${formid + key}" name="${key}">
-																<label for="${formid + key}">${value}</label>`)
+																							<input type="checkbox" id="${formid + key}" name="${key}">
+																								<label for="${formid + key}">${value}</label>`)
 			});
 
 
@@ -266,8 +266,8 @@
 				console.log(key);
 				console.log(value);
 				$(`#${formid} .predicintervallist`).append(`
-															<input type="radio" id="${formid + value}" name="interval" value="${value}">
-															<label for="${formid + value}">${key}</label>`)
+																							<input type="radio" id="${formid + value}" name="interval" value="${value}">
+																							<label for="${formid + value}">${key}</label>`)
 			});
 
 		}
@@ -290,11 +290,12 @@
 			// 抓選擇模型參數
 			var paras = GetPageAllNeedValue();
 			// 根據不同模型做不同事情
-			switch (paras.usingModel) { 
+			switch (paras.usingModel) {
 				case "R":
 					RegModelBuilding(paras);
 					break;
 				case "T":
+					TimeModelBuilding(paras);
 					break;
 				default:
 					break;
@@ -304,10 +305,60 @@
 
 		$("#testButton").on("click", function () {
 
-			GetPageAllNeedValue();
+			var t = ModelOutputCheck(700, 720, 680);
+			console.log(localStorage.getItem('esti'));
+			console.log(localStorage.getItem('u'));
+			console.log(localStorage.getItem('l'));
 		})
 
 		// ####<funcs-------------------------------------->
+		function TimeModelBuilding(paras) {
+			increaseProgress(10);
+			var data = {
+				InputColumnName: paras.InputColumnName,
+				R_maximumNumberOfIterations: paras.InputModelPara[0],
+				T_windowSize: paras.InputModelPara[1],
+				T_seriesLength: paras.InputModelPara[2],
+				T_trainSize: paras.InputModelPara[3],
+				T_confidenceLevel: paras.InputModelPara[4],
+				usingModel: paras.usingModel,
+				stockCode: paras.stockCode,
+				userPrefer: paras.prefertype
+			};
+			$.ajax({
+				method: "Post",
+				url: "/StockModel/ModelInputPack",
+				data: data,
+				beforeSend: function () {
+					var progress = 0; // 初始化進度
+					increaseProgress(20);
+					$("#ksprogressOuter>div,#ksprogressOuter").css("display", "flex");// 初始化進度
+					increaseProgress(30);
+
+				},
+				success: function (e) {
+					increaseProgress(50);
+					var datatoserver = {
+						PStock: data.stockCode,
+						PVariable: data.InputColumnName,
+						PLabel: e.output_F_Forcast,
+						PPrefer: data.userPrefer,
+						PBuildTime: paras.currentDate,
+						PfinishTime: paras.finishDate,
+						dummyblock: "{MSE:" + e.Output_M_MAE + ",RMSE:" + e.Output_M_RMSE + ",Output_F_upperEstimate:" + e.Output_F_upperEstimate + ",Output_F_lowerEstimate:" + e.Output_F_lowerEstimate + "}",
+						Paccount: paras.account
+					}
+
+					SaveModelResultToDB(datatoserver)
+					console.log(e);
+					increaseProgress(70);
+					increaseProgress(100);
+					window.location.href = "/stockmodel/predictphoto?predictedData=" + e.output_F_estimate + "&snCode=" + data.stockCode;
+					// alert("OKOK" + e);
+				}
+			})
+
+		}
 		function RegModelBuilding(paras) {
 
 			increaseProgress(10);
@@ -388,13 +439,13 @@
 				finishDate.setDate(finishDate.getDate() + 30);
 			}
 			Paras.finishDate = finishDate.toISOString();
-			
+
 			Paras.stockCode = $("#stockid").val();
 			Paras.prefertype = prefertype;
 			Paras.usingModel = (Paras.choosewhichmodel == 3) ? "R" : "T";
 
 			Paras.account = account;
-			console.log(Paras);
+			// console.log(Paras);
 			return Paras;
 		}
 		function GetInputModelPara() {
@@ -453,10 +504,13 @@
 			}
 			return true;
 		}
+
+		
+
 		function SaveModelResultToDB(datatoserver) {
-			console.log("Enter the Save Webapi~~~");
+			// console.log("Enter the Save Webapi~~~");
 			$.ajax({
-				method: "Post",
+				method: "post",
 				url: "StockModel/SaveModelResult",
 				data: datatoserver,
 				success: function (e) {
