@@ -35,6 +35,11 @@
 	$(function () {
 		//按下登入按鈕需驗證身分別
 		$('#LoginSubmit').on("click", function () {
+			var Account = $('#Account').val()
+			if (Account == "") {
+				alert("未輸入登入帳號");
+			}
+			else {
 			var dataToServer = {
 				MAccoMnt: $('#Account').val(),
 				MPassword: $('#Password').val()
@@ -44,15 +49,25 @@
 				method: "get",
 				data: dataToServer,
 				success: function (e) {
+					// alert(e);
+					if (e === "會員名稱錯誤" || e==="輸入的密碼不正確") {
+						alert(e);
+					}
+					else {							
+						window.location.href = "/Home/Index";
+					}
+					
+				//使用sessionStorage進行跨頁面傳值
+				// 	sessionStorage.setItem("Account", "MAccoMnt");
+				// 	sessionStorage.setItem("MemberLevel", "e");
 
-					alert(e)
-					//使用sessionStorage進行跨頁面傳值
-					sessionStorage.setItem("Account", "MAccoMnt");
-					sessionStorage.setItem("MemberLevel", "e");
-
-					window.location.href = "/Home/Index";
+				// 	window.location.href = "/Home/Index";
 				}
 			})
+
+			}
+			
+			
 
 
 		})

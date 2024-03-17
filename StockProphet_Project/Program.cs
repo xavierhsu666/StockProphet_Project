@@ -7,8 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<StocksContext>(
 	  options => options.UseSqlServer(builder.Configuration.GetConnectionString("StocksConnstring")));
-builder.Services.AddDbContext<StockProphetContext>(
-      options => options.UseSqlServer(builder.Configuration.GetConnectionString("StockProphetConnstring")));
 //AddSession
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -34,6 +32,6 @@ app.UseSession();
 app.MapControllerRoute(
 	name: "default",
 
-	pattern: "{controller=Member}/{action=Index}");
+	pattern: "{controller=Home}/{action=Index}");
 
 app.Run();

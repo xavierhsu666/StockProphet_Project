@@ -7,8 +7,8 @@ namespace StockProphet_Project.Controllers
     public class MemberController : Controller
     {
         //在MemberController中可以讀取該StockProphet資料
-        private readonly StockProphetContext _context;
-        public MemberController(StockProphetContext context)
+        private readonly StocksContext _context;
+        public MemberController(StocksContext context)
         {
             _context = context;
         }
@@ -90,7 +90,8 @@ namespace StockProphet_Project.Controllers
                 //再判斷密碼是否正確
                 //if (memberAccoMnt.Mpassword == MPassword || memberEmail.Mpassword == MPassword)
                 if (member.Mpassword == MPassword)
-                {
+                {                   
+                    //Session傳值
                     HttpContext.Session.SetString("MID", member.Mid.ToString());
                     HttpContext.Session.SetString("MEmail", member.Memail!);
                     HttpContext.Session.SetString("Mlevel", member.Mlevel!);
@@ -120,7 +121,6 @@ namespace StockProphet_Project.Controllers
                         default:
                             return "一般訪客";
                     }
-
                 }
                 else
                 {
