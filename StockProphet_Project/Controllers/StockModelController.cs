@@ -24,6 +24,8 @@ using Serilog;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using Tensorflow.NumPy.Pickle;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.ComponentModel;
+using Tensorflow.Keras.Callbacks;
 
 namespace StockProphet_Project.Controllers {
 	public class StockModelController : Controller {
@@ -327,7 +329,7 @@ namespace StockProphet_Project.Controllers {
 			return View(await _context.Stock.ToListAsync());
 		}
 		[HttpPost]
-		public IActionResult LSTMpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams ) {
+		public IActionResult LSTMpredict(string sncode, int predictday, Dictionary<string, bool> selectedParams) {
 			//測試區
 			// 在控制台輸出收到的資料以進行檢查
 			//Console.WriteLine("Received data:");
@@ -342,7 +344,7 @@ namespace StockProphet_Project.Controllers {
 
 			float predictionResult;
 			int selsectedcount = selectedParams.Count;
-
+			string predictionResulttoString;
 			//撈出所選股票(全部區間)
 
 			var stockData = _context.Stock
@@ -566,7 +568,16 @@ namespace StockProphet_Project.Controllers {
 			//return Ok("Some result");
 
 			//模型
-			model.fit(x, y, epochs: 200, verbose: 0);
+			var history = model.fit(x, y, epochs: 200, verbose: 0);
+			// 獲取訓練過程中的 loss 值列表
+			var lossList = history.history["loss"];
+
+			// 獲取最後一個 epoch 的 loss 值
+			var lastLoss = lossList.LastOrDefault();
+			string lastLosstostring=lastLoss.ToString();
+			// 打印最後一個 epoch 的 loss 值
+
+
 
 			int stockDatafromtime = predictdatacount(sncode, predictday);
 
@@ -595,9 +606,9 @@ namespace StockProphet_Project.Controllers {
 
 			// 輸出預測結果
 			predictionResult = prediction[0].numpy()[0, 0];
+			predictionResulttoString= predictionResult.ToString();
 
-
-			return Content(predictionResult.ToString());
+			return Content($"{predictionResulttoString},{lastLosstostring}");
 
 		}
 
@@ -642,6 +653,7 @@ namespace StockProphet_Project.Controllers {
 			//return Ok("Some result");
 
 			float predictionResult;
+			string predictionResulttoString;
 			int selsectedcount = selectedParams.Count;
 
 			//撈出所選股票
@@ -854,7 +866,14 @@ namespace StockProphet_Project.Controllers {
 			//編譯模型
 			model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
 			//訓練模型
-			model.fit(x, y, epochs: 200, verbose: 0);
+			var history = model.fit(x, y, epochs: 200, verbose: 0);
+			// 獲取訓練過程中的 loss 值列表
+			var lossList = history.history["loss"];
+
+			// 獲取最後一個 epoch 的 loss 值
+			var lastLoss = lossList.LastOrDefault();
+			string lastLosstostring = lastLoss.ToString();
+			// 打印最後一個 epoch 的 loss 值
 
 
 			int stockDatafromtime = predictdatacount(sncode, predictday);
@@ -884,9 +903,9 @@ namespace StockProphet_Project.Controllers {
 			var prediction = model.predict(reshapedData);
 			// 輸出預測結果
 			predictionResult = prediction[0].numpy()[0, 0];
+			predictionResulttoString = predictionResult.ToString();
 
-
-			return Content(predictionResult.ToString());
+			return Content($"{predictionResulttoString},{lastLosstostring}");
 
 		}
 
@@ -906,7 +925,7 @@ namespace StockProphet_Project.Controllers {
 			// 將資料傳遞到視圖
 			ViewBag.DataCount = dataCount;
 			ViewBag.PredictedData = predictedData;
-
+			ViewBag.PredictedLoss= predictedloss;
 			// 檢索資料庫中的股票資料
 			var stockData = _context.Stock.Where(x => x.SnCode == sncode).ToList();
 			// 將股票資料傳遞到視圖
@@ -935,18 +954,20 @@ namespace StockProphet_Project.Controllers {
 		}
 
 		[HttpPost]
-		public IActionResult Predictsavedata( string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime ) {
+		public IActionResult Predictsavedata(string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime, string PAccount) {
 			var query = new StocksContext();
 			DateTime buildTime = DateTime.Parse(PBuildTime);
 			DateTime finishTime = DateTime.Parse(PfinishTime);
 			//System.Diagnostics.Debug.WriteLine($"PLabel: {PLabel}");
+			System.Diagnostics.Debug.WriteLine($"PAccount111111111111: {PAccount}");
 			var newdata = new DbModel {
 				Pstock = PStock,
 				Pvariable = PVariable,
 				Plabel = PLabel,
 				Pprefer = PPrefer,
 				PbulidTime = buildTime,
-				PfinishTime = finishTime
+				PfinishTime = finishTime,
+				Paccount = PAccount
 			};
 			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
 			query.DbModels.Add(newdata);
