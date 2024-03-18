@@ -36,6 +36,7 @@
 		//按下登入按鈕需驗證身分別
 		$('#LoginSubmit').on("click", function () {
 			var Account = $('#Account').val()
+			console.log(Account);
 			if (Account == "") {
 				alert("未輸入登入帳號");
 			}
@@ -44,24 +45,23 @@
 				MAccoMnt: $('#Account').val(),
 				MPassword: $('#Password').val()
 			}
-			$.ajax({
-				url: "/Member/checkLogin",
-				method: "get",
-				data: dataToServer,
+				$.ajax({
+					url: "/Member/checkLogin",
+					method: "get",
+					data: dataToServer,
 				success: function (e) {
 					// alert(e);
 					if (e === "會員名稱錯誤" || e==="輸入的密碼不正確") {
 						alert(e);
 					}
-					else {							
+					else {					
+						//使用sessionStorage進行跨頁面傳值
+						sessionStorage.setItem("LogAccount", Account);
+						sessionStorage.setItem("LogMemberLevel", e);
+						
 						window.location.href = "/Home/Index";
-					}
-					
-				//使用sessionStorage進行跨頁面傳值
-				// 	sessionStorage.setItem("Account", "MAccoMnt");
-				// 	sessionStorage.setItem("MemberLevel", "e");
 
-				// 	window.location.href = "/Home/Index";
+					}		
 				}
 			})
 

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StockProphet_Project.Models;
 using System.Net.Mail;
+using System.Reflection.Metadata.Ecma335;
+using Tensorflow;
 
 namespace StockProphet_Project.Controllers
 {
@@ -31,6 +33,7 @@ namespace StockProphet_Project.Controllers
             //判斷帳戶名是否有重複            
             var result = _context.DbMembers.Where(x => x.MaccoMnt == MAccoMnt);
             return result.Any();
+            
         }
 
         //註冊頁面-新會員註冊OK
@@ -83,6 +86,7 @@ namespace StockProphet_Project.Controllers
             //var memberEmail = _context.Members.FirstOrDefault(x=>x.Memail == MAccoMnt);
 
             var member = _context.DbMembers.FirstOrDefault(x => x.MaccoMnt == MAccoMnt);
+            Console.WriteLine(member);
             //先檢查是否存在該會員
             //if (memberAccoMnt != null || memberEmail != null)
             if (member != null)
@@ -110,13 +114,13 @@ namespace StockProphet_Project.Controllers
                     switch (member.Mlevel)
                     {
                         case "一般會員":
-                            return "我是一般會員";
+                            return "一般會員";
 
                         case "高級會員":
-                            return "我是高級會員";
+                            return "高級會員";
 
                         case "管理者":
-                            return "我是管理者";
+                            return "管理者";
 
                         default:
                             return "一般訪客";
@@ -146,6 +150,16 @@ namespace StockProphet_Project.Controllers
         {
             System.Diagnostics.Debug.WriteLine("test" + MEmail);
             var result = _context.DbMembers.Where(x => x.Memail == MEmail);
+           
+            if (result.Any() == true)
+            {
+                 var resultmid = _context.DbMembers.FirstOrDefault(x => x.Memail == MEmail).Mid;
+                //抓取忘記密碼的會員Id
+                var memberId = resultmid;
+                System.Diagnostics.Debug.WriteLine("顯示忘記密碼的會員ID" + memberId);
+
+            }
+
             return result.Any();
         }
 
@@ -163,7 +177,7 @@ namespace StockProphet_Project.Controllers
                 //                          前面是發信的email  後面是顯示的名稱   
                 mail.From = new MailAddress("j1129w@gmail.com", "測試自動寄信功能");
                 //收件者email
-                mail.To.Add("boris830418@gmail.com");//result
+                mail.To.Add("boris83418@gmail.com");//result
                 //設定優先權
                 mail.Priority = MailPriority.Normal;
                 //標題
@@ -171,8 +185,7 @@ namespace StockProphet_Project.Controllers
                 //內容
                 mail.Body = "<h1>StockProphet系統自動發信_驗證碼發送</h1>\r\n" +
                             "<p>以下是您本次修改密碼的驗證碼</p>\r\n" +
-                            "<h3>驗證碼:</h3>\r\n<h3><b>0316</b></h3>\r\n" +
-                            "<p>請將該組驗證碼輸入至以下網址，以進行下一步驟</p>\r\n";
+                            "<h3>驗證碼:</h3>\r\n<h3><b>帳號註冊信箱</b></h3>\r\n";
                 //內容使用html
                 mail.IsBodyHtml = true;
                 //設定gmail的smtp(這是google的)
@@ -188,27 +201,62 @@ namespace StockProphet_Project.Controllers
                 //放掉宣告出來的mail
                 mail.Dispose();
                 System.Diagnostics.Debug.WriteLine("顯示" + "郵件發送成功");
-
             }
             else
             {
                 System.Diagnostics.Debug.WriteLine("顯示" + "郵件未寄送");
-
             }
         }
 
         //比對驗證碼
-        public bool CheckVerifyIdentifyCode(string VerifyIdentifyCode)
+        //public bool CheckVerifyIdentifyCode(string VerifyIdentifyCode)
+        //{
+        //    System.Diagnostics.Debug.WriteLine("test1" + VerifyIdentifyCode);
+        //   
+        //    var result = _context.DbMembers.Where(x => x.Memail == VerifyIdentifyCode);
+        //    return result.Any();
+        //}
+
+        //比對驗證碼
+        public bool CheckVerifyIdentifyCode(string MEmail, string VerifyIdentifyCode)
         {
-            System.Diagnostics.Debug.WriteLine("test" + VerifyIdentifyCode);
-            var result = _context.DbMembers.Where(x => x.Memail == VerifyIdentifyCode);
-            return result.Any();
+            System.Diagnostics.Debug.WriteLine("比對忘記密碼會員的_Email:" + MEmail);
+            System.Diagnostics.Debug.WriteLine("比對忘記密碼會員的_驗證碼:" + VerifyIdentifyCode);
+                       
+            var query = _context.DbMembers.FirstOrDefault(x=>x.Memail == MEmail);
+            var result = query.Memail;
+            if(result == VerifyIdentifyCode) { 
+            return true;
+            }
+            else
+            {
+                return false;
+            }
         }
+
         //未登入時的修改密碼頁面      
         public IActionResult RevisePassword()
-        {
+        {            
             return View();
         }
+        //儲存修改後的密碼
+        [HttpPut]
+        public bool SaveRevisePassword(string ForgotMemberEmail, string RevisePassword)
+        {
+            System.Diagnostics.Debug.WriteLine("儲存修改後的密碼_Email:" + ForgotMemberEmail);
+            System.Diagnostics.Debug.WriteLine("儲存修改後的密碼_Password:" + RevisePassword);
+
+            var query = _context.DbMembers.FirstOrDefault( x=>x.Memail == ForgotMemberEmail);
+            if (query != null)
+            {
+                //修改DbMember中的密碼
+                query.Mpassword = RevisePassword;
+                _context.SaveChanges();
+            }
+            return true;
+        }
+
+
         //管理者頁面Admin
         public IActionResult Admin()
         {
