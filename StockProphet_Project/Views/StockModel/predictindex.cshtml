@@ -254,20 +254,20 @@
 			$.each(technicalParam, function (key, value) {
 				$(`#${formid} .technicalparamlist`).append(
 					`<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check" >
-					<label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`
+												<label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`
 				)
 			});
 			$.each(foundmentParam, function (key, value) {
 				$(`#${formid} .foundmentalparamlist`).append(`
-				<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
-			    <label for="${formid + key}" class="btn btn-outline-secondary" >${value}</label>`)
+											<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
+											<label for="${formid + key}" class="btn btn-outline-secondary" >${value}</label>`)
 			});
 			$.each(otherParam, function (key, value) {
 				$(`#${formid} .otherparamlist`).append(`
-				<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
-			 <label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`)
+											<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
+										 <label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`)
 			});
-			
+
 
 		};
 		function appendradio(formid) {
@@ -276,8 +276,8 @@
 				console.log(key);
 				console.log(value);
 				$(`#${formid} .predicintervallist`).append(`
-				<input type="radio" id="${formid + value}" name="interval" value="${value}">
-                <label for="${formid + value}">${key}</label>`)
+											<input type="radio" id="${formid + value}" name="interval" value="${value}">
+											<label for="${formid + value}">${key}</label>`)
 			});
 
 		}
@@ -315,14 +315,51 @@
 
 		$("#testButton").on("click", function () {
 
-			var t = ModelOutputCheck(700, 720, 680);
-			console.log(localStorage.getItem('esti'));
-			console.log(localStorage.getItem('u'));
-			console.log(localStorage.getItem('l'));
+
+			switch (ModelInputCheck()) {
+				case 1:
+					alert("請選擇至少 一項 變數！");
+					return false;
+				case 2:
+					alert("視窗週期需 小於 系列週期！");
+					return false;
+				case 3:
+					alert("系列週期需 大於 0！");
+					return false;
+				case 4:
+					alert("信心水準需 介於 0到100間！");
+					return false;
+				case 5:
+					alert("資料筆數需 大於 系列週期！");
+					return false;
+			}
 		})
 
 		// ####<funcs-------------------------------------->
 		function TimeModelBuilding(paras) {
+
+			switch (ModelInputCheck()) {
+				case 1:
+					alert("請選擇至少 一項 變數！");
+					window.location.href = "/stockmodel/predictindex";
+					return false;
+				case 2:
+					alert("視窗週期需 小於 系列週期！");
+					window.location.href = "/stockmodel/predictindex";
+					return false;
+				case 3:
+					alert("系列週期需 大於 0！");
+					window.location.href = "/stockmodel/predictindex";
+					return false;
+				case 4:
+					alert("信心水準需 介於 0到100間！");
+					window.location.href = "/stockmodel/predictindex";
+					return false;
+				case 5:
+					alert("資料筆數需 大於 系列週期！");
+					window.location.href = "/stockmodel/predictindex";
+					return false;
+			}
 			increaseProgress(10);
 			var data = {
 				InputColumnName: paras.InputColumnName,
@@ -370,6 +407,16 @@
 
 		}
 		function RegModelBuilding(paras) {
+			switch (ModelInputCheck()) {
+				case 1:
+					alert("請選擇至少一項變數！");
+					window.location.href = "/stockmodel/predictindex";
+					return false;
+				case 2:
+					alert("最大跌代數請<500！");
+					window.location.href = "/stockmodel/predictindex";
+					return false;
+			}
 
 			increaseProgress(10);
 			var data = {
@@ -398,7 +445,7 @@
 					increaseProgress(50);
 					var datatoserver = {
 						PStock: data.stockCode,
-						PVariable: JSON.stringify( data.InputColumnName),
+						PVariable: JSON.stringify(data.InputColumnName),
 						PLabel: e.output_F_Forcast,
 						PPrefer: data.userPrefer,
 						PBuildTime: paras.currentDate,
@@ -499,23 +546,45 @@
 		function increaseProgress(val) {
 			$(`#ksprogress`).css("width", val + "%");
 		}
-		function ModelInputCheck(data) {
-			console.log(data);
+		function ModelInputCheck() {
+			var data = GetPageAllNeedValue();
 			switch (data.usingModel) {
 				case "R":
 					console.log("Regression check go");
+					if (data.InputColumnName.length == 0) {
+						return 1;
+					} else if (parseInt(data.InputModelPara[0]) > 500) {
+						return 2;
+					} else {
+						return 0;
+					}
 					break;
 				case "T":
 					console.log("Timeserial check go");
+					if (data.InputColumnName.length == 0) {
+						return 1;
+					} else if (parseInt(data.InputModelPara[1]) > parseInt(data.InputModelPara[2])) {
+						return 2;
+					} else if (parseInt(data.InputModelPara[2]) <= 0) {
+						console.log(parseInt(data.InputModelPara[2]));
+						return 3;
+					} else if (parseInt(data.InputModelPara[4]) < 0 || parseInt(data.InputModelPara[4]) > 100) {
+						return 4;
+					} else if (parseInt(data.InputModelPara[3]) < parseInt(data.InputModelPara[2])) {
+						return 5;
+					} else {
+						return 0;
+					}
 					break;
+
 				default:
 					window.location.href = "/stockmodel/index";
 					break;
 			}
-			return true;
+
 		}
 
-		
+
 
 		function SaveModelResultToDB(datatoserver) {
 			// console.log("Enter the Save Webapi~~~");
@@ -589,15 +658,15 @@
 				$(".progress").hide();
 				prefertype = 1;
 			})
-		
-		
-		
+
+
+
 		}
 
 
 
 
-		
+
 
 		$("#checkmodel").on("click", function () {
 
@@ -735,7 +804,7 @@
 
 				success: function (response) {
 					$(`#progress${number}`).css("width", '100%');
-					
+
 					setTimeout(function () {
 						$(`.progress`).hide();
 					}, 1000);
@@ -765,7 +834,7 @@
 						return key;
 					}).join(",");
 
-					
+
 					var datatoserver = {
 						PStock: sncode,
 						PVariable: keysWithoutBrackets,
