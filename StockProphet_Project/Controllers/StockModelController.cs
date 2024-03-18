@@ -548,9 +548,10 @@ namespace StockProphet_Project.Controllers {
 			x = np.reshape(x, theShape);
 			var model = keras.Sequential();
 			model.add(keras.layers.LSTM(50, keras.activations.Relu));
+			
 			model.add(keras.layers.Dense(1));
 			model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
-			// 測試Xnumpy的樣子
+			////測試Xnumpy的樣子
 			//string xString1 = x.ToString();
 			//string filePathx1 = "x_array1.txt";
 			//System.IO.File.WriteAllText(filePathx1, xString1);
