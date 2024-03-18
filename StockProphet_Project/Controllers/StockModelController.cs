@@ -26,6 +26,13 @@ using Tensorflow.NumPy.Pickle;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.ComponentModel;
 using Tensorflow.Keras.Callbacks;
+using Tensorflow.Keras;
+using Tensorflow.Keras.Layers;
+using Tensorflow.Keras.Models;
+using Tensorflow.Keras.ArgsDefinition;
+using Tensorflow.Keras.Datasets;
+using Tensorflow.Operations.Activation;
+
 
 namespace StockProphet_Project.Controllers {
 	public class StockModelController : Controller {
@@ -329,7 +336,7 @@ namespace StockProphet_Project.Controllers {
 			return View(await _context.Stock.ToListAsync());
 		}
 		[HttpPost]
-		public IActionResult LSTMpredict(string sncode, int predictday, Dictionary<string, bool> selectedParams) {
+		public IActionResult LSTMpredict(string sncode, int predictday, Dictionary<string, bool> selectedParams,int iterationtime) {
 			//測試區
 			// 在控制台輸出收到的資料以進行檢查
 			//Console.WriteLine("Received data:");
@@ -547,8 +554,8 @@ namespace StockProphet_Project.Controllers {
 			Shape theShape = new Shape(rowcount, colcount, 1);
 			x = np.reshape(x, theShape);
 			var model = keras.Sequential();
-			model.add(keras.layers.LSTM(50, keras.activations.Relu));
-			
+			model.add(keras.layers.LSTM(64, keras.activations.Relu));
+			model.add(keras.layers.Dense(64));
 			model.add(keras.layers.Dense(1));
 			model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
 			////測試Xnumpy的樣子
@@ -569,7 +576,7 @@ namespace StockProphet_Project.Controllers {
 			//return Ok("Some result");
 
 			//模型
-			var history = model.fit(x, y, epochs: 200, verbose: 0);
+			var history = model.fit(x, y, epochs: iterationtime, verbose: 0);
 			// 獲取訓練過程中的 loss 值列表
 			var lossList = history.history["loss"];
 
@@ -640,7 +647,7 @@ namespace StockProphet_Project.Controllers {
 		}
 
 		[HttpPost]
-		public IActionResult FNNpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams ) {
+		public IActionResult FNNpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams, int iterationtime) {
 			//測試區
 			// 在控制台輸出收到的資料以進行檢查
 			//Console.WriteLine("Received data:");
@@ -863,11 +870,12 @@ namespace StockProphet_Project.Controllers {
 			//Feedforward Neural Network
 			var model = keras.Sequential();
 			model.add(keras.layers.Dense(64, activation: "relu", input_shape: new Shape(colcount)));
+			model.add(keras.layers.Dense(64, activation: "relu", input_shape: new Shape(colcount)));
 			model.add(keras.layers.Dense(1));
 			//編譯模型
 			model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
 			//訓練模型
-			var history = model.fit(x, y, epochs: 200, verbose: 0);
+			var history = model.fit(x, y, epochs: iterationtime, verbose: 0);
 			// 獲取訓練過程中的 loss 值列表
 			var lossList = history.history["loss"];
 
