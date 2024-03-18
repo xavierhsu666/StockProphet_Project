@@ -207,16 +207,7 @@ namespace StockProphet_Project.Controllers
                 System.Diagnostics.Debug.WriteLine("顯示" + "郵件未寄送");
             }
         }
-
-        //比對驗證碼
-        //public bool CheckVerifyIdentifyCode(string VerifyIdentifyCode)
-        //{
-        //    System.Diagnostics.Debug.WriteLine("test1" + VerifyIdentifyCode);
-        //   
-        //    var result = _context.DbMembers.Where(x => x.Memail == VerifyIdentifyCode);
-        //    return result.Any();
-        //}
-
+              
         //比對驗證碼
         public bool CheckVerifyIdentifyCode(string MEmail, string VerifyIdentifyCode)
         {
