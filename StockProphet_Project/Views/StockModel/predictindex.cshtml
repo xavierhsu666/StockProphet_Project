@@ -41,7 +41,8 @@
 <br>
 <br>
 
-<p>testforboris</p>
+
+
 <div id="borisform1" class="modelformforBoris">
 	<h3 class="display-6">第三步:設定參數並建置模型預測</h3>
 	<h4>參數選擇:</h4>
@@ -299,11 +300,12 @@
 			// 抓選擇模型參數
 			var paras = GetPageAllNeedValue();
 			// 根據不同模型做不同事情
-			switch (paras.usingModel) { 
+			switch (paras.usingModel) {
 				case "R":
 					RegModelBuilding(paras);
 					break;
 				case "T":
+					TimeModelBuilding(paras);
 					break;
 				default:
 					break;
@@ -313,10 +315,60 @@
 
 		$("#testButton").on("click", function () {
 
-			GetPageAllNeedValue();
+			var t = ModelOutputCheck(700, 720, 680);
+			console.log(localStorage.getItem('esti'));
+			console.log(localStorage.getItem('u'));
+			console.log(localStorage.getItem('l'));
 		})
 
 		// ####<funcs-------------------------------------->
+		function TimeModelBuilding(paras) {
+			increaseProgress(10);
+			var data = {
+				InputColumnName: paras.InputColumnName,
+				R_maximumNumberOfIterations: paras.InputModelPara[0],
+				T_windowSize: paras.InputModelPara[1],
+				T_seriesLength: paras.InputModelPara[2],
+				T_trainSize: paras.InputModelPara[3],
+				T_confidenceLevel: paras.InputModelPara[4],
+				usingModel: paras.usingModel,
+				stockCode: paras.stockCode,
+				userPrefer: paras.prefertype
+			};
+			$.ajax({
+				method: "Post",
+				url: "/StockModel/ModelInputPack",
+				data: data,
+				beforeSend: function () {
+					var progress = 0; // 初始化進度
+					increaseProgress(20);
+					$("#ksprogressOuter>div,#ksprogressOuter").css("display", "flex");// 初始化進度
+					increaseProgress(30);
+
+				},
+				success: function (e) {
+					increaseProgress(50);
+					console.log(e);
+					var datatoserver = {
+						PStock: data.stockCode,
+						PVariable: JSON.stringify(data.InputColumnName),
+						PLabel: e.output_F_estimate,
+						PPrefer: data.userPrefer,
+						PBuildTime: paras.currentDate,
+						PfinishTime: paras.finishDate,
+						dummyblock: '{"MSE":' + e.output_M_MAE.toFixed(3) + ',"RMSE":' + e.output_M_RMSE.toFixed(3) + ',"UpEsti":' + e.output_F_upperEstimate.toFixed(3) + ',"LowEsti":' + e.output_F_lowerEstimate.toFixed(3) + '}',
+						Paccount: paras.account
+					}
+
+					SaveModelResultToDB(datatoserver)
+					increaseProgress(70);
+					increaseProgress(100);
+					window.location.href = "/stockmodel/predictphoto?predictedData=" + e.output_F_estimate + "&snCode=" + data.stockCode;
+					// alert("OKOK" + e);
+				}
+			})
+
+		}
 		function RegModelBuilding(paras) {
 
 			increaseProgress(10);
@@ -346,12 +398,12 @@
 					increaseProgress(50);
 					var datatoserver = {
 						PStock: data.stockCode,
-						PVariable: data.InputColumnName,
+						PVariable: JSON.stringify( data.InputColumnName),
 						PLabel: e.output_F_Forcast,
 						PPrefer: data.userPrefer,
 						PBuildTime: paras.currentDate,
 						PfinishTime: paras.finishDate,
-						dummyblock: "{MSE:" + e.output_M_MSE + ",RMSE:" + e.output_M_RMSE + "}",
+						dummyblock: '["MSE":' + e.output_M_MSE.toFixed(3) + ',"RMSE":' + e.output_M_RMSE.toFixed(3) + ']',
 						Paccount: paras.account
 					}
 
@@ -391,19 +443,19 @@
 			Paras.currentDate = currentDate.toISOString();
 			var finishDate = new Date(currentDate);
 
-			if (Paras.choosewhichmodel == 1) {
+			if (prefertype == 1) {
 				finishDate.setDate(finishDate.getDate() + 5);
 			} else {
 				finishDate.setDate(finishDate.getDate() + 30);
 			}
 			Paras.finishDate = finishDate.toISOString();
-			
+
 			Paras.stockCode = $("#stockid").val();
 			Paras.prefertype = prefertype;
 			Paras.usingModel = (Paras.choosewhichmodel == 3) ? "R" : "T";
 
 			Paras.account = account;
-			console.log(Paras);
+			// console.log(Paras);
 			return Paras;
 		}
 		function GetInputModelPara() {
@@ -462,10 +514,13 @@
 			}
 			return true;
 		}
+
+		
+
 		function SaveModelResultToDB(datatoserver) {
-			console.log("Enter the Save Webapi~~~");
+			// console.log("Enter the Save Webapi~~~");
 			$.ajax({
-				method: "Post",
+				method: "post",
 				url: "StockModel/SaveModelResult",
 				data: datatoserver,
 				success: function (e) {
@@ -513,7 +568,7 @@
 				$("#longterm").css("color", "black")
 				$("#shortterm").css("color", "white")
 				$("#selectmodel").prop("disabled", false);
-				$("#selectmodel option[value='1']").prop("selected", true);
+				$("#selectmodel option[value='1']").prop("disabled", true);
 				$("#selectmodel option[value='2']").prop("disabled", true);
 				$("#selectmodel option[value='3']").prop("selected", true);
 				$("#selectmodel option[value='4']").prop("selected", false);
