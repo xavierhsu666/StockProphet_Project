@@ -15,8 +15,8 @@ public partial class StocksContext : DbContext
         : base(options)
     {
     }
-
-    public virtual DbSet<DbModel> DbModels { get; set; }
+	public virtual DbSet<DbMember> DbMembers { get; set; }
+	public virtual DbSet<DbModel> DbModels { get; set; }
 
     public virtual DbSet<Stock> Stock { get; set; }
 
@@ -26,7 +26,45 @@ public partial class StocksContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<DbModel>(entity =>
+		modelBuilder.Entity<DbMember>(entity =>
+		{
+			entity.HasKey(e => e.Mid).HasName("PK_Member");
+
+			entity.ToTable("DB_Member");
+
+			entity.Property(e => e.Mid).HasColumnName("MID");
+			entity.Property(e => e.MaccoMnt)
+				.HasMaxLength(30)
+				.HasColumnName("MAccoMnt");
+			entity.Property(e => e.Mbirthday).HasColumnName("MBirthday");
+			entity.Property(e => e.Memail)
+				.HasMaxLength(50)
+				.IsUnicode(false)
+				.HasColumnName("MEmail");
+			entity.Property(e => e.MfavoriteModel)
+				.HasMaxLength(50)
+				.IsUnicode(false)
+				.HasColumnName("MFavoriteModel");
+			entity.Property(e => e.Mgender)
+				.HasMaxLength(10)
+				.IsFixedLength()
+				.HasColumnName("MGender");
+			entity.Property(e => e.MinvestYear).HasColumnName("MInvestYear");
+			entity.Property(e => e.MlastLoginTime).HasColumnName("MLastLoginTime");
+			entity.Property(e => e.Mlevel)
+				.HasMaxLength(10)
+				.IsUnicode(false)
+				.HasColumnName("MLevel");
+			entity.Property(e => e.Mpassword)
+				.HasMaxLength(30)
+				.HasColumnName("MPassword");
+			entity.Property(e => e.Mprefer).HasColumnName("MPrefer");
+			entity.Property(e => e.MregisterTime).HasColumnName("MRegisterTime");
+			entity.Property(e => e.MtrueName)
+				.HasMaxLength(50)
+				.HasColumnName("MTrueName");
+		});
+		modelBuilder.Entity<DbModel>(entity =>
         {
             entity.HasKey(e => e.Pid).HasName("PK__DB_model__C5775520AB2B0250");
 

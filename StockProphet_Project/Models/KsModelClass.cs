@@ -19,6 +19,7 @@ namespace StockProphet_Project.Models {
 		public class ModelInput {
 			public int maximumNumberOfIterations { get; set; }
 			public string[] inputPara { get; set; }
+			public int userPrefer { get; set; }
 
 		}
 		public class ModelOutput {
@@ -45,7 +46,9 @@ namespace StockProphet_Project.Models {
 			//    .Append(mlContext.Regression.Trainers.Sdca(labelColumnName: "STe_Close", maximumNumberOfIterations: 100));
 			// 線性回歸
 			var pipeline = mlContext.Transforms.Concatenate("Features", MI.inputPara)
-				.Append(mlContext.Regression.Trainers.Sdca(labelColumnName: "STe_Close", maximumNumberOfIterations: MI.maximumNumberOfIterations));//100
+				.Append(mlContext.Regression.Trainers.Sdca(labelColumnName: (MI.userPrefer == 1) ? "SI_MovingAverage_5" : "SI_MovingAverage_30", maximumNumberOfIterations: MI.maximumNumberOfIterations));//100
+
+			//.Append(mlContext.Regression.Trainers.Sdca(labelColumnName: "STe_Close", maximumNumberOfIterations: MI.maximumNumberOfIterations));//100
 
 			// 決策樹(二元預測)
 			//        var pipeline = mlContext.Transforms.Concatenate("Features", new[] { "STe_Open", "STe_Close", "STe_Max",
@@ -55,7 +58,7 @@ namespace StockProphet_Project.Models {
 			// 3. Train model
 			var model = pipeline.Fit(trainingData);
 			// 模型評估
-			var modelEV = Evaluate(trainingData, model, mlContext);
+			var modelEV = Evaluate(trainingData, model, mlContext, MI.userPrefer);
 			// 4. Make a prediction
 			var x = input[input.Count - 1];
 			var close = mlContext.Model.CreatePredictionEngine<StockDBA, Prediction>(model).Predict(x);
@@ -70,11 +73,11 @@ namespace StockProphet_Project.Models {
 			return mo;
 			// Predicted price for size: 2500 sq ft= $261.98k
 		}
-		public double[] Evaluate( IDataView testData, ITransformer model, MLContext mlContext ) {
+		public double[] Evaluate( IDataView testData, ITransformer model, MLContext mlContext, int userPrefer ) {
 			IDataView predictions = model.Transform(testData);
 			IEnumerable<float> actual =
 			mlContext.Data.CreateEnumerable<StockDBA>(testData, true)
-				.Select(observed => observed.STe_Close);
+				.Select(observed => (userPrefer == 1) ? observed.SI_MovingAverage_5 : observed.SI_MovingAverage_30);
 			IEnumerable<float> forecast =
 			mlContext.Data.CreateEnumerable<Prediction>(predictions, true)
 				.Select(prediction1 => prediction1.STe_Close);
@@ -160,6 +163,7 @@ namespace StockProphet_Project.Models {
 			public int seriesLength { get; set; }
 			public int trainSize { get; set; }
 			public Single confidenceLevel { get; set; }
+			public int userPrefer { get; set; }
 		}
 
 
@@ -182,7 +186,7 @@ namespace StockProphet_Project.Models {
 			// 設定模型參數
 			var forecastingPipeline = mlContext.Forecasting.ForecastBySsa(
 			outputColumnName: "ForecastedRentals",
-			inputColumnName: "STe_Close",
+			inputColumnName: (mp.userPrefer == 1) ? "SI_MovingAverage_5" : "SI_MovingAverage_30",
 			windowSize: mp.windowSize,
 			seriesLength: mp.seriesLength,
 			trainSize: mp.trainSize,
@@ -194,7 +198,7 @@ namespace StockProphet_Project.Models {
 			// 模型建立
 			SsaForecastingTransformer forecaster = forecastingPipeline.Fit(dataView);
 			// 模型評估
-			var modelEV = Evaluate(dataView, forecaster, mlContext);
+			var modelEV = Evaluate(dataView, forecaster, mlContext, mp.userPrefer);
 			// 轉成固態模型
 			var forecastEngine = forecaster.CreateTimeSeriesEngine<StockDBA, ModelEVOutput>(mlContext);
 			// 調整預測用input值
@@ -210,7 +214,14 @@ namespace StockProphet_Project.Models {
 			//}
 			IDataView dataView1 = mlContext.Data.LoadFromEnumerable(q);
 			// 進行預測
-			var forcastEV = Forecast(dataView1, 7, forecastEngine, mlContext);
+			var forcastEV = Forecast(dataView1, 7, forecastEngine, mlContext, mp.userPrefer);
+			Console.WriteLine("Ksmodel ");
+			Console.WriteLine("Output_M_MAE " + modelEV[0]);
+			Console.WriteLine("Output_M_RMSE " + modelEV[1]);
+			Console.WriteLine("Output_F_actualRentals " + forcastEV[0]);
+			Console.WriteLine("Output_F_lowerEstimate " + forcastEV[1]);
+			Console.WriteLine("Output_F_estimate " + forcastEV[2]);
+			Console.WriteLine("Output_F_upperEstimate " + forcastEV[3]);
 			return new ModelOutput() {
 				Output_M_MAE = modelEV[0],
 				Output_M_RMSE = modelEV[1],
@@ -221,11 +232,11 @@ namespace StockProphet_Project.Models {
 			};
 
 		}
-		public double[] Evaluate( IDataView testData, ITransformer model, MLContext mlContext ) {
+		public double[] Evaluate( IDataView testData, ITransformer model, MLContext mlContext, int userPrefer ) {
 			IDataView predictions = model.Transform(testData);
 			IEnumerable<float> actual =
 			mlContext.Data.CreateEnumerable<StockDBA>(testData, true)
-				.Select(observed => observed.STe_Close);
+				.Select(observed => (userPrefer == 1) ? observed.SI_MovingAverage_5 : observed.SI_MovingAverage_30);
 			IEnumerable<float> forecast =
 			mlContext.Data.CreateEnumerable<ModelEVOutput>(predictions, true)
 				.Select(prediction => prediction.ForecastedRentals[0]);
@@ -238,7 +249,7 @@ namespace StockProphet_Project.Models {
 			Console.WriteLine($"Root Mean Squared Error: {RMSE:F3}\n");
 			return new double[] { (double)MAE, RMSE };
 		}
-		public float[] Forecast( IDataView testData, int horizon, TimeSeriesPredictionEngine<StockDBA, ModelEVOutput> forecaster, MLContext mlContext ) {
+		public float[] Forecast( IDataView testData, int horizon, TimeSeriesPredictionEngine<StockDBA, ModelEVOutput> forecaster, MLContext mlContext, int userPrefer ) {
 			ModelEVOutput forecast = forecaster.Predict();
 			float actualRentals = 0;
 			float lowerEstimate = 0;
@@ -249,7 +260,7 @@ namespace StockProphet_Project.Models {
 				.Take(horizon)
 				.Select(( StockDBA rental, int index ) => {
 					string rentalDate = rental.ST_Date.ToShortDateString();
-					actualRentals = rental.STe_Close;
+					actualRentals = (userPrefer == 1) ? rental.SI_MovingAverage_5 : rental.SI_MovingAverage_30;
 					lowerEstimate = Math.Max(0, forecast.LowerBoundRentals[index]);
 					estimate = forecast.ForecastedRentals[index];
 					upperEstimate = forecast.UpperBoundRentals[index];
@@ -263,7 +274,7 @@ namespace StockProphet_Project.Models {
 			Console.WriteLine("---------------------");
 			int i = 0;
 			foreach (var prediction in forecastOutput) {
-				Console.WriteLine(i.ToString()+prediction);
+				Console.WriteLine(i.ToString() + prediction);
 				i++;
 			}
 			return new float[] { actualRentals, lowerEstimate, estimate, upperEstimate };
