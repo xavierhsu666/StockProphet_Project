@@ -1,352 +1,407 @@
 ﻿@charset "UTF-8";
+
 text {
-  font-size: 12px; }
+    font-size: 12px;
+}
 
 /* K棒 */
 path.candle {
-  stroke: #000000; }
+    stroke: #000000;
+}
 
-/* K棒 */
-path.candle.body {
-  stroke-width: 0; }
+    /* K棒 */
+    path.candle.body {
+        stroke-width: 0;
+    }
 
-/* 綠K棒 */
-path.candle.up {
-  fill: #9dab6c;
-  stroke: #9dab6c; }
+    /* 綠K棒 */
+    path.candle.up {
+        fill: #9dab6c;
+        stroke: #9dab6c;
+    }
 
-/* 紅K棒 */
-path.candle.down {
-  fill: #b84121;
-  stroke: #b84121; }
+    /* 紅K棒 */
+    path.candle.down {
+        fill: #b84121;
+        stroke: #b84121;
+    }
 
 /* 表格內線的顏色 */
 .x.axis line {
-  fill: none;
-  stroke: #edeae6; }
+    fill: none;
+    stroke: #edeae6;
+}
 
 .y.axis line {
-  fill: none;
-  stroke: #edeae6; }
+    fill: none;
+    stroke: #edeae6;
+}
 
 /* --- */
 .x.axis.pre path {
-  display: none; }
+    display: none;
+}
 
 .y.axis.pre path {
-  display: none; }
+    display: none;
+}
 
 .y.annotation.left path {
-  fill: #00AA00; }
+    fill: #00AA00;
+}
 
 .y.annotation.right path {
-  fill: #FF0000; }
+    fill: #FF0000;
+}
 
 .x.annotation path {
-  fill: #DDD80E; }
+    fill: #DDD80E;
+}
 
 .ma-5 path.line {
-  stroke: #1f77b4;
-  fill: none;
-  stroke-width: 2; }
+    stroke: #1f77b4;
+    fill: none;
+    stroke-width: 2;
+}
 
 .ma-30 path.line {
-  stroke: #FF8000;
-  fill: none;
-  stroke-width: 2; }
+    stroke: #FF8000;
+    fill: none;
+    stroke-width: 2;
+}
 
 /* 十字線 */
 .crosshair {
-  cursor: crosshair; }
+    cursor: crosshair;
+}
 
-/* 十字線 */
-.crosshair path.wire {
-  stroke: #7B7B7B;
-  /* 虛線 */
-  stroke-dasharray: 1, 1; }
+    /* 十字線 */
+    .crosshair path.wire {
+        stroke: #7B7B7B;
+        /* 虛線 */
+        stroke-dasharray: 1, 1;
+    }
 
-/* 十字線左右顯示的文字底色? */
-.crosshair .axisannotation path {
-  fill: #DDDDDD; }
+    /* 十字線左右顯示的文字底色? */
+    .crosshair .axisannotation path {
+        fill: #DDDDDD;
+    }
 
 /* 成交量 */
 path.volume {
-  /*    opacity: 0.8;*/
-  fill: #DDDDDD; }
+    /*    opacity: 0.8;*/
+    fill: #DDDDDD;
+}
 
-/* 成交量顏色 */
-path.volume.up {
-  fill: #00AA00; }
+    /* 成交量顏色 */
+    path.volume.up {
+        fill: #00AA00;
+    }
 
-/* 成交量顏色 */
-path.volume.down {
-  fill: #FF0000; }
+    /* 成交量顏色 */
+    path.volume.down {
+        fill: #FF0000;
+    }
 
 /* ------MACD------ */
 .crosshairMacd {
-  cursor: crosshair; }
+    cursor: crosshair;
+}
 
-.crosshairMacd path.wire {
-  stroke: #7B7B7B;
-  /* 虛線 */
-  stroke-dasharray: 1, 1; }
+    .crosshairMacd path.wire {
+        stroke: #7B7B7B;
+        /* 虛線 */
+        stroke-dasharray: 1, 1;
+    }
 
-.crosshairMacd .axisannotation path {
-  fill: #DDDDDD; }
+    .crosshairMacd .axisannotation path {
+        fill: #DDDDDD;
+    }
 
 path {
-  fill: none;
-  stroke-width: 1; }
+    fill: none;
+    stroke-width: 1;
+}
 
-path.macd {
-  stroke: #0000AA; }
+    path.macd {
+        stroke: #0000AA;
+    }
 
-path.signal {
-  stroke: #FF9999; }
+    path.signal {
+        stroke: #FF9999;
+    }
 
-path.zero {
-  stroke: #BBBBBB;
-  stroke-dasharray: 0;
-  stroke-opacity: 0.5; }
+    path.zero {
+        stroke: #BBBBBB;
+        stroke-dasharray: 0;
+        stroke-opacity: 0.5;
+    }
 
-path.difference {
-  fill: #BBBBBB;
-  opacity: 0.5; }
+    path.difference {
+        fill: #BBBBBB;
+        opacity: 0.5;
+    }
 
 /* ------KD線------ */
 .pathK {
-  fill: none;
-  stroke: blue;
-  stroke-width: 1; }
+    fill: none;
+    stroke: blue;
+    stroke-width: 1;
+}
 
 .pathD {
-  fill: none;
-  stroke: red;
-  stroke-width: 1; }
+    fill: none;
+    stroke: red;
+    stroke-width: 1;
+}
 
 .hideElem {
-  display: none; }
+    display: none;
+}
 
 .svgArea {
-  height: 420px;
-  display: flex;
-  /*align-items: center; /*左右置中*/
-  justify-content: center;
-  /*上下置中*/ }
+    height: 420px;
+    display: flex;
+    /*align-items: center; /*左右置中*/
+    justify-content: center; /*上下置中*/
+}
 
 .ctrlBtn {
-  display: flex;
-  align-items: center;
-  height: 35px;
-  width: 100%;
-  padding-left: 50px; }
+    display: flex;
+    align-items: center;
+    height: 35px;
+    width: 100%;
+    padding-left: 50px;
+}
 
 .btnT {
-  margin-right: 5px;
-  width: 100px;
-  height: 30px; }
+    margin-right: 5px;
+    width: 100px;
+    height: 30px;
+}
 
 .upArea {
-  max-width: 1400px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  /*上下置中*/
-  padding-top: 50px;
-  flex-wrap: wrap; }
+    max-width: 1800px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center; /*上下置中*/
+    padding-top: 50px;
+    flex-wrap: wrap;
+}
 
 .upLayer {
-  width: 600px;
-  height: 500px;
-  display: flex;
-  flex-direction: column;
-  background-color: white;
-  margin: 50px;
-  margin-top: 10px;
-  border-radius: 25px;
-  justify-content: center;
-  /*上下置中*/
-  /*align-items: center;*/
-  /*左右置中*/ }
+    width: 600px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    margin: 50px;
+    margin-top: 10px;
+    border-radius: 25px;
+    justify-content: center; /*上下置中*/
+    /*align-items: center;*/ /*左右置中*/
+}
 
 .downLayer {
-  min-width: 600px;
-  margin-left: 50px;
-  margin-right: 50px;
-  height: 300px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  /*上下置中*/
-  align-items: center;
-  /*左右置中*/ }
+    min-width: 600px;
+    margin-left: 50px;
+    margin-right: 50px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /*上下置中*/
+    align-items: center; /*左右置中*/
+}
 
 .tb-head {
-  min-width: 600px;
-  display: flex;
-  flex-direction: row;
-  height: 50px; }
+    min-width: 600px;
+    display: flex;
+    flex-direction: row;
+    height: 50px;
+}
 
 .tb-head-content {
-  margin-right: 25px;
-  font-size: 28px;
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%); }
+    margin-right: 25px;
+    font-size: 28px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
 
 .border-top-line {
-  border-top: 2px solid #bbbdbe; }
+    border-top: 2px solid #bbbdbe;
+}
 
 .tb-info {
-  /* margin-top: 70px;*/
-  width: 100%;
-  height: 200px; }
+    /* margin-top: 70px;*/
+    width: 100%;
+    height: 200px;
+}
 
 .st-info {
-  position: relative;
-  left: 10px; }
+    position: relative;
+    left: 10px;
+}
 
 .st-th {
-  width: 12%;
-  text-align-last: justify; }
+    width: 13%;
+    text-align-last: justify;
+}
 
 .td-w {
-  width: 20%;
-  padding-left: 12px; }
+    width: 23%;
+    padding-left: 12px;
+}
 
 .td-a {
-  width: 8%;
-  padding-left: 12px; }
+    width: 10%;
+    padding-left: 12px;
+}
 
 .td-date {
-  display: none; }
+    display: none;
+}
 
 .downArea {
-  /*    max-width: 1200px;*/
-  background-color: white;
-  border-radius: 25px;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  /*左右置中*/
-  justify-content: center;
-  /*上下置中*/ }
+    /*    max-width: 1200px;*/
+    background-color: white;
+    border-radius: 25px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center; /*左右置中*/
+    justify-content: center; /*上下置中*/
+}
 
 .memberArea {
-  position: relative;
-  height: 250px;
-  width: 70%;
-  background-color: blanchedalmond;
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center; }
+    position: relative;
+    height: 250px;
+    width: 70%;
+    background-color: blanchedalmond;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
 .member-btn-g {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  /*上下置中*/
-  align-items: center;
-  /*左右置中*/ }
+    display: flex;
+    flex-direction: row;
+    justify-content: center; /*上下置中*/
+    align-items: center; /*左右置中*/
+}
 
 .member-btn {
-  margin-left: 8px;
-  margin-right: 8px;
-  width: 7em;
-  height: 50px; }
+    margin-left: 8px;
+    margin-right: 8px;
+    width: 7em;
+    height: 50px;
+}
 
 .predictionArea {
-  min-width: 600px;
-  max-width: 1175px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 50px;
-  margin-bottom: 20px; }
+    min-width: 600px;
+    max-width: 1175px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
 
 /*翻轉卡片*/
 .prediction-card {
-  -webkit-perspective: 1000px;
-  perspective: 1000px;
-  -webkit-transform-style: preserve-3d;
-  transform-style: preserve-3d;
-  display: block;
-  width: 350px;
-  height: 250px;
-  cursor: pointer;
-  /*margin-left: 10px;*/
-  margin: 20px;
-  /*margin-right: auto;
-    position: relative;
-    /*left: 3%;*/
-  /*transform: translateX(-185%);*/ }
+    -webkit-perspective: 1000px;
+    perspective: 1000px;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    display: block;
+    width: 350px;
+    height: 250px;
+    cursor: pointer;
+    /*margin-left: 10px;*/
+    margin: 20px;
+    /*margin-right: auto;
+  position: relative;
+  /*left: 3%;*/
+    /*transform: translateX(-185%);*/
+}
 
 .card-content {
-  position: relative;
-  height: 100%;
-  width: 100%;
-  -webkit-transform-style: preserve-3d;
-  transform-style: preserve-3d;
-  -webkit-transition: all 500ms;
-  transition: all 500ms; }
+    position: relative;
+    height: 100%;
+    width: 100%;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-transition: all 500ms;
+    transition: all 500ms;
+}
 
-.card-content div {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  background: #FFF;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden; }
+    .card-content div {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        background: #FFF;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+    }
 
-.card-content .card-back {
-  -webkit-transform: rotateY(180deg);
-  transform: rotateY(180deg);
-  display: flex;
-  justify-content: center;
-  /*上下置中*/
-  align-items: center;
-  /*左右置中*/ }
+    .card-content .card-back {
+        -webkit-transform: rotateY(180deg);
+        transform: rotateY(180deg);
+        display: flex;
+        justify-content: center; /*上下置中*/
+        align-items: center; /*左右置中*/
+    }
 
 .prediction-card:hover .card-content {
-  box-shadow: 0 20px 20px rgba(50, 50, 50, 0.2); }
+    box-shadow: 0 20px 20px rgba(50, 50, 50, 0.2);
+}
 
 .card-btn {
-  display: none; }
+    display: none;
+}
 
 :checked + .card-content {
-  transform: rotateY(180deg);
-  -webkit-transform: rotateY(180deg); }
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+}
 
 .prediction-card:hover :checked + .card-content {
-  box-shadow: 0 -20px 20px rgba(50, 50, 50, 0.2); }
+    box-shadow: 0 -20px 20px rgba(50, 50, 50, 0.2);
+}
 
 .prediction-collect {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  height: 3em;
-  width: 3em;
-  border-radius: 50%; }
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    height: 3em;
+    width: 3em;
+    border-radius: 50%;
+}
 
 .forPre {
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-48%, -50%);
-  transform: translate(-48%, -50%); }
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-48%, -50%);
+    transform: translate(-48%, -50%);
+}
 
-.myCircle:hover {
-  stroke: red; }
+/*預測股票的那點*/
+/*.myCircle:hover {
+    stroke: red;
+}*/
 
 .card-front {
-  padding: 20px; }
+    padding: 20px;
+}
 
 .pre-state {
-  font-size: 32px; }
+    font-size: 32px;
+}
 
 .pre-td {
-  padding-left: 10px; }
+    padding-left: 10px;
+}

@@ -145,6 +145,7 @@ var yScaleKD = d3.scaleLinear()
 var dataAll;
 
 d3.json(`/Home/showStocks/${stocksID}`, function (data) {
+    //console.log(data);
     $(".td-tittle").text(data[0].StockName) //股票名稱
     data = data.map(function (d) {
         return {
@@ -278,16 +279,16 @@ function draw(data, volumeData) {
 
     //ticks(幾個刻度?縮放比例?) timeFormat(什麼樣的數值) tickSize(表格內的格線)
     svg.select("g.candlestick").call(candlestick).attr("clip-path", "url(#candlestickClip)");  //K棒
-    svg.selectAll("g.x.axis").call(xAxis.ticks(5).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
+    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 1).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
     svg.selectAll("g.y.axis").call(yAxis.ticks(5).tickSize(-width, 0).tickPadding(10));   //Y軸
     svg.select("g.sma.ma-5").attr("clip-path", "url(#candlestickClip)").call(sma);
     svg.select("g.sma.ma-30").attr("clip-path", "url(#candlestickClip)").call(sma);
 
     //K棒十字線，丟到這裡生成，避免被成交量蓋掉
     svg.append('g').attr("class", "crosshair")
-    svg.select("g.crosshair").call(crosshair).call(zoom);  //十字線+呼叫zoom的功能
     //zoom的初始值
     zoomableInit = x.zoomable().clamp(false).copy();
+    svg.select("g.crosshair").call(crosshair).call(zoom);  //十字線+呼叫zoom的功能
 }
 
 function drawMACD(data) {
@@ -305,7 +306,7 @@ function drawMACD(data) {
     macdY.domain([(d3.min(macdList) - 0.1), (d3.max(macdList) + 0.1)]);     //找signal、macd跟difference的最大最小值，避免某一方超過軸度
 
     svgMACD.selectAll("g.macd.here").datum(macdData).call(macd);
-    svgMACD.selectAll("g.x.axis.macd").call(xAxisMacd.ticks(d3.timeMonday, 1).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));
+    svgMACD.selectAll("g.x.axis.macd").call(xAxisMacd.ticks(d3.timeMonth, 1).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));
     svgMACD.selectAll("g.y.axis.macd").call(yAxisMacd.ticks(10).tickSize(-width, -width).tickPadding(10));
     svgMACD.select("g.crosshairMacd").call(crosshairMACD);  //十字線
 }
@@ -356,12 +357,12 @@ function move(coords) {
         if (coords.x === dataAll[i].date) {
             $(".tb-open").text(dataAll[i].open);
             $(".tb-close").text(dataAll[i].close);
-            $(".tb-SR").text(d3.format(".0%")(dataAll[i].spreadRatio));
+            $(".tb-SR").text(d3.format(".2f")(dataAll[i].spreadRatio)+"%");
             $(".tb-max").text(dataAll[i].high);
             $(".tb-min").text(dataAll[i].low);
             $(".tb-TM").text(d3.format(",")(dataAll[i].tradeMoney));
             $(".tb-TQ").text(d3.format(",")(dataAll[i].tradeQuantity));
-            $(".tb-EPS").text(dataAll[i].eps);
+            $(".tb-EPS").text(d3.format(".2f")(dataAll[i].eps));
             $(".tb-BI").text(d3.format(",")(dataAll[i].bussinessIncome));
             //$(".tb-NBI").text(d3.format(",")(dataAll[i].nonBussinessIncome));
             //$(".tb-NBIR").text(d3.format(".0%")(dataAll[i].nonBussinessIncomeRatio));
@@ -477,7 +478,7 @@ function drawPre(myData, index, preState, preDate) {
     for (var i = 0; i < myData.length; i++) {
         dateList.push(myData[i].Date);
     }
-    console.log(dateList);
+    console.log();
 
     //圖表大小的設置
     var preMargin = { top: 20, right: 50, bottom: 30, left: 50 },
@@ -578,7 +579,7 @@ function drawPre(myData, index, preState, preDate) {
     }
     //加圓點
     preSvg.append("g")
-        .attr("class", "circleGroup")
+        .attr("class", `circleGroup${index}`)
         .attr("transform", "translate(18,0)")
         .selectAll("dot")
         .data(myData)
@@ -596,21 +597,26 @@ function drawPre(myData, index, preState, preDate) {
 
 
     //動畫?
-    pointAni();
-    function pointAni() {
-        d3.selectAll(".circleGroup :last-child")
+    pointAni(index);
+    function pointAni(index) {
+        var strokeC = (myData[5].Close > myData[4].Close) ? "#b84121" : "#69b3a2";
+        var fillC = (myData[5].Close > myData[4].Close) ? "#f77465" : "#cedba0";
+    /*        console.log("strokeC:" + strokeC + "  fillC:" + fillC);*/
+
+        d3.select(`.circleGroup${index} :last-child`)
+            .attr("stroke", strokeC)
             .style("stroke-width", 3)
             .style("stroke-opacity", 1)
             .style("r", 5)
 
-        d3.selectAll(".circleGroup :last-child")
-            .attr("fill", "#cedba0")
+        d3.select(`.circleGroup${index} :last-child`)
+            .attr("fill", fillC)
             .transition()
             .duration(1000)
             .style("stroke-width", 10)
             .style("stroke-opacity", 0)
             .style("r", 7)
-            .on("end", pointAni);
+            .on("end", function () { pointAni(index) });
     }
 }
 
@@ -635,7 +641,7 @@ function zooming() {
 
 function redraw() {
     svg.select("g.candlestick").call(candlestick);  //K棒
-    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonday, 1).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
+    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 1).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
     svg.selectAll("g.y.axis").call(yAxis.ticks(5).tickSize(-width, 0).tickPadding(10));   //Y軸
     svg.select("g.sma.ma-5").call(sma);
     svg.select("g.sma.ma-30").call(sma);
