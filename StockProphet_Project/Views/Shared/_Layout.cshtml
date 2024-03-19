@@ -1,73 +1,103 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - StockProphet_Project</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/StockProphet_Project.styles.css" asp-append-version="true" />
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - StockProphet_Project</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/StockProphet_Project.styles.css" asp-append-version="true" />
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">StockProphet_Project</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        @* 新增會員中心的下拉選單 *@
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">會員中心</a>
-                            <div class="dropdown-menu">
+	<header>
+		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+			<div class="container-fluid">
+				<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">StockProphet_Project</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+						aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+					<ul class="navbar-nav flex-grow-1" id="mynavgation">
+						<li class="nav-item">
+							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+						</li>
+						@* 新增會員中心的下拉選單 *@
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">會員中心</a>
+							<div class="dropdown-menu">
 
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Login">會員登入/註冊</a>
+								<a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Login">會員登入/註冊</a>
+								<a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">會員主頁</a>
+								<a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">個人資料修改</a>
+								<a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">我要預測</a>
+								<a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">我的收藏頁面</a>
+								<a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">歷史預測頁面</a>
+							</div>
+						</li>
+						@* 要設定靠右對齊-未完成 *@
+						<p>
+						<li class="nav-item">
+							<a class="nav-link text-dark text-right" asp-area="" asp-controller="Member" asp-action="Register">註冊</a>
+						</li>
+							@* <li class="nav-item">
+						<a class="nav-link text-dark text-right" asp-area="" asp-controller="Member" asp-action="Login">登入</a>
+						</li> *@
+						</p>
+					</ul>
+				</div>
+			</div>
+		</nav>
+	</header>
+	<div class="container">
+		<main role="main" class="pb-3">
+			@RenderBody()
+		</main>
+	</div>
 
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">會員主頁</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">個人資料修改</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">我要預測</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">我的收藏頁面</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">歷史預測頁面</a>
-                            </div>
-                        </li>
-                        @* 要設定靠右對齊-未完成 *@
-                        <p>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark text-right" asp-area="" asp-controller="Member" asp-action="Register">註冊</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark text-right" asp-area="" asp-controller="Member" asp-action="Login">登入</a>
-                        </li>
-                        </p>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+	<footer class="border-top footer text-muted">
+		<div class="container">
+			&copy; 2024 - StockProphet_Project - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+		</div>
+	</footer>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	@await RenderSectionAsync("Scripts", required: false)
+	<script>
+		$(document).ready(function () {
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - StockProphet_Project - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+			if (sessionStorage.getItem("LogAccount") == null) {
+
+				$('#mynavgation').append(`<li class="nav-item" ><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login" >登入</a></li>`);
+				$('#loginlink').show();
+				$('#logoutlink').hide();
+			} else {
+
+				$("#mynavgation").append(`<li class="nav-item"><a class="nav-link text-dark text-right" id="logoutlink" href="/Member/Index">登出</a></li> `)
+				$('#loginlink').hide();
+				$('#logoutlink').show();
+			}
+			$("#logoutlink").on("click", function () { 
+			
+				if (confirm('您確定要登出嗎？')) {
+					// 用户点击了确认按钮，执行相关操作
+					sessionStorage.clear();
+					window.location.href("/Home/Index")
+				} else {
+					// 用户点击了取消按钮，取消操作
+					console.log("2");
+				}
+			
+			})
+
+
+
+		})
+	</script>
 </body>
 </html>

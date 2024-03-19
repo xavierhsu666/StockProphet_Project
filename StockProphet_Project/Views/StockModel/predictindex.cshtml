@@ -2,6 +2,7 @@
 @{
 	var customerlevel = @Context.Session.GetString("Mlevel");
 }
+
 @* session傳值 *@
 <div style="background-color:lightpink">
 	<p> <b>Session傳值1:</b> @Context.Session.GetString("MID")</p><br>
@@ -9,197 +10,210 @@
 	<p> <b>Session傳值3:</b> @Context.Session.GetString("Mlevel")</p>
 	<p> <b>Session傳值3:</b> @Context.Session.GetString("MaccoMnt")</p>
 </div>
-<h3 class="display-6">第一步:選定股票</h3>
-<div class="input-group mb-3">
-	<span class="input-group-text" id="inputGroup-sizing-default">股票代號</span>
-	<input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="stockid" name="SnCode" onchange="stockinput()">
-</div>
-<div style="display: flex;">
+ <div id="beforeLog">
+     <b>請先登入會員</b>
+ </div>
+ <div id="afterLog">
+	<h3 class="display-6">第一步:選定股票</h3>
 	<div class="input-group mb-3">
-		<span class="input-group-text" id="inputGroup-sizing-default">股票名稱</span>
-		<div id="stockname" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" readonly></div>
+		<span class="input-group-text" id="inputGroup-sizing-default">股票代號</span>
+		<input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="stockid" name="SnCode" onchange="stockinput()">
 	</div>
-</div>
-<h3 class="display-6">第二步:選定投資偏好及選擇模型</h3>
-<div style="display: flex;">
-	投資偏好:
-	<div class="btn-group" role="group" aria-label="Basic example">
-		<button id="longterm" type="button" class="btn btn-primary">長期</button>
-		<button id="shortterm" type="button" class="btn btn-primary">短期</button>
+	<div style="display: flex;">
+		<div class="input-group mb-3">
+			<span class="input-group-text" id="inputGroup-sizing-default">股票名稱</span>
+			<div id="stockname" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" readonly></div>
+		</div>
 	</div>
-</div>
-
-<label>選擇模型(灰底請選擇一個):</label>
-<select class="form-select" id="selectmodel" multiple aria-label="multiple select example">
-	<option value="1">LSTM</option>
-	<option value="2">FNN</option>
-	<option value="3">迴歸</option>
-	<option value="4">時間序列</option>
-</select>
-<button id="checkmodel" class="btn btn-primary btn-sm">確認模型</button>
-
-<br>
-<br>
-
-
-
-<div id="borisform1" class="modelformforBoris">
-	<h3 class="display-6">第三步:設定參數並建置模型預測</h3>
-	<h4>參數選擇:</h4>
-	<h5 class="technicalparamlist">技術面:</h5>
-	@* JS-append *@
-	<br>
-	<h5 class="foundmentalparamlist">基本面:</h5>
-	@* JS-append *@
-	<br>
-
-	<h5 class="otherparamlist">其餘參數:</h5>
-	@* JS-append *@
-
-
-	<br>
-	<h5 class="predicintervallist">使用幾天前的數據進行預測:</h5>
-	@* JS-append *@
-
-	<br>
-
-	<label>Step1:</label>
-	<button id="Okbutton1">確認參數</button>
-	<br><br>
-	<label>Step2:</label>
-	<button id="predict1">建立LSTM模型</button>
-	<br>
-	<div id="predictionResult1"></div>
-	<div class="progress">
-		<div class="progress-bar progress-bar-striped progress-bar-animated" id="progress1" role="progressbar"
-			 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+	<h3 class="display-6">第二步:選定投資偏好及選擇模型</h3>
+	<div style="display: flex;">
+		投資偏好:
+		<div class="btn-group" role="group" aria-label="Basic example">
+			<button id="longterm" type="button" class="btn btn-primary">長期</button>
+			<button id="shortterm" type="button" class="btn btn-primary">短期</button>
 		</div>
 	</div>
 
-</div>
-<div id="borisform2" class="modelformforBoris">
-	<h3>第三步:設定參數並建置模型預測</h3>
-	<h4>參數選擇:</h4>
-	<h5 class="technicalparamlist">技術面:</h5>
-	@* JS-append *@
+	<label>選擇模型(灰底請選擇一個):</label>
+	<select class="form-select" id="selectmodel" multiple aria-label="multiple select example">
+		<option value="1">LSTM</option>
+		<option value="2">FNN</option>
+		<option value="3">迴歸</option>
+		<option value="4">時間序列</option>
+	</select>
+	<button id="checkmodel" class="btn btn-primary btn-sm">確認模型</button>
 
 	<br>
-	<h5 class="foundmentalparamlist">基本面:</h5>
-	@* JS-append *@
 	<br>
 
-	<h5 class="otherparamlist">其餘參數:</h5>
-	@* JS-append *@
 
-	<br>
-	<h5 class="predicintervallist">使用幾天前的數據進行預測:</h5>
-	@* JS-append *@
-	<br>
+	<div id="borisform1" class="modelformforBoris">
+		<h3 class="display-6">第三步:設定參數並建置模型預測</h3>
+		<h4>1.變數選擇:</h4>
+		<h5 class="technicalparamlist">技術面:</h5>
+		@* JS-append *@
+		<br>
+		<h5 class="foundmentalparamlist">基本面:</h5>
+		@* JS-append *@
+		<br>
 
-	<label>Step1:</label>
-	<button id="Okbutton2">確認參數</button>
-	<br><br>
-	<label>Step2:</label>
-	<button id="predict2">建立FNN模型</button>
-	<br>
-	<div id="predictionResult2"></div>
-	<div class="progress">
-		<div class="progress-bar progress-bar-striped progress-bar-animated" id="progress2" role="progressbar"
-			 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+
+
+		<br>
+		<h5 class="predicintervallist">使用幾天前的數據進行預測:</h5>
+		@* JS-append *@
+
+		<br>
+		<h4 >2.參數選擇:</h4>
+		<h5 class="iterationlist">迭代次數:</h5>
+		<input type="number" id="iterationtime1" name="iterationtime" value="100" min="50" max="200">
+		<br>
+		<label>Step1:</label>
+		<button id="Okbutton1">確認變數及參數</button>
+		<br><br>
+		<label>Step2:</label>
+		<button id="predict1">建立LSTM模型</button>
+		<br>
+		<div id="predictionResult1"></div>
+		<div class="progress">
+			<div class="progress-bar progress-bar-striped progress-bar-animated" id="progress1" role="progressbar"
+				 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+			</div>
+		</div>
+
 	</div>
-</div>
+	<div id="borisform2" class="modelformforBoris">
+		<h3>第三步:設定參數並建置模型預測</h3>
+		<h4>1.變數選擇:</h4>
+		<h5 class="technicalparamlist">技術面:</h5>
+		@* JS-append *@
 
-<div id="kazuoform3">
-	<h3>第三步:設定參數並建置模型預測(迴歸模型)</h3>
-	<h4>變數選擇:</h4>
-	<div id="ksParaArea">
+		<br>
+		<h5 class="foundmentalparamlist">基本面:</h5>
+		@* JS-append *@
+		<br>
 
-		<input type="checkbox" id="kazuopara1" name="SteOpen" autocomplete="off" class="btn-check">
-		<label class="btn btn-outline-secondary" for="kazuopara1">開盤價</label>
-		<input type="checkbox" id="kazuopara2" name="SteClose" autocomplete="off" class="btn-check">
-		<label for="kazuopara2" class="btn btn-outline-secondary">收盤價</label>
-		<input type="checkbox" id="kazuopara3" name="SteMax" autocomplete="off" class="btn-check">
-		<label for="kazuopara3" class="btn btn-outline-secondary">最高價</label>
-		<input type="checkbox" id="kazuopara4" name="SteMin" autocomplete="off" class="btn-check">
-		<label for="kazuopara4" class="btn btn-outline-secondary">最低價</label>
-		<input type="checkbox" id="kazuopara5" name="SteSpreadRatio" autocomplete="off" class="btn-check">
-		<label for="kazuopara5" class="btn btn-outline-secondary">震幅</label>
-		<input type="checkbox" id="kazuopara6" name="SteTradeMoney" autocomplete="off" class="btn-check">
-		<label for="kazuopara6" class="btn btn-outline-secondary">當日交易額</label>
-		<input type="checkbox" id="kazuopara7" name="SteTradeQuantity" autocomplete="off" class="btn-check">
-		<label for="kazuopara7" class="btn btn-outline-secondary">當日交易量</label>
-		<input type="checkbox" id="kazuopara8" name="SteTransActions" autocomplete="off" class="btn-check">
-		<label for="kazuopara8" class="btn btn-outline-secondary">當日交易比數</label>
-		<input type="checkbox" id="kazuopara9" name="SiMovingAverage5" autocomplete="off" class="btn-check">
-		<label for="kazuopara9" class="btn btn-outline-secondary">移動平均_5天</label>
-		<input type="checkbox" id="kazuopara10" name="SiMovingAverage30" autocomplete="off" class="btn-check">
-		<label for="kazuopara10" class="btn btn-outline-secondary">移動平均_30天</label>
-		<input type="checkbox" id="kazuopara11" name="SiRsv5" autocomplete="off" class="btn-check">
-		<label for="kazuopara11" class="btn btn-outline-secondary">RSV_5天</label>
-		<input type="checkbox" id="kazuopara12" name="SiRsv30" autocomplete="off" class="btn-check">
-		<label for="kazuopara12" class="btn btn-outline-secondary">RSV_30天</label>
-		<input type="checkbox" id="kazuopara13" name="SiK5" autocomplete="off" class="btn-check">
-		<label for="kazuopara13" class="btn btn-outline-secondary">K_5天</label>
-		<input type="checkbox" id="kazuopara14" name="SiK30" autocomplete="off" class="btn-check">
-		<label for="kazuopara14" class="btn btn-outline-secondary">K_30天</label>
-		<input type="checkbox" id="kazuopara15" name="SiD5" autocomplete="off" class="btn-check">
-		<label for="kazuopara15" class="btn btn-outline-secondary">D_5天</label>
-		<input type="checkbox" id="kazuopara16" name="SiD30" autocomplete="off" class="btn-check">
-		<label for="kazuopara16" class="btn btn-outline-secondary">D_30天</label>
-		<input type="checkbox" id="kazuopara17" name="SiLongEma" autocomplete="off" class="btn-check">
-		<label for="kazuopara17" class="btn btn-outline-secondary">EMA長 (指數移動平均線 - 長期)</label>
-		<input type="checkbox" id="kazuopara18" name="SiShortEma" autocomplete="off" class="btn-check">
-		<label for="kazuopara18" class="btn btn-outline-secondary">EMA短 (指數移動平均線 - 短期)</label>
-		<input type="checkbox" id="kazuopara19" name="SiDif" autocomplete="off" class="btn-check">
-		<label for="kazuopara19" class="btn btn-outline-secondary">DIF (差離值)</label>
-		<input type="checkbox" id="kazuopara20" name="SiMacd" autocomplete="off" class="btn-check">
-		<label for="kazuopara20" class="btn btn-outline-secondary">MACD</label>
-		<input type="checkbox" id="kazuopara21" name="SiOsc" autocomplete="off" class="btn-check">
-		<label for="kazuopara21" class="btn btn-outline-secondary">OSC</label>
-		<input type="checkbox" id="kazuopara22" name="SiMa" autocomplete="off" class="btn-check">
-		<label for="kazuopara22" class="btn btn-outline-secondary">OSC_MA</label>
-
-		<input type="checkbox" id="kazuopara23" name="SbYield" autocomplete="off" class="btn-check">
-		<label for="kazuopara23" class="btn btn-outline-secondary">殖利率</label>
-		<input type="checkbox" id="kazuopara24" name="SbPbratio" autocomplete="off" class="btn-check">
-		<label for="kazuopara24" class="btn btn-outline-secondary">淨值比</label>
-		<input type="checkbox" id="kazuopara25" name="SbEps" autocomplete="off" class="btn-check">
-		<label for="kazuopara25" class="btn btn-outline-secondary">EPS</label>
-		<input type="checkbox" id="kazuopara26" name="SbBussinessIncome" autocomplete="off" class="btn-check">
-		<label for="kazuopara26" class="btn btn-outline-secondary">營業收入</label>
-		<input type="checkbox" id="kazuopara27" name="SiPe" autocomplete="off" class="btn-check">
-		<label for="kazuopara27" class="btn btn-outline-secondary">PE (市盈率)</label>
-
-		@* <input type="checkbox" id="kazuopara28" name="ST_Date" autocomplete="off" class="btn-check">
-		<label for="kazuopara28" class="btn btn-outline-secondary">日期</label>
-		<input type="checkbox" id="kazuopara29" name="ST_Year_Quarter" autocomplete="off" class="btn-check">
-		<label for="kazuopara29" class="btn btn-outline-secondary">年/季</label>
-		<input type="checkbox" id="kazuopara30" name="SteDividendYear" autocomplete="off" class="btn-check">
-		<label for="kazuopara30" class="btn btn-outline-secondary">最近一筆股利發放年</label> *@
+		<br>
+		<h5 class="predicintervallist">使用幾天前的數據進行預測:</h5>
+		@* JS-append *@
+		<br>
+		<h4>2.參數選擇:</h4>
+		<h5 class="iterationlist">迭代次數:</h5>
+		<input type="number" id="iterationtime2" name="iterationtime" value="200" min="100" max="300">
+		<br>
+		<label>Step1:</label>
+		<button id="Okbutton2">確認變數及參數</button>
+		<br><br>
+		<label>Step2:</label>
+		<button id="predict2">建立FNN模型</button>
+		<br>
+		<div id="predictionResult2"></div>
+		<div class="progress">
+			<div class="progress-bar progress-bar-striped progress-bar-animated" id="progress2" role="progressbar"
+				 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+		</div>
 	</div>
 
-	<br>
-	<h5>參數選擇:</h5>
-	<div id="ModelParaInputArea">
-	</div>
-	<br>
-	<hr>
-	<button id="ksOkbutton2">Build</button>
-	<br>
-	<br>
-	<div id="predictionResult2"></div>
-	<div class="progress" id="ksprogressOuter">
-		<div class="progress-bar progress-bar-striped progress-bar-animated" id="ksprogress" role="progressbar"
-			 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
-	</div>
-</div>
-<br>
-<br>
-<button id="testButton">嘉澤的 Test Button</button>
+	<div id="kazuoform3">
+		<h3>第三步:設定參數並建置模型預測(迴歸模型)</h3>
+		<h4>變數選擇:</h4>
+		<div id="ksParaArea">
 
+			<input type="checkbox" id="kazuopara1" name="SteOpen" autocomplete="off" class="btn-check">
+			<label class="btn btn-outline-secondary" for="kazuopara1">開盤價</label>
+			<input type="checkbox" id="kazuopara2" name="SteClose" autocomplete="off" class="btn-check">
+			<label for="kazuopara2" class="btn btn-outline-secondary">收盤價</label>
+			<input type="checkbox" id="kazuopara3" name="SteMax" autocomplete="off" class="btn-check">
+			<label for="kazuopara3" class="btn btn-outline-secondary">最高價</label>
+			<input type="checkbox" id="kazuopara4" name="SteMin" autocomplete="off" class="btn-check">
+			<label for="kazuopara4" class="btn btn-outline-secondary">最低價</label>
+			<input type="checkbox" id="kazuopara5" name="SteSpreadRatio" autocomplete="off" class="btn-check">
+			<label for="kazuopara5" class="btn btn-outline-secondary">震幅</label>
+			<input type="checkbox" id="kazuopara6" name="SteTradeMoney" autocomplete="off" class="btn-check">
+			<label for="kazuopara6" class="btn btn-outline-secondary">當日交易額</label>
+			<input type="checkbox" id="kazuopara7" name="SteTradeQuantity" autocomplete="off" class="btn-check">
+			<label for="kazuopara7" class="btn btn-outline-secondary">當日交易量</label>
+			<input type="checkbox" id="kazuopara8" name="SteTransActions" autocomplete="off" class="btn-check">
+			<label for="kazuopara8" class="btn btn-outline-secondary">當日交易比數</label>
+			<input type="checkbox" id="kazuopara9" name="SiMovingAverage5" autocomplete="off" class="btn-check">
+			<label for="kazuopara9" class="btn btn-outline-secondary">移動平均_5天</label>
+			<input type="checkbox" id="kazuopara10" name="SiMovingAverage30" autocomplete="off" class="btn-check">
+			<label for="kazuopara10" class="btn btn-outline-secondary">移動平均_30天</label>
+			<input type="checkbox" id="kazuopara11" name="SiRsv5" autocomplete="off" class="btn-check">
+			<label for="kazuopara11" class="btn btn-outline-secondary">RSV_5天</label>
+			<input type="checkbox" id="kazuopara12" name="SiRsv30" autocomplete="off" class="btn-check">
+			<label for="kazuopara12" class="btn btn-outline-secondary">RSV_30天</label>
+			<input type="checkbox" id="kazuopara13" name="SiK5" autocomplete="off" class="btn-check">
+			<label for="kazuopara13" class="btn btn-outline-secondary">K_5天</label>
+			<input type="checkbox" id="kazuopara14" name="SiK30" autocomplete="off" class="btn-check">
+			<label for="kazuopara14" class="btn btn-outline-secondary">K_30天</label>
+			<input type="checkbox" id="kazuopara15" name="SiD5" autocomplete="off" class="btn-check">
+			<label for="kazuopara15" class="btn btn-outline-secondary">D_5天</label>
+			<input type="checkbox" id="kazuopara16" name="SiD30" autocomplete="off" class="btn-check">
+			<label for="kazuopara16" class="btn btn-outline-secondary">D_30天</label>
+			<input type="checkbox" id="kazuopara17" name="SiLongEma" autocomplete="off" class="btn-check">
+			<label for="kazuopara17" class="btn btn-outline-secondary">EMA長 (指數移動平均線 - 長期)</label>
+			<input type="checkbox" id="kazuopara18" name="SiShortEma" autocomplete="off" class="btn-check">
+			<label for="kazuopara18" class="btn btn-outline-secondary">EMA短 (指數移動平均線 - 短期)</label>
+			<input type="checkbox" id="kazuopara19" name="SiDif" autocomplete="off" class="btn-check">
+			<label for="kazuopara19" class="btn btn-outline-secondary">DIF (差離值)</label>
+			<input type="checkbox" id="kazuopara20" name="SiMacd" autocomplete="off" class="btn-check">
+			<label for="kazuopara20" class="btn btn-outline-secondary">MACD</label>
+			<input type="checkbox" id="kazuopara21" name="SiOsc" autocomplete="off" class="btn-check">
+			<label for="kazuopara21" class="btn btn-outline-secondary">OSC</label>
+			<input type="checkbox" id="kazuopara22" name="SiMa" autocomplete="off" class="btn-check">
+			<label for="kazuopara22" class="btn btn-outline-secondary">OSC_MA</label>
+
+			<input type="checkbox" id="kazuopara23" name="SbYield" autocomplete="off" class="btn-check">
+			<label for="kazuopara23" class="btn btn-outline-secondary">殖利率</label>
+			<input type="checkbox" id="kazuopara24" name="SbPbratio" autocomplete="off" class="btn-check">
+			<label for="kazuopara24" class="btn btn-outline-secondary">淨值比</label>
+			<input type="checkbox" id="kazuopara25" name="SbEps" autocomplete="off" class="btn-check">
+			<label for="kazuopara25" class="btn btn-outline-secondary">EPS</label>
+			<input type="checkbox" id="kazuopara26" name="SbBussinessIncome" autocomplete="off" class="btn-check">
+			<label for="kazuopara26" class="btn btn-outline-secondary">營業收入</label>
+			<input type="checkbox" id="kazuopara27" name="SiPe" autocomplete="off" class="btn-check">
+			<label for="kazuopara27" class="btn btn-outline-secondary">PE (市盈率)</label>
+
+			@* <input type="checkbox" id="kazuopara28" name="ST_Date" autocomplete="off" class="btn-check">
+			<label for="kazuopara28" class="btn btn-outline-secondary">日期</label>
+			<input type="checkbox" id="kazuopara29" name="ST_Year_Quarter" autocomplete="off" class="btn-check">
+			<label for="kazuopara29" class="btn btn-outline-secondary">年/季</label>
+			<input type="checkbox" id="kazuopara30" name="SteDividendYear" autocomplete="off" class="btn-check">
+			<label for="kazuopara30" class="btn btn-outline-secondary">最近一筆股利發放年</label> *@
+		</div>
+
+		<br>
+		<h5>參數選擇:</h5>
+		<div id="ModelParaInputArea">
+		</div>
+		<br>
+		<hr>
+		<button id="ksOkbutton2">Build</button>
+		<br>
+		<br>
+		<div id="predictionResult2"></div>
+		<div class="progress" id="ksprogressOuter">
+			<div class="progress-bar progress-bar-striped progress-bar-animated" id="ksprogress" role="progressbar"
+				 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+		</div>
+	</div>
+	<br>
+	<br>
+	<button id="testButton">嘉澤的 Test Button</button>
+   </div>
 
 <script>
-
+	//判斷會員是否登入
+	 var MID = "@Context.Session.GetString("MID")"
+	 if (MID == '') {
+		 $('#beforeLog').show();
+		 $('#afterLog').hide();
+	 } 
+	 else 
+	 {
+		 $('#beforeLog').hide();
+		 $('#afterLog').show();
 
 	//初始化:不需要的東西先隱藏
 	$("#borisform1,#borisform2,#chart").css("display", "none");
@@ -207,6 +221,9 @@
 	$("#longterm,#shortterm,#predict1,#predict2,#checkmodel,#selectmodel").prop("disabled", true);
 	$("#ksParaArea>label").css("margin", "5px");
 	$(document).ready(function () {
+
+
+		
 		// append表格
 		const technicalParam = {
 			"SteOpen": "開盤價",
@@ -240,14 +257,9 @@
 			"SbBussinessIncome": "營業收入",
 			"SiPe": "PE (市盈率)"
 		};
-		const otherParam = {
-			"ST_Date": "日期",
-			"ST_Year_Quarter": "年/季",
-			"SteDividendYear": "最近一筆股利發放年"
-		}
 		const predictinterval = { "5天(周)": 5, "30天(月)": 30, "365天(年)": 365 };
 
-
+		
 
 
 		function appendCheckbox(formid) {
@@ -262,13 +274,7 @@
 				<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
 			    <label for="${formid + key}" class="btn btn-outline-secondary" >${value}</label>`)
 			});
-			$.each(otherParam, function (key, value) {
-				$(`#${formid} .otherparamlist`).append(`
-				<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
-			 <label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`)
-			});
 			
-
 		};
 		function appendradio(formid) {
 
@@ -281,6 +287,7 @@
 			});
 
 		}
+		
 		var borisprediction;
 		var predicturl;
 		var sncode;
@@ -289,6 +296,7 @@
 		var functionurl = ["LSTMpredict", "FNNpredict"]
 		var prefertype;
 		var createmodelTime;
+		var iterationtimeforpredict;
 		// <ks area--------------------->
 
 		// ####<預設值待更新-------------------------------------->
@@ -700,6 +708,7 @@
 				var paramName = $(this).attr("name");
 				userselectparams[paramName] = true;
 			});
+			iterationtimeforpredict = $(`#iterationtime${number}`).val();
 			$(`#predict${number}`).prop("disabled", false);
 
 		});
@@ -709,36 +718,39 @@
 			var buttonId = $(this).prop("id"); // 獲取按鈕的 ID
 			var number = parseInt(buttonId.match(/\d+/)[0]); // 從 ID 中提取數字部分
 			createmodelTime = new Date();
+
 			$.ajax({
 				url: `/StockModel/${functionurl[number - 1]}`,
 				type: "Post",
 				data: {
 					sncode: sncode,
 					predictday: predictday,
-					selectedParams: userselectparams
+					selectedParams: userselectparams,
+					iterationtime: iterationtimeforpredict
 				},
 				beforeSend: function () {
 					$(`#longterm,#shortterm,#predict${number},#Okbutton${number}`).prop("disabled", true);
 					// 在發送請求前顯示訓練中的訊息
 					$(`#predictionResult${number}`).text("模型訓練中...");
-					$(`.progress`).show()
-					var progress = 0; // 初始化進度
-					var increaseProgress = function () {
-						if (progress <= 80) {
-							progress += 10; // 每次增加 10%
-							$(`#progress${number}`).css("width", progress + "%");
-							setTimeout(increaseProgress, 800);
-						}
-					};
-					increaseProgress(); // 開始增加進度
-				},
-
-				success: function (response) {
-					$(`#progress${number}`).css("width", '100%');
-					
+					$(`.progress`).show();
 					setTimeout(function () {
-						$(`.progress`).hide();
-					}, 1000);
+						$(`#progress${number}`).css("width", '30%');
+
+						setTimeout(function () {
+							$(`#progress${number}`).css("width", '50%');
+
+							setTimeout(function () {
+								$(`#progress${number}`).css("width", '70%');
+
+							}, 2000); // 第三个setTimeout在第二个setTimeout执行完后4秒再执行
+
+						}, 3000); // 第二个setTimeout在第一个setTimeout执行完后5秒再执行
+
+					}, 1000); // 第一个setTimeout在0秒后执行
+
+				},
+				success: function (response) {
+
 					var values = response.split(','); // 拆分字符串为数组
 					borisprediction = parseFloat(values[0]);
 					if (borisprediction < 0) {
@@ -781,7 +793,7 @@
 						url: "/StockModel/Predictsavedata",
 						data: datatoserver,
 						success: function (e) {
-							alert("save OK")
+							// alert("save OK")
 						},
 						error: function (xhr, status, error) {
 							// 處理錯誤
@@ -794,14 +806,17 @@
 					var predictedData = borisprediction;
 					var predictedloss = values[1];
 
+					setTimeout(function () {
+						$(`#progress${number}`).css("width", '99%');
+
+						setTimeout(function () {
+							var predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode;
+							window.location.href = predicturl;
+						}, 3000); // 第四个setTimeout在第三个setTimeout执行完后3秒再执行
+
+					}, 2000); // 第三个setTimeout在第二个setTimeout执行完后4秒再执行
 
 
-
-					// 在這裡將 predictedData 傳遞到 predictphoto 頁面
-					predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode;
-
-					//跳轉
-					window.location.href = predicturl
 
 				},
 				error: function (xhr, status, error) {
@@ -820,6 +835,7 @@
 
 
 	});
+
 	function stockinput() {
 		var stockId = $("#stockid").val();
 		$("#stockname").text("");
@@ -837,4 +853,7 @@
 			);
 		}
 	}
+	
+}
+	 console.log("顯示MID:" + MID);
 </script>
