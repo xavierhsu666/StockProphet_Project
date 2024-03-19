@@ -89,6 +89,35 @@ namespace StockProphet_Project.Controllers {
             return Json(query);
         }
 
+        //檢查股票是否存在
+        public string checkStocks(string id) {
+            var ans = "Nah";
+            var stocksList = (from obj in new ChoCSVReader<stocksCheck>("wwwroot\\stocksList.csv").WithFirstLineHeader()
+                              select obj).ToList();
+            foreach (var stock in stocksList) {
+                if (stock.Code == id || stock.Name == id) {
+                    ans = stock.Code;
+                }
+            }
+            return ans;
+        }
+
+        //回傳股票名稱的陣列表
+        public IActionResult stocksListAC() {
+            var stocksList = (from obj in new ChoCSVReader<stocksCheck>("wwwroot\\stocksList.csv").WithFirstLineHeader()
+                              select new {
+                                  label = obj.Name,
+                                  category = obj.type
+                              })
+                              .ToList();
+
+            return Json(stocksList);
+        }
+
+
+
+
+
         public IActionResult Privacy() {
             return View();
         }

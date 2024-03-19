@@ -1,0 +1,94 @@
+﻿body {
+}
+
+.upArea {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: baseline;
+    /*    width: 100%;*/
+    height: calc(35vh - 40px - 1rem); /*扣掉header的高度*/
+}
+
+.bottomArea {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    /*ll*/
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    height: calc(65vh - 60px);
+}
+
+
+.bottom-left {
+    width: 50%;
+}
+
+.bottom-right {
+    width: 50%;
+}
+
+img {
+    position: relative;
+    right: 3vw;
+    float: right;
+    width: 40%;
+    height: 40%;
+}
+
+.btn {
+    margin-top: 20px;
+}
+
+/*會擋到Session傳值測試 暫時註掉*/
+/*#search-box {
+    position: absolute;
+    top: 25%;*/
+/*transform: translateY(-50%);*/
+/*}*/
+
+#search {
+    border-radius: 100px;
+    min-width: 20vw;
+    text-indent: 10px;
+    line-height: 50px;
+    font-size: 20px;
+}
+
+.m-btn {
+    display: flex;
+    position: relative;
+    width: 200px;
+    right: -3vw;
+    flex-direction: column;
+}
+
+.btn-m, .btn-t {
+    margin: 20px;
+    width: 12vw;
+    height: 15vh;
+}
+
+
+.ui-autocomplete-category {
+    font-weight: bold;
+    padding: .2em .4em;
+    margin: .8em 0 .2em;
+    line-height: 1.5;
+}
+
+
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active,
+a.ui-button:active,
+.ui-button:active,
+.ui-button.ui-state-active:hover {
+    border: 1px solid #a579ad !important; /*改背景顏色*/
+    background: #a579ad !important;
+    font-weight: normal;
+    color: #ffffff;
+}
