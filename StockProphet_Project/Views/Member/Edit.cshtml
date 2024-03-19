@@ -1,0 +1,252 @@
+﻿@{
+    //修改會員資料
+    var MInvestYear = @Context.Session.GetString("MinvestYear")!;
+    var Mlevel = @Context.Session.GetString("Mlevel")!;
+}
+<h1 class="text-">會員功能-修改個人資料</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <button id="showMemberIndex">回到會員頁</button><br>
+        <button id="showRevise">修改個人資料</button><br>
+        <button id="showFavoritesPage">我的收藏</button><br>
+        <button id="showPredictFunc">我要預測</button><br>
+        <button id="showHistoryPage">我的預測結果</button><br>
+    </div>
+    <div class="col-md-8">
+        @* Session 傳值 *@
+        <div style="background-color:lightpink">
+            <p> <b>Session傳值1:</b> @Context.Session.GetString("MID") </p><br>
+            <p> <b>Session傳值2:</b> @Context.Session.GetString("MEmail")</p>
+            <p> <b>Session傳值3:</b> @Context.Session.GetString("Mlevel")</p>
+        </div>
+
+        <div id="beforeLog">
+            <b>請先登入會員</b>
+        </div>
+
+        <div id="afterLog">
+            @* 2.修改個人資料 *@
+            <div id="Revise">
+                <div>
+                    <label for="Account">帳號:</label>
+                    <label>@Context.Session.GetString("MaccoMnt")</label>
+                </div>
+
+                <div>
+                    <label for="Password">舊密碼:</label>
+                    <input type="password" pattern="" size="20" minlength="20" name="MPassword" id="Password" title="請輸入原始密碼" value="">
+                </div>
+
+                <div>
+                    <label for="Password">輸入新密碼:</label>
+                    <input type="password" pattern="" size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼" value="">
+                </div>
+                <div>
+                    <label for="Password">請再輸入一次新密碼:</label>
+                    <input type="password" pattern="" size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="">
+                    @* 再次輸入密碼不同時，顯示提示字 *@
+                    <div id="pwdnoteword"><p style="color:red; ">您輸入的密碼不相同</p></div>
+                </div>
+
+                <label for="Email">信箱:</label>
+                <input type="email" pattern="" name="MEmail" id="Email" value="@Context.Session.GetString("MEmail")">
+
+
+                <br>
+
+                <label for="UserName">姓名:</label>
+                <input type="text" name="MTrueName" id="UserName" value="@Context.Session.GetString("MtrueName")">
+                <br>
+
+                <label for="Birthday">生日:</label>
+                <label>@Context.Session.GetString("Mbirthday")</label>
+                <br>
+
+                <label for="MGender">性別:</label>
+                <label>@Context.Session.GetString("Mgender")</label>
+                <br>
+
+                <label for="MInvestYear">您的投資年數:</label>
+                <select name="MInvestYear" id="InvestYear">
+                    <option value="1">未滿1年</option>
+                    <option value="2">1-3年</option>
+                    <option value="3">3-5年</option>
+                    <option value="4">5年以上</option>
+                </select>
+                <br>
+
+                <label for="MLevel">會員等級:</label>
+                @* 不可修改會員等級 *@
+                @*  <select name="MLevel" id="MLevel" size="1">
+                <option value="一般會員">一般會員</option>
+                <option value="高級會員">高級會員</option>
+                </select> *@
+                <label>@Context.Session.GetString("Mlevel")</label>
+                <br>
+
+                <button id="ReviseData">修改資料</button>
+                <button id="Reset">取消</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    //判斷會員是否登入
+    var MID = "@Context.Session.GetString("MID")"
+    if (MID == '') {
+        $('#beforeLog').show();
+        $('#afterLog').hide();
+    } else {
+        $('#beforeLog').hide();
+        $('#afterLog').show();
+    }
+    console.log("顯示MID:" + MID);
+
+    // 設定新密碼的提示字
+    $('#pwdnoteword').hide();
+
+    //輸入正確舊密碼前不能修改
+    $('#Password1').prop("disabled", true);
+    $('#Password2').prop("disabled", true);
+
+    $(function () {
+        // 1.點擊回到會員頁
+        $('#showMemberIndex').on("click", function () {
+            window.location.href = "/Member/Index";
+        })
+
+        // 2.點擊修改個人資料
+        $('#showRevise').on("click", function () {
+            window.location.href = "/Member/Edit";
+        })
+        // 3.點擊我的收藏
+        $('#showFavoritesPage').on("click", function () {
+            window.location.href = "/Member/Index";
+        })
+
+        // 4.點擊我要預測
+        $('#showPredictFunc').on("click", function () {
+            window.location.href = "/StockModel/Predictindex";
+        })
+
+        // 5.點擊我的預測結果
+        $('#showHistoryPage').on("click", function () {
+            window.location.href = "/Member/Index";
+        })
+
+        function RevisePassword() {
+            //打開密碼欄位可以編輯
+            $('#Password1').prop("disabled", false);
+            $('#Password2').prop("disabled", false);
+
+            //檢查兩次輸入的密碼是否一致
+            $('#Password2').on("change", function () {
+                var MPassword1 = $('#Password1').val();
+                var MPassword2 = $('#Password2').val();
+                if (MPassword1 != MPassword2) {
+                    $('#pwdnoteword').show();
+                }
+                else {
+                    $('#pwdnoteword').hide();
+                    console.log("ok");
+                }
+                if (MPassword2 == "") {
+                    $('#pwdnoteword').hide();
+                }
+            })
+        }
+        //(1).判斷該會員的舊密碼是否一致
+        //Yes =>可以修改
+        //NO  =>不能修改
+
+        $('#Password').on("change", function () {
+            var checkPassword = $('#Password').val()
+            console.log(checkPassword);
+
+            $.ajax({
+                url: "/Member/checkPassword",
+                method: "get",
+                data: { checkPassword },
+                success: function (e) {
+                    console.log(e)
+                    if (e) {
+                        RevisePassword(); 
+                        alert("舊密碼輸入正確");
+                    }
+                    else {
+                        alert("密碼輸入錯誤")
+                    }
+                }
+            })
+        })
+
+          //(2).帶入該會員的投資年數+會員等級
+        switch ("@MInvestYear") {
+
+            case "1":
+                $("#InvestYear").val("1");
+                // console.log("1")
+                // console.log("123")
+                break;
+            case "2":
+                $("#InvestYear").val("1-3");
+                // console.log("2")
+                break;
+            case "3":
+                $("#InvestYear").val("3-5");
+                // console.log("3")
+                break;
+            case "5":
+                $("#InvestYear option[value='5']").prop("selected", true);
+                // console.log("5")
+                break;
+            default:
+                console.log("error");
+                break;
+        }
+        var encodedString = "@Mlevel"; // 將 @Mlevel 的值放在這裡
+        var tempElement = document.createElement("div");
+        tempElement.innerHTML = encodedString;
+        var decodedString = tempElement.innerText || tempElement.textContent;
+        switch (decodedString) {
+
+            case "一般會員":
+                $("#MLevel").val("一般會員");
+                break;
+            case "高級會員":
+                $("#MLevel").val("高級會員");
+                break;
+            default:
+                break;
+        }
+
+    // (3).將修改的資料存回資料庫
+        $('#ReviseData').on("click", function () {
+                       
+            var dataToServer = {
+                Account: "@Context.Session.GetString("MaccoMnt")",
+                NewPassword: $('#Password1').val(),
+                NewEmail:$('#Email').val(),
+                NewName: $('#UserName').val(),
+                NewInvestYear: $('#InvestYear').val()
+            }
+            console.log(dataToServer)
+
+            $.ajax({
+                url: "/Member/SaveReviseMemberData",
+                method:"put",
+                data: dataToServer,
+                success: function (e) {
+                    console.log(e);
+                    // window.location.href = "/Member/Edit";
+
+                }
+            })
+        })
+
+    })
+
+</script>

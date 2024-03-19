@@ -1,0 +1,84 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@@{
+    //修改會員資料
+    var MInvestYear = @Context.Session.GetString("MinvestYear")!;
+    var Mlevel = @Context.Session.GetString("Mlevel")!;
+}
+
+<h1 class="text-">會員功能-我的收藏</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <button id="showMemberIndex">回到會員頁</button><br>
+        <button id="showRevise">修改個人資料</button><br>
+        <button id="showFavoritesPage">我的收藏</button><br>
+        <button id="showPredictFunc">我要預測</button><br>
+        <button id="showHistoryPage">我的預測結果</button><br>
+    </div>
+    <div class="col-md-8">
+        @* Session 傳值 *@
+        <div style="background-color:lightpink">
+            <p> <b>Session傳值1:</b> @Context.Session.GetString("MID") </p><br>
+            <p> <b>Session傳值2:</b> @Context.Session.GetString("MEmail")</p>
+            <p> <b>Session傳值3:</b> @Context.Session.GetString("Mlevel")</p>
+            <p> <b>Session傳值4:</b> @MInvestYear</p>
+        </div>
+
+        <div id="beforeLog">
+            <b>請先登入會員</b>
+        </div>
+
+        <div id="afterLog">
+
+            @* 3.我的收藏 *@
+            <div id="FavoritesPage">
+
+                我的收藏
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    //判斷會員是否登入
+    var MID = "@Context.Session.GetString("MID")"
+    if (MID == '') {
+        $('#beforeLog').show();
+        $('#afterLog').hide();
+    } else {
+        $('#beforeLog').hide();
+        $('#afterLog').show();
+    }
+    console.log("顯示MID:" + MID);
+
+    $(function () {
+        // 1.點擊回到會員頁
+        $('#showMemberIndex').on("click", function () {
+            window.location.href = "/Member/Index";
+        })
+
+        // 2.點擊修改個人資料
+        $('#showRevise').on("click", function () {
+            window.location.href = "/Member/Edit";       
+        })
+        // 3.點擊我的收藏
+        $('#showFavoritesPage').on("click", function () {
+            window.location.href = "/Member/Index";
+        })
+
+        // 4.點擊我要預測
+        $('#showPredictFunc').on("click", function () {
+            window.location.href = "/StockModel/Predictindex";
+        })
+
+        // 5.點擊我的預測結果
+        $('#showHistoryPage').on("click", function () {
+            window.location.href = "/Member/Index";
+        })
+    })
+
+</script>

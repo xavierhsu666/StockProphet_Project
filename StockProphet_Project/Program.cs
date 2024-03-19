@@ -27,11 +27,10 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-//呼叫跨頁面存取功能函式
 app.UseSession();
 app.MapControllerRoute(
 	name: "default",
-pattern: "{controller=Member}/{action=Index}");
+pattern: "{controller=Home}/{action=Index}");
 //pattern: "{controller=StockModel}/{action=predictindex}/{id?}");
 //pattern: "{controller=StockModel}/{action=testBuild}");
 

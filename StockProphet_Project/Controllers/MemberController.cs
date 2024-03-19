@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 using StockProphet_Project.Models;
 using System.Net.Mail;
 using System.Reflection.Metadata.Ecma335;
@@ -20,6 +22,68 @@ namespace StockProphet_Project.Controllers
 		{
 			return View();
 		}
+        //修改個人資料頁面
+        public IActionResult Edit()
+        {
+            return View();
+        }
+        //確認舊密碼是否正確
+        public bool checkPassword(string checkPassword)
+        {
+            System.Diagnostics.Debug.WriteLine("舊密碼:"+checkPassword);
+
+            //判斷該會員的舊密碼是否一致            
+            HttpContext.Session.GetString("MID");
+            System.Diagnostics.Debug.WriteLine("登入會員的Id:" + HttpContext.Session.GetString("MID"));
+            var member = _context.DbMembers.Where(x => x.Mid.ToString() == HttpContext.Session.GetString("MID"));
+            var result = member.Where(x => x.Mpassword == checkPassword);
+            System.Diagnostics.Debug.WriteLine("測試會員"+member);
+
+            return result.Any();
+        }
+        // //儲存修改後的會員資料
+        [HttpPut]
+        public bool SaveReviseMemberData(string Account, string NewPassword, string NewEmail, string NewName, string NewInvestYear)
+        {
+            //Console.WriteLine( NewPassword==null);
+            //Console.WriteLine("NewEmail:" + NewEmail);
+            //Console.WriteLine("NewName:" + NewName);
+            //Console.WriteLine("NewInvestYear:" + NewInvestYear);
+            var query = _context.DbMembers.SingleOrDefault(x => x.MaccoMnt == Account);
+
+            if (NewPassword == null)
+            {
+                //不修改DbMember中的密碼
+                query.Memail = NewEmail;
+                query.MtrueName = NewName;
+                query.MinvestYear = Convert.ToByte(NewInvestYear);
+                _context.SaveChanges();
+
+            }
+            else
+            {
+                //修改DbMember中的密碼
+                query.Memail = NewPassword;
+                query.Memail = NewEmail;
+                query.MtrueName = NewName;
+                query.MinvestYear = Convert.ToByte(NewInvestYear);
+                _context.SaveChanges();
+            }
+
+            return true;
+
+        }
+
+        //我的收藏頁面
+        public IActionResult MyCollect()
+        {
+            return View();
+        }
+        //我的預測結果頁面
+        public IActionResult MyPredictResult()
+        {
+            return View();
+        }
 
         //註冊頁面
         public IActionResult Register()
@@ -71,7 +135,6 @@ namespace StockProphet_Project.Controllers
 			return View();
 		}
 
-
 		//會員登入頁
 		public IActionResult Login()
 		{
@@ -81,59 +144,162 @@ namespace StockProphet_Project.Controllers
 		[HttpGet]
 		public string checkLogin(string MAccoMnt, string MPassword)
 		{
-			//var memberAccoMnt = _context.Members.FirstOrDefault(x => x.MaccoMnt == MAccoMnt);
-			//var memberEmail = _context.Members.FirstOrDefault(x=>x.Memail == MAccoMnt);
-
-            var member = _context.DbMembers.FirstOrDefault(x => x.MaccoMnt == MAccoMnt);
-            Console.WriteLine(member);
-            //先檢查是否存在該會員
-            //if (memberAccoMnt != null || memberEmail != null)
-            if (member != null)
+            Console.WriteLine("測試登入帳號資料"+MAccoMnt);
+            if (MAccoMnt.IndexOf('@') >= 0)
             {
-                //再判斷密碼是否正確
-                //if (memberAccoMnt.Mpassword == MPassword || memberEmail.Mpassword == MPassword)
-                if (member.Mpassword == MPassword)
-                {                   
-                    //Session傳值
-                    HttpContext.Session.SetString("MID", member.Mid.ToString());
-                    HttpContext.Session.SetString("MEmail", member.Memail!);
-                    HttpContext.Session.SetString("Mlevel", member.Mlevel!);
-                    HttpContext.Session.SetString("MaccoMnt", member.MaccoMnt!);
-                    HttpContext.Session.SetString("Mlevel", member.Mlevel!);
-                    //不常用_供修改會員資料頁面使用
-                    HttpContext.Session.SetString("MtrueName", member.MtrueName!);
-                    HttpContext.Session.SetString("Mbirthday", value: member.Mbirthday.ToString()!);
-                    HttpContext.Session.SetString("Mgender", member.Mgender!);
-                    HttpContext.Session.SetString("MinvestYear", member.MinvestYear.ToString()!);
-
-					//Console.WriteLine(member.MinvestYear);
-					Console.WriteLine(member.Mlevel);
-
-                    //依照會員身分給予不同權限的頁面
-                    switch (member.Mlevel)
+                var member = _context.DbMembers.FirstOrDefault(x => x.Memail == MAccoMnt);
+                Console.WriteLine(member);
+                //先檢查是否存在該會員
+                if (member != null)
+                {
+                    //再判斷密碼是否正確
+                    //if (memberAccoMnt.Mpassword == MPassword || memberEmail.Mpassword == MPassword)
+                    if (member.Mpassword == MPassword)
                     {
-                        case "一般會員":
-                            return "一般會員";
+                        //Session傳值
+                        HttpContext.Session.SetString("MID", member.Mid.ToString());
+                        HttpContext.Session.SetString("MEmail", member.Memail!);
+                        HttpContext.Session.SetString("Mlevel", member.Mlevel!);
+                        HttpContext.Session.SetString("MaccoMnt", member.MaccoMnt!);
+                        HttpContext.Session.SetString("Mlevel", member.Mlevel!);
+                        //不常用_供修改會員資料頁面使用
+                        HttpContext.Session.SetString("MtrueName", member.MtrueName!);
+                        HttpContext.Session.SetString("Mbirthday", value: member.Mbirthday.ToString()!);
+                        HttpContext.Session.SetString("Mgender", member.Mgender!);
+                        HttpContext.Session.SetString("MinvestYear", member.MinvestYear.ToString()!);
 
-                        case "高級會員":
-                            return "高級會員";
+                        //Console.WriteLine(member.MinvestYear);
+                        //Console.WriteLine(member.Mlevel);
 
-                        case "管理者":
-                            return "管理者";
+                        //依照會員身分給予不同權限的頁面
+                        switch (member.Mlevel)
+                        {
+                            case "一般會員":
+                                return "一般會員";
 
-						default:
-							return "一般訪客";
-					}
-				}
-				else
-				{
-					return "輸入的密碼不正確";
-				}
-			}
-			else
-			{
-				return "會員名稱錯誤";
-			}
+                            case "高級會員":
+                                return "高級會員";
+
+                            case "管理者":
+                                return "管理者";
+
+                            default:
+                                return "一般訪客";
+                        }
+                    }
+                    else
+                    {
+                        return "輸入的密碼不正確";
+                    }
+                }
+                else
+                {
+                    return "會員名稱錯誤";
+                }
+            }
+            else
+            {
+                var member = _context.DbMembers.FirstOrDefault(x => x.MaccoMnt == MAccoMnt);
+                Console.WriteLine(member);
+                //先檢查是否存在該會員
+                if (member != null)
+                {
+                    //再判斷密碼是否正確
+                    //if (memberAccoMnt.Mpassword == MPassword || memberEmail.Mpassword == MPassword)
+                    if (member.Mpassword == MPassword)
+                    {
+                        //Session傳值
+                        HttpContext.Session.SetString("MID", member.Mid.ToString());
+                        HttpContext.Session.SetString("MEmail", member.Memail!);
+                        HttpContext.Session.SetString("Mlevel", member.Mlevel!);
+                        HttpContext.Session.SetString("MaccoMnt", member.MaccoMnt!);
+                        HttpContext.Session.SetString("Mlevel", member.Mlevel!);
+                        //不常用_供修改會員資料頁面使用
+                        HttpContext.Session.SetString("MtrueName", member.MtrueName!);
+                        HttpContext.Session.SetString("Mbirthday", value: member.Mbirthday.ToString()!);
+                        HttpContext.Session.SetString("Mgender", member.Mgender!);
+                        HttpContext.Session.SetString("MinvestYear", member.MinvestYear.ToString()!);
+
+                        //Console.WriteLine(member.MinvestYear);
+                        //Console.WriteLine(member.Mlevel);
+
+                        //依照會員身分給予不同權限的頁面
+                        switch (member.Mlevel)
+                        {
+                            case "一般會員":
+                                return "一般會員";
+
+                            case "高級會員":
+                                return "高級會員";
+
+                            case "管理者":
+                                return "管理者";
+
+                            default:
+                                return "一般訪客";
+                        }
+                    }
+                    else
+                    {
+                        return "輸入的密碼不正確";
+                    }
+                }
+                else
+                {
+                    return "會員名稱錯誤";
+                }
+            }
+            
+
+            //var member = _context.DbMembers.FirstOrDefault(x => x.MaccoMnt == MAccoMnt);
+   //         Console.WriteLine(member);
+   //         //先檢查是否存在該會員
+   //         if (member != null)
+   //         {
+   //             //再判斷密碼是否正確
+   //             //if (memberAccoMnt.Mpassword == MPassword || memberEmail.Mpassword == MPassword)
+   //             if (member.Mpassword == MPassword)
+   //             {                    
+   //                 //Session傳值
+   //                 HttpContext.Session.SetString("MID", member.Mid.ToString());
+   //                 HttpContext.Session.SetString("MEmail", member.Memail!);
+   //                 HttpContext.Session.SetString("Mlevel", member.Mlevel!);
+   //                 HttpContext.Session.SetString("MaccoMnt", member.MaccoMnt!);
+   //                 HttpContext.Session.SetString("Mlevel", member.Mlevel!);
+   //                 //不常用_供修改會員資料頁面使用
+   //                 HttpContext.Session.SetString("MtrueName", member.MtrueName!);
+   //                 HttpContext.Session.SetString("Mbirthday", value: member.Mbirthday.ToString()!);
+   //                 HttpContext.Session.SetString("Mgender", member.Mgender!);
+   //                 HttpContext.Session.SetString("MinvestYear", member.MinvestYear.ToString()!);
+
+			//		//Console.WriteLine(member.MinvestYear);
+			//		//Console.WriteLine(member.Mlevel);
+
+   //                 //依照會員身分給予不同權限的頁面
+   //                 switch (member.Mlevel)
+   //                 {
+   //                     case "一般會員":
+   //                         return "一般會員";
+
+   //                     case "高級會員":
+   //                         return "高級會員";
+
+   //                     case "管理者":
+   //                         return "管理者";
+
+			//			default:
+			//				return "一般訪客";
+			//		}
+			//	}
+			//	else
+			//	{
+			//		return "輸入的密碼不正確";
+			//	}
+			//}
+			//else
+			//{
+			//	return "會員名稱錯誤";
+			//}
 
 		}
 
@@ -176,6 +342,7 @@ namespace StockProphet_Project.Controllers
                 //                          前面是發信的email  後面是顯示的名稱   
                 mail.From = new MailAddress("j1129w@gmail.com", "測試自動寄信功能");
                 //收件者email
+                //mail.To.Add("wryi636@gmail.com");//result\
                 mail.To.Add("boris83418@gmail.com");//result
                 //設定優先權
                 mail.Priority = MailPriority.Normal;
@@ -229,14 +396,14 @@ namespace StockProphet_Project.Controllers
         {            
             return View();
         }
-        //儲存修改後的密碼
+        ////儲存修改後的密碼
         [HttpPut]
         public bool SaveRevisePassword(string ForgotMemberEmail, string RevisePassword)
         {
             System.Diagnostics.Debug.WriteLine("儲存修改後的密碼_Email:" + ForgotMemberEmail);
             System.Diagnostics.Debug.WriteLine("儲存修改後的密碼_Password:" + RevisePassword);
 
-            var query = _context.DbMembers.FirstOrDefault( x=>x.Memail == ForgotMemberEmail);
+            var query = _context.DbMembers.FirstOrDefault(x => x.Memail == ForgotMemberEmail);
             if (query != null)
             {
                 //修改DbMember中的密碼
