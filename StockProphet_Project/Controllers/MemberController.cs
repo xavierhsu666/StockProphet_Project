@@ -300,19 +300,20 @@ namespace StockProphet_Project.Controllers {
 			if (member != null) {
 				MailMessage mail = new MailMessage();
 				//                          前面是發信的email  後面是顯示的名稱   
-				mail.From = new MailAddress("j1129w@gmail.com", "測試自動寄信功能");
+				mail.From = new MailAddress("j1129w@gmail.com", "系統驗證碼發送");
 				//收件者email
-				mail.To.Add("wryi636@gmail.com");//result\
+				mail.To.Add(MEmail);//result\
+				//mail.To.Add("wryi636@gmail.com");//result\
 				//mail.To.Add("boris83418@gmail.com");//result
-													//設定優先權
+				//設定優先權
 				mail.Priority = MailPriority.Normal;
 				//標題
-				mail.Subject = "StockProphet_驗證碼發送，該信箱為系統自動發信，請勿回信";
+				mail.Subject = "StockProphet_身分驗證，此為系統自動發信，請勿回信";
 				//內容
-				mail.Body = "<h1>StockProphet系統自動發信_驗證碼發送</h1>\r\n" +
+				mail.Body = "<h1>StockProphet系統 驗證碼</h1>\r\n" +
 							"<p>以下是您本次修改密碼的驗證碼</p>\r\n" +
-							"<p>" + verifyCode + "</p>\r\n" +
-							"<h3>驗證碼:</h3>\r\n<h3><b>帳號註冊信箱</b></h3>\r\n";
+							"<h3>驗證碼:</h3>\r\n" +
+							"<h3>" + verifyCode + "</h3>\r\n" ;
 				//內容使用html
 				mail.IsBodyHtml = true;
 				//設定gmail的smtp(這是google的)
