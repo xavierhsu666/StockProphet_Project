@@ -30,7 +30,7 @@ app.UseAuthorization();
 app.UseSession();
 app.MapControllerRoute(
 	name: "default",
-pattern: "{controller=StockModel}/{action=predictindex}");
+pattern: "{controller=Member}/{action=Index}");
 //pattern: "{controller=StockModel}/{action=predictindex}/{id?}");
 //pattern: "{controller=StockModel}/{action=testBuild}");
 
