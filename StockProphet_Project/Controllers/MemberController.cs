@@ -6,20 +6,20 @@ using Tensorflow;
 
 namespace StockProphet_Project.Controllers
 {
-    public class MemberController : Controller
-    {
-        //在MemberController中可以讀取該StockProphet資料
-        private readonly StocksContext _context;
-        public MemberController(StocksContext context)
-        {
-            _context = context;
-        }
+	public class MemberController : Controller
+	{
+		//在MemberController中可以讀取該StockProphet資料
+		private readonly StocksContext _context;
+		public MemberController(StocksContext context)
+		{
+			_context = context;
+		}
 
-        //會員主頁
-        public IActionResult Index()
-        {
-            return View();
-        }
+		//會員主頁
+		public IActionResult Index()
+		{
+			return View();
+		}
 
         //註冊頁面
         public IActionResult Register()
@@ -33,57 +33,56 @@ namespace StockProphet_Project.Controllers
             //判斷帳戶名是否有重複            
             var result = _context.DbMembers.Where(x => x.MaccoMnt == MAccoMnt);
             return result.Any();
-            
         }
 
-        //註冊頁面-新會員註冊OK
-        [HttpPost]
-        public IActionResult Register(string MAccoMnt, string MPassword, string MEmail, string MTrueName, DateOnly MBirthday, string MGender, byte MInvestYear, string MLevel, string registerTime)
-        {
-            //System.Diagnostics.Debug.WriteLine(MAccoMnt);
-            //System.Diagnostics.Debug.WriteLine(MPassword);
-            //System.Diagnostics.Debug.WriteLine(MEmail);
-            //System.Diagnostics.Debug.WriteLine(MTrueName);
-            //System.Diagnostics.Debug.WriteLine(MBirthday);
-            //System.Diagnostics.Debug.WriteLine(MGender);
-            //System.Diagnostics.Debug.WriteLine(MInvestYear);
-            //System.Diagnostics.Debug.WriteLine(MLevel);
+		//註冊頁面-新會員註冊OK
+		[HttpPost]
+		public IActionResult Register(string MAccoMnt, string MPassword, string MEmail, string MTrueName, DateOnly MBirthday, string MGender, byte MInvestYear, string MLevel, string registerTime)
+		{
+			//System.Diagnostics.Debug.WriteLine(MAccoMnt);
+			//System.Diagnostics.Debug.WriteLine(MPassword);
+			//System.Diagnostics.Debug.WriteLine(MEmail);
+			//System.Diagnostics.Debug.WriteLine(MTrueName);
+			//System.Diagnostics.Debug.WriteLine(MBirthday);
+			//System.Diagnostics.Debug.WriteLine(MGender);
+			//System.Diagnostics.Debug.WriteLine(MInvestYear);
+			//System.Diagnostics.Debug.WriteLine(MLevel);
 
-            //轉換日期格式 字串->DateOnly
-            DateOnly CurrentTime = DateOnly.Parse("2024-03-14");
-            DateOnly MregisterTime = DateOnly.Parse(CurrentTime.ToString("yyyy-MM-dd"));
-            System.Diagnostics.Debug.WriteLine(MregisterTime);
-
-
-            //將資料存到資料庫
-            _context.DbMembers.Add(new DbMember
-            {
-                MaccoMnt = MAccoMnt,
-                Mpassword = MPassword,
-                Memail = MEmail,
-                MtrueName = MTrueName,
-                Mbirthday = MBirthday,
-                Mgender = MGender,
-                MinvestYear = MInvestYear,
-                Mlevel = MLevel,
-                MregisterTime = MregisterTime
-            });
-            _context.SaveChanges();
-            return View();
-        }
+			//轉換日期格式 字串->DateOnly
+			DateOnly CurrentTime = DateOnly.Parse("2024-03-14");
+			DateOnly MregisterTime = DateOnly.Parse(CurrentTime.ToString("yyyy-MM-dd"));
+			System.Diagnostics.Debug.WriteLine(MregisterTime);
 
 
-        //會員登入頁
-        public IActionResult Login()
-        {
-            return View();
-        }
-        //判斷登入會員等級並決定可看到頁面的權限
-        [HttpGet]
-        public string checkLogin(string MAccoMnt, string MPassword)
-        {
-            //var memberAccoMnt = _context.Members.FirstOrDefault(x => x.MaccoMnt == MAccoMnt);
-            //var memberEmail = _context.Members.FirstOrDefault(x=>x.Memail == MAccoMnt);
+			//將資料存到資料庫
+			_context.DbMembers.Add(new DbMember
+			{
+				MaccoMnt = MAccoMnt,
+				Mpassword = MPassword,
+				Memail = MEmail,
+				MtrueName = MTrueName,
+				Mbirthday = MBirthday,
+				Mgender = MGender,
+				MinvestYear = MInvestYear,
+				Mlevel = MLevel,
+				MregisterTime = MregisterTime
+			});
+			_context.SaveChanges();
+			return View();
+		}
+
+
+		//會員登入頁
+		public IActionResult Login()
+		{
+			return View();
+		}
+		//判斷登入會員等級並決定可看到頁面的權限
+		[HttpGet]
+		public string checkLogin(string MAccoMnt, string MPassword)
+		{
+			//var memberAccoMnt = _context.Members.FirstOrDefault(x => x.MaccoMnt == MAccoMnt);
+			//var memberEmail = _context.Members.FirstOrDefault(x=>x.Memail == MAccoMnt);
 
             var member = _context.DbMembers.FirstOrDefault(x => x.MaccoMnt == MAccoMnt);
             Console.WriteLine(member);
@@ -107,8 +106,8 @@ namespace StockProphet_Project.Controllers
                     HttpContext.Session.SetString("Mgender", member.Mgender!);
                     HttpContext.Session.SetString("MinvestYear", member.MinvestYear.ToString()!);
 
-                    //Console.WriteLine(member.MinvestYear);
-                    //Console.WriteLine(member.Mlevel);
+					//Console.WriteLine(member.MinvestYear);
+					//Console.WriteLine(member.Mlevel);
 
                     //依照會員身分給予不同權限的頁面
                     switch (member.Mlevel)
@@ -122,27 +121,27 @@ namespace StockProphet_Project.Controllers
                         case "管理者":
                             return "管理者";
 
-                        default:
-                            return "一般訪客";
-                    }
-                }
-                else
-                {
-                    return "輸入的密碼不正確";
-                }
-            }
-            else
-            {
-                return "會員名稱錯誤";
-            }
+						default:
+							return "一般訪客";
+					}
+				}
+				else
+				{
+					return "輸入的密碼不正確";
+				}
+			}
+			else
+			{
+				return "會員名稱錯誤";
+			}
 
-        }
+		}
 
-        //忘記密碼頁forgot-password
-        public IActionResult ForgotPassword()
-        {
-            return View();
-        }
+		//忘記密碼頁forgot-password
+		public IActionResult ForgotPassword()
+		{
+			return View();
+		}
 
         //檢查忘記密碼頁面的信箱是否正確
         [HttpGet]
@@ -163,13 +162,13 @@ namespace StockProphet_Project.Controllers
             return result.Any();
         }
 
-        [HttpGet]
-        //系統自動發驗證碼信件
-        public void sendGmail(string MEmail)
-        {
-            var member = _context.DbMembers.FirstOrDefault(x => x.Memail == MEmail);
-            var result = member.Memail;
-            System.Diagnostics.Debug.WriteLine("顯示的" + result);
+		[HttpGet]
+		//系統自動發驗證碼信件
+		public void sendGmail(string MEmail)
+		{
+			var member = _context.DbMembers.FirstOrDefault(x => x.Memail == MEmail);
+			var result = member.Memail;
+			System.Diagnostics.Debug.WriteLine("顯示的" + result);
 
             if (member != null)
             {
@@ -256,5 +255,5 @@ namespace StockProphet_Project.Controllers
 
 
 
-    }
+	}
 }

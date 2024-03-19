@@ -25,6 +25,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using Tensorflow.NumPy.Pickle;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.ComponentModel;
+using Tensorflow.Keras.Callbacks;
 
 namespace StockProphet_Project.Controllers {
 	public class StockModelController : Controller {
@@ -162,29 +163,35 @@ namespace StockProphet_Project.Controllers {
 			}
 
 		}
-		public double[] ModelOutputCheck( string stockCode,float esti, float u = 0, float l = 0 ) {
-			var q = from o in _context.Stock
-					where o.SnCode == stockCode
-					orderby o.StDate descending
-					select o;
-			var e = (float)(q.FirstOrDefault().SteClose);
+		public double[] ModelOutputCheck( string stockCode, int userPrefer, float esti, float u = 0, float l = 0 ) {
+			if (userPrefer == 1) {
+				var q = from o in _context.Stock
+						where o.SnCode == stockCode
+						orderby o.StDate descending
+						select o;
+				var e = (float)(q.FirstOrDefault().SteClose);
 
-			Console.WriteLine("Adjust the Usable price");
-			Console.WriteLine("e = " + e);
-			Console.WriteLine("esti = " + esti);
-			Console.WriteLine("esti/e = " + esti / e);
-			if (esti / e > 1.0 || esti/e   < 0.9) {
-				var spread = esti / e;
-				if (spread > 1) {
-					u = u - (esti - (e * (float)1.1));
-					l = l - (esti - (e * (float)1.1));
-					esti = e * (float)1.1;
+				Console.WriteLine("Adjust the Usable price");
+				Console.WriteLine("e = " + e);
+				Console.WriteLine("esti = " + esti);
+				Console.WriteLine("esti/e = " + esti / e);
+				Console.WriteLine("u = " + u);
+				Console.WriteLine("l = " + l);
+				if (esti / e > 1.1 || esti / e < 0.9) {
+					var spread = esti / e;
+					if (spread > 1) {
+						u = u - (esti - (e * (float)1.1));
+						l = l - (esti - (e * (float)1.1));
+						esti = e * (float)1.1;
+					} else {
+						u = u - (esti - (e * (float)0.9));
+						l = l - (esti - (e * (float)0.9));
+						esti = e * (float)0.9;
+					}
+					return new double[] { esti, u, l };
 				} else {
-					u = u - (esti - (e * (float)0.9));
-					l = l - (esti - (e * (float)0.9));
-					esti = e * (float)0.9;
+					return new double[] { esti, u, l };
 				}
-				return new double[]{ esti, u, l };
 			} else {
 				return new double[] { esti, u, l };
 			}
@@ -270,12 +277,13 @@ namespace StockProphet_Project.Controllers {
 					string[] inputVar = TransferToColumnName(wi.InputColumnName).ToArray();
 					KsModelClass.ModelInput mi = new KsModelClass.ModelInput() {
 						inputPara = inputVar,
-						maximumNumberOfIterations = (int)wi.R_maximumNumberOfIterations
+						maximumNumberOfIterations = (int)wi.R_maximumNumberOfIterations,
+						userPrefer = (int)wi.userPrefer
 					};
 
 					var mo = RegessionBuild(q, mi);
 					//mo.output_F_Forcast,mo.output_M_RMSE,mo.output_M_MSE
-					var moo = ModelOutputCheck(wi.stockCode,mo.output_F_Forcast);
+					var moo = ModelOutputCheck(wi.stockCode,(int)wi.userPrefer, mo.output_F_Forcast);
 					var jmo = new {
 						output_F_Forcast = moo[0],
 						output_M_RMSE = mo.output_M_RMSE,
@@ -293,13 +301,17 @@ namespace StockProphet_Project.Controllers {
 					Console.WriteLine("Check Input data OK...............");
 					TimeSerialModel.ModelInput tmi = new TimeSerialModel.ModelInput() {
 						focastDate = DateTime.Parse(InputLatestDate),
-						confidenceLevel = (float)(data.T_confidenceLevel / 100),
+						confidenceLevel = (float)((float)data.T_confidenceLevel / (float)100),
 						windowSize = data.T_windowSize,
 						seriesLength = data.T_seriesLength,
 						trainSize = data.T_trainSize
 					};
+
 					var tmo = TimeSerialBuild(q, tmi);
-					var qoo = ModelOutputCheck(wi.stockCode, tmo.Output_F_estimate,tmo.Output_F_upperEstimate,tmo.Output_F_lowerEstimate);
+					var qoo = ModelOutputCheck(wi.stockCode,(int)wi.userPrefer, tmo.Output_F_estimate, tmo.Output_F_upperEstimate, tmo.Output_F_lowerEstimate);
+					tmo.Output_F_estimate = (float)qoo[0];
+					tmo.Output_F_upperEstimate = (float)qoo[1];
+					tmo.Output_F_lowerEstimate = (float)qoo[2];
 					ViewBag.result = new double[] {
 						tmo.Output_M_MAE,
 						tmo.Output_M_RMSE,
@@ -307,7 +319,6 @@ namespace StockProphet_Project.Controllers {
 						qoo[2],
 						qoo[1]
 					};
-
 					return Json(tmo);
 				default:
 					return Json(data);
@@ -379,7 +390,7 @@ namespace StockProphet_Project.Controllers {
 			return View(await _context.Stock.ToListAsync());
 		}
 		[HttpPost]
-		public IActionResult LSTMpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams ) {
+		public IActionResult LSTMpredict(string sncode, int predictday, Dictionary<string, bool> selectedParams) {
 			//測試區
 			// 在控制台輸出收到的資料以進行檢查
 			//Console.WriteLine("Received data:");
@@ -394,7 +405,7 @@ namespace StockProphet_Project.Controllers {
 
 			float predictionResult;
 			int selsectedcount = selectedParams.Count;
-
+			string predictionResulttoString;
 			//撈出所選股票(全部區間)
 
 			var stockData = _context.Stock
@@ -598,9 +609,10 @@ namespace StockProphet_Project.Controllers {
 			x = np.reshape(x, theShape);
 			var model = keras.Sequential();
 			model.add(keras.layers.LSTM(50, keras.activations.Relu));
+			
 			model.add(keras.layers.Dense(1));
 			model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
-			// 測試Xnumpy的樣子
+			////測試Xnumpy的樣子
 			//string xString1 = x.ToString();
 			//string filePathx1 = "x_array1.txt";
 			//System.IO.File.WriteAllText(filePathx1, xString1);
@@ -618,7 +630,16 @@ namespace StockProphet_Project.Controllers {
 			//return Ok("Some result");
 
 			//模型
-			model.fit(x, y, epochs: 200, verbose: 0);
+			var history = model.fit(x, y, epochs: 200, verbose: 0);
+			// 獲取訓練過程中的 loss 值列表
+			var lossList = history.history["loss"];
+
+			// 獲取最後一個 epoch 的 loss 值
+			var lastLoss = lossList.LastOrDefault();
+			string lastLosstostring=lastLoss.ToString();
+			// 打印最後一個 epoch 的 loss 值
+
+
 
 			int stockDatafromtime = predictdatacount(sncode, predictday);
 
@@ -647,9 +668,9 @@ namespace StockProphet_Project.Controllers {
 
 			// 輸出預測結果
 			predictionResult = prediction[0].numpy()[0, 0];
+			predictionResulttoString= predictionResult.ToString();
 
-
-			return Content(predictionResult.ToString());
+			return Content($"{predictionResulttoString},{lastLosstostring}");
 
 		}
 
@@ -694,6 +715,7 @@ namespace StockProphet_Project.Controllers {
 			//return Ok("Some result");
 
 			float predictionResult;
+			string predictionResulttoString;
 			int selsectedcount = selectedParams.Count;
 
 			//撈出所選股票
@@ -906,7 +928,14 @@ namespace StockProphet_Project.Controllers {
 			//編譯模型
 			model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
 			//訓練模型
-			model.fit(x, y, epochs: 200, verbose: 0);
+			var history = model.fit(x, y, epochs: 200, verbose: 0);
+			// 獲取訓練過程中的 loss 值列表
+			var lossList = history.history["loss"];
+
+			// 獲取最後一個 epoch 的 loss 值
+			var lastLoss = lossList.LastOrDefault();
+			string lastLosstostring = lastLoss.ToString();
+			// 打印最後一個 epoch 的 loss 值
 
 
 			int stockDatafromtime = predictdatacount(sncode, predictday);
@@ -936,9 +965,9 @@ namespace StockProphet_Project.Controllers {
 			var prediction = model.predict(reshapedData);
 			// 輸出預測結果
 			predictionResult = prediction[0].numpy()[0, 0];
+			predictionResulttoString = predictionResult.ToString();
 
-
-			return Content(predictionResult.ToString());
+			return Content($"{predictionResulttoString},{lastLosstostring}");
 
 		}
 
@@ -946,11 +975,7 @@ namespace StockProphet_Project.Controllers {
 		public IActionResult predictindex() {
 			return View();
 		}
-		public IActionResult test()
-		{
-			return View();
-		}
-		public IActionResult predictphoto( string predicteddata, string sncode ) {
+		public IActionResult predictphoto( string predicteddata, string sncode, string predictedloss) {
 			// 檢索資料庫中的資料筆數
 			int dataCount = _context.Stock.Where(x => x.SnCode == sncode).Count();
 
@@ -962,7 +987,7 @@ namespace StockProphet_Project.Controllers {
 			// 將資料傳遞到視圖
 			ViewBag.DataCount = dataCount;
 			ViewBag.PredictedData = predictedData;
-
+			ViewBag.PredictedLoss= predictedloss;
 			// 檢索資料庫中的股票資料
 			var stockData = _context.Stock.Where(x => x.SnCode == sncode).ToList();
 			// 將股票資料傳遞到視圖
@@ -991,18 +1016,20 @@ namespace StockProphet_Project.Controllers {
 		}
 
 		[HttpPost]
-		public IActionResult Predictsavedata( string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime ) {
+		public IActionResult Predictsavedata(string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime, string PAccount) {
 			var query = new StocksContext();
 			DateTime buildTime = DateTime.Parse(PBuildTime);
 			DateTime finishTime = DateTime.Parse(PfinishTime);
 			//System.Diagnostics.Debug.WriteLine($"PLabel: {PLabel}");
+			System.Diagnostics.Debug.WriteLine($"PAccount111111111111: {PAccount}");
 			var newdata = new DbModel {
 				Pstock = PStock,
 				Pvariable = PVariable,
 				Plabel = PLabel,
 				Pprefer = PPrefer,
 				PbulidTime = buildTime,
-				PfinishTime = finishTime
+				PfinishTime = finishTime,
+				Paccount = PAccount
 			};
 			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
 			query.DbModels.Add(newdata);
