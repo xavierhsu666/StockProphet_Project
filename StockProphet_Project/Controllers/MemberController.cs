@@ -83,6 +83,7 @@ namespace StockProphet_Project.Controllers
 			//var memberEmail = _context.Members.FirstOrDefault(x=>x.Memail == MAccoMnt);
 
 			var member = _context.DbMembers.FirstOrDefault(x => x.MaccoMnt == MAccoMnt);
+			Console.WriteLine(member);
 			//先檢查是否存在該會員
 			//if (memberAccoMnt != null || memberEmail != null)
 			if (member != null)
@@ -104,19 +105,19 @@ namespace StockProphet_Project.Controllers
 					HttpContext.Session.SetString("MinvestYear", member.MinvestYear.ToString()!);
 
 					//Console.WriteLine(member.MinvestYear);
-					//Console.WriteLine(member.Mlevel);
+					Console.WriteLine(member.Mlevel);
 
 					//依照會員身分給予不同權限的頁面
 					switch (member.Mlevel)
 					{
 						case "一般會員":
-							return "我是一般會員";
+							return "一般會員";
 
 						case "高級會員":
-							return "我是高級會員";
+							return "高級會員";
 
 						case "管理者":
-							return "我是管理者";
+							return "管理者";
 
 						default:
 							return "一般訪客";

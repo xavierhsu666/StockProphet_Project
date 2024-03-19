@@ -41,6 +41,7 @@
         //按下登入按鈕需驗證身分別
         $('#LoginSubmit').on("click", function () {
             var Account = $('#Account').val()
+            console.log(Account);
             if (Account == "") {
                 alert("未輸入登入帳號");
             }
@@ -59,14 +60,13 @@
                             alert(e);
                         }
                         else {
+                            //使用sessionStorage進行跨頁面傳值
+                            sessionStorage.setItem("LogAccount", Account);
+                            sessionStorage.setItem("LogMemberLevel", e);
+
                             window.location.href = "/Home/Index";
+
                         }
-
-                        //使用sessionStorage進行跨頁面傳值
-                         sessionStorage.setItem("LogAccount", null);
-                         sessionStorage.setItem("MemberLevel", null);
-
-                        //  window.location.href = "/Home/Index";
                     }
                 })
 
