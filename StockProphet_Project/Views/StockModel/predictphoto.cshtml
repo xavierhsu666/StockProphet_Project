@@ -16,13 +16,14 @@
     // 从 ViewBag 中获取后端传递的股票数据和预测数据
     var actualData = @Html.Raw(Json.Serialize(ViewBag.ChartData));
     var predictedData = @Html.Raw(Json.Serialize(ViewBag.PredictedData));
-
+    // 只取最后五条记录
+    var lastFiveRecords = actualData.slice(-5);
     // 解析实际数据的日期和收盘价
-    var actualDates = actualData.map(function(item) {
+    var actualDates = lastFiveRecords.map(function (item) {
         return item.stDate;
     });
 
-    var actualClosePrices = actualData.map(function(item) {
+    var actualClosePrices = lastFiveRecords.map(function (item) {
         return item.steClose;
     });
 
@@ -30,7 +31,7 @@
     var lastActualDate = moment(actualDates[actualDates.length - 1]);
 
     // 获取隔天的日期
-    var predictedDate = moment(lastActualDate).add(1, 'day');
+    var predictedDate = moment(lastActualDate).add(30, 'day');
 
     // 格式化预测日期为 YYYY-MM-DD
     var formattedPredictedDate = predictedDate.format('YYYY-MM-DD');

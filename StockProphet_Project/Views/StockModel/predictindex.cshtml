@@ -205,7 +205,7 @@
 
 <script>
 	//判斷會員是否登入
-	 var MID = "@Context.Session.GetString("MID")"
+	var MID = sessionStorage.getItem("LogAccount");
 	 if (MID == '') {
 		 $('#beforeLog').show();
 		 $('#afterLog').hide();
@@ -619,7 +619,7 @@
 		// ####<funcs-------------------------------------->
 		// <ks area--------------------->
 
-		if ("@customerlevel" == "high") {
+			if (sessionStorage.getItem("LogMemberLevel") == "高級會員") {
 			$("#longterm").on("click", function () {
 				$("#longterm").css("color", "black")
 				$("#shortterm").css("color", "white")

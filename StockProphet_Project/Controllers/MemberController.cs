@@ -107,7 +107,7 @@ namespace StockProphet_Project.Controllers
                     HttpContext.Session.SetString("MinvestYear", member.MinvestYear.ToString()!);
 
 					//Console.WriteLine(member.MinvestYear);
-					//Console.WriteLine(member.Mlevel);
+					Console.WriteLine(member.Mlevel);
 
                     //依照會員身分給予不同權限的頁面
                     switch (member.Mlevel)
