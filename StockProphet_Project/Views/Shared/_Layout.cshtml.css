@@ -1,6 +1,16 @@
 ﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+/*mainArea是新增的*/
+.mainArea {
+    background-color: #f3f2f1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /*padding-top: 50px;*/
+    /*padding-bottom: 50px;*/
+}
+
 a.navbar-brand {
   white-space: normal;
   text-align: center;
