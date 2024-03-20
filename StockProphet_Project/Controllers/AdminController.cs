@@ -12,8 +12,27 @@ namespace StockProphet_Project.Controllers
 		}
 		public IActionResult Index()
         {
-            
             return View();
+        }
+        [HttpGet]
+        public IActionResult AdminStock()
+        {
+            var query = _context.Stock
+                .OrderBy(x=>x.SnCode)
+                .ThenByDescending(x=> x.StDate ).ToList();
+
+            return Json(query);
+        }
+        public IActionResult AdminMember()
+        {
+            var query=_context.DbMembers.ToList();
+            return Json(query);
+        }
+        public IActionResult AdminModel()
+        {
+            var query = _context.DbModels.ToList();
+            return Json(query);
+
         }
     }
 }
