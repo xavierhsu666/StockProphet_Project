@@ -19,7 +19,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                    <ul class="navbar-nav flex-grow-1" id="mynavgation">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
@@ -42,9 +42,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark text-right" asp-area="" asp-controller="Member" asp-action="Register">註冊</a>
                         </li>
-                        <li class="nav-item">
+                        @* <li class="nav-item">
                             <a class="nav-link text-dark text-right" asp-area="" asp-controller="Member" asp-action="Login">登入</a>
-                        </li>
+                        </li> *@
                       
                         </p>
                     </ul>
@@ -71,13 +71,14 @@
 		$(document).ready(function () {
 
 			if (sessionStorage.getItem("LogAccount") == null) {
+                console.log(1)
 
-				$('#mynavgation').append(`<li class="nav-item" ><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login" >登入</a></li>`);
+                $('#mynavgation').append(`<li class="nav-item" ><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login" >登入</a></li>`);
 				$('#loginlink').show();
 				$('#logoutlink').hide();
 			} else {
-
-				$("#mynavgation").append(`<li class="nav-item"><a class="nav-link text-dark text-right" id="logoutlink" href="/Member/Index">登出</a></li> `)
+                console.log(2)
+				$("#mynavgation").append(`<li class="nav-item"><a class="nav-link text-dark text-right" id="logoutlink" href="/Home/Index">登出</a></li> `)
 				$('#loginlink').hide();
 				$('#logoutlink').show();
 			}
