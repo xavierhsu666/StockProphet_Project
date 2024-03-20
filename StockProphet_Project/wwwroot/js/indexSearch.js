@@ -1,4 +1,5 @@
-﻿$("#search").on("keydown", function (e) {
+﻿$("#tttest").on
+$("#search").on("keydown", function (e) {
     if (e.which == 13) changePage();
 });
 
@@ -42,4 +43,4 @@ $.getJSON("/Home/stocksListAC", function (myData) {
     });
 })
 
-
+console.log("wowwww");

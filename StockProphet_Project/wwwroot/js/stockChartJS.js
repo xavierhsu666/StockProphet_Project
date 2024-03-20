@@ -452,6 +452,7 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
                 preData[z] = { Date: parseDate(xData[z]), Close: yData[z] };
             }
             var index = i;
+            console.log(preData);
             drawPre(preData, index, preState, preDate);
         }
     })
