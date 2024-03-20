@@ -1,10 +1,11 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<link rel="stylesheet" href="~/css/indexStyle.css" type="text/css" />
 
+<p id="tttest">Show Session</p>
+<div id="SessionTest" style="display: none;">
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
     <p>網站首頁</p>
     <div style="background-color:lightpink">
         <p> <b>Session傳值1:</b> @Context.Session.GetString("MID")</p><br>
@@ -12,7 +13,33 @@
         <p> <b>Session傳值3:</b> @Context.Session.GetString("Mlevel")</p>
     </div>
 </div>
-<script>
-   
+<p>網站首頁</p>
+<div style="background-color:lightpink">
+    <p> <b>Session傳值1:</b> @Context.Session.GetString("MID")</p><br>
+    <p> <b>Session傳值2:</b> @Context.Session.GetString("MEmail")</p>
+    <p> <b>Session傳值3:</b> @Context.Session.GetString("Mlevel")</p>
+</div>
+</div>
 
-</script>
+
+
+
+<div class="upArea">
+	<div id="search-box">
+		<label for="search"></label>
+		<input type="text" id="search" />
+		<button onclick="changePage()">O</button>
+	</div>
+</div>
+<div class="bottomArea">
+	<div class="bottom-left">
+		<div class="MB-icon"><img src="~/FB.gif" /></div>
+	</div>
+	<div class="bottom-right">
+		<div class="m-btn">
+			<button class="btn-m">會員專區</button>
+			<button class="btn-t">遊客體驗</button>
+		</div>
+	</div>
+</div>
+<script src="~/js/indexSearch.js"></script>
