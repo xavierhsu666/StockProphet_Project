@@ -32,6 +32,8 @@ using Tensorflow.Keras.Models;
 using Tensorflow.Keras.ArgsDefinition;
 using Tensorflow.Keras.Datasets;
 using Tensorflow.Operations.Activation;
+using Microsoft.AspNetCore.Cors;
+using System.Text;
 
 
 namespace StockProphet_Project.Controllers {
@@ -52,6 +54,44 @@ namespace StockProphet_Project.Controllers {
 		// <參數區>改過需要調整的地方
 
 		// <view頁面區>
+		public IActionResult TestWsWepAPI() {
+			return View();
+
+		}
+		[EnableCors("MyAllowSpecificOrigins")]
+		[HttpGet]
+		public async Task<IActionResult> test1() {
+			Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+			using (HttpClient client = new HttpClient()) {
+				try {
+					// 設定 Web API 的 URL
+					string apiUrl = "https://mops.twse.com.tw/nas/t21/sii/t21sc03_113_2_0.html";
+
+					// 發送 GET 請求並等待回應
+					HttpResponseMessage response = await client.GetAsync(apiUrl);
+
+					// 確認請求成功
+					if (response.IsSuccessStatusCode) {
+						// 讀取回傳的資料
+						byte[] bytes = await response.Content.ReadAsByteArrayAsync();
+						// 將資料轉換為 UTF-8 編碼
+						string responseBody = Encoding.GetEncoding("big5").GetString(bytes);
+
+						// 將資料以 UTF-8 編碼返回
+
+						Console.WriteLine("API 回傳的資料：");
+						Console.WriteLine(responseBody);
+						return Content(responseBody, "text/html", Encoding.GetEncoding("big5"));
+					} else {
+						Console.WriteLine($"請求失敗，狀態碼：{response.StatusCode}");
+						return Content($"請求失敗，狀態碼：{response.StatusCode}");
+					}
+				} catch (HttpRequestException e) {
+					Console.WriteLine($"發生 HTTP 錯誤： {e.Message}");
+					return Content($"發生 HTTP 錯誤： {e.Message}");
+				}
+			}
+		}
 		public IActionResult TestBuild() {// 获取表单中的所有输入值
 			return View();
 		}

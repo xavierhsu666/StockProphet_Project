@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.ML.LightGbm" Version="3.0.1" />
     <PackageReference Include="Microsoft.ML.TimeSeries" Version="3.0.1" />
     <PackageReference Include="SciSharp.TensorFlow.Redist" Version="2.11.4" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
     <PackageReference Include="TensorFlow.Keras" Version="0.11.4" />
     <PackageReference Include="TensorFlow.NET" Version="0.110.4" />
   </ItemGroup>
