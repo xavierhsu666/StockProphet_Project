@@ -145,7 +145,7 @@ var yScaleKD = d3.scaleLinear()
 var dataAll;
 
 d3.json(`/Home/showStocks/${stocksID}`, function (data) {
-    //console.log(data);
+    
     $(".td-tittle").text(data[0].StockName) //股票名稱
     data = data.map(function (d) {
         return {
