@@ -1,10 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using StockProphet_Project.Models;
+using System.Text.Encodings.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+         .AddJsonOptions(options => {
+             //不要改大小寫
+             options.JsonSerializerOptions.PropertyNamingPolicy = null;
+             //排版
+             options.JsonSerializerOptions.WriteIndented = true;
+             options.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+
+         });
 builder.Services.AddDbContext<StocksContext>(
 	  options => options.UseSqlServer(builder.Configuration.GetConnectionString("StocksConnstring")));
 //AddSession
@@ -27,12 +36,11 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-//呼叫跨頁面存取功能函式
 app.UseSession();
 app.MapControllerRoute(
 	name: "default",
-pattern: "{controller=StockModel}/{action=predictindex}");
-//pattern: "{controller=StockModel}/{action=predictindex}/{id?}");
+//pattern: "{controller=StockModel}/{action=predictindex}");
+pattern: "{controller=StockModel}/{action=predictindex}/{id?}");
 //pattern: "{controller=StockModel}/{action=testBuild}");
 
 app.Run();

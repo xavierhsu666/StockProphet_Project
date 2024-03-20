@@ -59,12 +59,22 @@
 					if (e === "會員名稱錯誤" || e==="輸入的密碼不正確") {
 						alert(e);
 					}
-					else {					
-						//使用sessionStorage進行跨頁面傳值
-						sessionStorage.setItem("LogAccount", Account);
-						sessionStorage.setItem("LogMemberLevel", e);
+					else {
+						if (e === "管理者") {
+
+								window.location.href = "/Admin/Index";
 						
-						window.location.href = "/Home/Index";
+						}
+						else {
+
+							
+								//使用sessionStorage進行跨頁面傳值
+								sessionStorage.setItem("LogAccount", Account);
+								sessionStorage.setItem("LogMemberLevel", e);
+
+								window.location.href = "/Home/Index";
+						}
+
 
 					}		
 				}

@@ -8,6 +8,13 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/StockProphet_Project.styles.css" asp-append-version="true" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @* d3.js及圖表會用的到的 *@
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://techanjs.org/techan.min.js"></script>
+    @* 首頁autocomplete要用到的 *@
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js" integrity="sha256-xLD7nhI62fcsEZK2/v8LsBcb4lG7dgULkuXoXB/j91c=" crossorigin="anonymous"></script>
 </head>
 <body>
     <header>
@@ -19,25 +26,22 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                    <ul class="navbar-nav flex-grow-1" id="mynavgation">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                       
                         @* 新增會員中心的下拉選單 *@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">會員中心</a>
                             <div class="dropdown-menu">
 
                                 <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Login">會員登入/註冊</a>
-
                                 <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">會員主頁</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">個人資料修改</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">我要預測</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">我的收藏頁面</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">歷史預測頁面</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Edit">個人資料修改</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="StockModel" asp-action="Predictindex">我要預測</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="MyCollect">我的收藏頁面</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="MyPredictResult">我的預測結果頁面</a>
                             </div>
                         </li>
                         @* 要設定靠右對齊-未完成 *@
@@ -45,9 +49,10 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark text-right" asp-area="" asp-controller="Member" asp-action="Register">註冊</a>
                         </li>
-                        <li class="nav-item">
+                        @* <li class="nav-item">
                             <a class="nav-link text-dark text-right" asp-area="" asp-controller="Member" asp-action="Login">登入</a>
-                        </li>
+                        </li> *@
+                      
                         </p>
                     </ul>
                 </div>
@@ -55,19 +60,51 @@
         </nav>
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-3 mainArea">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - StockProphet_Project - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+	<footer class="border-top footer text-muted">
+		<div class="container">
+			&copy; 2024 - StockProphet_Project - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+		</div>
+	</footer>
+	@*<script src="~/lib/jquery/dist/jquery.min.js"></script> *@
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	@await RenderSectionAsync("Scripts", required: false)
+	<script>
+		$(document).ready(function () {
+
+			if (sessionStorage.getItem("LogAccount") == null) {
+                console.log(1)
+
+                $('#mynavgation').append(`<li class="nav-item" ><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login" >登入</a></li>`);
+				$('#loginlink').show();
+				$('#logoutlink').hide();
+			} else {
+                console.log(2)
+				$("#mynavgation").append(`<li class="nav-item"><a class="nav-link text-dark text-right" id="logoutlink" href="/Home/Index">登出</a></li> `)
+				$('#loginlink').hide();
+				$('#logoutlink').show();
+			}
+			$("#logoutlink").on("click", function () { 
+			
+				if (confirm('您確定要登出嗎？')) {
+					// 用户点击了确认按钮，执行相关操作
+					sessionStorage.clear();
+					window.location.href("/Home/Index")
+				} else {
+					// 用户点击了取消按钮，取消操作
+					console.log("2");
+				}
+			
+			})
+
+
+
+		})
+	</script>
 </body>
 </html>
