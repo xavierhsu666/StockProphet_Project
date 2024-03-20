@@ -43,4 +43,3 @@ $.getJSON("/Home/stocksListAC", function (myData) {
     });
 })
 
-console.log("wowwww");
