@@ -35,48 +35,61 @@
 </div>
 
 <script>
-    $('#WrongMsg').hide();
+    $('#WrongMsg').hide();	
 
-	$(function () {
-		//按下登入按鈕需驗證身分別
-		$('#LoginSubmit').on("click", function () {
-			var Account = $('#Account').val()
-			console.log(Account);
-			if (Account == "") {
-				alert("未輸入登入帳號");
-			}
-			else {
-			var dataToServer = {
-				MAccoMnt: $('#Account').val(),
-				MPassword: $('#Password').val()
-			}
-				$.ajax({
-					url: "/Member/checkLogin",
-					method: "get",
-					data: dataToServer,
-				success: function (e) {
-					// alert(e);
-					if (e === "會員名稱錯誤" || e==="輸入的密碼不正確") {
-						alert(e);
-					}
-					else {					
-						//使用sessionStorage進行跨頁面傳值
-						sessionStorage.setItem("LogAccount", Account);
-						sessionStorage.setItem("LogMemberLevel", e);
-						
-						window.location.href = "/Home/Index";
-
-					}		
+		$(function () {
+			//按下登入按鈕需驗證身分別
+			$('#LoginSubmit').on("click", function () {
+				var Account = $('#Account').val()
+				console.log(Account);
+				if (Account == "") {
+					alert("未輸入登入帳號");
 				}
+				else {
+					var dataToServer = {
+						MAccoMnt: $('#Account').val(),
+						MPassword: $('#Password').val()
+					}
+					$.ajax({
+						url: "/Member/checkLogin",
+						method: "get",
+						data: dataToServer,
+						success: function (e) {
+							// alert(e);
+							if (e === "會員名稱錯誤" || e === "輸入的密碼不正確") {
+								alert(e);
+							}
+							else {
+								//使用sessionStorage進行跨頁面傳值
+								sessionStorage.setItem("LogAccount", Account);
+								sessionStorage.setItem("LogMemberLevel", e);
+								//使用sessionStorage進行跨頁面傳值-會員資料
+								//供修改會員使用
+								// console.log("ViewBag.LogMemderId")
+								// var LogMemderId = '@ViewBag.LogMemderId';
+								// 	console.log("測試紀錄登錄會員的Id"+LogMemderId)
+
+								// sessionStorage.setItem("LogMemderId", LogMemderId);
+								// sessionStorage.setItem("LogMemberEmail", ViewBag.LogMemberEmail);
+								// sessionStorage.setItem("LogMemberName", ViewBag.LogMemberName);
+								// sessionStorage.setItem("LogMemberBirthday", ViewBag.LogMemberBirthday);
+								// sessionStorage.setItem("LogMemberGender", ViewBag.LogMemberGender);
+								// sessionStorage.setItem("LogMemberInvestYear", ViewBag.LogMemberInvestYear);
+
+								window.location.href = "/Home/Index";
+
+							}
+						}
+					})
+
+				}
+
+
+
+
 			})
 
-            }
 
-
-
-
-        })
-
-
-    })
+		})
+	
 </script>
