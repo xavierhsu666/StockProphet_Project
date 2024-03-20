@@ -62,18 +62,23 @@ namespace StockProphet_Project.Controllers {
         }
 
         //網址傳資料|回傳預測內容
-        public IActionResult showPredictions(string id) {
-            var viewModel = _context.DbModels.ToList();
-            var query = from p in viewModel
-                        where p.Pstock == id
-                        select new {
-                            Account = p.Paccount,
-                            Variable = p.Pvariable,
-                            Label = p.Plabel,
-                            FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd")
-                        };
-            return Json(query);
-        }
+          public IActionResult showPredictions(string id) {
+              var viewModel = _context.DbModels.ToList();
+              var query = from p in viewModel
+                          where p.Pstock == id
+                          select new {
+                              Account = p.Paccount,
+                              Variable = p.Pvariable,
+                              Label = p.Plabel,
+                              FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd"),
+        	                  PID = p.Pid,
+                              BuildTime = Convert.ToDateTime(p.PbulidTime).ToString("yyyy-MM-dd")
+                          };
+              return Json(query);
+          }
+
+ 
+        
 
         //網址傳資料|該股票所有內容(for預測用
         public IActionResult showAllStocks(string id) {
@@ -88,6 +93,21 @@ namespace StockProphet_Project.Controllers {
 
             return Json(query);
         }
+
+        //加入最愛清單
+        [HttpPut]
+        public string SavefavoriteCard(string user, string cardID) {
+            Console.WriteLine(user);
+            var member = _context.DbMembers.SingleOrDefault(e => e.MaccoMnt == user);
+
+            //if (member.Mprefer == null) { 
+            //    member.Mprefer = "{" + cardID + "}";
+            //}
+
+
+            return "zzz";
+        }
+
 
         //檢查股票是否存在
         public string checkStocks(string id) {

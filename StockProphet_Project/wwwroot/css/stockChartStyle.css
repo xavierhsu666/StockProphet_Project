@@ -320,12 +320,8 @@ path {
     width: 350px;
     height: 250px;
     cursor: pointer;
-    /*margin-left: 10px;*/
     margin: 20px;
-    /*margin-right: auto;
-  position: relative;
-  /*left: 3%;*/
-    /*transform: translateX(-185%);*/
+    z-index: 1;
 }
 
 .card-content {
@@ -336,6 +332,7 @@ path {
     transform-style: preserve-3d;
     -webkit-transition: all 500ms;
     transition: all 500ms;
+    z-index: 1;
 }
 
     .card-content div {
@@ -345,6 +342,7 @@ path {
         background: #FFF;
         -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
+
     }
 
     .card-content .card-back {
@@ -353,6 +351,7 @@ path {
         display: flex;
         justify-content: center; /*上下置中*/
         align-items: center; /*左右置中*/
+
     }
 
 .prediction-card:hover .card-content {
@@ -373,12 +372,15 @@ path {
 }
 
 .prediction-collect {
+    
     position: absolute;
-    right: 10px;
+    right: 20px;
     bottom: 10px;
     height: 3em;
     width: 3em;
     border-radius: 50%;
+    z-index:10;
+
 }
 
 .forPre {
@@ -396,6 +398,7 @@ path {
 
 .card-front {
     padding: 20px;
+    z-index: 1;
 }
 
 .pre-state {
