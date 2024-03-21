@@ -3,13 +3,6 @@
 	var customerlevel = @Context.Session.GetString("Mlevel");
 }
 
-@* session傳值 *@
-<div style="background-color:lightpink">
-	<p> <b>Session傳值1:</b> @Context.Session.GetString("MID")</p><br>
-	<p> <b>Session傳值2:</b> @Context.Session.GetString("MEmail")</p>
-	<p> <b>Session傳值3:</b> @Context.Session.GetString("Mlevel")</p>
-	<p> <b>Session傳值3:</b> @Context.Session.GetString("MaccoMnt")</p>
-</div>
  <div id="beforeLog">
      <b>請先登入會員</b>
  </div>
@@ -221,7 +214,9 @@
 	$("#longterm,#shortterm,#predict1,#predict2,#checkmodel,#selectmodel").prop("disabled", true);
 	$("#ksParaArea>label").css("margin", "5px");
 	$(document).ready(function () {
-
+		
+		//測試客人已經預測幾次了
+		checkaccoutbuildmodelnumber();
 
 		
 		// append表格
@@ -274,11 +269,11 @@
 											<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
 											<label for="${formid + key}" class="btn btn-outline-secondary" >${value}</label>`)
 			});
-			$.each(otherParam, function (key, value) {
-				$(`#${formid} .otherparamlist`).append(`
-											<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
-										 <label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`)
-			});
+			// $.each(otherParam, function (key, value) {
+			// 	$(`#${formid} .otherparamlist`).append(`
+			// 								<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
+			// 							 <label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`)
+			// });
 
 
 		};
@@ -932,6 +927,37 @@
 			);
 		}
 	}
+		function checkaccoutbuildmodelnumber() {
+
+			if (sessionStorage.getItem("LogAccount") == null) {
+				// console.log("login")
+				alert("尚未登入，請先登入或註冊")
+				window.location.href = "/Member/Login"
+			} else {
+				// console.log("判斷是否有超過會員比數資料")
+				if (sessionStorage.getItem("LogMemberLevel") != "高級會員") {
+					var datatoserver = { accountname: sessionStorage.getItem("LogAccount") };
+					$.ajax({
+						url: "/StockModel/countpredicttime",
+						method: "get",
+						data: datatoserver,
+						success: function (e) {
+							//超過五筆，跳轉到我的收藏
+							if (e.resulttoformer) {
+								alert("已超過預測上限，請到我的收藏增刪");
+								window.location.href = "/Member/MyPredictResult";
+							} else {
+								console.log("一般會員您好")
+							}
+						}
+					});
+				}
+				else {
+					console.log("高級會員您好")
+				}
+			}
+
+		}
 	
 }
 	 console.log("顯示MID:" + MID);

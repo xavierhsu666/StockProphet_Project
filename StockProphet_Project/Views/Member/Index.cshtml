@@ -49,8 +49,7 @@
 
             <div id="Revise">
                 <div>
-                    <label for="Account">帳號:</label>
-                    <label>@Context.Session.GetString("MaccoMnt")</label>
+                    <label for="Account" id="Account">帳號:</label>
                 </div>
 
                 <div>
@@ -69,22 +68,16 @@
                     <div id="pwdnoteword"><p style="color:red; ">您輸入的密碼不相同</p></div>
                 </div>
 
-                <label for="Email">信箱:</label>
-                <input type="email" pattern="" name="MEmail" id="Email" value="@Context.Session.GetString("MEmail")">
-
-
+                <label for="Email" id="Email">信箱:</label>
                 <br>
 
-                <label for="UserName">姓名:</label>
-                <input type="text" name="MTrueName" id="UserName" value="@Context.Session.GetString("MtrueName")">
+                <label for="UserName" id="UserName">姓名:</label>
                 <br>
 
-                <label for="Birthday">生日:</label>
-                <label>@Context.Session.GetString("Mbirthday")</label>
+                <label for="Birthday" id="Birthday">生日:</label>
                 <br>
 
-                <label for="MGender">性別:</label>
-                <label>@Context.Session.GetString("Mgender")</label>
+                <label for="MGender" id="MGender">性別:</label>
                 <br>
 
                 <label for="MInvestYear">您的投資年數:</label>
@@ -96,13 +89,9 @@
                 </select>
                 <br>
 
-                <label for="MLevel">會員等級:</label>
-                @* 不可修改會員等級 *@
-                @*  <select name="MLevel" id="MLevel" size="1">
-                <option value="一般會員">一般會員</option>
-                <option value="高級會員">高級會員</option>
-                </select> *@
-                <label>@Context.Session.GetString("Mlevel")</label>
+                <label for="MLevel" id="MLevel">會員等級:</label>
+
+
                 <br>
 
                 <button id="ReviseData">修改資料</button>
@@ -134,192 +123,206 @@
 
 <script>
     //判斷會員是否登入
-    var MID = "@Context.Session.GetString("MID")"
-    
-    if (MID == '') {
+    var MID = sessionStorage.getItem("LogAccount")
+
+    if (MID == null) {
         $('#beforeLog').show();
         $('#afterLog').hide();
     } else {
         $('#beforeLog').hide();
         $('#afterLog').show();
-    }
-    console.log("顯示MID:"+MID);
- 
 
-    // 隱藏不同按鈕顯示的畫面
-    $('#Revise').hide();
-    $('#FavoritesPage').hide();
-    $('#PredictFunc').hide();
-    $('#HistoryPage').hide();
-
-    // 重新設定密碼的提示字
-    $('#pwdnoteword').hide();
-
-    //輸入正確舊密碼前不能修改
-    $('#Password1').prop("disabled", true);
-    $('#Password2').prop("disabled", true);
+        // console.log("顯示MID:" + MID);
 
 
-    $(function () {
-        // 1.點擊回到會員頁
-        $('#showMemberIndex').on("click", function () {
-            $('#Revise').hide();
-            $('#FavoritesPage').hide();
-            $('#PredictFunc').hide();
-            $('#HistoryPage').hide();
-            $('#MemberIndex').show();
+        // 隱藏不同按鈕顯示的畫面
+        $('#Revise').hide();
+        $('#FavoritesPage').hide();
+        $('#PredictFunc').hide();
+        $('#HistoryPage').hide();
 
-        })
+        // 重新設定密碼的提示字
+        $('#pwdnoteword').hide();
 
-        // 2.點擊修改個人資料
-        $('#showRevise').on("click", function () {
-            $('#Revise').show();
-            $('#FavoritesPage').hide();
-            $('#PredictFunc').hide();
-            $('#HistoryPage').hide();
-            $('#MemberIndex').hide();
+        //輸入正確舊密碼前不能修改
+        $('#Password1').prop("disabled", true);
+        $('#Password2').prop("disabled", true);
 
-            function RevisePassword() {
-                //打開密碼欄位可以編輯
-                $('#Password1').prop("disabled", false);
-                $('#Password2').prop("disabled", false);
 
-                //檢查兩次輸入的密碼是否一致
-                $('#Password2').on("change", function () {
-                    var MPassword1 = $('#Password1').val();
-                    var MPassword2 = $('#Password2').val();
-                    if (MPassword1 != MPassword2) {
-                        $('#pwdnoteword').show();
-                    }
-                    else {
-                        $('#pwdnoteword').hide();
-                        console.log("ok");
-                    }
-                    if (MPassword2 == "") {
-                        $('#pwdnoteword').hide();
-                    }
-                })
-            }
-            //(1).判斷該會員的舊密碼是否一致
-            //Yes =>可以修改
-            //NO  =>不能修改
+        $(function () {
+            // 1.點擊回到會員頁
+            $('#showMemberIndex').on("click", function () {
+                $('#Revise').hide();
+                $('#FavoritesPage').hide();
+                $('#PredictFunc').hide();
+                $('#HistoryPage').hide();
+                $('#MemberIndex').show();
 
-            $('#Password').on("change", function () {
-                var checkPassword = $('#Password').val()
-                console.log(checkPassword);
+            })
 
-                $.ajax({
-                    url: "/Member/checkPassword",
-                    method: "get",
-                    data: { checkPassword },
-                    success: function (e) {
-                        console.log(e)
-                        if (e) {
-                            RevisePassword();
-                            alert("舊密碼輸入正確");
+            // 2.點擊修改個人資料
+            $('#showRevise').on("click", function () {
+                $('#Revise').show();
+                $('#FavoritesPage').hide();
+                $('#PredictFunc').hide();
+                $('#HistoryPage').hide();
+                $('#MemberIndex').hide();
+
+                //將登入的會員資料帶到前台-不可修改的(帳號、生日、性別、會員等級)
+                var LogAccount = sessionStorage.getItem("LogAccount");
+                $('#Account').append(`<label>${LogAccount}</label>`);
+                var LogMemberBirthday = sessionStorage.getItem("LogMemberBirthday");
+                $('#Birthday').append(`<label>${LogMemberBirthday}</label>`);
+                var LogMemberGender = sessionStorage.getItem("LogMemberGender");
+                $('#MGender').append(`<label>${LogMemberGender}</label>`);
+                var LogMemberLevel = sessionStorage.getItem("LogMemberLevel");
+                // console.log(LogMemberLevel);
+                switch (LogMemberLevel) {
+
+                    case "normal":
+                        $("#MLevel").append("<label>一般會員</label>");
+                        break;
+                    case "high":
+                        $("#MLevel").append("<label>高級會員</label>");
+                        break;
+                    case "管理者":
+                        $("#MLevel").append("<label>管理者</label>");
+                        break;
+                    default:
+                        break;
+                }
+
+                //將登入的會員資料帶到前台-可修改的(信箱、姓名、投資年數)
+                var LogMemberEmail = sessionStorage.getItem("LogMemberEmail");
+                $('#Email').append(`<input type="email" pattern="" name="MEmail" id="Email" value="${LogMemberEmail}">`);
+                var LogMemberName = sessionStorage.getItem("LogMemberName");
+                $('#UserName').append(`<input type="text" name="MTrueName" id="UserName" value="${LogMemberName}">`)
+                var LogMemberInvestYear = sessionStorage.getItem("LogMemberInvestYear");
+                console.log(LogMemberInvestYear);
+                switch (LogMemberInvestYear) {
+
+                    case "1":
+                        $("#InvestYear").val("1");
+                        // console.log("1")
+                        break;
+                    case "2":
+                        $("#InvestYear").val("2");
+                        // console.log("2")
+                        break;
+                    case "3":
+                        $("#InvestYear").val("3");
+                        // console.log("3")
+                        break;
+                    case "4":
+                        $("#InvestYear option[value='4']").prop("selected", true);
+                        // console.log("5")
+                        break;
+                    default:
+                        console.log("error");
+                        break;
+                }
+
+                function RevisePassword() {
+                    //打開密碼欄位可以編輯
+                    $('#Password1').prop("disabled", false);
+                    $('#Password2').prop("disabled", false);
+
+                    //檢查兩次輸入的密碼是否一致
+                    $('#Password2').on("change", function () {
+                        var MPassword1 = $('#Password1').val();
+                        var MPassword2 = $('#Password2').val();
+                        if (MPassword1 != MPassword2) {
+                            $('#pwdnoteword').show();
                         }
                         else {
-                            alert("密碼輸入錯誤")
+                            $('#pwdnoteword').hide();
+                            console.log("ok");
                         }
-                    }
-                })
-            })
-
-            //(2).帶入該會員的投資年數+會員等級
-            switch ("@MInvestYear") {
-
-                case "1":
-                    $("#InvestYear").val("1");
-                    // console.log("1")
-                    // console.log("123")
-                    break;
-                case "2":
-                    $("#InvestYear").val("1-3");
-                    // console.log("2")
-                    break;
-                case "3":
-                    $("#InvestYear").val("3-5");
-                    // console.log("3")
-                    break;
-                case "5":
-                    $("#InvestYear option[value='5']").prop("selected", true);
-                    // console.log("5")
-                    break;
-                default:
-                    console.log("error");
-                    break;
-            }
-            var encodedString = "@Mlevel"; // 將 @Mlevel 的值放在這裡
-            var tempElement = document.createElement("div");
-            tempElement.innerHTML = encodedString;
-            var decodedString = tempElement.innerText || tempElement.textContent;
-            switch (decodedString) {
-
-                case "一般會員":
-                    $("#MLevel").val("一般會員");
-                    break;
-                case "高級會員":
-                    $("#MLevel").val("高級會員");
-                    break;
-                default:
-                    break;
-            }
-
-            // (3).將修改的資料存回資料庫
-            $('#ReviseData').on("click", function () {
-
-                var dataToServer = {
-                    Account: "@Context.Session.GetString("MaccoMnt")",
-                    NewPassword: $('#Password1').val(),
-                    NewEmail: $('#Email').val(),
-                    NewName: $('#UserName').val(),
-                    NewInvestYear: $('#InvestYear').val()
+                        if (MPassword2 == "") {
+                            $('#pwdnoteword').hide();
+                        }
+                    })
                 }
-                console.log(dataToServer)
+                //(1).判斷該會員的舊密碼是否一致
+                //Yes =>可以修改
+                //NO  =>不能修改
 
-                $.ajax({
-                    url: "/Member/SaveReviseMemberData",
-                    method: "put",
-                    data: dataToServer,
-                    success: function (e) {
-                        console.log(e);
-                        // window.location.href = "/Member/Edit";
+                $('#Password').on("change", function () {
+                    var checkPassword = $('#Password').val()
+                    console.log(checkPassword);
 
-                    }
+                    $.ajax({
+                        url: "/Member/checkPassword",
+                        method: "get",
+                        data: { checkPassword },
+                        success: function (e) {
+                            console.log(e)
+                            if (e) {
+                                RevisePassword();
+                                alert("舊密碼輸入正確");
+                            }
+                            else {
+                                alert("密碼輸入錯誤")
+                            }
+                        }
+                    })
                 })
+
+                // (2).將修改的資料存回資料庫
+                $('#ReviseData').on("click", function () {
+
+                    var dataToServer = {
+                        Account: "@Context.Session.GetString("MaccoMnt")",
+                        NewPassword: $('#Password1').val(),
+                        NewEmail: $('#Email').val(),
+                        NewName: $('#UserName').val(),
+                        NewInvestYear: $('#InvestYear').val()
+                    }
+                    console.log(dataToServer)
+
+                    $.ajax({
+                        url: "/Member/SaveReviseMemberData",
+                        method: "put",
+                        data: dataToServer,
+                        success: function (e) {
+                            console.log(e);
+                            window.location.href = "/Member/Edit";
+
+                        }
+                    })
+                })
+
+            // 3.點擊我的收藏
+            $('#showFavoritesPage').on("click", function () {
+                $('#Revise').hide();
+                $('#FavoritesPage').show();
+                $('#PredictFunc').hide();
+                $('#HistoryPage').hide();
+                $('#MemberIndex').hide();
+
             })
 
-        })
-        // 3.點擊我的收藏
-        $('#showFavoritesPage').on("click", function () {
-            $('#Revise').hide();
-            $('#FavoritesPage').show();
-            $('#PredictFunc').hide();
-            $('#HistoryPage').hide();
-            $('#MemberIndex').hide();
+            // 4.點擊我要預測
+            $('#showPredictFunc').on("click", function () {
+                $('#Revise').hide();
+                $('#FavoritesPage').hide();
+                $('#PredictFunc').show();
+                $('#HistoryPage').hide();
+                $('#MemberIndex').hide();
+                window.location.href = "/StockModel/Predictindex";
+            })
 
-        })
+            // 5.點擊我的預測結果
+            $('#showHistoryPage').on("click", function () {
+                $('#Revise').hide();
+                $('#FavoritesPage').hide();
+                $('#PredictFunc').hide();
+                $('#HistoryPage').show();
+                $('#MemberIndex').hide();
 
-        // 4.點擊我要預測
-        $('#showPredictFunc').on("click", function () {
-            $('#Revise').hide();
-            $('#FavoritesPage').hide();
-            $('#PredictFunc').show();
-            $('#HistoryPage').hide();
-            $('#MemberIndex').hide();
-            window.location.href = "/StockModel/Predictindex";
+            })
         })
-
-        // 5.點擊我的預測結果
-        $('#showHistoryPage').on("click", function () {
-            $('#Revise').hide();
-            $('#FavoritesPage').hide();
-            $('#PredictFunc').hide();
-            $('#HistoryPage').show();
-            $('#MemberIndex').hide();
-
-        })
-    })
+    }
 
 </script>
 
