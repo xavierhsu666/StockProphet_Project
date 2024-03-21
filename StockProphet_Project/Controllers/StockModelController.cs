@@ -1025,12 +1025,13 @@ namespace StockProphet_Project.Controllers {
 		}
 
 		[HttpPost]
-		public IActionResult Predictsavedata(string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime, string PAccount) {
+		public IActionResult Predictsavedata(string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime, string PAccount, string Pparameter) {
 			var query = new StocksContext();
 			DateTime buildTime = DateTime.Parse(PBuildTime);
 			DateTime finishTime = DateTime.Parse(PfinishTime);
 			//System.Diagnostics.Debug.WriteLine($"PLabel: {PLabel}");
-			System.Diagnostics.Debug.WriteLine($"PAccount111111111111: {PAccount}");
+			System.Diagnostics.Debug.WriteLine($"Pparameter111111111111: {Pparameter}");
+			var parametertodb = $"{{\"MSE\":{Pparameter}}}";
 			var newdata = new DbModel {
 				Pstock = PStock,
 				Pvariable = PVariable,
@@ -1038,7 +1039,8 @@ namespace StockProphet_Project.Controllers {
 				Pprefer = PPrefer,
 				PbulidTime = buildTime,
 				PfinishTime = finishTime,
-				Paccount = PAccount
+				Paccount = PAccount,
+				Dummyblock= parametertodb
 			};
 			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
 			query.DbModels.Add(newdata);
