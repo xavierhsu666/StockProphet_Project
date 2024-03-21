@@ -471,18 +471,19 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             }
             var index = i;
             //console.log(preData);
-            drawPre(preData, index, preState, preDate, PID);
+            drawPre(preData, index, preState, preDate, PID, preBuildDate);
         }
     })
 })
 
-function drawPre(myData, index, preState, preDate, PID) {
+function drawPre(myData, index, preState, preDate, PID, preBuildDate) {
 
     //console.log(myData);
     $(".predictionArea").prepend(`<label class='prediction-card ${index}'>
     <input type='checkbox' class='card-btn' />
     <div class='card-content'><div class='card-front'><p class="pre-state">${preState}+${PID}</p>
-    <table><tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
+    <table><tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${preDate}</td></tr>
+    <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preBuildDate}</td></tr>
     <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5].Close}</td></tr>
     <tr><th class="pre-th">選擇參數</th><td class="pre-td">--</td></tr>
     </table>
@@ -672,8 +673,8 @@ function redraw() {
 
 
 //如果有登入 需要改變的部分
-user = "apple5678";       /////////先寫死是apple
-logging = true;     /////////先寫死是true
+//user = "apple5678";       /////////先寫死是apple
+//logging = true;     /////////先寫死是true
 function btnTest(btn) {
     if (logging) {      //如果有登入
         //到時候user要改成抓目前登入者的帳號ㄛ
@@ -686,9 +687,11 @@ function btnTest(btn) {
             success: function (e) {
                 switch (e) {
                     case "add":
+                        $(btn).css("color", "red");
                         console.log("新增一筆");
                         break
                     case "delete":
+                        $(btn).css("color", "black");
                         console.log("刪除一筆");
                         break;
                     case "reject":
@@ -705,15 +708,30 @@ function btnTest(btn) {
 setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
     if (logging) { //這邊要判斷是否有登入
         d3.json(`/Home/cardCheck/${user}`, function (list) {
-
             list.forEach(function (item, i) {
                 //針對會員有按愛心的按鈕 變化
                 $(`#PID${parseInt(item)}`).css({
                     color: "red",
-                    /*                    fontSize: "32px" */
+                    /* fontSize: "32px" */
                 });
-
             })
         });
-    };
+    } else {
+        //沒登入時按鈕
+        $(".prediction-collect").on({
+            mouseenter: function () {
+                $(this).removeClass("collectBtnStart");
+                $(this).removeClass("collectBtnLeave");
+                //先清掉先前的class
+                $(this).addClass("collectBtnStart");
+            },
+            mouseleave: function () {
+                $(this).addClass("collectBtnLeave");
+            }
+        })
+
+
+    }//else尾
+
+
 }, 100);
