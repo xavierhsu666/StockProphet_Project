@@ -48,9 +48,9 @@ app.UseAuthorization();
 app.UseSession();
 app.MapControllerRoute(
 	name: "default",
-//pattern: "{controller=StockModel}/{action=predictindex}");
+pattern: "{controller=StockModel}/{action=predictindex}");
 //pattern: "{controller=StockModel}/{action=predictindex}/{id?}");
-pattern: "{controller=StockModel}/{action=TestWsWepAPI}");
+//pattern: "{controller=StockModel}/{action=TestWsWepAPI}");
 //pattern: "{controller=StockModel}/{action=testBuild}");
 
 app.Run();

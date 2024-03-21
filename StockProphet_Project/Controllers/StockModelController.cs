@@ -34,6 +34,9 @@ using Tensorflow.Keras.Datasets;
 using Tensorflow.Operations.Activation;
 using Microsoft.AspNetCore.Cors;
 using System.Text;
+using static StockProphet_Project.Models.WebAPI_Class;
+using ChoETL;
+using System.Security.Cryptography.X509Certificates;
 
 
 namespace StockProphet_Project.Controllers {
@@ -54,9 +57,36 @@ namespace StockProphet_Project.Controllers {
 		// <參數區>改過需要調整的地方
 
 		// <view頁面區>
-		public IActionResult TestWsWepAPI() {
-			return View();
+		//public IActionResult TestWsWepAPI() {
+		//	CallPyApi cpa = new CallPyApi();
+		//	var fedback = cpa.UpdateOneStock("8271", InputLatestDate.Replace("-", ""));
 
+		//	return Content(fedback);
+
+		//}
+		public async Task<IActionResult> TestWepAPI() {
+			WebAPI_Class wac = new WebAPI_Class();
+			wac.stockCode = "2330";
+			wac.date = DateTime.Now.AddDays(-10);
+			wac.stockName = "台積電";
+			//List<Table3OBJ> result = await wac.ajax_3();
+			//List<Table1OBJ> result = await wac.ajax_1();
+			//List<Table2OBJ> result = await wac.ajax_2();
+			wac.run();
+
+			////// 使用 result 中的元素
+			//foreach (var item in result) {
+			//	Console.WriteLine($"Stock Code: {item.date}, " +
+			//		$"Stock date: {item.SB_PBRatio}, " +
+			//		$"Stock OpenPrice: {item.SB_Yield}, " +
+			//		$"Stock MaxPrice: {item.ST_Year_Quarter}, " +
+			//		$"Stock MinPrice: {item.STe_Dividend_Year}, " +
+			//		$"Stock ClosePrice: {item.SI_PE}"
+			//		);
+			//}
+
+
+			return Content("OK");
 		}
 		[EnableCors("MyAllowSpecificOrigins")]
 		[HttpGet]
@@ -80,7 +110,7 @@ namespace StockProphet_Project.Controllers {
 						// 將資料以 UTF-8 編碼返回
 
 						Console.WriteLine("API 回傳的資料：");
-						Console.WriteLine(responseBody);
+						//Console.WriteLine(responseBody);
 						return Content(responseBody, "text/html", Encoding.GetEncoding("big5"));
 					} else {
 						Console.WriteLine($"請求失敗，狀態碼：{response.StatusCode}");
@@ -163,6 +193,17 @@ namespace StockProphet_Project.Controllers {
 		}
 		// <view頁面區>
 		// <功能開發測試區>
+		public string checkStockCodeIsRight( string id ) {
+			var ans = "Nah";
+			var stocksList = (from obj in new ChoCSVReader<stocksCheck>("wwwroot\\stocksList.csv").WithFirstLineHeader()
+							  select obj).ToList();
+			foreach (var stock in stocksList) {
+				if (stock.Code == id || stock.Name == id) {
+					ans = stock.Code;
+				}
+			}
+			return ans;
+		}
 		public TimeSerialModel.ModelOutput TimeSerialBuild( IQueryable<Stock> q, TimeSerialModel.ModelInput mp ) {// 获取表单中的所有输入值
 			TimeSerialModel t = new TimeSerialModel();
 
@@ -247,6 +288,37 @@ namespace StockProphet_Project.Controllers {
 		// <功能開發測試區>
 
 		// <WEB API 區>
+
+		[HttpGet]
+		public async Task<IActionResult> UpdateOneStock( string stockCode ) {
+			if (checkStockCodeIsRight(stockCode) == "Nah") {
+
+				var result = new { stockname = "查無這支股票", stockexist = false };
+				return Json(result);
+			} else {
+
+
+				CallPyApi cpa = new CallPyApi();
+				Console.WriteLine(stockCode);
+				string fedback = await cpa.UpdateOneStock(stockCode, InputLatestDate.Replace("-", ""));
+				var stockData = _context.Stock
+						.Where(x => x.SnCode == stockCode)
+						.OrderBy(x => x.StDate)
+						.ToList();
+				string stockname;
+				bool stockexist;
+				if (stockData == null || stockData.Count == 0) {
+					stockname = "查無這支股票";
+					stockexist = false;
+				} else {
+					stockname = stockData[0].SnName;
+					stockexist = true;
+
+				}
+				var result = new { stockname = stockname, stockexist = stockexist };
+				return Json(result);
+			}
+		}
 		[HttpPost]
 		public IActionResult getStock( APIClass apiData ) {
 
@@ -330,7 +402,7 @@ namespace StockProphet_Project.Controllers {
 
 					var mo = RegessionBuild(q, mi);
 					//mo.output_F_Forcast,mo.output_M_RMSE,mo.output_M_MSE
-					var moo = ModelOutputCheck(wi.stockCode,(int)wi.userPrefer, mo.output_F_Forcast);
+					var moo = ModelOutputCheck(wi.stockCode, (int)wi.userPrefer, mo.output_F_Forcast);
 					var jmo = new {
 						output_F_Forcast = moo[0],
 						output_M_RMSE = mo.output_M_RMSE,
@@ -355,7 +427,7 @@ namespace StockProphet_Project.Controllers {
 					};
 
 					var tmo = TimeSerialBuild(q, tmi);
-					var qoo = ModelOutputCheck(wi.stockCode,(int)wi.userPrefer, tmo.Output_F_estimate, tmo.Output_F_upperEstimate, tmo.Output_F_lowerEstimate);
+					var qoo = ModelOutputCheck(wi.stockCode, (int)wi.userPrefer, tmo.Output_F_estimate, tmo.Output_F_upperEstimate, tmo.Output_F_lowerEstimate);
 					tmo.Output_F_estimate = (float)qoo[0];
 					tmo.Output_F_upperEstimate = (float)qoo[1];
 					tmo.Output_F_lowerEstimate = (float)qoo[2];
@@ -393,7 +465,13 @@ namespace StockProphet_Project.Controllers {
 			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
 			query.DbModels.Add(newdata);
 			query.SaveChanges();
-
+			var user = _context.DbMembers.FirstOrDefault(o => o.MaccoMnt == mr.Paccount);
+			if (user != null) {
+				// 更新會員相關的屬性
+				user.Mprefer = mr.PPrefer; // 這裡請替換為您想要更新的屬性和值
+				_context.DbMembers.Update(user);
+				_context.SaveChanges();
+			}
 			return Json(newdata);
 		}
 
@@ -437,7 +515,7 @@ namespace StockProphet_Project.Controllers {
 			return View(await _context.Stock.ToListAsync());
 		}
 		[HttpPost]
-		public IActionResult LSTMpredict(string sncode, int predictday, Dictionary<string, bool> selectedParams,int iterationtime) {
+		public IActionResult LSTMpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams, int iterationtime ) {
 			//測試區
 			// 在控制台輸出收到的資料以進行檢查
 			//Console.WriteLine("Received data:");
@@ -683,7 +761,7 @@ namespace StockProphet_Project.Controllers {
 
 			// 獲取最後一個 epoch 的 loss 值
 			var lastLoss = lossList.LastOrDefault();
-			string lastLosstostring=lastLoss.ToString();
+			string lastLosstostring = lastLoss.ToString();
 			// 打印最後一個 epoch 的 loss 值
 
 
@@ -715,7 +793,7 @@ namespace StockProphet_Project.Controllers {
 
 			// 輸出預測結果
 			predictionResult = prediction[0].numpy()[0, 0];
-			predictionResulttoString= predictionResult.ToString();
+			predictionResulttoString = predictionResult.ToString();
 
 			return Content($"{predictionResulttoString},{lastLosstostring}");
 
@@ -748,7 +826,7 @@ namespace StockProphet_Project.Controllers {
 		}
 
 		[HttpPost]
-		public IActionResult FNNpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams, int iterationtime) {
+		public IActionResult FNNpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams, int iterationtime ) {
 			//測試區
 			// 在控制台輸出收到的資料以進行檢查
 			//Console.WriteLine("Received data:");
@@ -1023,7 +1101,7 @@ namespace StockProphet_Project.Controllers {
 		public IActionResult predictindex() {
 			return View();
 		}
-		public IActionResult predictphoto( string predicteddata, string sncode, string predictedloss) {
+		public IActionResult predictphoto( string predicteddata, string sncode, string predictedloss ) {
 			// 檢索資料庫中的資料筆數
 			int dataCount = _context.Stock.Where(x => x.SnCode == sncode).Count();
 
@@ -1035,7 +1113,7 @@ namespace StockProphet_Project.Controllers {
 			// 將資料傳遞到視圖
 			ViewBag.DataCount = dataCount;
 			ViewBag.PredictedData = predictedData;
-			ViewBag.PredictedLoss= predictedloss;
+			ViewBag.PredictedLoss = predictedloss;
 			// 檢索資料庫中的股票資料
 			var stockData = _context.Stock.Where(x => x.SnCode == sncode).ToList();
 			// 將股票資料傳遞到視圖
@@ -1044,27 +1122,27 @@ namespace StockProphet_Project.Controllers {
 			return View();
 		}
 
-		public IActionResult checkstock( string sncode ) {
-			var stockData = _context.Stock
-					.Where(x => x.SnCode == sncode)
-					.OrderBy(x => x.StDate)
-					.ToList();
-			string stockname;
-			bool stockexist;
-			if (stockData == null || stockData.Count == 0) {
-				stockname = "查無這支股票";
-				stockexist = false;
-			} else {
-				stockname = stockData[0].SnName;
-				stockexist = true;
+		//public IActionResult checkstock( string sncode ) {
+		//	var stockData = _context.Stock
+		//			.Where(x => x.SnCode == sncode)
+		//			.OrderBy(x => x.StDate)
+		//			.ToList();
+		//	string stockname;
+		//	bool stockexist;
+		//	if (stockData == null || stockData.Count == 0) {
+		//		stockname = "查無這支股票";
+		//		stockexist = false;
+		//	} else {
+		//		stockname = stockData[0].SnName;
+		//		stockexist = true;
 
-			}
-			var result = new { stockname = stockname, stockexist = stockexist };
-			return Json(result);
-		}
+		//	}
+		//	var result = new { stockname = stockname, stockexist = stockexist };
+		//	return Json(result);
+		//}
 
 		[HttpPost]
-		public IActionResult Predictsavedata(string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime, string PAccount) {
+		public IActionResult Predictsavedata( string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime, string PAccount ) {
 			var query = new StocksContext();
 			DateTime buildTime = DateTime.Parse(PBuildTime);
 			DateTime finishTime = DateTime.Parse(PfinishTime);
@@ -1083,6 +1161,13 @@ namespace StockProphet_Project.Controllers {
 			query.DbModels.Add(newdata);
 			query.SaveChanges();
 
+			var user = _context.DbMembers.FirstOrDefault(o => o.MaccoMnt == PAccount);
+			if (user != null) {
+				// 更新會員相關的屬性
+				user.Mprefer = PPrefer; // 這裡請替換為您想要更新的屬性和值
+				_context.DbMembers.Update(user);
+				_context.SaveChanges();
+			}
 			return View();
 		}
 	}

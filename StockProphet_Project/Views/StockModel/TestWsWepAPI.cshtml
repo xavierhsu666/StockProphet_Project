@@ -20,7 +20,7 @@
     <tbody id="combinedRows">
     </tbody>
 </table>
-<button id="testbtn">testbtn</button>
+<button onclick="ajax_1()">testbtn</button>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
 
@@ -68,7 +68,11 @@
     // });
 
 
+    function ajax_1() {
+        window.location.href = '/stockmodel/TestWepAPI';
 
+    }
+    console.log(ajax_1());
     $(document).ready(function () {
         console.log(0);
 
