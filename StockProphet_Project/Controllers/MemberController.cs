@@ -62,14 +62,55 @@ namespace StockProphet_Project.Controllers {
 
 			return true;
 
-		}
+        }
 
 		//我的收藏頁面
-		public IActionResult MyCollect() {
-			return View();
-		}
-		//我的預測結果頁面
-		public IActionResult MyPredictResult() {
+		public IActionResult MyCollect()
+        {
+            ViewBag.Collected = 1;
+
+            return View();
+        }
+
+        //我的收藏 - 網址傳資料|回傳預測內容
+        //public IActionResult showPredictions(string id)
+        //{
+        //    var viewModel = _context.DbModels.ToList();
+        //    var query = from p in viewModel
+        //                where p.Pstock == id
+        //                select new
+        //                {
+        //                    Account = p.Paccount,
+        //                    Variable = p.Pvariable,
+        //                    Label = p.Plabel,
+        //                    FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd")
+        //                };
+        //    return Json(query);
+        //}
+
+        // 我的收藏 - 網址傳資料|該股票所有內容 ( for 預測用
+        //public IActionResult showAllStocks(string id)
+        //{
+
+        //    //Console.WriteLine(id);
+        //    //var query1 = _context.Stock.ToList();
+        //    var viewModel = _context.Stock.ToList();
+        //    var query = from p in viewModel
+        //                where p.SnCode == id
+        //                select new
+        //                {
+        //                    Date = p.StDate,
+        //                    Close = p.SteClose,
+        //                    StockName = p.SnName
+        //                };
+			
+        //    return Json(query);
+        //}
+
+
+
+        //我的預測結果頁面
+        public IActionResult MyPredictResult() {
 			return View();
 		}
 

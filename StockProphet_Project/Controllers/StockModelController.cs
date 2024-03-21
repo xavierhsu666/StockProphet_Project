@@ -32,6 +32,7 @@ using Tensorflow.Keras.Models;
 using Tensorflow.Keras.ArgsDefinition;
 using Tensorflow.Keras.Datasets;
 using Tensorflow.Operations.Activation;
+using System.Security.Cryptography.X509Certificates;
 
 
 namespace StockProphet_Project.Controllers {
@@ -1044,6 +1045,20 @@ namespace StockProphet_Project.Controllers {
 			query.SaveChanges();
 
 			return View();
+		}
+
+		[HttpGet]
+		public IActionResult countpredicttime(string accountname)
+		{
+			var query = _context.DbModels.Count(o => o.Paccount == accountname);
+			bool result;
+			if (query==5) {
+				result=true;
+			} else {
+				result=false;
+			}
+			var Finalresult = new { resulttoformer = result};
+			return Json(Finalresult);
 		}
 	}
 }
