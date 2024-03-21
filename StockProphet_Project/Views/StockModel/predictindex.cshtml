@@ -298,6 +298,7 @@
 		var prefertype;
 		var createmodelTime;
 		var iterationtimeforpredict;
+		var predictedloss;
 		// <ks area--------------------->
 
 		// ####<預設值待更新-------------------------------------->
@@ -831,7 +832,7 @@
 						borisprediction = -borisprediction;
 					}
 					borisprediction = borisprediction.toFixed(2);
-
+					predictedloss = values[1];
 
 
 					//存數據
@@ -859,7 +860,8 @@
 						PPrefer: prefertype,
 						PBuildTime: isoString,
 						PfinishTime: finishString,
-						PAccount: "@Context.Session.GetString("MaccoMnt")"
+						PAccount: sessionStorage.getItem("LogAccount"),
+						Pparameter:predictedloss
 					}
 
 					$.ajax({
@@ -878,7 +880,7 @@
 					})
 					console.log(borisprediction)
 					var predictedData = borisprediction;
-					var predictedloss = values[1];
+					
 
 					setTimeout(function () {
 						$(`#progress${number}`).css("width", '99%');
