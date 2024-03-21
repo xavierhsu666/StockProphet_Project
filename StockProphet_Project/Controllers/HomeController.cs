@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using StockProphet_Project.Models;
 using System.Diagnostics;
 using ChoETL;
+using Microsoft.VisualBasic;
 
 namespace StockProphet_Project.Controllers {
     public class HomeController : Controller {
@@ -62,18 +63,23 @@ namespace StockProphet_Project.Controllers {
         }
 
         //網址傳資料|回傳預測內容
-        public IActionResult showPredictions(string id) {
-            var viewModel = _context.DbModels.ToList();
-            var query = from p in viewModel
-                        where p.Pstock == id
-                        select new {
-                            Account = p.Paccount,
-                            Variable = p.Pvariable,
-                            Label = p.Plabel,
-                            FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd")
-                        };
-            return Json(query);
-        }
+          public IActionResult showPredictions(string id) {
+              var viewModel = _context.DbModels.ToList();
+              var query = from p in viewModel
+                          where p.Pstock == id
+                          select new {
+                              Account = p.Paccount,
+                              Variable = p.Pvariable,
+                              Label = p.Plabel,
+                              FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd"),
+        	                  PID = p.Pid,
+                              BuildTime = Convert.ToDateTime(p.PbulidTime).ToString("yyyy-MM-dd")
+                          };
+              return Json(query);
+          }
+
+ 
+        
 
         //網址傳資料|該股票所有內容(for預測用
         public IActionResult showAllStocks(string id) {
@@ -88,6 +94,58 @@ namespace StockProphet_Project.Controllers {
 
             return Json(query);
         }
+
+        //加入或刪除最愛清單
+        [HttpPost]
+        public string CheckCard(string user, string cardID) {
+            var member = _context.DbMembers.SingleOrDefault(e => e.MaccoMnt == user);
+            char[] delimiterChars = ['{', '}', ','];
+            string[] myCard = (member.MfavoriteModel).Split(delimiterChars);
+            //不知道為什麼會有空格:(
+            myCard = myCard.Where((source, index) => index != 0).ToArray();
+            myCard = myCard.Where((source, index) => index != myCard.Length-1).ToArray();
+            string change = "change?";   //回傳是刪除(false)、新增(true)或限制(reject)
+            var saveChange = "";
+
+
+            if (member.MfavoriteModel == "{}" || member.MfavoriteModel == null) {   //如果表資料為空
+                member.MfavoriteModel = "{" + cardID + "}";
+                _context.SaveChanges();
+                change = "add";
+            } else  {    //資料不為空
+                    int i = Array.IndexOf(myCard, cardID);
+                if (i > -1) {   //列表有這個值
+                    myCard = myCard.Where((source, index) => index != i).ToArray();
+                    saveChange = string.Join(",", myCard);  //array整理成字串
+                    change = "delete";
+                } else if (i == -1) {   //列表沒這個值
+                    if (myCard.Length > 4) { //已超過五筆，拒絕新增
+                        saveChange = string.Join(",", myCard);
+                        change = "reject";
+                    } else {
+                        myCard = myCard.Concat(new string[] { cardID }).ToArray();
+                        saveChange = string.Join(",", myCard);  //array整理成字串
+                        change = "add";
+                    }
+                }
+                member.MfavoriteModel = "{" + saveChange + "}";
+                _context.SaveChanges();
+            }
+
+            return change;
+        }
+
+        //抓登入者的最愛清單
+        public IActionResult cardCheck(string id) {
+            var member = _context.DbMembers.SingleOrDefault(e => e.MaccoMnt == id);
+            char[] delimiterChars = ['{', '}', ','];
+            string[] myCard = (member.MfavoriteModel).Split(delimiterChars);
+            myCard = myCard.Where((source, index) => index != 0).ToArray();
+            myCard = myCard.Where((source, index) => index != myCard.Length - 1).ToArray();
+
+            return Json(myCard);
+        }
+
 
         //檢查股票是否存在
         public string checkStocks(string id) {
