@@ -1,10 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using StockProphet_Project.Models;
+using System.Text.Encodings.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+         .AddJsonOptions(options => {
+             //不要改大小寫
+             options.JsonSerializerOptions.PropertyNamingPolicy = null;
+             //排版
+             options.JsonSerializerOptions.WriteIndented = true;
+             options.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+
+         });
 builder.Services.AddDbContext<StocksContext>(
 	  options => options.UseSqlServer(builder.Configuration.GetConnectionString("StocksConnstring")));
 //AddSession

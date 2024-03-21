@@ -1,0 +1,235 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<h1>管理者頁面</h1>
+<div class="flex">
+    <button id="AdminStock">Stock</button>
+    <button id="AdminMember">Member</button>
+    <button id="AdminModel">Model</button>
+
+</div>
+<div id ="stockdiv">
+    <table class="table" >
+        <thead>
+            <tr>
+                <th scope="col">index</th>
+                <th scope="col">股票代碼</th>
+                <th scope="col">股票名稱</th>
+                <th scope="col">日期</th>
+                <th scope="col">開盤</th>
+                <th scope="col">收盤</th>
+                <th scope="col">最高</th>
+                <th scope="col">最低</th>
+
+            </tr>
+        </thead>
+        <tbody id ="mydemo1">
+
+        </tbody>
+    </table>
+
+</div>
+
+<div id="memberdiv">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">index</th>
+                <th scope="col">Account</th>
+                <th scope="col">pwd</th>
+                <th scope="col">真名</th>
+                <th scope="col">性別</th>
+                <th scope="col">年齡</th>
+                <th scope="col">投資年限</th>
+                <th scope="col">Email</th>
+                <th scope="col">會員等級</th>
+                <th scope="col">最近一筆投資偏好</th>
+                <th scope="col">最後登入時間</th>
+
+            </tr>
+        </thead>
+        <tbody id="mydemo2">
+        </tbody>
+    </table>
+
+</div>
+
+<div id="modeldiv">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">index</th>
+                <th scope="col">Account</th>
+                <th scope="col">股票代號</th>
+                <th scope="col">所選變數</th>
+                <th scope="col">預測值</th>
+                <th scope="col">傾向(1短期/2長期)</th>
+                <th scope="col">建立模型</th>
+                <th scope="col">模型完成時間</th>
+                <th scope="col">結案狀態</th>
+            </tr>
+        </thead>
+        <tbody id="mydemo3">
+        </tbody>
+    </table>
+
+</div>
+
+<div>
+    @* <td>${stock.SiD5}</td>
+    <td>${stock.SiD30}</td>
+    <td>${stock.SiDif}</td>
+    <td>${stock.SiK5}</td>
+    <td>${stock.SiK30}</td>
+    <td>${stock.SiLongEma}</td>
+    <td>${stock.SiMa}</td>
+    <td>${stock.SiMacd}</td>
+    <td>${stock.SiMovingAverage5}</td>
+    <td>${stock.SiMovingAverage30}</td>
+    <td>${stock.SiOsc}</td>
+    <td>${stock.SiPe}</td>
+    <td>${stock.SiRsv5}</td>
+    <td>${stock.SiRsv30}</td>
+    <td>${stock.SiShortEma}</td>
+    <td>${stock.SnName}</td>
+    <td>${stock.StDate}</td>
+    <td>${stock.StQuarter}</td>
+    <td>${stock.StYear}</td>
+    <td>${stock.StYearQuarter}</td>
+    <td>${stock.SteClose}</td>
+    <td>${stock.SteDividendYear}</td>
+    <td>${stock.SteMax}</td>
+    <td>${stock.SteMin}</td>
+    <td>${stock.SteOpen}</td>
+    <td>${stock.SteSpreadRatio}</td>
+    <td>${stock.SteTradeMoney}</td>
+    <td>${stock.SteTradeQuantity}</td>
+    <td>${stock.SteTransActions}</td> *@
+    @*
+    <th scope="col">SiD5</th>
+    <th scope="col">SiD30</th>
+    <th scope="col">SiDif</th>
+    <th scope="col">SiK5</th>
+    <th scope="col">SiK30</th>
+    <th scope="col">SiLongEma</th>
+    <th scope="col">SiMa</th>
+    <th scope="col">SiMacd</th>
+    <th scope="col">SiMovingAverage5</th>
+    <th scope="col">SiMovingAverage30</th>
+    <th scope="col">SiOsc</th>
+    <th scope="col">SiPe</th>
+    <th scope="col">SiRsv5</th>
+    <th scope="col">SiRsv30</th>
+    <th scope="col">SiShortEma</th>
+    <th scope="col">SnName</th>
+    <th scope="col">StDate</th>
+    <th scope="col">StQuarter</th>
+    <th scope="col">StYear</th>
+    <th scope="col">StYearQuarter</th>
+    <th scope="col">SteClose</th>
+    <th scope="col">SteDividendYear</th>
+    <th scope="col">SteMax</th>
+    <th scope="col">SteMin</th>
+    <th scope="col">SteOpen</th>
+    <th scope="col">SteSpreadRatio</th>
+    <th scope="col">SteTradeMoney</th>
+    <th scope="col">SteTradeQuantity</th>
+    <th scope="col">SteTransActions</th> *@
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#stockdiv").hide();
+        $("#memberdiv").hide();
+        $("#modeldiv").hide();
+        $("#AdminStock").on("click", function () {
+            $("#stockdiv").show();
+            $("#memberdiv").hide();
+            $("#modeldiv").hide();
+            $.ajax({
+                url: "/Admin/AdminStock",
+                method: "get",
+                success: function (data) {
+                    $.each(data, function (index, stock) {
+                        $("#mydemo1").append(`
+                                <tr>
+                                    <th scope="row">${index + 1}</th>
+                                        <td>${stock.SnCode}</td>
+                                        <td>${stock.SnName}</td>
+                                        <td>${stock.StDate}</td>
+                                        <td>${stock.SteOpen}</td>
+                                        <td>${stock.SteClose}</td>
+                                        <td>${stock.SteMax}</td>
+                                        <td>${stock.SteMin}</td>
+
+                                </tr>
+                            `);
+                    });
+                }
+            });
+        });
+        $("#AdminMember").on("click", function () {
+            $("#stockdiv").hide();
+            $("#memberdiv").show();
+            $("#modeldiv").hide();
+            $.ajax({
+                url: "/Admin/AdminMember",
+                method: "get",
+                success: function (data) {
+                    $.each(data, function (index, members) {
+                        console.log(members)
+                        $("#mydemo2").append(`
+                                    <tr>
+                                        <th scope="row">${index + 1}</th>
+                                                    <td>${members.MaccoMnt}</td>
+                                                    <td>${members.Mpassword}</td>
+                                                    <td>${members.MtrueName}</td>
+                                                    <td>${members.Mgender}</td>
+                                                    <td>${members.Mbirthday}</td>
+                                                    <td>${members.MinvestYear}</td>
+                                                     <td>${members.Memail}</td>
+                                                    <td>${members.Mlevel}</td>
+                                                    <td>${members.Mprefer}</td>
+                                                    <td>${members.MlastLoginTime}</td>
+
+                                    </tr>
+                                `);
+                    });
+                }
+            });
+
+        });
+        $("#AdminModel").on("click", function () {
+            $("#stockdiv").hide();
+            $("#memberdiv").hide();
+            $("#modeldiv").show();
+            $.ajax({
+                url: "/Admin/AdminModel",
+                method: "get",
+                success: function (data) {
+                    $.each(data, function (index, model) {
+                        console.log(model)
+                        $("#mydemo3").append(`
+                                        <tr>
+                                            <th scope="row">${index + 1}</th>
+                                                <td>${model.Paccount}</td>
+                                                <td>${model.Pstock}</td>
+                                                <td>${model.Pvariable}</td>
+                                                <td>${model.Plabel}</td>
+                                                <td>${model.Pprefer}</td>
+                                                <td>${model.PbulidTime}</td>
+                                                <td>${model.PfinishTime}</td>
+                                                <td>${model.Pstatus}</td>
+                                        </tr>
+                                    `);
+                    });
+                }
+            });
+
+        });
+
+    });
+</script>
