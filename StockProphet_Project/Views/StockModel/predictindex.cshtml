@@ -3,10 +3,10 @@
 	var customerlevel = @Context.Session.GetString("Mlevel");
 }
 
- <div id="beforeLog">
-     <b>請先登入會員</b>
- </div>
- <div id="afterLog">
+<div id="beforeLog">
+	<b>請先登入會員</b>
+</div>
+<div id="afterLog">
 	<h3 class="display-6">第一步:選定股票</h3>
 	<div class="input-group mb-3">
 		<span class="input-group-text" id="inputGroup-sizing-default">股票代號</span>
@@ -207,15 +207,15 @@
 		$('#beforeLog').hide();
 		$('#afterLog').show();
 
-	//初始化:不需要的東西先隱藏
-	$("#borisform1,#borisform2,#chart").css("display", "none");
-	$("#kazuoform3, #kazuoform4").css("display", "none");
-	$("#longterm,#shortterm,#predict1,#predict2,#checkmodel,#selectmodel").prop("disabled", true);
-	$("#ksParaArea>label").css("margin", "5px");
-	$(document).ready(function () {
-		
-		//測試客人已經預測幾次了
-		checkaccoutbuildmodelnumber();
+		//初始化:不需要的東西先隱藏
+		$("#borisform1,#borisform2,#chart").css("display", "none");
+		$("#kazuoform3, #kazuoform4").css("display", "none");
+		$("#longterm,#shortterm,#predict1,#predict2,#checkmodel,#selectmodel").prop("disabled", true);
+		$("#ksParaArea>label").css("margin", "5px");
+		$(document).ready(function () {
+
+			//測試客人已經預測幾次了
+			checkaccoutbuildmodelnumber();
 
 
 			// append表格
@@ -260,13 +260,13 @@
 				$.each(technicalParam, function (key, value) {
 					$(`#${formid} .technicalparamlist`).append(
 						`<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check" >
-																									<label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`
+																										<label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`
 					)
 				});
 				$.each(foundmentParam, function (key, value) {
 					$(`#${formid} .foundmentalparamlist`).append(`
-																								<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
-																								<label for="${formid + key}" class="btn btn-outline-secondary" >${value}</label>`)
+																									<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
+																									<label for="${formid + key}" class="btn btn-outline-secondary" >${value}</label>`)
 				});
 				// $.each(otherParam, function (key, value) {
 				// 	$(`#${formid} .otherparamlist`).append(`
@@ -282,23 +282,23 @@
 					console.log(key);
 					console.log(value);
 					$(`#${formid} .predicintervallist`).append(`
-																								<input type="radio" id="${formid + value}" name="interval" value="${value}">
-																								<label for="${formid + value}">${key}</label>`)
+																									<input type="radio" id="${formid + value}" name="interval" value="${value}">
+																									<label for="${formid + value}">${key}</label>`)
 				});
 
-		}
-		
-		var borisprediction;
-		var predicturl;
-		var sncode;
-		var predictday;
-		var userselectparams;
-		var functionurl = ["LSTMpredict", "FNNpredict"]
-		var prefertype;
-		var createmodelTime;
-		var iterationtimeforpredict;
-		var predictedloss;
-		// <ks area--------------------->
+			}
+
+			var borisprediction;
+			var predicturl;
+			var sncode;
+			var predictday;
+			var userselectparams;
+			var functionurl = ["LSTMpredict", "FNNpredict"]
+			var prefertype;
+			var createmodelTime;
+			var iterationtimeforpredict;
+			var predictedloss;
+			// <ks area--------------------->
 
 			// ####<預設值待更新-------------------------------------->
 			var account = "testUser";
@@ -802,25 +802,25 @@
 
 						}, 1000); // 第一个setTimeout在0秒后执行
 
-				},
-				success: function (response) {
-					$(`#progress${number}`).css("width", '100%');
-					
-					setTimeout(function () {
-						$(`.progress`).hide();
-					}, 1000);
-					var values = response.split(','); // 拆分字符串为数组
-					borisprediction = parseFloat(values[0]);
-					if (borisprediction < 0) {
-						borisprediction = -borisprediction;
-					}
-					borisprediction = borisprediction.toFixed(2);
-					predictedloss = values[1];
+					},
+					success: function (response) {
+						$(`#progress${number}`).css("width", '100%');
+
+						setTimeout(function () {
+							$(`.progress`).hide();
+						}, 1000);
+						var values = response.split(','); // 拆分字符串为数组
+						borisprediction = parseFloat(values[0]);
+						if (borisprediction < 0) {
+							borisprediction = -borisprediction;
+						}
+						borisprediction = borisprediction.toFixed(2);
+						predictedloss = values[1];
 
 
-					//存數據
-					var isoString = createmodelTime.toISOString();
-					var finishDate = new Date(isoString); // 將 ISO 字符串轉換為 Date 物件
+						//存數據
+						var isoString = createmodelTime.toISOString();
+						var finishDate = new Date(isoString); // 將 ISO 字符串轉換為 Date 物件
 
 						if (prefertype == 1) {
 							finishDate.setDate(finishDate.getDate() + 5); // 添加 5 天
@@ -836,34 +836,34 @@
 						}).join(",");
 
 
-					var datatoserver = {
-						PStock: sncode,
-						PVariable: keysWithoutBrackets,
-						PLabel: borisprediction,
-						PPrefer: prefertype,
-						PBuildTime: isoString,
-						PfinishTime: finishString,
-						PAccount: sessionStorage.getItem("LogAccount"),
-						Pparameter:predictedloss
-					}
-
-					$.ajax({
-						method: "Post",
-						url: "/StockModel/Predictsavedata",
-						data: datatoserver,
-						success: function (e) {
-							// alert("save OK")
-						},
-						error: function (xhr, status, error) {
-							// 處理錯誤
-							// console.error(xhr.responseText); // 處理錯誤
-							// var errorMessage = xhr.responseText;
-							// alert(errorMessage);
+						var datatoserver = {
+							PStock: sncode,
+							PVariable: keysWithoutBrackets,
+							PLabel: borisprediction,
+							PPrefer: prefertype,
+							PBuildTime: isoString,
+							PfinishTime: finishString,
+							PAccount: sessionStorage.getItem("LogAccount"),
+							Pparameter: predictedloss
 						}
-					})
-					console.log(borisprediction)
-					var predictedData = borisprediction;
-					
+
+						$.ajax({
+							method: "Post",
+							url: "/StockModel/Predictsavedata",
+							data: datatoserver,
+							success: function (e) {
+								// alert("save OK")
+							},
+							error: function (xhr, status, error) {
+								// 處理錯誤
+								// console.error(xhr.responseText); // 處理錯誤
+								// var errorMessage = xhr.responseText;
+								// alert(errorMessage);
+							}
+						})
+						console.log(borisprediction)
+						var predictedData = borisprediction;
+
 
 						setTimeout(function () {
 							$(`#progress${number}`).css("width", '99%');
@@ -894,29 +894,24 @@
 
 
 		});
-		async function jget(url, stockId) {
-			// Note: Below variable will hold the value of the resolved promise
-			let response = await fetchingData(url, stockId);
-			return response;
-		}
 
-	function stockinput() {
-		var stockId = $("#stockid").val();
-		$("#stockname").text("");
-		if (stockId.trim() !== "") {
-			$.get("/StockModel/checkstock", { sncode: stockId },
-				function (element) {
-					if (element.stockexist) {
-						$("#longterm,#shortterm").prop("disabled", false);
-						$("#stockname").text(element.stockname);
-					} else {
-						alert("請選擇其他股票");
-						$("#longterm,#shortterm").prop("disabled", true);
-					}
-				}
-			);
-		}
-	}
+		// function stockinput() {
+		// 	var stockId = $("#stockid").val();
+		// 	$("#stockname").text("");
+		// 	if (stockId.trim() !== "") {
+		// 		$.get("/StockModel/checkstock", { sncode: stockId },
+		// 			function (element) {
+		// 				if (element.stockexist) {
+		// 					$("#longterm,#shortterm").prop("disabled", false);
+		// 					$("#stockname").text(element.stockname);
+		// 				} else {
+		// 					alert("請選擇其他股票");
+		// 					$("#longterm,#shortterm").prop("disabled", true);
+		// 				}
+		// 			}
+		// 		);
+		// 	}
+		// }
 		function checkaccoutbuildmodelnumber() {
 
 			if (sessionStorage.getItem("LogAccount") == null) {
@@ -948,47 +943,51 @@
 			}
 
 		}
-	
-}
-	 console.log("顯示MID:" + MID);
-		function fetchingData(url, stockId) {
-			return new Promise((resolve, reject) => {
-				$.get(url, { stockCode: stockId }, html => {
-					resolve(html);
-					console.log(html);
-				})
-			})
-		}
-		function stockinput() {
-			var stockId = $("#stockid").val();
-			// var Updating = async function () {
-			// 	if (stockId.trim() !== "") {
-			// 		$.get("/StockModel/UpdateOneStock",
-			// 			{ stockCode: stockId },
-			// 			function (e) {
-			// 				if (e = "OK")
-			// 					return true;
-			// 				else
-			// 					return false;
-			// 			})
-			// 	}
-
-			var rr = jget("/StockModel/UpdateOneStock", stockId);
-			
-			rr.then(function (e) {
-				if (e.stockname == "查無這支股票") {
-					alert("請選擇其他股票");
-					$("#longterm,#shortterm").prop("disabled", true);
-
-				} else {
-					$("#longterm,#shortterm").prop("disabled", false);
-					$("#stockname").text(e.stockname);
-				}
-				console.log(rr);
-			})
-			
-		}
 
 	}
+	console.log("顯示MID:" + MID);
+	function fetchingData(url, stockId) {
+		return new Promise((resolve, reject) => {
+			$.get(url, { stockCode: stockId }, html => {
+				resolve(html);
+				console.log(html);
+			})
+		})
+	}
+	function stockinput() {
+		var stockId = $("#stockid").val();
+		// var Updating = async function () {
+		// 	if (stockId.trim() !== "") {
+		// 		$.get("/StockModel/UpdateOneStock",
+		// 			{ stockCode: stockId },
+		// 			function (e) {
+		// 				if (e = "OK")
+		// 					return true;
+		// 				else
+		// 					return false;
+		// 			})
+		// 	}
+
+		async function jget(url, stockId) {
+			// Note: Below variable will hold the value of the resolved promise
+			let response = await fetchingData(url, stockId);
+			return response;
+		}
+		var rr = jget("/StockModel/UpdateOneStock", stockId);
+
+		rr.then(function (e) {
+			if (e.stockname == "查無這支股票") {
+				alert("請選擇其他股票");
+				$("#longterm,#shortterm").prop("disabled", true);
+
+			} else {
+				$("#longterm,#shortterm").prop("disabled", false);
+				$("#stockname").text(e.stockname);
+			}
+			console.log(rr);
+		})
+
+	}
+
 	console.log("顯示MID:" + MID);
 </script>
