@@ -8,7 +8,7 @@ function changePage() {
         url: `/Home/checkStocks/${$("#search").val()}`,
         method: "post"
     }).done(function (ans) {
-        alert(ans);
+        //alert(ans);
         document.location.href = `/Home/StockCharts/${ans}`;
     })
 }

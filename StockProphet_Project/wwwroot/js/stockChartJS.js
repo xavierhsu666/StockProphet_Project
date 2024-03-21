@@ -1,4 +1,17 @@
-﻿var stocksID = $("#stocks-id").text();
+﻿//判斷會員有沒有登入
+var MID = sessionStorage.getItem("LogAccount")
+var logging;
+var user;
+if (MID == null) {
+    console.log("沒有登入");
+    logging = false;
+} else {
+    console.log("顯示MID:" + MID);
+    user = MID;
+    logging = true;
+}
+
+var stocksID = $("#stocks-id").text();
 
 //圖表大小的設置
 var margin = { top: 20, right: 50, bottom: 30, left: 50 },
@@ -468,7 +481,7 @@ function drawPre(myData, index, preState, preDate, PID) {
     //console.log(myData);
     $(".predictionArea").prepend(`<label class='prediction-card ${index}'>
     <input type='checkbox' class='card-btn' />
-    <div class='card-content'><div class='card-front'><p class="pre-state">${preState}</p>
+    <div class='card-content'><div class='card-front'><p class="pre-state">${preState}+${PID}</p>
     <table><tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
     <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5].Close}</td></tr>
     <tr><th class="pre-th">選擇參數</th><td class="pre-td">--</td></tr>
@@ -658,18 +671,49 @@ function redraw() {
 
 
 
-
+//如果有登入 需要改變的部分
+user = "apple5678";       /////////先寫死是apple
+logging = true;     /////////先寫死是true
 function btnTest(btn) {
-    var dataToServer = [{ user: "apple5678", cardID: $(btn).attr("id").substring(3) }];
+    if (logging) {      //如果有登入
+        //到時候user要改成抓目前登入者的帳號ㄛ
+        var dataToServer = { user: user, cardID: $(btn).attr("id").substring(3) };
 
-
-    $.ajax({
-        url: "/Home/SavefavoriteCard",
-        method:"put",
-        data: dataToServer,
-        success: function (e) {
-            console.log("YA");
-        }
-    })
-
+        $.ajax({
+            url: "/Home/CheckCard",
+            method: "POST",
+            data: dataToServer,
+            success: function (e) {
+                switch (e) {
+                    case "add":
+                        console.log("新增一筆");
+                        break
+                    case "delete":
+                        console.log("刪除一筆");
+                        break;
+                    case "reject":
+                        console.log("收藏上限了朋友");
+                        break;
+                }
+            }
+        })
+    } else {    
+        //---沒登入的話---//
+    }
+    
 }
+setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
+    if (logging) { //這邊要判斷是否有登入
+        d3.json(`/Home/cardCheck/${user}`, function (list) {
+
+            list.forEach(function (item, i) {
+                //針對會員有按愛心的按鈕 變化
+                $(`#PID${parseInt(item)}`).css({
+                    color: "red",
+                    /*                    fontSize: "32px" */
+                });
+
+            })
+        });
+    };
+}, 100);
