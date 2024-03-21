@@ -173,8 +173,9 @@
 <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
 <script>
     //判斷會員是否登入
-    var MID = "@Context.Session.GetString("MID")"
-    if (MID == '') {
+    var MID = sessionStorage.getItem("LogAccount")
+
+    if (MID == null) {
         $('#beforeLog').show();
         $('#afterLog').hide();
     } else {

@@ -20,7 +20,7 @@ builder.Services.AddDbContext<StocksContext>(
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-	options.IdleTimeout = TimeSpan.FromSeconds(10);
+	options.IdleTimeout = TimeSpan.FromSeconds(1000);
 	options.Cookie.HttpOnly = true;
 	options.Cookie.IsEssential = true;
 });
@@ -39,8 +39,8 @@ app.UseAuthorization();
 app.UseSession();
 app.MapControllerRoute(
 	name: "default",
-//pattern: "{controller=StockModel}/{action=predictindex}");
-pattern: "{controller=Admin}/{action=Index}/{id?}");
+//pattern: "{controller=Home}/{action=Index}");
+pattern: "{controller=Home}/{action=Index}/{id?}"); 
 //pattern: "{controller=StockModel}/{action=testBuild}");
 
 app.Run();
