@@ -382,18 +382,18 @@
 						var datatoserver = {
 							PStock: data.stockCode,
 							PVariable: JSON.stringify(data.InputColumnName),
-							PLabel: e.output_F_estimate,
+							PLabel: e.Output_F_estimate,
 							PPrefer: data.userPrefer,
 							PBuildTime: paras.currentDate,
 							PfinishTime: paras.finishDate,
-							dummyblock: '{"MSE":' + e.output_M_MAE.toFixed(3) + ',"RMSE":' + e.output_M_RMSE.toFixed(3) + ',"UpEsti":' + e.output_F_upperEstimate.toFixed(3) + ',"LowEsti":' + e.output_F_lowerEstimate.toFixed(3) + '}',
+							dummyblock: '{"MSE":' + e.Output_M_MAE.toFixed(3) + ',"RMSE":' + e.Output_M_RMSE.toFixed(3) + ',"UpEsti":' + e.Output_F_upperEstimate.toFixed(3) + ',"LowEsti":' + e.Output_F_lowerEstimate.toFixed(3) + '}',
 							Paccount: paras.account
 						}
 
 						SaveModelResultToDB(datatoserver)
 						increaseProgress(70);
 						increaseProgress(100);
-						window.location.href = "/stockmodel/predictphoto?predictedData=" + e.output_F_estimate + "&snCode=" + data.stockCode;
+						window.location.href = "/stockmodel/predictphoto?predictedData=" + e.Output_F_estimate + "&snCode=" + data.stockCode;
 						// alert("OKOK" + e);
 					}
 				})

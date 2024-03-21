@@ -384,12 +384,7 @@ namespace StockProphet_Project.Controllers {
 			switch (data.usingModel) {
 				case "R":
 					Console.WriteLine("Regression Building...............");
-					Console.WriteLine("Check Input data is latest?...............");
 
-					if (!checkStockData_Latest(wi.stockCode))
-						return View("predictIndex");
-
-					Console.WriteLine("Check Input data OK...............");
 					// 建立model input 的參數
 					//string[] inputVar = wi.InputColumnName;
 					//new string[] { "STe_Open", "STe_Close", "STe_Max", "STe_Min", "STe_SpreadRatio" };
@@ -413,10 +408,10 @@ namespace StockProphet_Project.Controllers {
 					return Json(jmo);
 				case "T":
 					Console.WriteLine("Regression Building...............");
-					Console.WriteLine("Check Input data is latest?...............");
+					//Console.WriteLine("Check Input data is latest?...............");
 
-					if (!checkStockData_Latest(wi.stockCode))
-						return View("predictIndex");
+					//if (!checkStockData_Latest(wi.stockCode))
+					//	return View("predictIndex");
 					Console.WriteLine("Check Input data OK...............");
 					TimeSerialModel.ModelInput tmi = new TimeSerialModel.ModelInput() {
 						focastDate = DateTime.Parse(InputLatestDate),
