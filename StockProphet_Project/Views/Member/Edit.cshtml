@@ -13,13 +13,7 @@
         <button id="showPredictFunc">我要預測</button><br>
         <button id="showHistoryPage">我的預測結果</button><br>
     </div>
-    <div class="col-md-8">
-        @* Session 傳值 *@
-        <div style="background-color:lightpink">
-            <p> <b>Session傳值1:</b> @Context.Session.GetString("MID") </p><br>
-            <p> <b>Session傳值2:</b> @Context.Session.GetString("MEmail")</p>
-            <p> <b>Session傳值3:</b> @Context.Session.GetString("Mlevel")</p>
-        </div>
+    <div class="col-md-8">     
 
         <div id="beforeLog">
             <b>請先登入會員</b>
@@ -29,8 +23,7 @@
             @* 2.修改個人資料 *@
             <div id="Revise">
                 <div>
-                    <label for="Account">帳號:</label>
-                    <label>@Context.Session.GetString("MaccoMnt")</label>
+                    <label for="Account" id="Account">帳號:</label>
                 </div>
 
                 <div>
@@ -49,22 +42,16 @@
                     <div id="pwdnoteword"><p style="color:red; ">您輸入的密碼不相同</p></div>
                 </div>
 
-                <label for="Email">信箱:</label>
-                <input type="email" pattern="" name="MEmail" id="Email" value="@Context.Session.GetString("MEmail")">
-
-
+                <label for="Email" id="Email">信箱:</label>               
                 <br>
 
-                <label for="UserName">姓名:</label>
-                <input type="text" name="MTrueName" id="UserName" value="@Context.Session.GetString("MtrueName")">
+                <label for="UserName" id="UserName">姓名:</label>
                 <br>
 
-                <label for="Birthday">生日:</label>
-                <label>@Context.Session.GetString("Mbirthday")</label>
+                <label for="Birthday" id="Birthday">生日:</label>
                 <br>
 
-                <label for="MGender">性別:</label>
-                <label>@Context.Session.GetString("Mgender")</label>
+                <label for="MGender" id="MGender">性別:</label>
                 <br>
 
                 <label for="MInvestYear">您的投資年數:</label>
@@ -76,13 +63,9 @@
                 </select>
                 <br>
 
-                <label for="MLevel">會員等級:</label>
-                @* 不可修改會員等級 *@
-                @*  <select name="MLevel" id="MLevel" size="1">
-                <option value="一般會員">一般會員</option>
-                <option value="高級會員">高級會員</option>
-                </select> *@
-                <label>@Context.Session.GetString("Mlevel")</label>
+                <label for="MLevel" id="MLevel">會員等級:</label>
+               
+                
                 <br>
 
                 <button id="ReviseData">修改資料</button>
@@ -104,7 +87,7 @@
         $('#beforeLog').hide();
         $('#afterLog').show();
     }
-    console.log("顯示MID:" + MID);
+    // console.log("顯示MID:" + MID);
 
     // 設定新密碼的提示字
     $('#pwdnoteword').hide();
@@ -118,7 +101,6 @@
         $('#showMemberIndex').on("click", function () {
             window.location.href = "/Member/Index";
         })
-
         // 2.點擊修改個人資料
         $('#showRevise').on("click", function () {
             window.location.href = "/Member/Edit";
@@ -127,16 +109,67 @@
         $('#showFavoritesPage').on("click", function () {
             window.location.href = "/Member/Index";
         })
-
         // 4.點擊我要預測
         $('#showPredictFunc').on("click", function () {
             window.location.href = "/StockModel/Predictindex";
         })
-
         // 5.點擊我的預測結果
         $('#showHistoryPage').on("click", function () {
             window.location.href = "/Member/Index";
         })
+        //將登入的會員資料帶到前台-不可修改的(帳號、生日、性別、會員等級)
+        var LogAccount = sessionStorage.getItem("LogAccount");
+        $('#Account').append(`<label>${LogAccount}</label>`);
+        var LogMemberBirthday = sessionStorage.getItem("LogMemberBirthday");
+        $('#Birthday').append(`<label>${LogMemberBirthday}</label>`);
+        var LogMemberGender = sessionStorage.getItem("LogMemberGender");
+        $('#MGender').append(`<label>${LogMemberGender}</label>`);
+        var LogMemberLevel = sessionStorage.getItem("LogMemberLevel");
+        // console.log(LogMemberLevel);
+        switch (LogMemberLevel) {
+
+            case "normal":
+                $("#MLevel").append("<label>一般會員</label>");
+                break;
+            case "high":
+                $("#MLevel").append("<label>高級會員</label>");
+                break;
+            case "管理者":
+                $("#MLevel").append("<label>管理者</label>");
+                break;
+            default:
+                break;
+        }
+        
+        //將登入的會員資料帶到前台-可修改的(信箱、姓名、投資年數)
+        var LogMemberEmail = sessionStorage.getItem("LogMemberEmail");
+        $('#Email').append(`<input type="email" pattern="" name="MEmail" id="Email" value="${LogMemberEmail}">`);
+        var LogMemberName = sessionStorage.getItem("LogMemberName");
+        $('#UserName').append(`<input type="text" name="MTrueName" id="UserName" value="${LogMemberName}">`)
+        var LogMemberInvestYear = sessionStorage.getItem("LogMemberInvestYear");
+        console.log(LogMemberInvestYear);
+        switch (LogMemberInvestYear) {
+
+            case "1":
+                $("#InvestYear").val("1");
+                // console.log("1")
+                break;
+            case "2":
+                $("#InvestYear").val("2");
+                // console.log("2")
+                break;
+            case "3":
+                $("#InvestYear").val("3");
+                // console.log("3")
+                break;
+            case "4":
+                $("#InvestYear option[value='4']").prop("selected", true);
+                // console.log("5")
+                break;
+            default:
+                console.log("error");
+                break;
+        }
 
         function RevisePassword() {
             //打開密碼欄位可以編輯
@@ -159,6 +192,7 @@
                 }
             })
         }
+        
         //(1).判斷該會員的舊密碼是否一致
         //Yes =>可以修改
         //NO  =>不能修改
@@ -183,48 +217,9 @@
                 }
             })
         })
+            
 
-          //(2).帶入該會員的投資年數+會員等級
-        switch ("@MInvestYear") {
-
-            case "1":
-                $("#InvestYear").val("1");
-                // console.log("1")
-                // console.log("123")
-                break;
-            case "2":
-                $("#InvestYear").val("2");
-                // console.log("2")
-                break;
-            case "3":
-                $("#InvestYear").val("3");
-                // console.log("3")
-                break;
-            case "5":
-                $("#InvestYear option[value='4']").prop("selected", true);
-                // console.log("5")
-                break;
-            default:
-                console.log("error");
-                break;
-        }
-        var encodedString = "@Mlevel"; // 將 @Mlevel 的值放在這裡
-        var tempElement = document.createElement("div");
-        tempElement.innerHTML = encodedString;
-        var decodedString = tempElement.innerText || tempElement.textContent;
-        switch (decodedString) {
-
-            case "一般會員":
-                $("#MLevel").val("一般會員");
-                break;
-            case "高級會員":
-                $("#MLevel").val("高級會員");
-                break;
-            default:
-                break;
-        }
-
-    // (3).將修改的資料存回資料庫
+    // (2).將修改的資料存回資料庫
         $('#ReviseData').on("click", function () {
                        
             var dataToServer = {

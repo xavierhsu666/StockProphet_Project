@@ -49,6 +49,7 @@
 					var dataToServer = {
 						MAccoMnt: $('#Account').val(),
 						MPassword: $('#Password').val()
+					// LastLoginTime: GetCurrentTime.toISOString()
 					}
 					$.ajax({
 						url: "/Member/checkLogin",
@@ -60,36 +61,29 @@
 								alert(e);
 							}
 							else {
-								//使用sessionStorage進行跨頁面傳值
-								sessionStorage.setItem("LogAccount", Account);
-								sessionStorage.setItem("LogMemberLevel", e);
-								//使用sessionStorage進行跨頁面傳值-會員資料
-								//供修改會員使用
-								// console.log("ViewBag.LogMemderId")
-								// var LogMemderId = '@ViewBag.LogMemderId';
-								// 	console.log("測試紀錄登錄會員的Id"+LogMemderId)
+								var LogMember = JSON.parse(e);
 
-								// sessionStorage.setItem("LogMemderId", LogMemderId);
-								// sessionStorage.setItem("LogMemberEmail", ViewBag.LogMemberEmail);
-								// sessionStorage.setItem("LogMemberName", ViewBag.LogMemberName);
-								// sessionStorage.setItem("LogMemberBirthday", ViewBag.LogMemberBirthday);
-								// sessionStorage.setItem("LogMemberGender", ViewBag.LogMemberGender);
-								// sessionStorage.setItem("LogMemberInvestYear", ViewBag.LogMemberInvestYear);
-
+							console.log(LogMember);
+							console.log(LogMember.MaccoMnt);
+							//使用sessionStorage進行跨頁面傳值
+							sessionStorage.setItem("LogAccount", LogMember.MaccoMnt);
+							sessionStorage.setItem("LogMemberLevel", LogMember.Mlevel);
+							//供修改會員使用
+							sessionStorage.setItem("LogMemderId", LogMember.Mid);
+							sessionStorage.setItem("LogMemberEmail", LogMember.Memail);
+							sessionStorage.setItem("LogMemberName", LogMember.MtrueName);
+							sessionStorage.setItem("LogMemberBirthday", LogMember.Mbirthday);
+							sessionStorage.setItem("LogMemberGender", LogMember.Mgender);
+							sessionStorage.setItem("LogMemberInvestYear", LogMember.MinvestYear);
+							sessionStorage.setItem("LogMemberfavoriteModel", LogMember.MfavoriteModel);
+							//跳轉回首頁
 								window.location.href = "/Home/Index";
-
 							}
 						}
 					})
 
 				}
-
-
-
-
 			})
-
-
 		})
 	
 </script>
