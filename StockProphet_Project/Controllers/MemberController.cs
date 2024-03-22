@@ -1,25 +1,31 @@
 ﻿using Azure.Core;
-using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using StockProphet_Project.Models;
 using System.Net.Mail;
 using System.Reflection.Metadata.Ecma335;
-using System.Security.Cryptography;
 using Tensorflow;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
+using System.Data.SqlClient;
+using Newtonsoft.Json;
+using OneOf.Types;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Security.Principal;
+using ICSharpCode.SharpZipLib.Zip;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
-using Newtonsoft.Json;
-using System.Data.SqlClient;
 
 namespace StockProphet_Project.Controllers
 {
-   
     public class MemberController : Controller
     {
-        private readonly IConfiguration _configuration;
         //在MemberController中可以讀取該StockProphet資料
+        private readonly IConfiguration _configuration;
         private readonly StocksContext _context;
         public MemberController(StocksContext context, IConfiguration configuration)
         {
@@ -52,54 +58,84 @@ namespace StockProphet_Project.Controllers
             return result.Any();
         }
         // //儲存修改後的會員資料
+
         [HttpPut]
         public bool SaveReviseMemberData(string Account, string NewPassword, string NewEmail, string NewName, string NewInvestYear)
         {
-            //Console.WriteLine( NewPassword==null);
+            //Console.WriteLine(NewPassword == null);
             //Console.WriteLine("NewEmail:" + NewEmail);
             //Console.WriteLine("NewName:" + NewName);
             //Console.WriteLine("NewInvestYear:" + NewInvestYear);
+            //Console.WriteLine("Account:" + Account);
             var query = _context.DbMembers.SingleOrDefault(x => x.MaccoMnt == Account);
-
-            if (NewPassword == null)
+            if (query != null)
             {
-                //不修改DbMember中的密碼
-                query.Memail = NewEmail;
-                query.MtrueName = NewName;
-                query.MinvestYear = Convert.ToByte(NewInvestYear);
-                _context.SaveChanges();
+                Console.WriteLine(0);
+                if (NewPassword == null)
+                {
+                    //不修改DbMember中的密碼
+                    query.Memail = NewEmail;
+                    query.MtrueName = NewName;
+                    query.MinvestYear = Convert.ToByte(NewInvestYear);
+                    _context.SaveChanges();
+                    Console.WriteLine(1);
+
+
+
+                }
+                else
+                {
+                    //修改DbMember中的密碼
+                    query.Mpassword = NewPassword;
+                    query.Memail = NewEmail;
+                    query.MtrueName = NewName;
+                    query.MinvestYear = Convert.ToByte(NewInvestYear);
+                    _context.SaveChanges();
+
+                    Console.WriteLine(2);
+
+                }
+
+                return true;
 
             }
             else
             {
-                //修改DbMember中的密碼
-                query.Memail = NewPassword;
-                query.Memail = NewEmail;
-                query.MtrueName = NewName;
-                query.MinvestYear = Convert.ToByte(NewInvestYear);
-                _context.SaveChanges();
+                Console.WriteLine(3);
+                return false;
             }
 
-            return true;
 
         }
 
-        
+        //讀取更新後的會員資料
+        [HttpGet]
+        public string ReturnReviseMemberData(string LogAccount)
+        {
+            var query = _context.DbMembers.SingleOrDefault(x => x.MaccoMnt == LogAccount);
+            var ReviseMemberData = new
+            {
+                MtrueName = query.MtrueName,
+                MinvestYear = query.MinvestYear,
+                Memail = query.Memail
+            };
+            return ReviseMemberData.ToString()!;
+        }
 
-        //public static class SessionKeys
-        //{
-        //    public const string MID = "MID";
-        //    // 在這裡添加其他您想要使用的 Session 鍵
-        //}
-
+        //我的預測結果頁面_1-3
+        public IActionResult MyPredictResult()
+        {
+            return View();
+        }
         public IActionResult MySearchPage()
         {
             // 在加载搜索页面时返回一个空的视图
             return View();
         }
 
-        public IActionResult MyCollect() {
-        
+        public IActionResult MyCollect()
+        {
+
             return View();
         }
 
@@ -110,16 +146,16 @@ namespace StockProphet_Project.Controllers
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
             string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-            B.PBulidTime, B.Pfinishtime, A.ST_Date, A.ste_Close 
-            FROM DB_model AS B 
-            OUTER APPLY (
-                SELECT TOP 5 *
-                FROM Stock
-                WHERE SN_code = B.Pstock
-                      AND ST_Date <= B.PBulidTime
-                ORDER BY ST_Date DESC
-            ) AS A 
-            WHERE B.Pid = {MID}";
+    B.PBulidTime, B.Pfinishtime, A.ST_Date, A.ste_Close 
+    FROM DB_model AS B 
+    OUTER APPLY (
+        SELECT TOP 5 *
+        FROM Stock
+        WHERE SN_code = B.Pstock
+              AND ST_Date <= B.PBulidTime
+        ORDER BY ST_Date DESC
+    ) AS A 
+    WHERE B.Pid = {MID}";
             Console.WriteLine(sqlQuery);
             SqlConnection sqlconnect = new SqlConnection(connectionString);
             sqlconnect.Open();
@@ -146,7 +182,7 @@ namespace StockProphet_Project.Controllers
 
 
             return Json(results);
-            
+
         }
         //我的收藏頁面
         [HttpGet]
@@ -228,7 +264,7 @@ namespace StockProphet_Project.Controllers
             }
 
             return View();
-            
+
         }
 
         //[HttpPost]
@@ -359,16 +395,98 @@ namespace StockProphet_Project.Controllers
         //return Json(query);
         //     }
 
-
-
-
-        //我的預測結果頁面
-        public IActionResult MyPredictResult()
+        [HttpGet]
+        public IActionResult MyPredictResultBoris(string customername)
         {
-            return View();
+            List<object> results = new List<object>();
+            string connectionString = _configuration.GetConnectionString("StocksConnstring");
+            string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
+                        B.PBulidTime, B.Pfinishtime, A.ST_Date, A.ste_Close 
+                        FROM DB_model AS B 
+                        OUTER APPLY (
+                            SELECT TOP 5 *
+                            FROM Stock
+                            WHERE SN_code = B.Pstock
+                                  AND ST_Date <= B.PBulidTime
+                            ORDER BY ST_Date DESC
+                        ) AS A 
+                        WHERE B.PAccount = '{customername}'";
+            Console.WriteLine(sqlQuery);
+            SqlConnection sqlconnect = new SqlConnection(connectionString);
+            sqlconnect.Open();
+            SqlCommand sqlCommand = new SqlCommand(sqlQuery, sqlconnect);
+            SqlDataReader reader = sqlCommand.ExecuteReader();
+
+
+            while (reader.Read())
+            {
+
+                results.Add(new
+                {
+                    STdate = reader["ST_Date"],
+                    PAcount = reader["PAccount"],
+                    PStock = reader["Pstock"],
+                    PLabel = reader["Plabel"],
+                    Parameter = reader["dummyblock"],
+                    PBuildTime = reader["PBulidTime"],
+                    PFinsihTime = reader["Pfinishtime"],
+                    SteClose = reader["Ste_Close"]
+
+                });
+            }
+
+
+            return Json(results);
         }
 
-        //註冊頁面
+        //我的預測結果
+        //沛棋繪製卡片的功能
+
+        ////網址傳資料|回傳預測內容
+        //public IActionResult showPredictions(string id)
+        //{
+
+        //    var viewModel = _context.DbModels.ToList();
+        //    var query = from p in viewModel
+        //                where p.Paccount == id
+        //                select new
+        //                {
+        //                    Account = p.Paccount,
+        //                    Variable = p.Pvariable,
+        //                    Label = p.Plabel,
+        //                    FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd")
+        //                };
+
+        //    return Json(query);
+        //}
+        //如果該會員預測過10檔股票，就要跑10次!!!
+        //網址傳資料|該股票所有內容(for預測用
+        //public IActionResult showAllStocks(string id)
+        //{
+        //    var viewModel = _context.Stock.ToList();
+        //    var query = from p in viewModel
+        //                where p.SnCode == id
+        //                select new
+        //                {
+        //                    Date = p.StDate,
+        //                    Close = p.SteClose,
+        //                    StockName = p.SnName
+        //                };
+
+        //    return Json(query);
+        //}
+        //抓取會員預測過的結果
+        public IActionResult MemberPredictData(string LogAccount)
+        {
+            //找出登入的會員共有幾筆預測資料
+
+            var query = from m in _context.DbModels
+                        where m.Paccount == LogAccount
+                        orderby m.PbulidTime descending
+                        select new { PID = m.Pid, Paccount = m.Paccount, Pvariable = m.Pvariable, Plabel = m.Plabel, PbulidTime = m.PbulidTime, PfinishTime = m.PfinishTime };
+            return Json(query);
+        }
+        //註冊頁面-2		
         public IActionResult Register()
         {
             return View();
@@ -418,12 +536,12 @@ namespace StockProphet_Project.Controllers
             return View();
         }
 
-        //會員登入頁
+        //會員登入頁-3
         public IActionResult Login()
         {
             return View();
         }
-
+        //判斷登入會員等級並決定可看到頁面的權限
 
         //判斷登入會員等級並決定可看到頁面的權限
         [HttpGet]
@@ -489,7 +607,7 @@ namespace StockProphet_Project.Controllers
 
                 if (member != null)
                 {
-                    //再判斷密碼是否正確     
+                    //再判斷密碼是否正確					
                     if (member.Mpassword == MPassword)
                     {
                         //2.包成Json傳值
@@ -528,8 +646,7 @@ namespace StockProphet_Project.Controllers
             }
         }
 
-
-        //忘記密碼頁forgot-password
+        //忘記密碼頁forgot-password-4
         public IActionResult ForgotPassword()
         {
             return View();
@@ -602,25 +719,9 @@ namespace StockProphet_Project.Controllers
             }
         }
 
-        //比對驗證碼
-        public bool CheckVerifyIdentifyCode(string MEmail, string VerifyIdentifyCode)
-        {
-            System.Diagnostics.Debug.WriteLine("比對忘記密碼會員的_Email:" + MEmail);
-            System.Diagnostics.Debug.WriteLine("比對忘記密碼會員的_驗證碼:" + VerifyIdentifyCode);
 
-            var query = _context.DbMembers.FirstOrDefault(x => x.Memail == MEmail);
-            var result = query.Memail;
-            if (result == VerifyIdentifyCode)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
 
-        //未登入時的修改密碼頁面      
+        //未登入時的修改密碼頁面-5      
         public IActionResult RevisePassword()
         {
             return View();
@@ -643,11 +744,8 @@ namespace StockProphet_Project.Controllers
         }
 
 
-        //管理者頁面Admin
-        public IActionResult Admin()
-        {
-            return View();
-        }
-
     }
+
 }
+
+
