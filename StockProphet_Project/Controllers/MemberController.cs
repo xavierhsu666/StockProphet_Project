@@ -47,29 +47,36 @@ namespace StockProphet_Project.Controllers {
 		//儲存修改後的會員資料
 		[HttpPut]
 		public bool SaveReviseMemberData(string Account, string NewPassword, string NewEmail, string NewName, string NewInvestYear) {
-			//Console.WriteLine( NewPassword==null);
+			//Console.WriteLine(NewPassword == null);
 			//Console.WriteLine("NewEmail:" + NewEmail);
 			//Console.WriteLine("NewName:" + NewName);
 			//Console.WriteLine("NewInvestYear:" + NewInvestYear);
+			//Console.WriteLine("Account:" + Account);
 			var query = _context.DbMembers.SingleOrDefault(x => x.MaccoMnt == Account);
 			if (query != null)
 			{
+				Console.WriteLine(0);
 				if (NewPassword == null) {
 					//不修改DbMember中的密碼
 					query.Memail = NewEmail;
 					query.MtrueName = NewName;
 					query.MinvestYear = Convert.ToByte(NewInvestYear);
 					_context.SaveChanges();
+					Console.WriteLine(1);
 
 
 
-				} else {
+				}
+				else {
 					//修改DbMember中的密碼
 					query.Mpassword = NewPassword;
 					query.Memail = NewEmail;
 					query.MtrueName = NewName;
 					query.MinvestYear = Convert.ToByte(NewInvestYear);
 					_context.SaveChanges();
+					
+					Console.WriteLine(2);
+
 				}
 
 				return true;
@@ -77,6 +84,7 @@ namespace StockProphet_Project.Controllers {
 			}
 			else
 			{
+					Console.WriteLine(3);
 				return false;
 			}
 
@@ -386,22 +394,22 @@ namespace StockProphet_Project.Controllers {
 			}
 		}
 
-		//判斷從哪個頁面進入到登入畫面
-		[HttpGet]
-		public bool RedirectToPrevPage(string Member)
-		{
-			if (Member != null)
-			{
-				//跳轉回會員中心
-				return true;
-			}
-			else
-			{
-				//跳轉回首頁
-				return false;
-			}
+		////判斷從哪個頁面進入到登入畫面
+		//[HttpGet]
+		//public bool RedirectToPrevPage(string provider)
+		//{
+		//	if (provider != null)
+		//	{
+		//		//跳轉回會員中心
+		//		return true;
+		//	}
+		//	else
+		//	{
+		//		//跳轉回首頁
+		//		return false;
+		//	}
 				
-		}
+		//}
 
 
 

@@ -13,7 +13,7 @@
         <button id="showPredictFunc">我要預測</button><br>
         <button id="showHistoryPage">我的預測結果</button><br>
     </div>
-    <div class="col-md-8">     
+    <div class="col-md-8">
 
         <div id="beforeLog">
             <b>請先登入會員</b>
@@ -66,8 +66,8 @@
                 <br>
 
                 <label for="MLevel" id="MLevel">會員等級:</label>
-               
-                
+
+
                 <br>
 
                 <button id="ReviseData">修改資料</button>
@@ -148,7 +148,7 @@
             default:
                 break;
         }
-        
+
         //將登入的會員資料帶到前台-可修改的(信箱、姓名、投資年數)
         var LogMemberEmail = sessionStorage.getItem("LogMemberEmail");
         $('#Email').val(LogMemberEmail);
@@ -200,7 +200,7 @@
                 }
             })
         }
-        
+
         //(1).判斷該會員的舊密碼是否一致
         //Yes =>可以修改
         //NO  =>不能修改
@@ -216,7 +216,7 @@
                 success: function (e) {
                     console.log(e)
                     if (e) {
-                        RevisePassword(); 
+                        RevisePassword();
                         alert("舊密碼輸入正確");
                     }
                     else {
@@ -225,44 +225,49 @@
                 }
             })
         })
-            
 
-    // (2).將修改的資料存回資料庫
+
+        // (2).將修改的資料存回資料庫
         $('#ReviseData').on("click", function () {
-             NewEmail = $('#Email').val(),
-             NewName = $('#UserName').val(),
-             NewInvestYear = $('#InvestYear').val()
-
+            
+            NewEmail = $('#Email').val(),
+                NewName = $('#UserName').val(),
+                NewInvestYear = $('#InvestYear').val()
+            
             var dataToServer = {
                 Account: `${LogAccount}`,
                 NewPassword: $('#Password1').val(),
-                NewEmail:$('#Email').val(),
+                NewEmail: $('#Email').val(),
                 NewName: $('#UserName').val(),
                 NewInvestYear: $('#InvestYear').val()
             }
             console.log(dataToServer)
-            var LogAccount = sessionStorage.getItem("LogAccount")
+            
             $.ajax({
                 url: "/Member/SaveReviseMemberData",
-                method:"put",
+                method: "put",
                 data: dataToServer,
                 success: function (e) {
-                    console.log(e);                   
-                    $.ajax({
-                        url: "/Member/ReturnReviseMemberData",
-                        method:"get",
-                        data: {LogAccount},
-                        success: function (e) { 
-                        return e
-                        }
-                    })
-                    alert("資料修改成功");
-                    sessionStorage.setItem("LogMemberName", NewName);
-                    sessionStorage.setItem("LogMemberEmail", NewEmail);
-                    sessionStorage.setItem("LogMemberInvestYear", NewInvestYear);
+                    console.log(e);
+                    if (e) {
+                        $.ajax({
+                            url: "/Member/ReturnReviseMemberData",
+                            method: "get",
+                            data: { LogAccount },
+                            success: function (e) {
+                                return e
+                            }
+                        })
+                        alert("資料修改成功");
+                        sessionStorage.setItem("LogMemberName", NewName);
+                        sessionStorage.setItem("LogMemberEmail", NewEmail);
+                        sessionStorage.setItem("LogMemberInvestYear", NewInvestYear);
 
-                    window.location.href = "/Member/Index";
-                   
+                        window.location.href = "/Member/Edit";
+                    } else {
+                        alert("資料修改失敗");
+                    }
+
                 }
             })
         })

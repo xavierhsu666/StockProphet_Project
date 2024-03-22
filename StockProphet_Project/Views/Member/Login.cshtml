@@ -35,70 +35,82 @@
 </div>
 
 <script>
-    $('#WrongMsg').hide();	
+    $('#WrongMsg').hide();
 
-		$(function () {
-			//按下登入按鈕需驗證身分別
-			$('#LoginSubmit').on("click", function () {
-				var Account = $('#Account').val()
-				console.log(Account);
-				if (Account == "") {
-					alert("未輸入登入帳號");
-				}
-				else {
-					var dataToServer = {
-						MAccoMnt: $('#Account').val(),
-						MPassword: $('#Password').val()					
-					}
-					$.ajax({
-						url: "/Member/checkLogin",
-						method: "get",
-						data: dataToServer,
-						success: function (e) {
-							// alert(e);
-							if (e === "會員名稱錯誤" || e === "輸入的密碼不正確") {
-								alert(e);
-							}
-							else {
-								var LogMember = JSON.parse(e);
-							// console.log(LogMember);
-							// console.log(LogMember.MaccoMnt);
+    $(function () {
+        window.href
+        //按下登入按鈕需驗證身分別
+        $('#LoginSubmit').on("click", function () {
+            var Account = $('#Account').val()
+            console.log(Account);
+            if (Account == "") {
+                alert("未輸入登入帳號");
+            }
+            else {
+                var dataToServer = {
+                    MAccoMnt: $('#Account').val(),
+                    MPassword: $('#Password').val()
+                }
+                $.ajax({
+                    url: "/Member/checkLogin",
+                    method: "get",
+                    data: dataToServer,
+                    success: function (e) {
+                        // alert(e);
+                        if (e === "會員名稱錯誤" || e === "輸入的密碼不正確") {
+                            alert(e);
+                        }
+                        else {
+                            var LogMember = JSON.parse(e);
+                            // console.log(LogMember);
+                            // console.log(LogMember.MaccoMnt);
 
-							//使用sessionStorage進行跨頁面傳值
-							sessionStorage.setItem("LogAccount", LogMember.MaccoMnt);
-							sessionStorage.setItem("LogMemberLevel", LogMember.Mlevel);
-							//供修改會員使用
-							sessionStorage.setItem("LogMemderId", LogMember.Mid);
-							sessionStorage.setItem("LogMemberEmail", LogMember.Memail);
-							sessionStorage.setItem("LogMemberName", LogMember.MtrueName);
-							sessionStorage.setItem("LogMemberBirthday", LogMember.Mbirthday);
-							sessionStorage.setItem("LogMemberGender", LogMember.Mgender);
-							sessionStorage.setItem("LogMemberInvestYear", LogMember.MinvestYear);
-							// sessionStorage.setItem("LogMemberfavoriteModel", LogMember.MfavoriteModel);
-							
-								$.ajax({
-								url: "/Member/RedirectToPrevPage",
-								method:"get",
-								data: { provider: "Member" }
-									success: function (e) {
-										if (e == true) { 
-										//跳轉回"會員中心"
-										window.location.href = "/Member/Index";
-										}
-										else {
-										//跳轉回"首頁"
-										window.location.href = "/Home/Index";
-										}
-									}
-								})		
-							
-							
-							}
-						}
-					})
+                            //使用sessionStorage進行跨頁面傳值
+                            sessionStorage.setItem("LogAccount", LogMember.MaccoMnt);
+                            sessionStorage.setItem("LogMemberLevel", LogMember.Mlevel);
+                            //供修改會員使用
+                            sessionStorage.setItem("LogMemderId", LogMember.Mid);
+                            sessionStorage.setItem("LogMemberEmail", LogMember.Memail);
+                            sessionStorage.setItem("LogMemberName", LogMember.MtrueName);
+                            sessionStorage.setItem("LogMemberBirthday", LogMember.Mbirthday);
+                            sessionStorage.setItem("LogMemberGender", LogMember.Mgender);
+                            sessionStorage.setItem("LogMemberInvestYear", LogMember.MinvestYear);
+                            // sessionStorage.setItem("LogMemberfavoriteModel", LogMember.MfavoriteModel);
+                            
+                            try {
+                                var para1 = new URL(window.location.href).searchParams.toString().split('&')[0].split('=')[1];
+                                var para2 = new URL(window.location.href).searchParams.toString().split('&')[1].split('=')[1];
+                            } catch (e) {
+                                
+                            }
+                            // $.ajax({
+                            //     url: "/Member/RedirectToPrevPage",
+                            //     method: "get",
+                            //     data: { provider: para1 },
+                            //     success: function (e) {
+                            //         alert(para1);
+                            //         if (e == true) {
+                            //             //跳轉回"會員中心"
+                            //             // window.location.href = "/Member/Index";
+                            //             window.location.href = "/"+para1+"/"+para2;
+                            //         }
+                            //         else {
+                            //             //跳轉回"首頁"
+                            //             window.location.href = "/Home/Index";
+                            //         }
+                            //     }
+                            // })
+                            if (para1 == null)
+                                window.location.href = "/home/index";
+                            else
+                                window.location.href = "/" + para1 + "/" + para2;
 
-				}
-			})
-		})
-	
+                        }
+                    }
+                })
+
+            }
+        })
+    })
+
 </script>
