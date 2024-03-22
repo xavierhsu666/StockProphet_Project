@@ -39,8 +39,8 @@ app.UseAuthorization();
 app.UseSession();
 app.MapControllerRoute(
 	name: "default",
-//pattern: "{controller=StockModel}/{action=predictindex}");
-pattern: "{controller=Admin}/{action=Index}/{id?}");
+//pattern: "{controller=Home}/{action=Index}");
+pattern: "{controller=Member}/{action=MyPredictResult}/{id?}"); 
 //pattern: "{controller=StockModel}/{action=testBuild}");
 
 app.Run();
