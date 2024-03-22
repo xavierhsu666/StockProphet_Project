@@ -61,7 +61,6 @@
 							}
 							else {
 								var LogMember = JSON.parse(e);
-
 							// console.log(LogMember);
 							// console.log(LogMember.MaccoMnt);
 
@@ -76,8 +75,24 @@
 							sessionStorage.setItem("LogMemberGender", LogMember.Mgender);
 							sessionStorage.setItem("LogMemberInvestYear", LogMember.MinvestYear);
 							// sessionStorage.setItem("LogMemberfavoriteModel", LogMember.MfavoriteModel);
-							//跳轉回首頁
-								window.location.href = "/Home/Index";
+							
+								$.ajax({
+								url: "/Member/RedirectToPrevPage",
+								method:"get",
+								data: { provider: "Member" }
+									success: function (e) {
+										if (e == true) { 
+										//跳轉回"會員中心"
+										window.location.href = "/Member/Index";
+										}
+										else {
+										//跳轉回"首頁"
+										window.location.href = "/Home/Index";
+										}
+									}
+								})		
+							
+							
 							}
 						}
 					})

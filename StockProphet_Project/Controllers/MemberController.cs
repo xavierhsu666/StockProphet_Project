@@ -386,15 +386,27 @@ namespace StockProphet_Project.Controllers {
 			}
 		}
 
-        //判斷從哪個頁面進入到登入畫面
-  //      [HttpGet]
-		//public bool RedirectToPrevPage(string )
-		//{
+		//判斷從哪個頁面進入到登入畫面
+		[HttpGet]
+		public bool RedirectToPrevPage(string Member)
+		{
+			if (Member != null)
+			{
+				//跳轉回會員中心
+				return true;
+			}
+			else
+			{
+				//跳轉回首頁
+				return false;
+			}
+				
+		}
 
-		//}
 
-        //忘記密碼頁forgot-password-4
-        public IActionResult ForgotPassword() {
+
+		//忘記密碼頁forgot-password-4
+		public IActionResult ForgotPassword() {
             return View();
         }
 
