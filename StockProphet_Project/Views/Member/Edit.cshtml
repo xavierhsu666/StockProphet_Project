@@ -42,10 +42,12 @@
                     <div id="pwdnoteword"><p style="color:red; ">您輸入的密碼不相同</p></div>
                 </div>
 
-                <label for="Email" id="Email">信箱:</label>               
+                <label for="Email">信箱:</label>
+                <input type="email" pattern="" name="MEmail" id="Email" value="">
                 <br>
 
-                <label for="UserName" id="UserName">姓名:</label>
+                <label for="UserName">姓名:</label>
+                <input type="text" name="MTrueName" id="UserName" value="">
                 <br>
 
                 <label for="Birthday" id="Birthday">生日:</label>
@@ -125,13 +127,19 @@
         var LogMemberGender = sessionStorage.getItem("LogMemberGender");
         $('#MGender').append(`<label>${LogMemberGender}</label>`);
         var LogMemberLevel = sessionStorage.getItem("LogMemberLevel");
-        // console.log(LogMemberLevel);
+        console.log(LogMemberLevel);
         switch (LogMemberLevel) {
 
             case "normal":
                 $("#MLevel").append("<label>一般會員</label>");
                 break;
+            case "一般會員":
+                $("#MLevel").append("<label>一般會員</label>");
+                break;
             case "high":
+                $("#MLevel").append("<label>高級會員</label>");
+                break;
+            case "高級會員":
                 $("#MLevel").append("<label>高級會員</label>");
                 break;
             case "管理者":
@@ -143,11 +151,11 @@
         
         //將登入的會員資料帶到前台-可修改的(信箱、姓名、投資年數)
         var LogMemberEmail = sessionStorage.getItem("LogMemberEmail");
-        $('#Email').append(`<input type="email" pattern="" name="MEmail" id="Email" value="${LogMemberEmail}">`);
+        $('#Email').val(LogMemberEmail);
         var LogMemberName = sessionStorage.getItem("LogMemberName");
-        $('#UserName').append(`<input type="text" name="MTrueName" id="UserName" value="${LogMemberName}">`)
+        $('#UserName').val(LogMemberName);
         var LogMemberInvestYear = sessionStorage.getItem("LogMemberInvestYear");
-        console.log(LogMemberInvestYear);
+        // console.log(LogMemberInvestYear);
         switch (LogMemberInvestYear) {
 
             case "1":
@@ -221,24 +229,40 @@
 
     // (2).將修改的資料存回資料庫
         $('#ReviseData').on("click", function () {
-                       
+             NewEmail = $('#Email').val(),
+             NewName = $('#UserName').val(),
+             NewInvestYear = $('#InvestYear').val()
+
             var dataToServer = {
-                Account: "@Context.Session.GetString("MaccoMnt")",
+                Account: `${LogAccount}`,
                 NewPassword: $('#Password1').val(),
                 NewEmail:$('#Email').val(),
                 NewName: $('#UserName').val(),
                 NewInvestYear: $('#InvestYear').val()
             }
             console.log(dataToServer)
-
+            var LogAccount = sessionStorage.getItem("LogAccount")
             $.ajax({
                 url: "/Member/SaveReviseMemberData",
                 method:"put",
                 data: dataToServer,
                 success: function (e) {
-                    console.log(e);
-                    window.location.href = "/Member/Edit";
+                    console.log(e);                   
+                    $.ajax({
+                        url: "/Member/ReturnReviseMemberData",
+                        method:"get",
+                        data: {LogAccount},
+                        success: function (e) { 
+                        return e
+                        }
+                    })
+                    alert("資料修改成功");
+                    sessionStorage.setItem("LogMemberName", NewName);
+                    sessionStorage.setItem("LogMemberEmail", NewEmail);
+                    sessionStorage.setItem("LogMemberInvestYear", NewInvestYear);
 
+                    window.location.href = "/Member/Index";
+                   
                 }
             })
         })

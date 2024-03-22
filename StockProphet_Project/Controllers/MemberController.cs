@@ -12,15 +12,17 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using Newtonsoft.Json;
+using System.Security.Cryptography;
+using System.Security.Principal;
 
 namespace StockProphet_Project.Controllers {
 	public class MemberController : Controller {
 		//在MemberController中可以讀取該StockProphet資料
 		private readonly StocksContext _context;
-		public MemberController( StocksContext context ) {
+		public MemberController(StocksContext context) {
 			_context = context;
 		}
-		
+
 		//會員主頁-1
 		public IActionResult Index() {
 			return View();
@@ -30,7 +32,7 @@ namespace StockProphet_Project.Controllers {
 			return View();
 		}
 		//確認舊密碼是否正確
-		public bool checkPassword( string checkPassword ) {
+		public bool checkPassword(string checkPassword) {
 			System.Diagnostics.Debug.WriteLine("舊密碼:" + checkPassword);
 
 			//判斷該會員的舊密碼是否一致            
@@ -44,86 +46,201 @@ namespace StockProphet_Project.Controllers {
 		}
 		//儲存修改後的會員資料
 		[HttpPut]
-		public bool SaveReviseMemberData( string Account, string NewPassword, string NewEmail, string NewName, string NewInvestYear ) {
+		public bool SaveReviseMemberData(string Account, string NewPassword, string NewEmail, string NewName, string NewInvestYear) {
 			//Console.WriteLine( NewPassword==null);
 			//Console.WriteLine("NewEmail:" + NewEmail);
 			//Console.WriteLine("NewName:" + NewName);
 			//Console.WriteLine("NewInvestYear:" + NewInvestYear);
 			var query = _context.DbMembers.SingleOrDefault(x => x.MaccoMnt == Account);
+			if (query != null)
+			{
+				if (NewPassword == null) {
+					//不修改DbMember中的密碼
+					query.Memail = NewEmail;
+					query.MtrueName = NewName;
+					query.MinvestYear = Convert.ToByte(NewInvestYear);
+					_context.SaveChanges();
 
-			if (NewPassword == null) {
-				//不修改DbMember中的密碼
-				query.Memail = NewEmail;
-				query.MtrueName = NewName;
-				query.MinvestYear = Convert.ToByte(NewInvestYear);
-				_context.SaveChanges();
 
-			} else {
-				//修改DbMember中的密碼
-				query.Mpassword = NewPassword;
-				query.Memail = NewEmail;
-				query.MtrueName = NewName;
-				query.MinvestYear = Convert.ToByte(NewInvestYear);
-				_context.SaveChanges();
+
+				} else {
+					//修改DbMember中的密碼
+					query.Mpassword = NewPassword;
+					query.Memail = NewEmail;
+					query.MtrueName = NewName;
+					query.MinvestYear = Convert.ToByte(NewInvestYear);
+					_context.SaveChanges();
+				}
+
+				return true;
+
+			}
+			else
+			{
+				return false;
 			}
 
-			return true;
+
+		}
+		//讀取更新後的會員資料
+		[HttpGet]
+		public string ReturnReviseMemberData(string LogAccount) {
+			var query = _context.DbMembers.SingleOrDefault(x => x.MaccoMnt == LogAccount);
+			var ReviseMemberData = new
+			{
+				MtrueName = query.MtrueName,
+				MinvestYear = query.MinvestYear,
+				Memail = query.Memail
+			};
+			return ReviseMemberData.ToString()!;
 		}
 
-		//我的收藏頁面_1-2
-		public IActionResult MyCollect() {
+		//我的收藏頁面-菀琇
+		public IActionResult MyCollect()
+		{
+
+			// 從 Session 中獲取 MID
+			var sessionMID = HttpContext.Session.GetString(SessionKeys.MID);
+
+			// 將 MID 轉換為整數
+			if (int.TryParse(sessionMID, out int mid))
+			{
+				// 查詢 MID 對應的資料列
+				var item = _context.DbMembers.FirstOrDefault(item => item.Mid == mid);
+
+				if (item != null)
+				{
+
+
+					// 將 MfavoriteModel 的值整理成字串，以空白分隔數字
+					string formattedMfavoriteModel = string.Empty; // 若為 NULL，則設為空字串
+
+					if (!string.IsNullOrEmpty(item.MfavoriteModel))
+					{
+
+						formattedMfavoriteModel = item.MfavoriteModel.Trim('{', '}'); // 先移除大括號
+
+						// 檢查是否為空字串，若是則直接將 pidStrings.Length 設為 0
+						if (formattedMfavoriteModel == "")
+						{
+							ViewBag.FormattedMfavoriteModel = "尚無收藏項目";
+							ViewBag.PidStringsCount = 0;
+						}
+
+
+						else
+						{
+
+							var pidStrings = formattedMfavoriteModel.Split(',');
+
+							// 將字串轉換為整數並存儲在列表中
+							var pidList = new List<int>();
+							foreach (var pidString in pidStrings)
+							{
+								if (int.TryParse(pidString, out int pid))
+								{
+									pidList.Add(pid);
+								}
+							}
+
+							// 將數字陣列傳遞到 View
+							ViewBag.FavoriteNumbers = pidList;
+							ViewBag.PidStringsCount = pidStrings.Length;
+
+
+							// 使用 LINQ 查詢 DbModels 資料表，找出符合條件的資料列
+							var favoriteItems = _context.DbModels.Where(model => pidList.Contains(model.Pid)).ToList();
+
+							// 將查詢結果傳遞到 View
+							ViewBag.FavoriteItems = favoriteItems;
+
+
+
+						}
+					}
+					else
+					{
+						ViewBag.FormattedMfavoriteModel = "尚無收藏項目"; // 若找不到對應的資料，則設為空字串
+						ViewBag.FavoriteNumbers = new int[0]; // 若找不到對應的資料，則設為空陣列
+					}
+				}
+			}
+			else
+			{
+				ViewBag.FormattedMfavoriteModel = "尚無收藏資料";
+				ViewBag.FavoriteNumbers = new int[0];
+
+			}
+
 			return View();
 		}
+
+		public static class SessionKeys
+		{
+			public const string MID = "MID";
+			// 在這裡添加其他您想要使用的 Session 鍵
+		}
+
 		//我的預測結果頁面_1-3
 		public IActionResult MyPredictResult() {
 
 			return View();
 		}
 
-        //我的預測結果
-        //沛棋繪製卡片的功能
+		//我的預測結果-繪製卡片的功能
 
-        ////網址傳資料|回傳預測內容
-        //public IActionResult showPredictions(string id)
-        //{
-			
-        //    var viewModel = _context.DbModels.ToList();
-        //    var query = from p in viewModel
-        //                where p.Paccount == id
-        //                select new
-        //                {
-        //                    Account = p.Paccount,
-        //                    Variable = p.Pvariable,
-        //                    Label = p.Plabel,
-        //                    FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd")
-        //                };
+		//抓取會員預測過的結果
+		public IActionResult MemberPredictData(string LogAccount) {
+			//找出登入的會員共有幾筆預測資料
 
-        //    return Json(query);
-        //}
+			var query = from m in _context.DbModels
+						where m.Paccount == LogAccount
+						orderby m.PbulidTime descending
+						select new { PID = m.Pid, Paccount = m.Paccount, Pvariable = m.Pvariable, Plabel = m.Plabel, PbulidTime = m.PbulidTime, PfinishTime = m.PfinishTime };
+			return Json(query);
+		}
+
+		////網址傳資料|回傳預測內容
+		//public IActionResult showPredictions(string id)
+		//{
+
+		//    var viewModel = _context.DbModels.ToList();
+		//    var query = from p in viewModel
+		//                where p.Paccount == id
+		//                select new
+		//                {
+		//                    Account = p.Paccount,
+		//                    Variable = p.Pvariable,
+		//                    Label = p.Plabel,
+		//                    FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd")
+		//                };
+
+		//    return Json(query);
+		//}
 		//如果該會員預測過10檔股票，就要跑10次!!!
-        //網址傳資料|該股票所有內容(for預測用
-        //public IActionResult showAllStocks(string id)
-        //{
-        //    var viewModel = _context.Stock.ToList();
-        //    var query = from p in viewModel
-        //                where p.SnCode == id
-        //                select new
-        //                {
-        //                    Date = p.StDate,
-        //                    Close = p.SteClose,
-        //                    StockName = p.SnName
-        //                };
+		//網址傳資料|該股票所有內容(for預測用
+		//public IActionResult showAllStocks(string id)
+		//{
+		//    var viewModel = _context.Stock.ToList();
+		//    var query = from p in viewModel
+		//                where p.SnCode == id
+		//                select new
+		//                {
+		//                    Date = p.StDate,
+		//                    Close = p.SteClose,
+		//                    StockName = p.SnName
+		//                };
 
-        //    return Json(query);
-        //}
+		//    return Json(query);
+		//}
 
-        //註冊頁面-2		
-        public IActionResult Register() {
+		//註冊頁面-2		
+		public IActionResult Register() {
 			return View();
 		}
 		//檢查帳戶名
 		[HttpGet]
-		public bool RegisterA( string MAccoMnt ) {
+		public bool RegisterA(string MAccoMnt) {
 			//判斷帳戶名是否有重複            
 			var result = _context.DbMembers.Where(x => x.MaccoMnt == MAccoMnt);
 			return result.Any();
@@ -131,7 +248,7 @@ namespace StockProphet_Project.Controllers {
 
 		//註冊頁面-新會員註冊OK
 		[HttpPost]
-		public IActionResult Register( string MAccoMnt, string MPassword, string MEmail, string MTrueName, DateOnly MBirthday, string MGender, byte MInvestYear, string MLevel, string registerTime ) {
+		public IActionResult Register(string MAccoMnt, string MPassword, string MEmail, string MTrueName, DateOnly MBirthday, string MGender, byte MInvestYear, string MLevel, string registerTime) {
 			//System.Diagnostics.Debug.WriteLine(MAccoMnt);
 			//System.Diagnostics.Debug.WriteLine(MPassword);
 			//System.Diagnostics.Debug.WriteLine(MEmail);
@@ -165,17 +282,17 @@ namespace StockProphet_Project.Controllers {
 
 		//會員登入頁-3
 		public IActionResult Login() {
-				return View();			
-        }
+			return View();
+		}
 
 		//判斷登入會員等級並決定可看到頁面的權限
 		[HttpGet]
 		public string checkLogin(string MAccoMnt, string MPassword)
 		{
-            //Console.WriteLine("測試登入帳號資料" + MAccoMnt);
+			//Console.WriteLine("測試登入帳號資料" + MAccoMnt);
 
-            //輸入的帳號是信箱
-            if (MAccoMnt.IndexOf('@') >= 0)
+			//輸入的帳號是信箱
+			if (MAccoMnt.IndexOf('@') >= 0)
 			{
 				var member = _context.DbMembers.FirstOrDefault(x => x.Memail == MAccoMnt);
 				Console.WriteLine(member);
@@ -189,95 +306,50 @@ namespace StockProphet_Project.Controllers {
 					{
 						//2.包成Json傳值
 
-						var LogMember = new { 
-						   Mid = member.Mid, 
-						   MaccoMnt = member.MaccoMnt, 
-						   MtrueName = member.MtrueName, 
-						   Mgender = member.Mgender, 
-						   Mbirthday = member.Mbirthday, 
-						   MinvestYear = member.MinvestYear, 
-						   Memail = member.Memail, 
-						   Mlevel = member.Mlevel, 
-						   Mprefer = member.Mprefer, 
-						   MregisterTime = member.MregisterTime, 
-						   MfavoriteModel = member.MfavoriteModel };
+						var LogMember = new {
+							Mid = member.Mid,
+							MaccoMnt = member.MaccoMnt,
+							MtrueName = member.MtrueName,
+							Mgender = member.Mgender,
+							Mbirthday = member.Mbirthday,
+							MinvestYear = member.MinvestYear,
+							Memail = member.Memail,
+							Mlevel = member.Mlevel,
+							Mprefer = member.Mprefer,
+							MregisterTime = member.MregisterTime,
+							MfavoriteModel = member.MfavoriteModel };
 
 						//Newtonsoft.Json序列化
 						string jsonData1 = JsonConvert.SerializeObject(LogMember);
-						Console.WriteLine("登入後會員的資料:"+jsonData1);
-
-						//创建 JsonSerializerOptions 对象，并配置选项
-						//var options = new JsonSerializerOptions
-						//{
-						// Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-						// WriteIndented = true
-						//};
-
-						//Newtonsoft.Json反序列化
-
-						//string jsonData2 = JsonConvert.SerializeObject()
+						Console.WriteLine("登入後會員的資料:" + jsonData1);
 
 						return jsonData1;
-
-
-
-						////1.Session傳值
-						//HttpContext.Session.SetString("MID", member.Mid.ToString());
-						//HttpContext.Session.SetString("MEmail", member.Memail!);
-						//HttpContext.Session.SetString("Mlevel", member.Mlevel!);
-						//HttpContext.Session.SetString("MaccoMnt", member.MaccoMnt!);
-						//HttpContext.Session.SetString("Mlevel", member.Mlevel!);
-						////不常用_供修改會員資料頁面使用
-						//HttpContext.Session.SetString("MtrueName", member.MtrueName!);
-						//HttpContext.Session.SetString("Mbirthday", value: member.Mbirthday.ToString()!);
-						//HttpContext.Session.SetString("Mgender", member.Mgender!);
-						//HttpContext.Session.SetString("MinvestYear", member.MinvestYear.ToString()!);
-
-						//Console.WriteLine(member.MinvestYear);
-						//Console.WriteLine(member.Mlevel);
-						//string result = "";
-						//switch (member.Mlevel)
-						//{
-						//	case "一般會員":
-						//		result = "一般會員";
-						//		break;
-						//	case "高級會員":
-						//		result = "高級會員";
-						//		break;
-						//	case "管理者":
-						//		result = "管理者";
-						//		break;
-						//	default:
-						//		result = "一般訪客";
-						//		break;
-						//}
-						//return result;
 					}
 					else
-                    {
-                        return "輸入的密碼不正確";
-                    }
-                }
-                else
-                {
-                    return "會員名稱錯誤";
-                }
-            }
-            //輸入的帳號是帳號名
+					{
+						return "輸入的密碼不正確";
+					}
+				}
+				else
+				{
+					return "會員名稱錯誤";
+				}
+			}
+			//輸入的帳號是帳號名
 
-            else
-            {
-                var member = _context.DbMembers.FirstOrDefault(x => x.MaccoMnt == MAccoMnt);
-                Console.WriteLine(member);
-                Console.WriteLine("登入會員的ID" + member.Mid);
+			else
+			{
+				var member = _context.DbMembers.FirstOrDefault(x => x.MaccoMnt == MAccoMnt);
+				Console.WriteLine(member);
+				Console.WriteLine("登入會員的ID" + member.Mid);
 
-                //先檢查是否存在該會員
+				//先檢查是否存在該會員
 
-                if (member != null)
-                {
-                    //再判斷密碼是否正確					
-                        if (member.Mpassword == MPassword)
-                    {
+				if (member != null)
+				{
+					//再判斷密碼是否正確					
+					if (member.Mpassword == MPassword)
+					{
 						//2.包成Json傳值
 
 						var LogMember = new
@@ -299,71 +371,27 @@ namespace StockProphet_Project.Controllers {
 						string jsonData1 = JsonConvert.SerializeObject(LogMember);
 						Console.WriteLine("登入後會員的資料:" + jsonData1);
 
-						//创建 JsonSerializerOptions 对象，并配置选项
-						//var options = new JsonSerializerOptions
-						//{
-						// Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-						// WriteIndented = true
-						//};
-
-						//Newtonsoft.Json反序列化
-
-						//string jsonData2 = JsonConvert.SerializeObject()
-
 						return jsonData1;
-
-
-
-						////1.Session傳值
-						//HttpContext.Session.SetString("MID", member.Mid.ToString());
-						//HttpContext.Session.SetString("MEmail", member.Memail!);
-						//HttpContext.Session.SetString("Mlevel", member.Mlevel!);
-						//HttpContext.Session.SetString("MaccoMnt", member.MaccoMnt!);
-						//HttpContext.Session.SetString("Mlevel", member.Mlevel!);
-						////不常用_供修改會員資料頁面使用
-						//HttpContext.Session.SetString("MtrueName", member.MtrueName!);
-						//HttpContext.Session.SetString("Mbirthday", value: member.Mbirthday.ToString()!);
-						//HttpContext.Session.SetString("Mgender", member.Mgender!);
-						//HttpContext.Session.SetString("MinvestYear", member.MinvestYear.ToString()!);
-
-						//Console.WriteLine(member.MinvestYear);
-						//Console.WriteLine(member.Mlevel);
-						//string result = "";
-						//switch (member.Mlevel)
-						//{
-						//	case "一般會員":
-						//		result = "一般會員";
-						//		break;
-						//	case "高級會員":
-						//		result = "高級會員";
-						//		break;
-						//	case "管理者":
-						//		result = "管理者";
-						//		break;
-						//	default:
-						//		result = "一般訪客";
-						//		break;
-						//}
-						//return result;
 					}
-					
-                    else
-                    {
-                        return "輸入的密碼不正確";
-                    }
-                }
-                else
-                {
-                    return "會員名稱錯誤";
-                }
-            }
-        }
 
+					else
+					{
+						return "輸入的密碼不正確";
+					}
+				}
+				else
+				{
+					return "會員名稱錯誤";
+				}
+			}
+		}
 
+        //判斷從哪個頁面進入到登入畫面
+  //      [HttpGet]
+		//public bool RedirectToPrevPage(string )
+		//{
 
-
-
-
+		//}
 
         //忘記密碼頁forgot-password-4
         public IActionResult ForgotPassword() {

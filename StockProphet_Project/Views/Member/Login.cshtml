@@ -21,7 +21,7 @@
                 <label class="form-label">密碼</label>
             </div>
             <div>
-                <div id="LoginSubmit" class="w-100 btn btn-lg btn-primary">登入</div>
+                <div id="LoginSubmit" class="w-100 btn btn-lg btn-primary" rel="prev">登入</div>
             </div>
             <div>
                 <a href="~/Member/ForgotPassword">忘記密碼?</a>&nbsp&nbsp&nbsp
@@ -48,8 +48,7 @@
 				else {
 					var dataToServer = {
 						MAccoMnt: $('#Account').val(),
-						MPassword: $('#Password').val()
-					// LastLoginTime: GetCurrentTime.toISOString()
+						MPassword: $('#Password').val()					
 					}
 					$.ajax({
 						url: "/Member/checkLogin",
@@ -63,8 +62,9 @@
 							else {
 								var LogMember = JSON.parse(e);
 
-							console.log(LogMember);
-							console.log(LogMember.MaccoMnt);
+							// console.log(LogMember);
+							// console.log(LogMember.MaccoMnt);
+
 							//使用sessionStorage進行跨頁面傳值
 							sessionStorage.setItem("LogAccount", LogMember.MaccoMnt);
 							sessionStorage.setItem("LogMemberLevel", LogMember.Mlevel);
@@ -75,7 +75,7 @@
 							sessionStorage.setItem("LogMemberBirthday", LogMember.Mbirthday);
 							sessionStorage.setItem("LogMemberGender", LogMember.Mgender);
 							sessionStorage.setItem("LogMemberInvestYear", LogMember.MinvestYear);
-							sessionStorage.setItem("LogMemberfavoriteModel", LogMember.MfavoriteModel);
+							// sessionStorage.setItem("LogMemberfavoriteModel", LogMember.MfavoriteModel);
 							//跳轉回首頁
 								window.location.href = "/Home/Index";
 							}
