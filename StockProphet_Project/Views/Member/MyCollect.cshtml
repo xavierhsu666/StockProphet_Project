@@ -329,17 +329,17 @@
                 })
 
                 // 从 sessionStorage 中獲取當前登入 Favorite
-                var MFavorite = sessionStorage.setItem("LogMemberfavoriteModel");
+                // var MFavorite = sessionStorage.getItem("LogMemberfavoriteModel");
                 
 
-                $.ajax({
-                    method: "get",
-                    url: "/Member/MyCollect1", // 根据实际的路由配置调整路径
-                    data: { sessionFavorite: MFavorite }, // 传递的数据
-                    success: function (data) {
-                        console.log(data)
-                    }
-                });
+                // $.ajax({
+                //     method: "get",
+                //     url: "/Member/MyCollect1", // 根据实际的路由配置调整路径
+                //     data: { sessionFavorite: MFavorite }, // 传递的数据
+                //     success: function (data) {
+                //         console.log(data)
+                //     }
+                // });
                 // $.ajax({
                 //     method: "get",
                 //     url: "/Member/Test",
