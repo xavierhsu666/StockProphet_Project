@@ -44,11 +44,10 @@ img {
 }
 
 /*會擋到Session傳值測試 暫時註掉*/
-#search-box {
+/*#search-box {
     position: absolute;
-    top: 25%;*/
-/*transform: translateY(-50%);*/
-}
+    top: 25%;
+}*/
 
 #search {
     border-radius: 100px;
@@ -96,18 +95,9 @@ a.ui-button:active,
 
 /*搜尋欄設定*/
 #ui-id-1 {
-    height: 20px !important;
+    height: 250px !important;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
-/*暫時的*/
-#SessionTest {
-    position:absolute;
-}
-#tttest {
-    padding:0;
-    position: absolute;
-    width:150px;
-    height:25px;
-    background-color:peru;
-}
-/*暫時的*/
+

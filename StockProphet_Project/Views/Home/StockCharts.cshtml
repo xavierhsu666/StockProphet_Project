@@ -1,75 +1,76 @@
 ﻿<link rel="stylesheet" href="~/css/stockChartStyle.css" type="text/css" />
 
 <div class="upArea">
-    <div class="upLayer">
-        <div class="ctrlBtn">
-            <button class="btnT changeMA" onclick="smaClick(this)">SMA5</button>
-            <button class="btnT changeMA" onclick="smaClick(this)">SMA30</button>
-        </div>
-        <div id="forKcandle" class="svgArea"></div>
-    </div>
-    <div class="upLayer">
-        <div class="ctrlBtn">
-            <button id="change" class="btnT">MACD</button>
-        </div>
-        <div id="forIndicators" class="svgArea"></div>
-    </div>
+	<div class="upLayer">
+		<div class="ctrlBtn">
+			<button class="btnT changeMA" onclick="smaClick(this)">SMA5</button>
+			<button class="btnT changeMA" onclick="smaClick(this)">SMA30</button>
+		</div>
+		<div id="forKcandle" class="svgArea"></div>
+	</div>
+	<div class="upLayer">
+		<div class="ctrlBtn">
+			<button id="change" class="btnT">MACD</button>
+		</div>
+		<div id="forIndicators" class="svgArea"></div>
+	</div>
 </div>
 
 <div class="downArea">
-    <div class="downLayer st-info">
-        <div class="tb-head">
-            <p class="tb-head-content" id="stocks-id">@ViewBag.stockID</p>
-            <p class="tb-head-content td-tittle">tittle</p>
-            <p class="tb-head-content td-date">date</p>
-        </div>
-        <table class="tb-info">
-            <tr>
-                <th class="st-th">開盤價</th>
-                <td class="tb-open tb-content td-w">-</td>
-                <th class ="st-th">收盤價</th>
-                <td class="tb-close tb-content td-w">-</td>
-                <th class="st-th">震幅</th>
-                <td class="tb-SR tb-content td-a">-</td>
-            </tr>
-            <tr>
-                <th class="st-th">最高價</th>
-                <td class="tb-max tb-content td-w">-</td>
-                <th class="st-th">最低價</th>
-                <td class="tb-min tb-content td-w">-</td>
-            </tr>
-            <tr>
-                <th class="st-th border-top-line">當日交易額</th>
-                <td class="tb-TM tb-content td-w border-top-line">-</td>
-                <th class="st-th border-top-line">當日交易量</th>
-                <td class="tb-TQ tb-content td-w border-top-line">-</td>
-                <th class="st-th border-top-line">EPS</th>
-                <td class="tb-EPS tb-content td-a border-top-line">-</td>
-            </tr>
-            <tr>
-                <th class="st-th">營業收入</th>
-                <td class="tb-BI tb-content td-w">-</td>
-                <th class="st-th">業外收入</th>
-                <td class="tb-NBI tb-content td-w">-</td>
-                <th class="st-th">業外比例</th>
-                <td class="tb-NBIR tb-content td-a">-</td>
-            </tr>
-        </table>
-    </div>
-    <div class="downLayer">
-        <div class="memberArea">
-            <div><p style="font-size:28px">會員專區</p></div>
-            <div class="member-btn-g">
-                <button class="member-btn">我的模型</button>
-                <button class="member-btn">建立模型</button>
-            </div>
-        </div>
-    </div>
+	<div class="downLayer st-info">
+		<div class="tb-head">
+			<p class="tb-head-content" id="stocks-id">@ViewBag.stockID</p>
+			<p class="tb-head-content td-tittle">tittle</p>
+			<p class="tb-head-content td-date">date</p>
+		</div>
+		<table class="tb-info">
+			<tr>
+				<th class="st-th">開盤價</th>
+				<td class="tb-open tb-content td-w">-</td>
+				<th class="st-th">收盤價</th>
+				<td class="tb-close tb-content td-w">-</td>
+				<th class="st-th">震幅</th>
+				<td class="tb-SR tb-content td-a">-</td>
+			</tr>
+			<tr>
+				<th class="st-th">最高價</th>
+				<td class="tb-max tb-content td-w">-</td>
+				<th class="st-th">最低價</th>
+				<td class="tb-min tb-content td-w">-</td>
+			</tr>
+			<tr>
+				<th class="st-th border-top-line">當日交易額</th>
+				<td class="tb-TM tb-content td-w border-top-line">-</td>
+				<th class="st-th border-top-line">當日交易量</th>
+				<td class="tb-TQ tb-content td-w border-top-line">-</td>
+				<th class="st-th border-top-line">EPS</th>
+				<td class="tb-EPS tb-content td-a border-top-line">-</td>
+			</tr>
+			<tr>
+				<th class="st-th">營業收入</th>
+				<td class="tb-BI tb-content td-w">-</td>
+				<th class="st-th">業外收入</th>
+				<td class="tb-NBI tb-content td-w">-</td>
+				<th class="st-th">業外比例</th>
+				<td class="tb-NBIR tb-content td-a">-</td>
+			</tr>
+		</table>
+	</div>
+	<div class="downLayer">
+		<div class="memberArea">
+			<div><p style="font-size:28px">會員專區</p></div>
+			<div class="member-btn-g">
+				<button class="member-btn" id="HomeMymodel">我的模型</button>
+				<button class="member-btn" id="HomeBuildmodel">建立模型</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 
 
 <div class="predictionArea">
+    @* <button class='prediction-collect' id="PID${PID}" onclick=" btnTestCard()">♥</button> *@
 @*      <label class="prediction-card">
         <input type="checkbox" class="card-btn"/>
         <div class="card-content">
@@ -97,38 +98,58 @@
         </div>
     </label>  *@
 
-    @* <label class="prediction-card">
-        <input type="checkbox" class="card-btn" />
-        <div class="card-content">
-            <div class="card-front">
-                <button class="prediction-collect">♥</button>
-            </div>
-            <div class="card-back">
-                <div class="forPrediction"></div>
-            </div>
-        </div>
-    </label>
+	@* <label class="prediction-card">
+	<input type="checkbox" class="card-btn" />
+	<div class="card-content">
+	<div class="card-front">
+	<button class="prediction-collect">♥</button>
+	</div>
+	<div class="card-back">
+	<div class="forPrediction"></div>
+	</div>
+	</div>
+	</label>
 
-    <label class="prediction-card">
-        <input type="checkbox" class="card-btn" />
-        <div class="card-content">
-            <div class="card-front">
-                <button class="prediction-collect">♥</button>
-            </div>
-            <div class="card-back"><div class="forPrediction"></div></div>
-        </div>
-    </label>
-    <label class="prediction-card">
-        <input type="checkbox" class="card-btn" />
-        <div class="card-content">
-            <div class="card-front">
-                <button class="prediction-collect">♥</button>
-            </div>
-            <div class="card-back"><div class="forPrediction"></div></div>
-        </div>
-    </label> *@
+	<label class="prediction-card">
+	<input type="checkbox" class="card-btn" />
+	<div class="card-content">
+	<div class="card-front">
+	<button class="prediction-collect">♥</button>
+	</div>
+	<div class="card-back"><div class="forPrediction"></div></div>
+	</div>
+	</label>
+	<label class="prediction-card">
+	<input type="checkbox" class="card-btn" />
+	<div class="card-content">
+	<div class="card-front">
+	<button class="prediction-collect">♥</button>
+	</div>
+	<div class="card-back"><div class="forPrediction"></div></div>
+	</div>
+	</label> *@
 
 </div>
 
 
 <script src="~/js/stockChartJS.js"></script>
+<script>
+
+	$("#HomeMymodel").on("click", function () {
+
+		if (sessionStorage.getItem("LogAccount") == null) {
+			// console.log("login")
+			alert("尚未登入，請先登入或註冊")
+			window.location.href = "/Member/Login"
+		} else {
+			window.location.href = "/Member/MyCollect"
+		}
+	})
+	$("#HomeBuildmodel").on("click", function () {
+
+		window.location.href = "/StockModel/predictindex";
+	})
+
+		
+
+</script>

@@ -1,4 +1,17 @@
-﻿var stocksID = $("#stocks-id").text();
+﻿//判斷會員有沒有登入
+var MID = sessionStorage.getItem("LogAccount")
+var logging;
+var user;
+if (MID == null) {
+    console.log("沒有登入");
+    logging = false;
+} else {
+    console.log("顯示MID:" + MID);
+    user = MID;
+    logging = true;
+}
+
+var stocksID = $("#stocks-id").text();
 
 //圖表大小的設置
 var margin = { top: 20, right: 50, bottom: 30, left: 50 },
@@ -144,9 +157,8 @@ var yScaleKD = d3.scaleLinear()
 //---抓資料---//
 var dataAll;
 
-d3.json(`/Member/showStocks/${stocksID}`, function (data) {
-   
-   $(".td-tittle").text(data[0].StockName) //股票名稱
+d3.json(`/Home/showStocks/${stocksID}`, function (data) {
+    $(".td-tittle").text(data[0].StockName) //股票名稱
     data = data.map(function (d) {
         return {
             date: parseDate(d.Date),
@@ -415,30 +427,36 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
     d3.json(`/Home/showPredictions/${stocksID}`, function (Ddata) {
         // -----------* 先只找第1筆 記得改成Ddata.length*----------- //
         //最新的資料在最前
-        for (let i = (Ddata.length - 1); i >= 0; i--) {
-            var xData = [Ddata[i].FinishTime] //預測日&前推五日
+        for (let i = 0; i < Ddata.length; i++) {
+            var PID = Ddata[i].PID; //卡片ID
+            var xData = [Ddata[i].FinishTime] //預測日&前推五日的大禮包
             var yData = [Ddata[i].Label];
-            var preDate = xData[0];
+            var preDate = xData[0]; //預測日 懶人傳值
+            var preBuildDate = Ddata[i].BuildTime;
             //console.log("預測日: "+ xData)
+            //用BuildDate去找列表中最近的日子(closestDate)，closestDate可能等於BuildDate，也可能是前一天
             var closestDate = dateList.reduce((prev, curr) => {
-                var prevDiff = Math.abs(new Date(xData) - new Date(prev));
-                var currDiff = Math.abs(new Date(xData) - new Date(curr));
+                var prevDiff = Math.abs(new Date(preBuildDate) - new Date(prev));
+                var currDiff = Math.abs(new Date(preBuildDate) - new Date(curr));
 
-                return currDiff < prevDiff ? curr : prev;   //可能是最靠近，也可能是當日?
+                return currDiff < prevDiff ? curr : prev;
             })
-            //console.log("最近近的日子: " + closestDate);
-            var preState;
-            if (closestDate == xData[0]) {
+/*            console.log("最近近的日子: " + closestDate);*/
+
+            var Today = (new Date()).toISOString().split('T')[0];
+            var preState;   //判斷結案狀態
+            if (Today == preDate) {
                 preState = "已結案"
 
             } else {
                 preState = "追蹤中"
             }
+
             //找最接近的日子，並往回推5次紀錄
-            //先找資料中日期=最接近的日期
             for (var j = 0; j < Alldata.length; j++) {
                 if (Alldata[j].Date == closestDate) {
-                    var endDate = j - (closestDate == xData[0] ? 1 : 0);
+                    //最近的那天是建立那天嗎？（根據那張卡片對於使用者是當天or之前建立的）
+                    var endDate = j - (closestDate == preBuildDate ? 1 : 0);
                     for (var x = 0; x < 5; x++) {
                         xData.unshift((Alldata[endDate - x]).Date);
                         yData.unshift((Alldata[endDate - x]).Close);
@@ -452,23 +470,24 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
                 preData[z] = { Date: parseDate(xData[z]), Close: yData[z] };
             }
             var index = i;
-            console.log(preData);
-            drawPre(preData, index, preState, preDate);
+            //console.log(preData);
+            drawPre(preData, index, preState, preDate, PID, preBuildDate);
         }
     })
 })
 
-function drawPre(myData, index, preState, preDate) {
+function drawPre(myData, index, preState, preDate, PID, preBuildDate) {
 
     //console.log(myData);
     $(".predictionArea").prepend(`<label class='prediction-card ${index}'>
     <input type='checkbox' class='card-btn' />
-    <div class='card-content'><div class='card-front'><p class="pre-state">${preState}</p>
-    <table><tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
-    <tr><th class="pre-th">預測價格</th><td class ="pre-td">-</td></tr>
+    <div class='card-content'><div class='card-front'><p class="pre-state">${preState}+${PID}</p>
+    <table><tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${preDate}</td></tr>
+    <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preBuildDate}</td></tr>
+    <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5].Close}</td></tr>
     <tr><th class="pre-th">選擇參數</th><td class="pre-td">--</td></tr>
     </table>
-    <button class='prediction-collect'>♥</button>
+    <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
     </div>
     <div class='card-back'>
     <div class='forPrediction'>
@@ -479,7 +498,6 @@ function drawPre(myData, index, preState, preDate) {
     for (var i = 0; i < myData.length; i++) {
         dateList.push(myData[i].Date);
     }
-    console.log();
 
     //圖表大小的設置
     var preMargin = { top: 20, right: 50, bottom: 30, left: 50 },
@@ -650,3 +668,70 @@ function redraw() {
         .attr("x", function (d) { return xVolume(d.date); })
         .attr("width", (xVolume.bandwidth()));
 }
+
+
+
+
+//如果有登入 需要改變的部分
+//user = "apple5678";       /////////先寫死是apple
+//logging = true;     /////////先寫死是true
+function btnTest(btn) {
+    if (logging) {      //如果有登入
+        //到時候user要改成抓目前登入者的帳號ㄛ
+        var dataToServer = { user: user, cardID: $(btn).attr("id").substring(3) };
+
+        $.ajax({
+            url: "/Home/CheckCard",
+            method: "POST",
+            data: dataToServer,
+            success: function (e) {
+                switch (e) {
+                    case "add":
+                        $(btn).css("color", "red");
+                        console.log("新增一筆");
+                        break
+                    case "delete":
+                        $(btn).css("color", "black");
+                        console.log("刪除一筆");
+                        break;
+                    case "reject":
+                        console.log("收藏上限了朋友");
+                        break;
+                }
+            }
+        })
+    } else {    
+        //---沒登入的話---//
+    }
+    
+}
+setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
+    if (logging) { //這邊要判斷是否有登入
+        d3.json(`/Home/cardCheck/${user}`, function (list) {
+            list.forEach(function (item, i) {
+                //針對會員有按愛心的按鈕 變化
+                $(`#PID${parseInt(item)}`).css({
+                    color: "red",
+                    /* fontSize: "32px" */
+                });
+            })
+        });
+    } else {
+        //沒登入時按鈕
+        $(".prediction-collect").on({
+            mouseenter: function () {
+                $(this).removeClass("collectBtnStart");
+                $(this).removeClass("collectBtnLeave");
+                //先清掉先前的class
+                $(this).addClass("collectBtnStart");
+            },
+            mouseleave: function () {
+                $(this).addClass("collectBtnLeave");
+            }
+        })
+
+
+    }//else尾
+
+
+}, 100);

@@ -5,7 +5,104 @@
     var MInvestYear = @Context.Session.GetString("MinvestYear")!;
     var Mlevel = @Context.Session.GetString("Mlevel")!;
 }
+<script src="https://d3js.org/d3.v4.js"></script>
 
+
+<style>
+    /*翻轉卡片*/
+    .prediction-card {
+        -webkit-perspective: 1000px;
+        perspective: 1000px;
+        -webkit-transform-style: preserve-3d;
+        transform-style: preserve-3d;
+        display: block;
+        width: 350px;
+        height: 250px;
+        cursor: pointer;
+        margin: 20px;
+    }
+
+    .card-content {
+        position: relative;
+        height: 100%;
+        width: 100%;
+        -webkit-transform-style: preserve-3d;
+        transform-style: preserve-3d;
+        -webkit-transition: all 500ms;
+        transition: all 500ms;
+    }
+
+        .card-content div {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            background: #fff;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+
+        .card-content .card-back {
+            -webkit-transform: rotateY(180deg);
+            transform: rotateY(180deg);
+            display: flex;
+            justify-content: center; /*上下置中*/
+            align-items: center; /*左右置中*/
+        }
+
+    .prediction-card:hover .card-content {
+        box-shadow: 0 20px 20px rgba(50, 50, 50, 0.2);
+    }
+
+    .card-btn {
+        display: none;
+    }
+
+    :checked + .card-content {
+        transform: rotateY(180deg);
+        -webkit-transform: rotateY(180deg);
+    }
+
+    .prediction-card:hover :checked + .card-content {
+        box-shadow: 0 -20px 20px rgba(50, 50, 50, 0.2);
+    }
+
+    .prediction-collect {
+        position: absolute;
+        right: 20px;
+        bottom: 10px;
+        height: 3em;
+        width: 3em;
+        border-radius: 50%;
+        z-index: 10;
+    }
+
+    .forPre {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-48%, -50%);
+        transform: translate(-48%, -50%);
+    }
+
+    /*預測股票的那點*/
+    /*.myCircle:hover {
+        stroke: red;
+    }*/
+
+    .card-front {
+        padding: 20px;
+        z-index: 1;
+    }
+
+    .pre-state {
+        font-size: 32px;
+    }
+
+    .pre-td {
+        padding-left: 10px;
+    }
+
+</style>
 <h1 class="text-">會員功能-我的預測結果</h1>
 
 <div class="row">
@@ -35,7 +132,11 @@
             @* 4.我的預測結果 *@
             <div id="FavoritesPage">
                 <b></b>我的預測結果的卡片
+                @* <!-- 卡片都會塞這裡 --> *@
                 <div class="predictionArea"></div>
+
+
+
 
             </div>
 
@@ -46,8 +147,9 @@
 
 <script>
     //判斷會員是否登入
-    var MID = "@Context.Session.GetString("MID")"
-    if (MID == '') {
+    var MID = sessionStorage.getItem("LogAccount")
+
+    if (MID == null) {
         $('#beforeLog').show();
         $('#afterLog').hide();
     } else {
@@ -82,7 +184,274 @@
             window.location.href = "/Member/MyPredictResult";
         })
 
+        // 抓預測資料-某某會員預測過XX股票的質料值
+
+        //stocksID=>要修改成會員ID(PAccount)
         
+        // var PAccount = sessionStorage.getItem("LogAccount");
+        // d3.json(`/Member/showAllStocks/${PAccount}`, function (Alldata) {
+        //     var dateList = []; //把所有日期資料整理成陣列
+        //     for (let i = 0; i < Alldata.length; i++) {
+        //         dateList.push(Alldata[i].Date);
+        //     }
+
+            //如果該會員有10筆預測資料，就要跑10次!!!
+            // d3.json(`/Member/${PID}`)
+
+
+
+            //抓所有資料，方便之後比對預測日的前五筆
+            // d3.json(`/Member/showPredictions/${stocksID}`, function (Ddata) {
+            //     //最新的資料在最前
+            //     for (let i = Ddata.length - 1; i >= 0; i--) {
+            //         var xData = [Ddata[i].FinishTime]; //預測日&前推五日
+            //         var yData = [Ddata[i].Label];
+            //         var preDate = xData[0];
+            //         //console.log("預測日: "+ xData)
+            //         var closestDate = dateList.reduce((prev, curr) => {
+            //             var prevDiff = Math.abs(new Date(xData) - new Date(prev));
+            //             var currDiff = Math.abs(new Date(xData) - new Date(curr));
+
+            //             return currDiff < prevDiff ? curr : prev; //可能是最靠近，也可能是當日?
+            //         });
+            //         //console.log("最近近的日子: " + closestDate);
+            //         var preState;
+            //         if (closestDate == xData[0]) {
+            //             preState = "已結案";
+            //         } else {
+            //             preState = "追蹤中";
+            //         }
+            //         //找最接近的日子，並往回推5次紀錄
+            //         //先找資料中日期=最接近的日期
+            //         for (var j = 0; j < Alldata.length; j++) {
+            //             if (Alldata[j].Date == closestDate) {
+            //                 var endDate = j - (closestDate == xData[0] ? 1 : 0);
+            //                 for (var x = 0; x < 5; x++) {
+            //                     xData.unshift(Alldata[endDate - x].Date);
+            //                     yData.unshift(Alldata[endDate - x].Close);
+            //                 }
+            //                 break;
+            //             }
+            //         }
+            //         //
+            //         var preData = [];
+            //         for (var z = 0; z < xData.length; z++) {
+            //             preData[z] = { Date: parseDate(xData[z]), Close: yData[z] };
+            //         }
+            //         var index = i;
+            //         drawPre(preData, index, preState, preDate);
+            //     }
+            // });
+        // });
+
+        //生卡片
+    //     function drawPre(myData, index, preState, preDate) {
+    //         //console.log(myData);
+    //         $(".predictionArea").prepend(`<label class='prediction-card ${index}'>
+    // <input type='checkbox' class='card-btn' />
+    // <div class='card-content'><div class='card-front'><p class="pre-state">${preState}</p>
+    // <table><tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
+    // <tr><th class="pre-th">預測價格</th><td class ="pre-td">-</td></tr>
+    // <tr><th class="pre-th">選擇參數</th><td class="pre-td">--</td></tr>
+    // </table>
+    // <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
+    // </div>
+    // <div class='card-back'>
+    // <div class='forPrediction'>
+
+    // </div></div></div></label>`);
+    //         //重新整理日期
+    //         var dateList = [];
+    //         for (var i = 0; i < myData.length; i++) {
+    //             dateList.push(myData[i].Date);
+    //         }
+
+    //         //圖表大小的設置
+    //         var preMargin = { top: 20, right: 50, bottom: 30, left: 50 },
+    //             preWidth = 325 - preMargin.left - preMargin.right,
+    //             preHeight = 200 - preMargin.top - preMargin.bottom;
+
+    //         //X、Y軸scale
+    //         var preScaleX = d3.scaleBand().range([10, preWidth]).domain(dateList);
+    //         var preScaleY = d3
+    //             .scaleLinear()
+    //             .range([preHeight - 10, 0])
+    //             .domain(d3.extent(myData, (d) => d.Close));
+
+    //         //X、Y軸
+    //         var preAxisX = d3.axisBottom(preScaleX);
+    //         var preAxisY = d3.axisLeft(preScaleY);
+
+    //         //生成線
+    //         var linePre = d3
+    //             .line()
+    //             .x((d) => preScaleX(d.Date))
+    //             .y((d) => preScaleY(d.Close));
+    //         /*.curve(d3.curveBasis);*/ //讓折線有弧度
+
+    //         //生SVG
+    //         var preSvg = d3
+    //             .select(".forPrediction")
+    //             .append("svg")
+    //             .attr("class", "forPre")
+    //             .attr("width", preWidth + preMargin.left + preMargin.right)
+    //             .attr("height", preHeight + preMargin.top + preMargin.bottom)
+    //             .append("g")
+    //             .attr(
+    //                 "transform",
+    //                 "translate(" + preMargin.left + "," + preMargin.top + ")"
+    //             );
+
+    //         //顏色
+    //         var maxDPre = d3.max(myData, function (d) {
+    //             return +d.Date;
+    //         });
+    //         var maxCPre = d3.max(myData, function (d) {
+    //             return +d.Close;
+    //         });
+    //         var minCPre = d3.min(myData, function (d) {
+    //             return +d.Close;
+    //         });
+
+    //         var colorX = d3.scaleLinear().domain([0, maxDPre]).range([preWidth, 0]);
+
+    //         preSvg
+    //             .append("linearGradient")
+    //             .attr("id", "line-gradient")
+    //             .attr("gradientUnits", "userSpaceOnUse")
+    //             .attr("x1", colorX(0))
+    //             .attr("y1", 0)
+    //             .attr("x2", colorX(maxDPre))
+    //             .attr("y2", 0)
+    //             .selectAll("stop")
+    //             .data([
+    //                 { offset: "0%", color: "#51a1b7" },
+    //                 { offset: "100%", color: "#cedba0" },
+    //             ])
+    //             .enter()
+    //             .append("stop")
+    //             .attr("offset", function (d) {
+    //                 return d.offset;
+    //             })
+    //             .attr("stop-color", function (d) {
+    //                 return d.color;
+    //             });
+
+    //         preSvg
+    //             .append("g")
+    //             .datum(myData)
+    //             .attr("class", "predictionLine here")
+    //             .attr("transform", "translate(18,0)"); //折線
+    //         preSvg
+    //             .append("g")
+    //             .attr("class", "x axis pre")
+    //             .attr("transform", "translate(0," + preHeight + ")"); //X軸
+    //         preSvg.append("g").attr("class", "y axis pre"); //Y軸
+
+    //         preSvg
+    //             .select("g.predictionLine.here")
+    //             .append("path")
+    //             .attr("class", "pathPre")
+    //             .attr("d", linePre(myData))
+    //             .attr("fill", "none")
+    //             .attr("stroke", "url(#line-gradient)")
+    //             .attr("stroke-width", 2);
+    //         preSvg
+    //             .select("g.x.axis.pre")
+    //             .call(
+    //                 preAxisX
+    //                     .tickValues(dateList)
+    //                     .tickFormat(d3.timeFormat("%m/%d"))
+    //                     .tickPadding(10)
+    //                     .tickSizeInner(-preHeight - 10, -preHeight)
+    //             )
+    //             .selectAll("text")
+    //             .style("text-anchor", "end")
+    //             .attr("dx", "-.8em")
+    //             .attr("dy", ".15em")
+    //             .attr("transform", "rotate(-25) translate(20, 10)");
+
+    //         preSvg.select("g.y.axis.pre").call(
+    //             preAxisY
+    //                 .tickSizeInner(-preWidth - 10, -preWidth)
+    //                 .tickPadding(10)
+    //                 .tickFormat(d3.format(".1f"))
+    //                 .tickValues([minCPre, d3.mean([minCPre, maxCPre]), maxCPre])
+    //         );
+
+    //         //--點點--//
+    //         //提示框
+    //         var Tooltip = d3
+    //             .select(".forPrediction")
+    //             .append("div")
+    //             .style("opacity", 0)
+    //             .attr("class", "tooltip")
+    //             .style("background-color", "white")
+    //             .style("border", "solid")
+    //             .style("border-width", "2px")
+    //             .style("border-radius", "5px")
+    //             .style("padding", "5px")
+    //             .style("width", "100px")
+    //             .style("height", "33px")
+    //             .style("text-align", "center");
+
+    //         var mouseover = function (d) {
+    //             Tooltip.style("opacity", 1);
+    //         };
+    //         var mousemove = function (d) {
+    //             Tooltip.html("價格: " + d.Close)
+    //                 .style("left", d3.mouse(this)[0] + 20 + "px")
+    //                 .style("top", d3.mouse(this)[1] + "px");
+    //         };
+    //         //console.log($(".circleGroup"));
+    //         var mouseleave = function (d) {
+    //             Tooltip.style("opacity", 0);
+    //         };
+    //         //加圓點
+    //         preSvg
+    //             .append("g")
+    //             .attr("class", `circleGroup${index}`)
+    //             .attr("transform", "translate(18,0)")
+    //             .selectAll("dot")
+    //             .data(myData)
+    //             .enter()
+    //             .append("circle")
+    //             .attr("class", "myCircle")
+    //             .attr("cx", (d) => preScaleX(d.Date))
+    //             .attr("cy", (d) => preScaleY(d.Close))
+    //             .attr("r", 5)
+    //             .attr("stroke", "#69b3a2")
+    //             .attr("fill", "#FFF")
+    //             .on("mouseover", mouseover)
+    //             .on("mousemove", mousemove)
+    //             .on("mouseleave", mouseleave);
+
+    //         //動畫?
+    //         pointAni(index);
+    //         function pointAni(index) {
+    //             var strokeC = myData[5].Close > myData[4].Close ? "#b84121" : "#69b3a2";
+    //             var fillC = myData[5].Close > myData[4].Close ? "#f77465" : "#cedba0";
+    //             /*        console.log("strokeC:" + strokeC + "  fillC:" + fillC);*/
+
+    //             d3.select(`.circleGroup${index} :last-child`)
+    //                 .attr("stroke", strokeC)
+    //                 .style("stroke-width", 3)
+    //                 .style("stroke-opacity", 1)
+    //                 .style("r", 5);
+
+    //             d3.select(`.circleGroup${index} :last-child`)
+    //                 .attr("fill", fillC)
+    //                 .transition()
+    //                 .duration(1000)
+    //                 .style("stroke-width", 10)
+    //                 .style("stroke-opacity", 0)
+    //                 .style("r", 7)
+    //                 .on("end", function () {
+    //                     pointAni(index);
+    //                 });
+    //         }
+    //     }
+
 
     })
 

@@ -1,5 +1,18 @@
 ﻿@charset "UTF-8";
 
+.container {
+    max-width:100vw !important;
+}
+/*mainArea是新增的*/
+.mainArea {
+    background-color: #f3f2f1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+/*padding-top: 50px;*/
+/*padding-bottom: 50px;*/
+}
+
 text {
     font-size: 12px;
 }
@@ -301,10 +314,10 @@ path {
 
 .predictionArea {
     min-width: 600px;
-    max-width: 1175px;
+    max-width: 1400px;
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-around;
     flex-wrap: wrap;
     margin-top: 50px;
     margin-bottom: 20px;
@@ -320,12 +333,8 @@ path {
     width: 350px;
     height: 250px;
     cursor: pointer;
-    /*margin-left: 10px;*/
-    margin: 20px;
-    /*margin-right: auto;
-  position: relative;
-  /*left: 3%;*/
-    /*transform: translateX(-185%);*/
+    margin: 25px;
+    z-index: 1;
 }
 
 .card-content {
@@ -336,6 +345,7 @@ path {
     transform-style: preserve-3d;
     -webkit-transition: all 500ms;
     transition: all 500ms;
+    z-index: 1;
 }
 
     .card-content div {
@@ -345,6 +355,7 @@ path {
         background: #FFF;
         -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
+
     }
 
     .card-content .card-back {
@@ -353,6 +364,7 @@ path {
         display: flex;
         justify-content: center; /*上下置中*/
         align-items: center; /*左右置中*/
+
     }
 
 .prediction-card:hover .card-content {
@@ -372,14 +384,6 @@ path {
     box-shadow: 0 -20px 20px rgba(50, 50, 50, 0.2);
 }
 
-.prediction-collect {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    height: 3em;
-    width: 3em;
-    border-radius: 50%;
-}
 
 .forPre {
     position: relative;
@@ -396,6 +400,7 @@ path {
 
 .card-front {
     padding: 20px;
+    z-index: 1;
 }
 
 .pre-state {
@@ -404,4 +409,105 @@ path {
 
 .pre-td {
     padding-left: 10px;
+}
+
+.prediction-collect {
+    position: absolute;
+    right: 20px;
+    bottom: 10px;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    z-index: 10;
+    font-size:30px;
+}
+
+.collectBtnStart::after {
+    position: absolute;
+    content: '登入會員後\A就可進行收藏哦！';
+    white-space: pre;
+    font-size: 20px;
+    width: 200px;
+    height: 80px;
+    background-color: pink;
+    top: -100px;
+    left: -80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: visitorAlert 0.5s;
+    pointer-events: none;
+}
+
+.collectBtnStart::before {
+    position: absolute;
+    content: '';
+    width: 30px;
+    height: 30px;
+    background-color: pink;
+    top: -45px;
+    left: 7px;
+    animation: visitorAlert-D 0.3s 0.1s forwards;
+    opacity: 0;
+    pointer-events: none;
+}
+
+@keyframes visitorAlert {
+    0% {
+        transform: translateY(30px);
+        opacity:0;
+
+    }
+    70% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes visitorAlert-D {
+    0% {
+        transform: translateY(-30px);
+        opacity: 0;
+        /*transform: rotateZ(45deg);*/
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+        transform: rotateZ(45deg);
+    }
+}
+
+.collectBtnLeave::after {
+    animation: visitorAlertLeave 0.3s forwards
+}
+
+.collectBtnLeave::before {
+    animation: visitorAlert-DLeave 0.3s forwards;
+}
+
+@keyframes visitorAlertLeave {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(30px);
+        opacity:0;
+    }
+}
+
+@keyframes visitorAlert-DLeave {
+    0% {
+        opacity: 1;
+        transform: rotateZ(45deg);
+    }
+    80% {
+        opacity: 0;
+        transform: rotateZ(45deg);
+    }
 }

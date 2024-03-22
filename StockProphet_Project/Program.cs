@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using StockProphet_Project.Models;
 using System.Text.Encodings.Web;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -14,13 +15,20 @@ builder.Services.AddControllersWithViews()
              options.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
 
          });
+builder.Services.AddCors(options => {
+	options.AddPolicy(name: MyAllowSpecificOrigins,
+					  policy => {
+						  policy.WithOrigins("https://mops.twse.com.tw/nas/t21/sii/t21sc03_113_2_0.html")
+											 .AllowAnyHeader().AllowAnyMethod();
+					  });
+});
 builder.Services.AddDbContext<StocksContext>(
 	  options => options.UseSqlServer(builder.Configuration.GetConnectionString("StocksConnstring")));
 //AddSession
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-	options.IdleTimeout = TimeSpan.FromSeconds(10);
+	options.IdleTimeout = TimeSpan.FromSeconds(1000);
 	options.Cookie.HttpOnly = true;
 	options.Cookie.IsEssential = true;
 });
@@ -34,6 +42,7 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 app.UseSession();
