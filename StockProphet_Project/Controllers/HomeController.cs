@@ -21,15 +21,17 @@ namespace StockProphet_Project.Controllers {
             ViewBag.stockID = id;
             return View();
         }
+        
 
         //網址傳資料|從資料庫抓股票資料
         public IActionResult showStocks(string id) {
-
+            var myDateNow = DateOnly.FromDateTime(DateTime.Now);    //測試日是03/22
+            var myDate = DateOnly.FromDateTime(DateTime.Now.AddYears(-1));
             var viewModel = _context.Stock.ToList();
-            var query = (from p in viewModel
-                         where p.SnCode == id
+            var query =  from p in viewModel
+                         where p.SnCode == id && p.StDate <= myDateNow && p.StDate >= myDate
                          //先顛倒順序
-                         orderby p.StDate descending
+                         //orderby p.StDate descending
                          select new {
                              Date = p.StDate,
                              Open = p.SteOpen,
@@ -55,11 +57,11 @@ namespace StockProphet_Project.Controllers {
                              //NonBussinessIncome = p.SbNonBussinessIncome,
                              //NonBussinessIncomeRatio = p.SbNonBussinessIncomeRatio
 
-                         }).Take(100);   //取前一百筆
+                         };   //取前一百筆
             //->這樣表會顛倒啊朋友
 
             //記得顛倒回來
-            return Json(query.Reverse());
+            return Json(query);
         }
 
         //網址傳資料|回傳預測內容
@@ -100,7 +102,8 @@ namespace StockProphet_Project.Controllers {
         public string CheckCard(string user, string cardID) {
             var member = _context.DbMembers.SingleOrDefault(e => e.MaccoMnt == user);
             char[] delimiterChars = ['{', '}', ','];
-            string[] myCard = (member.MfavoriteModel).Split(delimiterChars);
+            string[] myCard = [];
+            if ((member.MfavoriteModel) != null) { myCard = (member.MfavoriteModel).Split(delimiterChars); }
             //不知道為什麼會有空格:(
             myCard = myCard.Where((source, index) => index != 0).ToArray();
             myCard = myCard.Where((source, index) => index != myCard.Length-1).ToArray();
@@ -139,7 +142,8 @@ namespace StockProphet_Project.Controllers {
         public IActionResult cardCheck(string id) {
             var member = _context.DbMembers.SingleOrDefault(e => e.MaccoMnt == id);
             char[] delimiterChars = ['{', '}', ','];
-            string[] myCard = (member.MfavoriteModel).Split(delimiterChars);
+            string[] myCard = [];
+            if ((member.MfavoriteModel) != null) { myCard = (member.MfavoriteModel).Split(delimiterChars); }
             myCard = myCard.Where((source, index) => index != 0).ToArray();
             myCard = myCard.Where((source, index) => index != myCard.Length - 1).ToArray();
 

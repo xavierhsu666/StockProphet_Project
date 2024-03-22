@@ -32,6 +32,8 @@ var allY = d3.scaleLinear()
 var y = d3.scaleLinear()
     .range([height - 60, 0])
 
+var yZoom = d3.scaleLinear().range([height - 60, 0])
+
 //成交量的X、Y軸範圍
 var xVolume = d3.scaleBand().range([0, width]).padding(0.15);
 var yVolume = d3.scaleLinear().range([height, height - 60]);
@@ -48,8 +50,9 @@ var sma = techan.plot.sma().xScale(x).yScale(y);
 //XY軸顯示的位置
 var xAxis = d3.axisBottom(x)
 var yAxis = d3.axisLeft(y)
+var YzoomAxis = d3.axisLeft(yZoom);
 ////詳細數值顯示在右側
-var yRightAxis = d3.axisRight(y);
+var yRightAxis = d3.axisRight(yZoom);
 var VyRightAxis = d3.axisRight(yVolume);
 
 
@@ -190,7 +193,8 @@ d3.json(`/Home/showStocks/${stocksID}`, function (data) {
     });
 
     //K棒X、Y軸
-    svg.append("g").attr("class", "y axis")
+    svg.append("g").attr("class", "y axis");
+    svg.append("g").attr("class", "y axis zoom");
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
@@ -248,6 +252,7 @@ function draw(data, volumeData) {
     x.domain(data.map(candlestick.accessor().d));
     //y的資料範圍
     y.domain(techan.scale.plot.ohlc(data, candlestick.accessor()).domain());
+    yZoom.domain(techan.scale.plot.ohlc(data, candlestick.accessor()).domain());
     //成交量
     yVolume.domain(techan.scale.plot.volume(data).domain());
     xVolume.domain(data.map(function (d) { return d.date; }))
@@ -291,8 +296,9 @@ function draw(data, volumeData) {
 
     //ticks(幾個刻度?縮放比例?) timeFormat(什麼樣的數值) tickSize(表格內的格線)
     svg.select("g.candlestick").call(candlestick).attr("clip-path", "url(#candlestickClip)");  //K棒
-    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 1).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
+    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 2).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
     svg.selectAll("g.y.axis").call(yAxis.ticks(5).tickSize(-width, 0).tickPadding(10));   //Y軸
+    svg.selectAll("g.y.axis.zoom").call(YzoomAxis.ticks(5).tickSize(-width, 0).tickPadding(10));   //Y軸
     svg.select("g.sma.ma-5").attr("clip-path", "url(#candlestickClip)").call(sma);
     svg.select("g.sma.ma-30").attr("clip-path", "url(#candlestickClip)").call(sma);
 
@@ -445,7 +451,7 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
 
             var Today = (new Date()).toISOString().split('T')[0];
             var preState;   //判斷結案狀態
-            if (Today == preDate) {
+            if (Today >= preDate) {
                 preState = "已結案"
 
             } else {
@@ -652,15 +658,18 @@ function zooming() {
     candlestick.yScale(rescaledY);
     sma.yScale(rescaledY);
 
+
     //X座標
     x.zoomable().domain(d3.event.transform.rescaleX(zoomableInit).domain());
+
+    yZoom.range([height - 60, 0].map(d => d3.event.transform.applyY(d)));
     xVolume.range([0, width].map(d => d3.event.transform.applyX(d)));
     redraw();
 }
 
 function redraw() {
     svg.select("g.candlestick").call(candlestick);  //K棒
-    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 1).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
+    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 2).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
     svg.selectAll("g.y.axis").call(yAxis.ticks(5).tickSize(-width, 0).tickPadding(10));   //Y軸
     svg.select("g.sma.ma-5").call(sma);
     svg.select("g.sma.ma-30").call(sma);
