@@ -106,21 +106,22 @@
 <h1 class="text-">會員功能-我的預測結果</h1>
 
 <div class="row">
-	<div class="col-md-4">
-		<button id="showMemberIndex">回到會員頁</button><br>
-		<button id="showRevise">修改個人資料</button><br>
-		<button id="showFavoritesPage">我的收藏</button><br>
-		<button id="showPredictFunc">我要預測</button><br>
-		<button id="showHistoryPage">我的預測結果</button><br>
-	</div>
-	<div class="col-md-8">
-		@* Session 傳值 *@
-		<div style="background-color:lightpink">
-			<p> <b>Session傳值1:</b> @Context.Session.GetString("MID") </p><br>
-			<p> <b>Session傳值2:</b> @Context.Session.GetString("MEmail")</p>
-			<p> <b>Session傳值3:</b> @Context.Session.GetString("Mlevel")</p>
-			<p> <b>Session傳值4:</b> @MInvestYear</p>
-		</div>
+    <div class="col-md-4">
+        <button id="showMemberIndex">回到會員頁</button><br>
+        <button id="showRevise">修改個人資料</button><br>
+        <button id="showFavoritesPage">我的收藏</button><br>
+        <button id="showPredictFunc">我要預測</button><br>
+        <button id="showHistoryPage">我的預測結果</button><br>
+        
+    </div>
+    <div class="col-md-8">
+        @* Session 傳值 *@
+        <div style="background-color:lightpink">
+            <p> <b>Session傳值1:</b> @Context.Session.GetString("MID") </p><br>
+            <p> <b>Session傳值2:</b> @Context.Session.GetString("MEmail")</p>
+            <p> <b>Session傳值3:</b> @Context.Session.GetString("Mlevel")</p>
+            <p> <b>Session傳值4:</b> @MInvestYear</p>
+        </div>
 
 		<div id="beforeLog">
 			<b>請先登入會員</b>

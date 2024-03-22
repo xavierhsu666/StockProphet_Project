@@ -1,0 +1,420 @@
+﻿<div>
+    <label for="stockCode">股票代碼:</label>
+    <input type="text" id="stockCode">
+</div>
+
+<div>
+    <label for="date">日期:</label>
+    <input type="text" id="date">
+</div>
+
+<button onclick="sendAjaxRequest()">查詢</button>
+
+<div id="displayArea"></div>
+
+<table border=1>
+    <thead>
+        <tr>
+        </tr>
+    </thead>
+    <tbody id="combinedRows">
+    </tbody>
+</table>
+<button onclick="ajax_1()">testbtn</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+
+    // function displayInput() {
+    //     var userInputStockCode = document.getElementById('stockCode').value; // 取得使用者輸入的股票代碼
+    //     var index = table3Obj.stockCode.indexOf(userInputStockCode); // 尋找使用者輸入的股票代碼在 table3Obj.stockCode 中的索引
+
+    //     if (index !== -1) { // 如果找到了相對應的股票代碼
+    //         var stockName = table3Obj.stockName[index]; // 取得相對應的股票名稱
+    //         var income = table3Obj.Income[index]; // 取得相對應的收益
+    //         // 在畫面上顯示使用者輸入的股票代碼、股票名稱和收益
+    //         document.getElementById('displayArea').innerHTML = "股票代碼: " + userInputStockCode + "<br>股票名稱: " + stockName + "<br>收益: " + income;
+    //     } else { // 如果找不到相對應的股票代碼
+    //         document.getElementById('displayArea').innerHTML = "找不到該股票代碼的相關資訊";
+    //     }
+    // }
+
+    // // 獲取使用者輸入的日期和股票代碼
+    // function sendAjaxRequest() {
+    // var date = document.getElementById('date').value;
+    // var stockNo = document.getElementById('stockCode').value;
+
+    // // 使用者輸入的值可能需要進行檢查和驗證，以確保它們符合預期的格式和範圍
+
+    // // 使用者輸入的值可以直接傳遞給 $.ajax() 函式中的 URL
+
+    // $(document).ready(function () {
+    //     console.log(0);
+    // $.ajax({
+    //     url: 'https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=html&date=' + date + '&stockNo=' + stockNo,
+    //     type: "get",
+    //     success: function (info1) {
+    //         console.log(1);
+    //         var htmlContent = info1;
+    //         var tempDiv = document.createElement('div');
+    //         tempDiv.innerHTML = htmlContent;
+    //         var table1 = tempDiv.querySelector('table');
+
+    //         // 在這裡處理你的相關邏輯
+    //     },
+    //     error: function (xhr, status, error) {
+    //         // 如果發生錯誤，可以在此處處理錯誤
+    //         console.error('Error:', error);
+    //     }
+    // });
+
+
+    function ajax_1() {
+        window.location.href = '/stockmodel/TestWepAPI';
+
+    }
+    console.log(ajax_1());
+    $(document).ready(function () {
+        console.log(0);
+
+        $.ajax({
+            url: 'https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=html&date=20240301&stockNo=2330',
+            type: "get",
+            success: function (info1) {
+                console.log(1);
+                var htmlContent = info1;
+                var tempDiv = document.createElement('div');
+                tempDiv.innerHTML = htmlContent;
+                var table1 = tempDiv.querySelector('table');
+
+                console.log(table1);
+                // Extracting data from table1
+                // var rows1 = table1.getElementsByTagName('tr');
+                // var cells1 = [];
+                // for (var i = 0; i < rows1.length; i++) {
+                //     cells1.push(rows1[i].getElementsByTagName('td')[0]); // Assuming the stock code is in the first column
+
+                $.ajax({
+
+                    url: 'https://www.twse.com.tw/rwd/zh/afterTrading/BWIBBU?response=html&date=20240301&stockNo=2330',
+                    type: "get",
+                    success: function (info2) {
+                        console.log(3);
+                        var htmlContent2 = info2;
+                        var tempDiv2 = document.createElement('div');
+                        tempDiv2.innerHTML = htmlContent2;
+                        var table2 = tempDiv2.querySelector('table');
+                        // console.log(table2);
+
+                        console.log(4);
+
+                        $.ajax({
+
+                            // url: 'https://mops.twse.com.tw/nas/t21/sii/t21sc03_113_2_0.html',
+                            url: '/stockmodel/test1',
+                            type: "get",
+                            success: function (info3) {
+                                console.log(5);
+                                var htmlContent3 = info3;
+                                var tempDiv3 = document.createElement('div');
+                                tempDiv3.innerHTML = htmlContent3;
+
+                                // 使用 jQuery 選擇器獲取表格元素
+                                var table3 = $(tempDiv3).find('table').find('table');
+                                // console.log(table3[0]);
+                                // console.log(table3[2]);
+                                // console.log(table3[65]);
+                                // console.log("-------------------");
+                                // console.log(table3);
+                                // console.log("-------------------");
+                                // var table3 = $(tempDiv3.getElementsByTagName('table'));
+                                var table3Obj = new Object();
+                                table3Obj.stockCode = [];
+                                table3Obj.stockName = [];
+                                table3Obj.Income = [];
+                                $.each(table3, function (i, index) {
+                                    if (i % 2 != 0 && i != 65) {
+                                        console.log(i);
+                                        $.each($(index).find('tr'), function (j, val) {
+                                            if (j == 0 || j == 1 || j == $(index).find('tr').length - 1) {
+                                            } else {
+                                                $.each($(val).find('td'), function (k, val2) {
+                                                    var text = $(val2).text().trim(); // Remove leading and trailing whitespace
+                                                    if (text !== "") {
+                                                        if (k == 0 || k == 1 || k == 2) {
+                                                            switch (k) {
+                                                                case 0:
+                                                                    table3Obj.stockCode.push(text);
+                                                                    break;
+                                                                case 1:
+                                                                    //table3Obj.stockName.push($(val2).text());
+                                                                    table3Obj.stockName.push(text);
+                                                                    break;
+                                                                case 2:
+                                                                    table3Obj.Income.push(text);
+                                                                    break;
+                                                            }
+
+                                                        }
+                                                    }
+
+                                                })
+                                            }
+                                        })
+                                    }
+                                })
+                                console.log(table3Obj);
+
+
+
+                                // Example stock code to search
+                                const stockCode = '2330';
+
+                                // Find the index of the stock code
+                                const index = table3Obj.stockCode.indexOf(stockCode);
+
+                                // Define an array to store the table data
+                                const tableData = [];
+
+                                // If the stock code is found
+                                if (index !== -1) {
+                                    // Retrieve data for that index
+                                    const income = table3Obj.Income[index];
+                                    const stockName = table3Obj.stockName[index];
+
+                                    // Store the data in the table data array
+                                    tableData.push({ stockCode: stockCode, stockName, income });
+                                } else {
+                                    // If stock code is not found
+                                    console.log("Stock code not found.");
+                                }
+                                // Print table rows
+                                tableData.forEach(row => {
+                                    console.log(`${row.stockCode}\t${row.stockName}\t${row.income}`);
+                                });
+                                console.log(tableData)
+
+
+
+
+
+
+
+
+
+
+
+
+                                // // Remove the first column from table2
+                                var rows2 = table2.getElementsByTagName('tr');
+                                for (var i = 0; i < rows2.length; i++) {
+                                    rows2[i].deleteCell(0);
+                                }
+
+                                // Get column headers from both tables
+                                var headers1 = table1.querySelectorAll('th');
+                                var headers2 = table2.querySelectorAll('th');
+
+
+                                console.log(headers1);
+                                console.log(headers2);
+
+                                // Combine column headers
+                                var combinedHeaders = [];
+                                for (var i = 1; i < headers1.length; i++) {
+                                    combinedHeaders.push(headers1[i].textContent);
+                                    //console.log(i)
+                                }
+                                for (var i = 0; i < headers2.length; i++) {
+                                    combinedHeaders.push(headers2[i].textContent);
+                                    //console.log(i)
+                                }
+                                combinedHeaders.push('stockCode');
+                                combinedHeaders.push('stockName');
+                                combinedHeaders.push('income');
+
+
+
+                                // //                                 // 假設您想將缺失的值填充為空字串
+                                // // string defaultValue = "";
+
+                                // //                             // 檢查 combinedHeaders 中的每個值，如果為空，則填充為 defaultValue
+                                // //                             for (int i = 0; i < combinedHeaders.Count; i++)
+                                // //                     {
+                                // //                         if (string.IsNullOrEmpty(combinedHeaders[i])) {
+                                // //                             combinedHeaders[i] = defaultValue;
+                                // //                         }
+                                // //                     }
+
+
+                                // // Combine the tables horizontally
+                                var rows1 = table1.getElementsByTagName('tr');
+
+                                // var rows3 = table3.getElementsByTagName('tr');
+                                for (var i = 0; i < rows1.length; i++) {
+                                    var cells2 = rows2[i].getElementsByTagName('td');
+                                    for (var j = 0; j < cells2.length; j++) {
+                                        rows1[i].appendChild(cells2[j].cloneNode(true));
+                                    }
+                                }
+
+
+                                // Remove original table1 header
+                                var originalHeader = table1.querySelector('thead');
+                                if (originalHeader) {
+                                    originalHeader.parentNode.removeChild(originalHeader);
+                                }
+
+                                // Create a new header row and insert combinedHeaders
+                                var headerRow = document.createElement('thead');
+                                var tr = document.createElement('tr');
+                                for (var i = 0; i < combinedHeaders.length; i++) {
+                                    var th = document.createElement('th');
+                                    th.textContent = combinedHeaders[i];
+                                    tr.appendChild(th);
+                                }
+                                headerRow.appendChild(tr);
+                                table1.insertBefore(headerRow, table1.firstChild);
+
+                                // Append the modified table1 to the document
+                                console.log(table1);
+                                // Append the modified table1 to tbody combinedRows
+                                var tbody = document.getElementById('combinedRows');
+                                tbody.appendChild(table1);
+
+
+                                // Get the table element
+
+                                const tbody1 = table1.getElementsByTagName('tbody');
+                                console.log(tbody1)
+                                // const rows = tbody1.getElementsByTagName('tr');
+                                // console.log(rows)
+
+                                // // Loop through each row and add the additional data
+                                // for (let i = 0; i < rows.length; i++) {
+                                //     const cells = rows[i].getElementsByTagName('td');
+                                //     console.log(cells)
+                                //     // Add the additional data to the last three cells
+                                //     cells[cells.length - 3].stockCode = tableData[0].stockCode;
+                                //     cells[cells.length - 2].stockName = tableData[0].stockName;
+                                //     cells[cells.length - 1].income = tableData[0].income;
+                                // }
+
+
+                                // Step 4: Append the new row to the table
+                                console.log(6);
+
+                                // Combine the tables horizontally based on stock code
+                                // for (var i = 0; i < rows1.length; i++) {
+                                //     var stockCode1 = cells1[i].textContent.trim(); // Get stock code from cells1
+                                //     var stockCode2 = cells2[i].textContent.trim(); // Get stock code from cells2
+
+                                // Find the corresponding row in cells3 based on stock code
+                                //     var correspondingRow = null;
+                                //     for (var j = 0; j < cells3.length; j += 3) { // Assuming cells3 has data in groups of 3 (stock code, stock name, income)
+                                //         if (cells3[j].textContent.trim() === stockCode1 || cells3[j].textContent.trim() === stockCode2) {
+                                //             correspondingRow = cells3[j].parentNode.querySelectorAll('td');
+                                //             break;
+                                //         }
+                                //     }
+
+                                //     if (correspondingRow) {
+                                //         // Append data from cells2 to cells1
+                                //         for (var j = 0; j < cells2.length; j++) {
+                                //             rows1[i].appendChild(cells2[j].cloneNode(true));
+                                //         }
+
+                                //         // Append data from corresponding row in cells3
+                                //         for (var j = 1; j < correspondingRow.length; j++) { // Start from index 1 to skip the stock code column
+                                //             rows1[i].appendChild(correspondingRow[j].cloneNode(true));
+                                //         }
+                                //     }
+                                // }
+
+                                // // Remove original table1 header
+                                // var originalHeader = table1.querySelector('thead');
+                                // if (originalHeader) {
+                                //     originalHeader.parentNode.removeChild(originalHeader);
+                                // }
+
+                                // // Create a new header row and insert combinedHeaders
+                                // var headerRow = document.createElement('thead');
+                                // var tr = document.createElement('tr');
+                                // for (var i = 0; i < combinedHeaders.length; i++) {
+                                //     var th = document.createElement('th');
+                                //     th.textContent = combinedHeaders[i];
+                                //     tr.appendChild(th);
+                                // }
+                                // headerRow.appendChild(tr);
+                                // table1.insertBefore(headerRow, table1.firstChild);
+
+                                // // Append the modified table1 to the document
+                                // var tbody = document.getElementById('combinedRows');
+                                // tbody.appendChild(table1);
+
+                            },
+                            error: function (data) {
+                                console.log("請求失敗");
+                            }
+                        });
+                    },
+                    error: function (data) {
+                        console.log("請求失敗");
+                    }
+                });
+            },
+            error: function (data) {
+                console.log("請求失敗");
+            }
+        });
+    });
+
+
+
+    console.log(combinedRows)
+
+    // const express = require('express');
+    // const app = express();
+    // const sql = require('mssql');
+
+    // // SQL Server 連接設定
+    // const config = {
+    //     user: 'sa',
+    //     password: 'sa',
+    //     server: 'MSI',
+    //     database: 'Stock',
+    //     options: {
+    //         encrypt: true // 如果你使用的是Azure SQL，則需要設置此選項
+    //     }
+    // };
+
+    // // 連接到SQL Server資料庫
+    // sql.connect(config, err => {
+    //     if (err) {
+    //         console.error('資料庫連接失敗:', err);
+    //     } else {
+    //         console.log('資料庫連接成功');
+    //     }
+    // });
+
+    // // 處理API請求並將資料存入資料庫
+    // app.get('/saveData', (req, res) => {
+    //     // 在此處進行從API獲取資料並存入資料庫的處理
+    //     // 使用SQL語句將資料插入到資料庫中
+    //     sql.query('Stock (column1, column2, ...) VALUES (value1, value2, ...)', (err, result) => {
+    //         if (err) {
+    //             console.error('資料插入失敗:', err);
+    //             res.status(500).send('資料插入失敗');
+    //         } else {
+    //             console.log('資料插入成功');
+    //             res.status(200).send('資料插入成功');
+    //         }
+    //     });
+    // });
+
+    // // 設置伺服器監聽端口
+    // const port = 3000;
+    // app.listen(port, () => {
+    //     console.log(`伺服器運行在 http://localhost:${port}`);
+    // });
+
+</script>

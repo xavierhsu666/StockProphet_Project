@@ -1,10 +1,12 @@
 ﻿using Azure.Core;
+using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using OneOf.Types;
 using StockProphet_Project.Models;
 using System.Net.Mail;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography;
 using System.Runtime.CompilerServices;
 using Tensorflow;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -13,6 +15,9 @@ using System.Text.Json;
 using System.Text.Unicode;
 using System.Data.SqlClient;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
+using System.Collections;
 
 namespace StockProphet_Project.Controllers {
 	public class MemberController : Controller {
@@ -73,6 +78,181 @@ namespace StockProphet_Project.Controllers {
 			return true;
 		}
 
+        
+
+        public static class SessionKeys
+        {
+            public const string MID = "MID";
+            // 在這裡添加其他您想要使用的 Session 鍵
+        }
+
+        public IActionResult MySearchPage()
+        {
+            // 在加载搜索页面时返回一个空的视图
+            return View();
+        }
+
+        //我的收藏頁面
+        public IActionResult MyCollect()
+        {
+
+            // 從 Session 中獲取 MID
+            var sessionMID = HttpContext.Session.GetString(SessionKeys.MID);
+
+            // 將 MID 轉換為整數
+            if (int.TryParse(sessionMID, out int mid))
+            {
+                // 查詢 MID 對應的資料列
+                var item = _context.DbMembers.FirstOrDefault(item => item.Mid == mid);
+
+                if (item != null)
+                {
+
+
+                    // 將 MfavoriteModel 的值整理成字串，以空白分隔數字
+                    string formattedMfavoriteModel = string.Empty; // 若為 NULL，則設為空字串
+
+                    if (!string.IsNullOrEmpty(item.MfavoriteModel))
+                    {
+
+                        formattedMfavoriteModel = item.MfavoriteModel.Trim('{', '}'); // 先移除大括號
+
+                        // 檢查是否為空字串，若是則直接將 pidStrings.Length 設為 0
+                        if (formattedMfavoriteModel == "")
+                        {
+                            ViewBag.FormattedMfavoriteModel = "尚無收藏項目";
+                            ViewBag.PidStringsCount = 0;
+                        }
+
+
+                        else
+                        {
+
+                            var pidStrings = formattedMfavoriteModel.Split(',');
+
+                            // 將字串轉換為整數並存儲在列表中
+                            var pidList = new List<int>();
+                            foreach (var pidString in pidStrings)
+                            {
+                                if (int.TryParse(pidString, out int pid))
+                                {
+                                    pidList.Add(pid);
+                                }
+                            }
+
+                            // 將數字陣列傳遞到 View
+                            ViewBag.FavoriteNumbers = pidList;
+                            ViewBag.PidStringsCount = pidStrings.Length;
+
+
+                            // 使用 LINQ 查詢 DbModels 資料表，找出符合條件的資料列
+                            var favoriteItems = _context.DbModels.Where(model => pidList.Contains(model.Pid)).ToList();
+
+                            // 將查詢結果傳遞到 View
+                            ViewBag.FavoriteItems = favoriteItems;
+
+
+
+                        }
+                    }
+                    else
+                    {
+                        ViewBag.FormattedMfavoriteModel = "尚無收藏項目"; // 若找不到對應的資料，則設為空字串
+                        ViewBag.FavoriteNumbers = new int[0]; // 若找不到對應的資料，則設為空陣列
+                    }
+                }
+            }
+            else
+            {
+                ViewBag.FormattedMfavoriteModel = "尚無收藏資料";
+                ViewBag.FavoriteNumbers = new int[0];
+
+            }
+
+            return View();
+        }
+
+
+
+        [HttpPost]
+        public IActionResult Search(string searchTerm)
+        {
+            // 从数据库中检索与搜索关键字匹配的数据
+            var searchResults = (from DbModel in _context.DbModels
+                                 where DbModel.Pstock == searchTerm
+                                 orderby DbModel.PbulidTime descending
+                                 select new { P = DbModel.Pstock, G = DbModel.PbulidTime })
+                    .Take(5)
+                    .ToList();
+
+            // 如果搜索结果不为空，则将其存储在 ViewBag 中，并返回显示搜索结果的视图
+            if (searchResults != null /*&& searchResults.Any()*/)
+            {
+                ViewBag.SearchResults = searchResults;
+                return View("MyCollect"); // 返回显示搜索结果的视图
+            }
+            else
+            {
+                ViewBag.NoResultsMessage = "未找到匹配的结果。";
+                return View("MyCollect"); // 返回显示搜索结果为空的视图
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //     //我的收藏 - 網址傳資料|回傳預測內容
+        //     public IActionResult showPredictions(string id)
+        //     {
+        //         var viewModel = _context.DbModels.ToList();
+        //         var query = from p in viewModel
+        //                     where p.Pstock == id
+        //                     select new
+        //                     {
+        //                         Account = p.Paccount,
+        //                         Variable = p.Pvariable,
+        //                         Label = p.Plabel,
+        //                         FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd")
+        //                     };
+        //         return Json(query);
+        //     }
+
+        //     // 我的收藏 - 網址傳資料|該股票所有內容 ( for 預測用
+        //     public IActionResult showAllStocks(string id)
+        //     {
+
+        ////Console.WriteLine(id);
+        ////var query1 = _context.Stock.ToList();
+        //var viewModel = _context.Stock.ToList();
+        //var query = from p in viewModel
+        //			where p.SnCode == id
+        //			select new
+        //			{
+        //				Date = p.StDate,
+        //				Close = p.SteClose,
+        //				StockName = p.SnName
+        //			};
+        //Console.WriteLine(query);
+        //return Json(query);
+        //     }
+
+
+
+
+        //我的預測結果頁面
+        public IActionResult MyPredictResult()
+        {
+            return View();
+        }
 		//我的收藏頁面_1-2
 		public IActionResult MyCollect() {
 			return View();
@@ -175,39 +355,41 @@ namespace StockProphet_Project.Controllers {
 			return result.Any();
 		}
 
-		//註冊頁面-新會員註冊OK
-		[HttpPost]
-		public IActionResult Register( string MAccoMnt, string MPassword, string MEmail, string MTrueName, DateOnly MBirthday, string MGender, byte MInvestYear, string MLevel, string registerTime ) {
-			//System.Diagnostics.Debug.WriteLine(MAccoMnt);
-			//System.Diagnostics.Debug.WriteLine(MPassword);
-			//System.Diagnostics.Debug.WriteLine(MEmail);
-			//System.Diagnostics.Debug.WriteLine(MTrueName);
-			//System.Diagnostics.Debug.WriteLine(MBirthday);
-			//System.Diagnostics.Debug.WriteLine(MGender);
-			//System.Diagnostics.Debug.WriteLine(MInvestYear);
-			//System.Diagnostics.Debug.WriteLine(MLevel);
+        //註冊頁面-新會員註冊OK
+        [HttpPost]
+        public IActionResult Register(string MAccoMnt, string MPassword, string MEmail, string MTrueName, DateOnly MBirthday, string MGender, byte MInvestYear, string MLevel, string registerTime)
+        {
+            //System.Diagnostics.Debug.WriteLine(MAccoMnt);
+            //System.Diagnostics.Debug.WriteLine(MPassword);
+            //System.Diagnostics.Debug.WriteLine(MEmail);
+            //System.Diagnostics.Debug.WriteLine(MTrueName);
+            //System.Diagnostics.Debug.WriteLine(MBirthday);
+            //System.Diagnostics.Debug.WriteLine(MGender);
+            //System.Diagnostics.Debug.WriteLine(MInvestYear);
+            //System.Diagnostics.Debug.WriteLine(MLevel);
 
-			//轉換日期格式 字串->DateOnly
-			DateOnly CurrentTime = DateOnly.Parse("2024-03-14");
-			DateOnly MregisterTime = DateOnly.Parse(CurrentTime.ToString("yyyy-MM-dd"));
-			System.Diagnostics.Debug.WriteLine(MregisterTime);
+            //轉換日期格式 字串->DateOnly
+            DateOnly CurrentTime = DateOnly.Parse("2024-03-14");
+            DateOnly MregisterTime = DateOnly.Parse(CurrentTime.ToString("yyyy-MM-dd"));
+            System.Diagnostics.Debug.WriteLine(MregisterTime);
 
 
-			//將資料存到資料庫
-			_context.DbMembers.Add(new DbMember {
-				MaccoMnt = MAccoMnt,
-				Mpassword = MPassword,
-				Memail = MEmail,
-				MtrueName = MTrueName,
-				Mbirthday = MBirthday,
-				Mgender = MGender,
-				MinvestYear = MInvestYear,
-				Mlevel = MLevel,
-				MregisterTime = MregisterTime
-			});
-			_context.SaveChanges();
-			return View();
-		}
+            //將資料存到資料庫
+            _context.DbMembers.Add(new DbMember
+            {
+                MaccoMnt = MAccoMnt,
+                Mpassword = MPassword,
+                Memail = MEmail,
+                MtrueName = MTrueName,
+                Mbirthday = MBirthday,
+                Mgender = MGender,
+                MinvestYear = MInvestYear,
+                Mlevel = MLevel,
+                MregisterTime = MregisterTime
+            });
+            _context.SaveChanges();
+            return View();
+        }
 
 		//會員登入頁-3
 		public IActionResult Login() {
@@ -234,6 +416,38 @@ namespace StockProphet_Project.Controllers {
 					if (member.Mpassword == MPassword)
 					{
 						//2.包成Json傳值
+        //會員登入頁
+        public IActionResult Login()
+        {
+            return View();
+        }
+        //判斷登入會員等級並決定可看到頁面的權限
+        [HttpGet]
+        public string checkLogin(string MAccoMnt, string MPassword)
+        {
+            Console.WriteLine("測試登入帳號資料" + MAccoMnt);
+            if (MAccoMnt.IndexOf('@') >= 0)
+            {
+                var member = _context.DbMembers.FirstOrDefault(x => x.Memail == MAccoMnt);
+                Console.WriteLine(member);
+                //先檢查是否存在該會員
+                if (member != null)
+                {
+                    //再判斷密碼是否正確
+                    //if (memberAccoMnt.Mpassword == MPassword || memberEmail.Mpassword == MPassword)
+                    if (member.Mpassword == MPassword)
+                    {
+                        //Session傳值
+                        HttpContext.Session.SetString("MID", member.Mid.ToString());
+                        HttpContext.Session.SetString("MEmail", member.Memail!);
+                        HttpContext.Session.SetString("Mlevel", member.Mlevel!);
+                        HttpContext.Session.SetString("MaccoMnt", member.MaccoMnt!);
+                        HttpContext.Session.SetString("Mlevel", member.Mlevel!);
+                        //不常用_供修改會員資料頁面使用
+                        HttpContext.Session.SetString("MtrueName", member.MtrueName!);
+                        HttpContext.Session.SetString("Mbirthday", value: member.Mbirthday.ToString()!);
+                        HttpContext.Session.SetString("Mgender", member.Mgender!);
+                        HttpContext.Session.SetString("MinvestYear", member.MinvestYear.ToString()!);
 
 						var LogMember = new { 
 						   Mid = member.Mid, 
@@ -355,9 +569,50 @@ namespace StockProphet_Project.Controllers {
 						//Newtonsoft.Json反序列化
 
 						//string jsonData2 = JsonConvert.SerializeObject()
+                            default:
+                                return "一般訪客";
+                        }
+                    }
+                    else
+                    {
+                        return "輸入的密碼不正確";
+                    }
+                }
+                else
+                {
+                    return "會員名稱錯誤";
+                }
+            }
+            else
+            {
+                var member = _context.DbMembers.FirstOrDefault(x => x.MaccoMnt == MAccoMnt);
+                Console.WriteLine(member);
+                //先檢查是否存在該會員
+                if (member != null)
+                {
+                    //再判斷密碼是否正確
+                    //if (memberAccoMnt.Mpassword == MPassword || memberEmail.Mpassword == MPassword)
+                    if (member.Mpassword == MPassword)
+                    {
+                        //Session傳值
+                        HttpContext.Session.SetString("MID", member.Mid.ToString());
+                        HttpContext.Session.SetString("MEmail", member.Memail!);
+                        HttpContext.Session.SetString("Mlevel", member.Mlevel!);
+                        HttpContext.Session.SetString("MaccoMnt", member.MaccoMnt!);
+                        HttpContext.Session.SetString("Mlevel", member.Mlevel!);
+                        //不常用_供修改會員資料頁面使用
+                        HttpContext.Session.SetString("MtrueName", member.MtrueName!);
+                        HttpContext.Session.SetString("Mbirthday", value: member.Mbirthday.ToString()!);
+                        HttpContext.Session.SetString("Mgender", member.Mgender!);
+                        HttpContext.Session.SetString("MinvestYear", member.MinvestYear.ToString()!);
 
 						return jsonData1;
 
+                        //依照會員身分給予不同權限的頁面
+                        switch (member.Mlevel)
+                        {
+                            case "一般會員":
+                                return "一般會員";
 
 
 						////1.Session傳值
@@ -485,14 +740,15 @@ namespace StockProphet_Project.Controllers {
 			System.Diagnostics.Debug.WriteLine("儲存修改後的密碼_Email:" + ForgotMemberEmail);
 			System.Diagnostics.Debug.WriteLine("儲存修改後的密碼_Password:" + RevisePassword);
 
-			var query = _context.DbMembers.FirstOrDefault(x => x.Memail == ForgotMemberEmail);
-			if (query != null) {
-				//修改DbMember中的密碼
-				query.Mpassword = RevisePassword;
-				_context.SaveChanges();
-			}
-			return true;
-		}
+            var query = _context.DbMembers.FirstOrDefault(x => x.Memail == ForgotMemberEmail);
+            if (query != null)
+            {
+                //修改DbMember中的密碼
+                query.Mpassword = RevisePassword;
+                _context.SaveChanges();
+            }
+            return true;
+        }
 
 
 		//管理者頁面Admin-6
