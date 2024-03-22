@@ -1,3 +1,26 @@
+
+import subprocess
+import os
+
+# 获取当前文件的绝对路径
+current_file_path = os.path.abspath(__file__).replace('PyAPI.py','')
+combinePath = os.path.join(current_file_path,'requirements.txt')
+
+# print("当前文件的位置1:", current_file_path)
+# print("当前文件的位置2:", combinePath)
+
+def install_requirements():
+    try:
+        # 执行 pip 命令安装 requirements.txt 中列出的所有依赖项
+        subprocess.check_call(["pip", "install", "-r",combinePath])
+        print("Requirements installed successfully!")
+    except subprocess.CalledProcessError as e:
+        print("Error occurred while installing requirements:", e)
+
+# 调用函数来安装 requirements.txt 中的依赖项
+install_requirements()
+os.system('cls')
+
 import requests
 import pandas as pd
 import numpy as np
