@@ -289,7 +289,7 @@ path {
 .memberArea {
     position: relative;
     height: 250px;
-    width: 70%;
+    width: 420px;
     background-color: blanchedalmond;
     border-radius: 20px;
     display: flex;
@@ -304,11 +304,17 @@ path {
     justify-content: center; /*上下置中*/
     align-items: center; /*左右置中*/
 }
+.member-btn-l {
+    display: flex;
+    flex-direction: column;
+        justify-content: center; /*上下置中*/
+    align-items: center; /*左右置中*/
+}
 
 .member-btn {
     margin-left: 8px;
     margin-right: 8px;
-    width: 7em;
+    width: auto;
     height: 50px;
 }
 

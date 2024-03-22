@@ -2,18 +2,21 @@
 $("#search").on("keydown", function (e) {
     if (e.which == 13) changePage();
 });
-
+console.log("wfe");
 function changePage() {
     $.ajax({
         url: `/Home/checkStocks/${$("#search").val()}`,
         method: "post"
     }).done(function (ans) {
-        //alert(ans);
-        document.location.href = `/Home/StockCharts/${ans}`;
+        if (ans == "wrongCode") {
+            $(".search-hint").css("display", "block");
+        } else {
+            document.location.href = `/Home/StockCharts/${ans}`;
+        } 
     })
 }
 
-
+console.log("???");
 $.widget("custom.catcomplete", $.ui.autocomplete, {
     _create: function () {
         this._super();
@@ -42,4 +45,16 @@ $.getJSON("/Home/stocksListAC", function (myData) {
         source: myData
     });
 })
+
+//按鈕網頁跳轉
+$(".btn-m").on("click", function () {   //會員專區按鈕
+    
+})
+
+$(".btn-t").on("click", function () {   //訪客體驗按鈕
+    window.location.href = "/Home/Visitor"
+    console.log("wwf");
+})
+
+console.log("wdfe");
 

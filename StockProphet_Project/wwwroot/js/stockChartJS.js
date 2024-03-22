@@ -488,10 +488,10 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate) {
     $(".predictionArea").prepend(`<label class='prediction-card ${index}'>
     <input type='checkbox' class='card-btn' />
     <div class='card-content'><div class='card-front'><p class="pre-state">${preState}+${PID}</p>
-    <table><tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${preDate}</td></tr>
-    <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preBuildDate}</td></tr>
+    <table><tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preBuildDate}</td></tr>
+    <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${preDate}</td></tr>
     <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5].Close}</td></tr>
-    <tr><th class="pre-th">選擇參數</th><td class="pre-td">--</td></tr>
+    <tr><th class="pre-th">模型參數</th><td class="pre-td">--</td></tr>
     </table>
     <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
     </div>
@@ -684,6 +684,7 @@ function redraw() {
 //如果有登入 需要改變的部分
 //user = "apple5678";       /////////先寫死是apple
 //logging = true;     /////////先寫死是true
+console.log("wdef");
 function btnTest(btn) {
     if (logging) {      //如果有登入
         //到時候user要改成抓目前登入者的帳號ㄛ
@@ -695,14 +696,18 @@ function btnTest(btn) {
             data: dataToServer,
             success: function (e) {
                 switch (e) {
-                    case "add":
+                    case "add": {
                         $(btn).css("color", "red");
                         console.log("新增一筆");
+                        sessionStorage.setItem("LogMemberInvestYear", LogMember.MinvestYear);
                         break
-                    case "delete":
+                    }
+                    case "delete": {
                         $(btn).css("color", "black");
                         console.log("刪除一筆");
+                        sessionStorage.setItem("LogMemberInvestYear", LogMember.MinvestYear);
                         break;
+                    }
                     case "reject":
                         console.log("收藏上限了朋友");
                         break;
@@ -715,17 +720,7 @@ function btnTest(btn) {
     
 }
 setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
-    if (logging) { //這邊要判斷是否有登入
-        d3.json(`/Home/cardCheck/${user}`, function (list) {
-            list.forEach(function (item, i) {
-                //針對會員有按愛心的按鈕 變化
-                $(`#PID${parseInt(item)}`).css({
-                    color: "red",
-                    /* fontSize: "32px" */
-                });
-            })
-        });
-    } else {
+    if (MID == null) { //這邊要判斷是否有登入
         //沒登入時按鈕
         $(".prediction-collect").on({
             mouseenter: function () {
@@ -738,9 +733,19 @@ setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
                 $(this).addClass("collectBtnLeave");
             }
         })
+    } else {
+        d3.json(`/Home/cardCheck/${user}`, function (list) {
+            list.forEach(function (item, i) {
+                //針對會員有按愛心的按鈕 變化
+                $(`#PID${parseInt(item)}`).css({
+                    color: "red",
+                    /* fontSize: "32px" */
+                });
+            })
+        });
 
 
     }//else尾
 
 
-}, 100);
+}, 500);

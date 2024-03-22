@@ -3,6 +3,7 @@ using StockProphet_Project.Models;
 using System.Diagnostics;
 using ChoETL;
 using Microsoft.VisualBasic;
+using Tensorflow;
 
 namespace StockProphet_Project.Controllers {
     public class HomeController : Controller {
@@ -67,15 +68,16 @@ namespace StockProphet_Project.Controllers {
         //網址傳資料|回傳預測內容
           public IActionResult showPredictions(string id) {
               var viewModel = _context.DbModels.ToList();
-              var query = from p in viewModel
-                          where p.Pstock == id
-                          select new {
-                              Account = p.Paccount,
-                              Variable = p.Pvariable,
-                              Label = p.Plabel,
-                              FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd"),
-        	                  PID = p.Pid,
-                              BuildTime = Convert.ToDateTime(p.PbulidTime).ToString("yyyy-MM-dd")
+            var query = from p in viewModel
+                        where p.Pstock == id
+                        select new {
+                            Account = p.Paccount,
+                            Dummyblock = p.Dummyblock,
+                            Label = p.Plabel,
+                            FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd"),
+                            PID = p.Pid,
+                            BuildTime = Convert.ToDateTime(p.PbulidTime).ToString("yyyy-MM-dd"),
+                            Variable = p.Pvariable
                           };
               return Json(query);
           }
@@ -159,7 +161,8 @@ namespace StockProphet_Project.Controllers {
             foreach (var stock in stocksList) {
                 if (stock.Code == id || stock.Name == id) {
                     ans = stock.Code;
-                }
+                    break;
+                } else ans = "wrongCode";
             }
             return ans;
         }
@@ -177,6 +180,9 @@ namespace StockProphet_Project.Controllers {
         }
 
 
+        public IActionResult Visitor() {
+            return View();
+        }
 
 
 

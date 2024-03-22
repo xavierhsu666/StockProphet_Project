@@ -3,9 +3,9 @@
 
 .upArea {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
-    align-items: baseline;
+    align-items: center;
     /*    width: 100%;*/
     height: calc(35vh - 40px - 1rem - 16px); /*扣掉header的高度*/
 }
@@ -21,7 +21,10 @@
     flex-direction: row;
     height: calc(65vh - 60px);
 }
-
+.search-hint {
+    position:absolute;
+    transform:translateY(50px);
+}
 
 .bottom-left {
     width: 50%;
