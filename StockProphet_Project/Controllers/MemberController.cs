@@ -202,50 +202,65 @@ namespace StockProphet_Project.Controllers
                 if (item != null)
                 {
 
-        //我的預測結果頁面_1-3
-        public IActionResult MyPredictResult()
-        {
-            return View();
-        }
 
-        [HttpGet]
-        public IActionResult MyPredictResultBoris(string customername)
-        {
-            List<object> results = new List<object>();
-            string connectionString = _configuration.GetConnectionString("StocksConnstring");
-            string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-                        B.PBulidTime, B.Pfinishtime, A.ST_Date, A.ste_Close 
-                        FROM DB_model AS B 
-                        OUTER APPLY (
-                            SELECT TOP 5 *
-                            FROM Stock
-                            WHERE SN_code = B.Pstock
-                                  AND ST_Date <= B.PBulidTime
-                            ORDER BY ST_Date DESC
-                        ) AS A 
-                        WHERE B.PAccount = '{customername}'";
-            Console.WriteLine(sqlQuery);
-            SqlConnection sqlconnect = new SqlConnection(connectionString);
-            sqlconnect.Open();
-            SqlCommand sqlCommand = new SqlCommand(sqlQuery, sqlconnect);
-            SqlDataReader reader = sqlCommand.ExecuteReader();
+                    // 將 MfavoriteModel 的值整理成字串，以空白分隔數字
+                    string formattedMfavoriteModel = string.Empty; // 若為 NULL，則設為空字串
+
+                    if (!string.IsNullOrEmpty(item.MfavoriteModel))
+                    {
+
+                        formattedMfavoriteModel = item.MfavoriteModel.Trim('{', '}'); // 先移除大括號
+
+                        // 檢查是否為空字串，若是則直接將 pidStrings.Length 設為 0
+                        if (formattedMfavoriteModel == "")
+                        {
+                            ViewBag.FormattedMfavoriteModel = "尚無收藏項目";
+                            ViewBag.PidStringsCount = 0;
+                        }
 
 
-            while (reader.Read())
+                        else
+                        {
+
+                            var pidStrings = formattedMfavoriteModel.Split(',');
+
+                            // 將字串轉換為整數並存儲在列表中
+                            var pidList = new List<int>();
+                            foreach (var pidString in pidStrings)
+                            {
+                                if (int.TryParse(pidString, out int pid))
+                                {
+                                    pidList.Add(pid);
+                                }
+                            }
+
+                            // 將數字陣列傳遞到 View
+                            ViewBag.FavoriteNumbers = pidList;
+                            ViewBag.PidStringsCount = pidStrings.Length;
+
+
+                            // 使用 LINQ 查詢 DbModels 資料表，找出符合條件的資料列
+                            var favoriteItems = _context.DbModels.Where(model => pidList.Contains(model.Pid)).ToList();
+
+                            // 將查詢結果傳遞到 View
+                            ViewBag.FavoriteItems = favoriteItems;
+
+
+
+                        }
+                    }
+                    else
+                    {
+                        ViewBag.FormattedMfavoriteModel = "尚無收藏項目"; // 若找不到對應的資料，則設為空字串
+                        ViewBag.FavoriteNumbers = new int[0]; // 若找不到對應的資料，則設為空陣列
+                    }
+                }
+            }
+            else
             {
+                ViewBag.FormattedMfavoriteModel = "尚無收藏資料";
+                ViewBag.FavoriteNumbers = new int[0];
 
-                results.Add(new
-                {
-                    STdate = reader["ST_Date"],
-                    PAcount = reader["PAccount"],
-                    PStock = reader["Pstock"],
-                    PLabel = reader["Plabel"],
-                    Parameter = reader["dummyblock"],
-                    PBuildTime = reader["PBulidTime"],
-                    PFinsihTime = reader["Pfinishtime"],
-                    SteClose = reader["Ste_Close"]
-
-                });
             }
 
             return View();
@@ -333,46 +348,10 @@ namespace StockProphet_Project.Controllers
             }
         }
 
-        //我的預測結果
-        //沛棋繪製卡片的功能
 
-        ////網址傳資料|回傳預測內容
-        //public IActionResult showPredictions(string id)
-        //{
 
-        //    var viewModel = _context.DbModels.ToList();
-        //    var query = from p in viewModel
-        //                where p.Paccount == id
-        //                select new
-        //                {
-        //                    Account = p.Paccount,
-        //                    Variable = p.Pvariable,
-        //                    Label = p.Plabel,
-        //                    FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd")
-        //                };
 
-        //    return Json(query);
-        //}
-        //如果該會員預測過10檔股票，就要跑10次!!!
-        //網址傳資料|該股票所有內容(for預測用
-        //public IActionResult showAllStocks(string id)
-        //{
-        //    var viewModel = _context.Stock.ToList();
-        //    var query = from p in viewModel
-        //                where p.SnCode == id
-        //                select new
-        //                {
-        //                    Date = p.StDate,
-        //                    Close = p.SteClose,
-        //                    StockName = p.SnName
-        //                };
 
-        //    return Json(query);
-        //}
-        //抓取會員預測過的結果
-        public IActionResult MemberPredictData(string LogAccount)
-        {
-            //找出登入的會員共有幾筆預測資料
 
 
 
