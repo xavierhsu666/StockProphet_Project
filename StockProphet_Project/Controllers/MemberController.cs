@@ -11,14 +11,17 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using System.Data.SqlClient;
 using Newtonsoft.Json;
 
 namespace StockProphet_Project.Controllers {
 	public class MemberController : Controller {
 		//在MemberController中可以讀取該StockProphet資料
+		private readonly IConfiguration _configuration;
 		private readonly StocksContext _context;
-		public MemberController( StocksContext context ) {
+		public MemberController( StocksContext context , IConfiguration configuration) {
 			_context = context;
+			_configuration = configuration;
 		}
 		
 		//會員主頁-1
@@ -79,46 +82,89 @@ namespace StockProphet_Project.Controllers {
 
 			return View();
 		}
+		[HttpGet]
+		public IActionResult MyPredictResultBoris(string customername)
+		{
+			List<object> results = new List<object>();
+			string connectionString = _configuration.GetConnectionString("StocksConnstring");
+			string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
+                        B.PBulidTime, B.Pfinishtime, A.ST_Date, A.ste_Close 
+                        FROM DB_model AS B 
+                        OUTER APPLY (
+                            SELECT TOP 5 *
+                            FROM Stock
+                            WHERE SN_code = B.Pstock
+                                  AND ST_Date <= B.PBulidTime
+                            ORDER BY ST_Date DESC
+                        ) AS A 
+                        WHERE B.PAccount = '{customername}'";
+			Console.WriteLine(sqlQuery);
+			SqlConnection sqlconnect = new SqlConnection(connectionString);
+			sqlconnect.Open();
+			SqlCommand sqlCommand = new SqlCommand(sqlQuery, sqlconnect);
+			SqlDataReader reader = sqlCommand.ExecuteReader();
 
-        //我的預測結果
-        //沛棋繪製卡片的功能
 
-        ////網址傳資料|回傳預測內容
-        //public IActionResult showPredictions(string id)
-        //{
-			
-        //    var viewModel = _context.DbModels.ToList();
-        //    var query = from p in viewModel
-        //                where p.Paccount == id
-        //                select new
-        //                {
-        //                    Account = p.Paccount,
-        //                    Variable = p.Pvariable,
-        //                    Label = p.Plabel,
-        //                    FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd")
-        //                };
+			while (reader.Read())
+			{
 
-        //    return Json(query);
-        //}
+				results.Add(new
+				{
+					STdate = reader["ST_Date"],
+					PAcount = reader["PAccount"],
+					PStock = reader["Pstock"],
+					PLabel = reader["Plabel"],
+					Parameter = reader["dummyblock"],
+					PBuildTime = reader["PBulidTime"],
+					PFinsihTime = reader["Pfinishtime"],
+					SteClose= reader["Ste_Close"]
+
+				});
+			}
+
+
+			return Json(results);
+		}
+
+		//我的預測結果
+		//沛棋繪製卡片的功能
+
+		////網址傳資料|回傳預測內容
+		//public IActionResult showPredictions(string id)
+		//{
+
+		//    var viewModel = _context.DbModels.ToList();
+		//    var query = from p in viewModel
+		//                where p.Paccount == id
+		//                select new
+		//                {
+		//                    Account = p.Paccount,
+		//                    Variable = p.Pvariable,
+		//                    Label = p.Plabel,
+		//                    FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd")
+		//                };
+
+		//    return Json(query);
+		//}
 		//如果該會員預測過10檔股票，就要跑10次!!!
-        //網址傳資料|該股票所有內容(for預測用
-        //public IActionResult showAllStocks(string id)
-        //{
-        //    var viewModel = _context.Stock.ToList();
-        //    var query = from p in viewModel
-        //                where p.SnCode == id
-        //                select new
-        //                {
-        //                    Date = p.StDate,
-        //                    Close = p.SteClose,
-        //                    StockName = p.SnName
-        //                };
+		//網址傳資料|該股票所有內容(for預測用
+		//public IActionResult showAllStocks(string id)
+		//{
+		//    var viewModel = _context.Stock.ToList();
+		//    var query = from p in viewModel
+		//                where p.SnCode == id
+		//                select new
+		//                {
+		//                    Date = p.StDate,
+		//                    Close = p.SteClose,
+		//                    StockName = p.SnName
+		//                };
 
-        //    return Json(query);
-        //}
+		//    return Json(query);
+		//}
 
-        //註冊頁面-2		
-        public IActionResult Register() {
+		//註冊頁面-2		
+		public IActionResult Register() {
 			return View();
 		}
 		//檢查帳戶名
