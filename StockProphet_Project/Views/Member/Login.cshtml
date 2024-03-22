@@ -38,7 +38,6 @@
     $('#WrongMsg').hide();
 
     $(function () {
-       
         //按下登入按鈕需驗證身分別
         $('#LoginSubmit').on("click", function () {
             var Account = $('#Account').val()
@@ -62,8 +61,6 @@
                         }
                         else {
                             var LogMember = JSON.parse(e);
-                            // console.log(LogMember);
-                            // console.log(LogMember.MaccoMnt);
 
                             //使用sessionStorage進行跨頁面傳值
                             sessionStorage.setItem("LogAccount", LogMember.MaccoMnt);
@@ -75,7 +72,7 @@
                             sessionStorage.setItem("LogMemberBirthday", LogMember.Mbirthday);
                             sessionStorage.setItem("LogMemberGender", LogMember.Mgender);
                             sessionStorage.setItem("LogMemberInvestYear", LogMember.MinvestYear);
-                            // sessionStorage.setItem("LogMemberfavoriteModel", LogMember.MfavoriteModel);
+                            sessionStorage.setItem("LogMemberfavoriteModel", LogMember.MfavoriteModel);
                             
                             try {
                                 var para1 = new URL(window.location.href).searchParams.toString().split('&')[0].split('=')[1];

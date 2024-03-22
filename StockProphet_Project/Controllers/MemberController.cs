@@ -15,6 +15,10 @@ using OneOf.Types;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Security.Principal;
+using ICSharpCode.SharpZipLib.Zip;
+using System.Collections.Generic;
+using System.Linq;
+using System.Collections;
 
 namespace StockProphet_Project.Controllers
 {
@@ -123,6 +127,294 @@ namespace StockProphet_Project.Controllers
         {
             return View();
         }
+        public IActionResult MySearchPage()
+        {
+            // 在加载搜索页面时返回一个空的视图
+            return View();
+        }
+
+        public IActionResult MyCollect()
+        {
+
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Test(string sessionMID)
+        {
+            int MID = Convert.ToInt32(sessionMID);
+            List<object> results = new List<object>();
+            string connectionString = _configuration.GetConnectionString("StocksConnstring");
+            string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
+    B.PBulidTime, B.Pfinishtime, A.ST_Date, A.ste_Close 
+    FROM DB_model AS B 
+    OUTER APPLY (
+        SELECT TOP 5 *
+        FROM Stock
+        WHERE SN_code = B.Pstock
+              AND ST_Date <= B.PBulidTime
+        ORDER BY ST_Date DESC
+    ) AS A 
+    WHERE B.Pid = {MID}";
+            Console.WriteLine(sqlQuery);
+            SqlConnection sqlconnect = new SqlConnection(connectionString);
+            sqlconnect.Open();
+            SqlCommand sqlCommand = new SqlCommand(sqlQuery, sqlconnect);
+            SqlDataReader reader = sqlCommand.ExecuteReader();
+
+
+            while (reader.Read())
+            {
+
+                results.Add(new
+                {
+                    STdate = reader["ST_Date"],
+                    PAcount = reader["PAccount"],
+                    PStock = reader["Pstock"],
+                    PLabel = reader["Plabel"],
+                    Parameter = reader["dummyblock"],
+                    PBuildTime = reader["PBulidTime"],
+                    PFinsihTime = reader["Pfinishtime"],
+                    SteClose = reader["Ste_Close"]
+
+                });
+            }
+
+
+            return Json(results);
+
+        }
+        //我的收藏頁面
+        [HttpGet]
+        public IActionResult MyCollect1(string sessionFavorite)
+        {
+
+            // 從 Session 中獲取 MID
+            //var sessionMID = HttpContext.Session.GetString(SessionKeys.MID);
+
+            int MID = Convert.ToInt32(sessionFavorite);
+            // 將 MID 轉換為整數
+            if (int.TryParse(sessionFavorite, out int mid))
+            {
+                // 查詢 MID 對應的資料列
+                var item = _context.DbMembers.FirstOrDefault(item => item.Mid == mid);
+
+                if (item != null)
+                {
+
+        //我的預測結果頁面_1-3
+        public IActionResult MyPredictResult()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult MyPredictResultBoris(string customername)
+        {
+            List<object> results = new List<object>();
+            string connectionString = _configuration.GetConnectionString("StocksConnstring");
+            string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
+                        B.PBulidTime, B.Pfinishtime, A.ST_Date, A.ste_Close 
+                        FROM DB_model AS B 
+                        OUTER APPLY (
+                            SELECT TOP 5 *
+                            FROM Stock
+                            WHERE SN_code = B.Pstock
+                                  AND ST_Date <= B.PBulidTime
+                            ORDER BY ST_Date DESC
+                        ) AS A 
+                        WHERE B.PAccount = '{customername}'";
+            Console.WriteLine(sqlQuery);
+            SqlConnection sqlconnect = new SqlConnection(connectionString);
+            sqlconnect.Open();
+            SqlCommand sqlCommand = new SqlCommand(sqlQuery, sqlconnect);
+            SqlDataReader reader = sqlCommand.ExecuteReader();
+
+
+            while (reader.Read())
+            {
+
+                results.Add(new
+                {
+                    STdate = reader["ST_Date"],
+                    PAcount = reader["PAccount"],
+                    PStock = reader["Pstock"],
+                    PLabel = reader["Plabel"],
+                    Parameter = reader["dummyblock"],
+                    PBuildTime = reader["PBulidTime"],
+                    PFinsihTime = reader["Pfinishtime"],
+                    SteClose = reader["Ste_Close"]
+
+                });
+            }
+
+            return View();
+
+        }
+
+        //[HttpPost]
+        //public IActionResult MyCollect(string sessionMID)
+        //{
+        //    // var sessionMID = HttpContext.Session.GetString(SessionKeys.MID);
+
+
+        //    if (int.TryParse(sessionMID, out int mid))
+        //    {
+        //        var item = _context.DbMembers.FirstOrDefault(item => item.Mid == mid);
+
+        //        if (item != null)
+        //        {
+        //            string formattedMfavoriteModel = string.Empty;
+
+        //            if (!string.IsNullOrEmpty(item.MfavoriteModel))
+        //            {
+        //                formattedMfavoriteModel = item.MfavoriteModel.Trim('{', '}');
+
+        //                if (formattedMfavoriteModel != "")
+        //                {
+        //                    var pidStrings = formattedMfavoriteModel.Split(',');
+        //                    var pidList = new List<int>();
+
+        //                    foreach (var pidString in pidStrings)
+        //                    {
+        //                        if (int.TryParse(pidString, out int pid))
+        //                        {
+        //                            pidList.Add(pid);
+        //                        }
+        //                    }
+
+        //                    var favoriteItems = _context.DbModels.Where(model => pidList.Contains(model.Pid)).ToList();
+
+        //                    // 将收藏项数据存储在sessionStorage中
+        //                    var favoriteItemsJson = JsonConvert.SerializeObject(favoriteItems);
+        //                    HttpContext.Session.SetString("FavoriteItems", favoriteItemsJson);
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    return View();
+        //}
+
+        //// 我的收藏頁面
+        //public IActionResult MyCollect()
+        //{
+        //    // 使用 JavaScript 將 MID 存儲到 sessionStorage
+        //    var sessionMID = HttpContext.Session.GetString(SessionKeys.MID);
+        //    ViewData["SessionMID"] = sessionMID; // 在视图中使用 ViewData 传递 MID
+
+        //    return View();
+        //}
+
+
+
+
+        [HttpPost]
+        public IActionResult Search(string searchTerm)
+        {
+            // 从数据库中检索与搜索关键字匹配的数据
+            var searchResults = (from DbModel in _context.DbModels
+                                 where DbModel.Pstock == searchTerm
+                                 orderby DbModel.PbulidTime descending
+                                 select new { P = DbModel.Pstock, G = DbModel.PbulidTime })
+                    .Take(5)
+                    .ToList();
+
+            // 如果搜索结果不为空，则将其存储在 ViewBag 中，并返回显示搜索结果的视图
+            if (searchResults != null /*&& searchResults.Any()*/)
+            {
+                ViewBag.SearchResults = searchResults;
+                return View("MyCollect"); // 返回显示搜索结果的视图
+            }
+            else
+            {
+                ViewBag.NoResultsMessage = "未找到匹配的结果。";
+                return View("MyCollect"); // 返回显示搜索结果为空的视图
+            }
+        }
+
+        //我的預測結果
+        //沛棋繪製卡片的功能
+
+        ////網址傳資料|回傳預測內容
+        //public IActionResult showPredictions(string id)
+        //{
+
+        //    var viewModel = _context.DbModels.ToList();
+        //    var query = from p in viewModel
+        //                where p.Paccount == id
+        //                select new
+        //                {
+        //                    Account = p.Paccount,
+        //                    Variable = p.Pvariable,
+        //                    Label = p.Plabel,
+        //                    FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd")
+        //                };
+
+        //    return Json(query);
+        //}
+        //如果該會員預測過10檔股票，就要跑10次!!!
+        //網址傳資料|該股票所有內容(for預測用
+        //public IActionResult showAllStocks(string id)
+        //{
+        //    var viewModel = _context.Stock.ToList();
+        //    var query = from p in viewModel
+        //                where p.SnCode == id
+        //                select new
+        //                {
+        //                    Date = p.StDate,
+        //                    Close = p.SteClose,
+        //                    StockName = p.SnName
+        //                };
+
+        //    return Json(query);
+        //}
+        //抓取會員預測過的結果
+        public IActionResult MemberPredictData(string LogAccount)
+        {
+            //找出登入的會員共有幾筆預測資料
+
+
+
+
+
+
+
+
+        //     //我的收藏 - 網址傳資料|回傳預測內容
+        //     public IActionResult showPredictions(string id)
+        //     {
+        //         var viewModel = _context.DbModels.ToList();
+        //         var query = from p in viewModel
+        //                     where p.Pstock == id
+        //                     select new
+        //                     {
+        //                         Account = p.Paccount,
+        //                         Variable = p.Pvariable,
+        //                         Label = p.Plabel,
+        //                         FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd")
+        //                     };
+        //         return Json(query);
+        //     }
+
+        //     // 我的收藏 - 網址傳資料|該股票所有內容 ( for 預測用
+        //     public IActionResult showAllStocks(string id)
+        //     {
+
+        ////Console.WriteLine(id);
+        ////var query1 = _context.Stock.ToList();
+        //var viewModel = _context.Stock.ToList();
+        //var query = from p in viewModel
+        //			where p.SnCode == id
+        //			select new
+        //			{
+        //				Date = p.StDate,
+        //				Close = p.SteClose,
+        //				StockName = p.SnName
+        //			};
+        //Console.WriteLine(query);
+        //return Json(query);
+        //     }
 
         [HttpGet]
         public IActionResult MyPredictResultBoris(string customername)
