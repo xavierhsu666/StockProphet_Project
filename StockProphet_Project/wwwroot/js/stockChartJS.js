@@ -144,9 +144,9 @@ var yScaleKD = d3.scaleLinear()
 //---抓資料---//
 var dataAll;
 
-d3.json(`/Home/showStocks/${stocksID}`, function (data) {
-    //console.log(data);
-    $(".td-tittle").text(data[0].StockName) //股票名稱
+d3.json(`/Member/showStocks/${stocksID}`, function (data) {
+   
+   $(".td-tittle").text(data[0].StockName) //股票名稱
     data = data.map(function (d) {
         return {
             date: parseDate(d.Date),

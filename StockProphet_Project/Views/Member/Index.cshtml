@@ -134,8 +134,8 @@
 
 <script>
     //判斷會員是否登入
-    var MID = "@Context.Session.GetString("MID")"
-    
+    // var MID = "@Context.Session.GetString("MID")"
+    var MID = sessionStorage.getItem("LogAccount")
     if (MID == '') {
         $('#beforeLog').show();
         $('#afterLog').hide();

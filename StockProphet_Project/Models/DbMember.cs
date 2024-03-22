@@ -28,4 +28,9 @@
 
 		public string? MfavoriteModel { get; set; }
 	}
+
+    public class SearchRequestModel
+    {
+        public string SearchTerm { get; set; }
+    }
 }
