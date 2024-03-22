@@ -684,31 +684,30 @@ function redraw() {
 //如果有登入 需要改變的部分
 //user = "apple5678";       /////////先寫死是apple
 //logging = true;     /////////先寫死是true
-console.log("wdef");
 function btnTest(btn) {
     if (logging) {      //如果有登入
         //到時候user要改成抓目前登入者的帳號ㄛ
         var dataToServer = { user: user, cardID: $(btn).attr("id").substring(3) };
-
         $.ajax({
             url: "/Home/CheckCard",
             method: "POST",
             data: dataToServer,
             success: function (e) {
-                switch (e) {
-                    case "add": {
+                console.log(e);
+                switch (e.substring(0,1)) {
+                    case "A": {
                         $(btn).css("color", "red");
                         console.log("新增一筆");
-                        sessionStorage.setItem("LogMemberInvestYear", LogMember.MinvestYear);
+                        sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
                         break
                     }
-                    case "delete": {
+                    case "D": {
                         $(btn).css("color", "black");
                         console.log("刪除一筆");
-                        sessionStorage.setItem("LogMemberInvestYear", LogMember.MinvestYear);
+                        sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
                         break;
                     }
-                    case "reject":
+                    case "R":
                         console.log("收藏上限了朋友");
                         break;
                 }

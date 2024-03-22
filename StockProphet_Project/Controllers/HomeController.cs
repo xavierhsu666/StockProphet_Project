@@ -103,6 +103,7 @@ namespace StockProphet_Project.Controllers {
         [HttpPost]
         public string CheckCard(string user, string cardID) {
             var member = _context.DbMembers.SingleOrDefault(e => e.MaccoMnt == user);
+            Console.WriteLine("--------------"+user+"/" + cardID);
             char[] delimiterChars = ['{', '}', ','];
             string[] myCard = [];
             if ((member.MfavoriteModel) != null) { myCard = (member.MfavoriteModel).Split(delimiterChars); }
@@ -116,28 +117,29 @@ namespace StockProphet_Project.Controllers {
             if (member.MfavoriteModel == "{}" || member.MfavoriteModel == null) {   //如果表資料為空
                 member.MfavoriteModel = "{" + cardID + "}";
                 _context.SaveChanges();
-                change = "add";
+                change = "A";
             } else  {    //資料不為空
                     int i = Array.IndexOf(myCard, cardID);
                 if (i > -1) {   //列表有這個值
                     myCard = myCard.Where((source, index) => index != i).ToArray();
                     saveChange = string.Join(",", myCard);  //array整理成字串
-                    change = "delete";
+                    change = "D";
                 } else if (i == -1) {   //列表沒這個值
                     if (myCard.Length > 4) { //已超過五筆，拒絕新增
                         saveChange = string.Join(",", myCard);
-                        change = "reject";
+                        change = "R";
                     } else {
                         myCard = myCard.Concat(new string[] { cardID }).ToArray();
                         saveChange = string.Join(",", myCard);  //array整理成字串
-                        change = "add";
+                        change = "A";
                     }
                 }
                 member.MfavoriteModel = "{" + saveChange + "}";
                 _context.SaveChanges();
             }
+            string nowList = member.MfavoriteModel;
 
-            return change;
+            return change+nowList;
         }
 
         //抓登入者的最愛清單
