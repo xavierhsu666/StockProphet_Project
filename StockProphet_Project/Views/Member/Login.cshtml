@@ -37,56 +37,53 @@
 <script>
     $('#WrongMsg').hide();
 
-	$(function () {
-		//按下登入按鈕需驗證身分別
-		$('#LoginSubmit').on("click", function () {
-			var Account = $('#Account').val()
-			console.log(Account);
-			if (Account == "") {
-				alert("未輸入登入帳號");
-			}
-			else {
-			var dataToServer = {
-				MAccoMnt: $('#Account').val(),
-				MPassword: $('#Password').val()
-			}
-				$.ajax({
-					url: "/Member/checkLogin",
-					method: "get",
-					data: dataToServer,
-				success: function (e) {
-					// alert(e);
-					if (e === "會員名稱錯誤" || e==="輸入的密碼不正確") {
-						alert(e);
-					}
-					else {
-						if (e === "管理者") {
+    $(function () {
+        //按下登入按鈕需驗證身分別
+        $('#LoginSubmit').on("click", function () {
+            var Account = $('#Account').val()
+            console.log(Account);
+            if (Account == "") {
+                alert("未輸入登入帳號");
+            }
+            else {
+                var dataToServer = {
+                    MAccoMnt: $('#Account').val(),
+                    MPassword: $('#Password').val()
+                }
+                $.ajax({
+                    url: "/Member/checkLogin",
+                    method: "get",
+                    data: dataToServer,
+                    success: function (e) {
+                        // alert(e);
+                        if (e === "會員名稱錯誤" || e === "輸入的密碼不正確") {
+                            alert(e);
+                        }
+                        else {
+                            var LogMember = JSON.parse(e);
 
-								window.location.href = "/Admin/Index";
-						
-						}
-						else {
+                            // console.log(LogMember);
+                            // console.log(LogMember.MaccoMnt);
 
-							
-								//使用sessionStorage進行跨頁面傳值
-								sessionStorage.setItem("LogAccount", Account);
-								sessionStorage.setItem("LogMemberLevel", e);
-
-								window.location.href = "/Home/Index";
-						}
-
-
-					}		
-				}
-			})
+                            //使用sessionStorage進行跨頁面傳值
+                            sessionStorage.setItem("LogAccount", LogMember.MaccoMnt);
+                            sessionStorage.setItem("LogMemberLevel", LogMember.Mlevel);
+                            
+                            //供修改會員使用
+                            sessionStorage.setItem("LogMemderId", LogMember.Mid);
+                            sessionStorage.setItem("LogMemberEmail", LogMember.Memail);
+                            sessionStorage.setItem("LogMemberName", LogMember.MtrueName);
+                            sessionStorage.setItem("LogMemberBirthday", LogMember.Mbirthday);
+                            sessionStorage.setItem("LogMemberGender", LogMember.Mgender);
+                            sessionStorage.setItem("LogMemberInvestYear", LogMember.MinvestYear);
+                            sessionStorage.setItem("LogMemberfavoriteModel", LogMember.MfavoriteModel);
+                            //跳轉回首頁
+                            window.location.href = "/Home/Index";
+                        }
+                    }
+                })
 
             }
-
-
-
-
         })
-
-
     })
 </script>
