@@ -64,6 +64,27 @@ namespace StockProphet_Project.Controllers {
 		//	return Content(fedback);
 
 		//}
+		public async Task<IActionResult> updateAllStock() {
+			var query = _context.Stock
+				   .AsEnumerable()
+				   .GroupBy(o => o.SnCode)
+				   .Select(g => g.First());
+			string log;
+			log = "KS: Start Update all stock.\r\n";
+			int i = 0;
+			foreach (var item in query) {
+				CallPyApi cpa = new CallPyApi();
+				Console.WriteLine("KS: 呼叫UpdateOneStock(stockCode=" + item.SnCode + ")");
+				log += "_________________ " + i + " \"_________________ \"\r\n";
+				log += "KS: 呼叫UpdateOneStock(stockCode=" + item.SnCode + ") for "+i+" Time .\r\n";
+				string fedback = await cpa.UpdateOneStock(item.SnCode, InputLatestDate.Replace("-", ""));
+				log += "KS: Finished.\r\n";
+				i++;
+			}
+			return Content(log);
+
+		}
+
 		public async Task<IActionResult> TestWepAPI() {
 			WebAPI_Class wac = new WebAPI_Class();
 			wac.stockCode = "2330";
@@ -299,7 +320,7 @@ namespace StockProphet_Project.Controllers {
 
 
 				CallPyApi cpa = new CallPyApi();
-				Console.WriteLine(stockCode);
+				Console.WriteLine("KS: 呼叫UpdateOneStock(stockCode=" + stockCode + ")");
 				string fedback = await cpa.UpdateOneStock(stockCode, InputLatestDate.Replace("-", ""));
 				var stockData = _context.Stock
 						.Where(x => x.SnCode == stockCode)
@@ -1137,7 +1158,7 @@ namespace StockProphet_Project.Controllers {
 		//}
 
 		[HttpPost]
-		public IActionResult Predictsavedata(string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime, string PAccount, string Pparameter) {
+		public IActionResult Predictsavedata( string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime, string PAccount, string Pparameter ) {
 			var query = new StocksContext();
 			DateTime buildTime = DateTime.Parse(PBuildTime);
 			DateTime finishTime = DateTime.Parse(PfinishTime);
@@ -1152,7 +1173,7 @@ namespace StockProphet_Project.Controllers {
 				PbulidTime = buildTime,
 				PfinishTime = finishTime,
 				Paccount = PAccount,
-				Dummyblock= parametertodb
+				Dummyblock = parametertodb
 			};
 			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
 			query.DbModels.Add(newdata);
@@ -1169,16 +1190,15 @@ namespace StockProphet_Project.Controllers {
 		}
 
 		[HttpGet]
-		public IActionResult countpredicttime(string accountname)
-		{
+		public IActionResult countpredicttime( string accountname ) {
 			var query = _context.DbModels.Count(o => o.Paccount == accountname);
 			bool result;
-			if (query==5) {
-				result=true;
+			if (query == 5) {
+				result = true;
 			} else {
-				result=false;
+				result = false;
 			}
-			var Finalresult = new { resulttoformer = result};
+			var Finalresult = new { resulttoformer = result };
 			return Json(Finalresult);
 		}
 	}
