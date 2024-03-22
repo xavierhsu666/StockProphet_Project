@@ -38,7 +38,7 @@ namespace StockProphet_Project.Controllers
 
             while (reader.Read())
             {
-                // 读取每一行的数据并添加到结果列表中
+                
                 results.Add(new
                 {
                     SNCode = reader["SN_Code"],

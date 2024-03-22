@@ -48,9 +48,10 @@ app.UseAuthorization();
 app.UseSession();
 app.MapControllerRoute(
 	name: "default",
-pattern: "{controller=StockModel}/{action=predictindex}/{id?}");
-//pattern: "{controller=StockModel}/{action=predictindex}/{id?}");
-//pattern: "{controller=StockModel}/{action=TestWsWepAPI}");
+//pattern: "{controller=StockModel}/{action=predictindex}");
+pattern: "{controller=Home}/{action=Index}/{id?}");
+//pattern: "{controller=Member}/{action=MyPredictResult}/{id?}");
 //pattern: "{controller=StockModel}/{action=testBuild}");
+
 
 app.Run();

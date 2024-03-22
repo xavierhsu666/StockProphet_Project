@@ -38,12 +38,12 @@
                             <a class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">會員中心</a>
                             <div class="dropdown-menu">
 
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Login">會員登入/註冊</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">會員主頁</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Edit">個人資料修改</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="StockModel" asp-action="Predictindex">我要預測</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="MyCollect">我的收藏頁面</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="MyPredictResult">我的預測結果頁面</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Login" asp-route-provider="Member" asp-route-act="Index">會員登入/註冊</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index" asp-route-provider="Member" asp-route-act="Index">會員主頁</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Edit" asp-route-provider="Member" asp-route-act="Edit">個人資料修改</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="StockModel" asp-action="Predictindex" asp-route-provider="StockModel" asp-route-act="Predictindex">我要預測</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="MyCollect" asp-route-provider="Member" asp-route-act="MyCollect"> 我的收藏頁面</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="MyPredictResult" asp-route-provider="Member" asp-route-act="MyPredictResult">我的預測結果頁面</a>
                             </div>
                         </li>
                         @* 要設定靠右對齊-未完成 *@
@@ -80,7 +80,7 @@
 			if (sessionStorage.getItem("LogAccount") == null) {
                 console.log(1)
 
-                $('#mynavgation').append(`<li class="nav-item" ><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login" >登入</a></li>`);
+                $('#mynavgation').append(`<li class="nav-item" ><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login">登入</a></li>`);
 				$('#loginlink').show();
 				$('#logoutlink').hide();
 			} else {

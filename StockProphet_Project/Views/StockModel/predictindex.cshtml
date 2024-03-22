@@ -193,7 +193,7 @@
 	</div>
 	<br>
 	<br>
-	<button id="testButton">嘉澤的 Test Button</button>
+	<button id="updateAllStockBtn">update All Stock Btn</button>
 </div>
 
 <script>
@@ -301,7 +301,7 @@
 			// <ks area--------------------->
 
 			// ####<預設值待更新-------------------------------------->
-			var account = "testUser";
+			var account = sessionStorage.getItem("LogAccount");
 			// ####<預設值待更新-------------------------------------->
 
 			// ####<main-------------------------------------->
@@ -322,8 +322,8 @@
 			})
 			// ####<main-------------------------------------->
 
-			$("#testButton").on("click", function () {
-
+			$("#updateAllStockBtn").on("click", function () {
+				window.location.href = '/stockmodel/updateAllStock';
 
 
 			})

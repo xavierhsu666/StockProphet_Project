@@ -60,7 +60,7 @@ namespace StockProphet_Project.Controllers {
 
                          };   //取前一百筆
             //->這樣表會顛倒啊朋友
-
+            Console.WriteLine(query);
             //記得顛倒回來
             return Json(query);
         }
