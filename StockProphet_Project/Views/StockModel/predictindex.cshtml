@@ -260,13 +260,13 @@
 				$.each(technicalParam, function (key, value) {
 					$(`#${formid} .technicalparamlist`).append(
 						`<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check" >
-																										<label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`
+																											<label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`
 					)
 				});
 				$.each(foundmentParam, function (key, value) {
 					$(`#${formid} .foundmentalparamlist`).append(`
-																									<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
-																									<label for="${formid + key}" class="btn btn-outline-secondary" >${value}</label>`)
+																										<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
+																										<label for="${formid + key}" class="btn btn-outline-secondary" >${value}</label>`)
 				});
 				// $.each(otherParam, function (key, value) {
 				// 	$(`#${formid} .otherparamlist`).append(`
@@ -282,8 +282,8 @@
 					console.log(key);
 					console.log(value);
 					$(`#${formid} .predicintervallist`).append(`
-																									<input type="radio" id="${formid + value}" name="interval" value="${value}">
-																									<label for="${formid + value}">${key}</label>`)
+																										<input type="radio" id="${formid + value}" name="interval" value="${value}">
+																										<label for="${formid + value}">${key}</label>`)
 				});
 
 			}
@@ -324,8 +324,6 @@
 
 			$("#updateAllStockBtn").on("click", function () {
 				window.location.href = '/stockmodel/updateAllStock';
-
-
 			})
 
 			// ####<funcs-------------------------------------->
@@ -386,7 +384,15 @@
 							PPrefer: data.userPrefer,
 							PBuildTime: paras.currentDate,
 							PfinishTime: paras.finishDate,
-							dummyblock: '{"MSE":' + e.Output_M_MAE.toFixed(3) + ',"RMSE":' + e.Output_M_RMSE.toFixed(3) + ',"UpEsti":' + e.Output_F_upperEstimate.toFixed(3) + ',"LowEsti":' + e.Output_F_lowerEstimate.toFixed(3) + '}',
+							dummyblock: '{"MSE":' + e.Output_M_MAE.toFixed(2) +
+								',"RMSE":' + e.Output_M_RMSE.toFixed(2) +
+								',"uEsti":' + e.Output_F_upperEstimate.toFixed(2) +
+								',"lEsti":' + e.Output_F_lowerEstimate.toFixed(2) +
+								',"wSize":' + paras.InputModelPara[1] +
+								',"sLen":' + paras.InputModelPara[2] +
+								',"tSize":' + paras.InputModelPara[3] +
+								',"cLev":' + paras.InputModelPara[4] +
+								'}',
 							Paccount: paras.account
 						}
 
@@ -443,7 +449,10 @@
 							PPrefer: data.userPrefer,
 							PBuildTime: paras.currentDate,
 							PfinishTime: paras.finishDate,
-							dummyblock: '["MSE":' + e.output_M_MSE.toFixed(3) + ',"RMSE":' + e.output_M_RMSE.toFixed(3) + ']',
+							dummyblock: '["MSE":' + e.output_M_MSE.toFixed(2) +
+								',"RMSE":' + e.output_M_RMSE.toFixed(2) +
+								',"Iters":' + paras.InputModelPara[0] +
+								']',
 							Paccount: paras.account
 						}
 
@@ -580,10 +589,10 @@
 
 
 			function SaveModelResultToDB(datatoserver) {
-				// console.log("Enter the Save Webapi~~~");
+				console.log(datatoserver);
 				$.ajax({
 					method: "post",
-					url: "StockModel/SaveModelResult",
+					url: "/StockModel/SaveModelResult",
 					data: datatoserver,
 					success: function (e) {
 						console.log(e);

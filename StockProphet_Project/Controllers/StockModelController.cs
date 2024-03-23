@@ -313,7 +313,6 @@ namespace StockProphet_Project.Controllers {
 		[HttpGet]
 		public async Task<IActionResult> UpdateOneStock( string stockCode ) {
 			if (checkStockCodeIsRight(stockCode) == "Nah") {
-
 				var result = new { stockname = "查無這支股票", stockexist = false };
 				return Json(result);
 			} else {
@@ -326,16 +325,21 @@ namespace StockProphet_Project.Controllers {
 						.Where(x => x.SnCode == stockCode)
 						.OrderBy(x => x.StDate)
 						.ToList();
+				//var stockData = from o in _context.Stock.ToList()
+				//				where o.SnCode == stockCode
+				//				select o;
+
 				string stockname;
 				bool stockexist;
-				if (stockData == null || stockData.Count == 0) {
+				if (stockData == null || stockData.Count() == 0) {
 					stockname = "查無這支股票";
 					stockexist = false;
 				} else {
-					stockname = stockData[0].SnName;
+					stockname = stockData.First().SnName;
 					stockexist = true;
-
 				}
+				//stockname = "查無這支股票";
+				//stockexist = false;
 				var result = new { stockname = stockname, stockexist = stockexist };
 				return Json(result);
 			}
@@ -467,6 +471,9 @@ namespace StockProphet_Project.Controllers {
 			var query = new StocksContext();
 			DateTime buildTime = DateTime.Parse(mr.PBuildTime);
 			DateTime finishTime = DateTime.Parse(mr.PfinishTime);
+			Console.WriteLine("---------------------------------------------");
+			Console.WriteLine(mr.dummyblock);
+			Console.WriteLine("---------------------------------------------");
 			//System.Diagnostics.Debug.WriteLine($"PLabel: {PLabel}");
 			var newdata = new DbModel {
 				Pstock = mr.PStock,
