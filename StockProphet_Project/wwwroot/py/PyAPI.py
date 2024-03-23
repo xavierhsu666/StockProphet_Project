@@ -339,7 +339,8 @@ SQL_data_df['SI_OSC'] = SQL_data_df['SI_OSC'].fillna(SQL_data_df['SI_OSC'].mean(
 SQL_data_df['SI_MA'] = SQL_data_df['SI_MA'].fillna(SQL_data_df['SI_MA'].mean())
 # SQL_data_df['S_PK'] = SQL_data_df['ST_Date'][0:4]+"-"+SQL_data_df['ST_Date'][4:6]+"-"+SQL_data_df['ST_Date'][6:8]+"_"+SQL_data_df['SN_Code']
 SQL_data_df['S_PK'] =  SQL_data_df['ST_Date'].str[0:4]+"-"+SQL_data_df['ST_Date'].str[4:6]+"-"+SQL_data_df['ST_Date'].str[6:8]+"_"+SQL_data_df['SN_Code']
-# 将'SI_PE'列中的值转换为数字，错误值将转换为NaN
+SQL_data_df['ST_Date']=  SQL_data_df['ST_Date'].str[0:4]+"-"+SQL_data_df['ST_Date'].str[4:6]+"-"+SQL_data_df['ST_Date'].str[6:8]
+# 将'SI_PE'列中的值转换为数字，错误值将转换为0
 SQL_data_df['SI_PE'] = pd.to_numeric(SQL_data_df['SI_PE'], errors='coerce')
 
 # 计算除了NaN之外的平均值
@@ -347,5 +348,18 @@ mean_without_nan = SQL_data_df['SI_PE'].dropna().mean()
 
 # 使用fillna将NaN填充为平均值
 SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(mean_without_nan)
+SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(0)
 
-SQL_data_df.to_sql(table_name, engine, index=False, if_exists='replace') # Change 'replace' to 'append' if you want to append data
+
+
+# 從資料庫讀取目標表格的資料到 DataFrame 中
+existing_data_df = pd.read_sql('SELECT * FROM Stock where SN_Code = '+stockNo, engine)
+
+# 找到目標表格中不存在的資料
+missing_data_df = SQL_data_df[~SQL_data_df.isin(existing_data_df)].dropna()
+
+# 如果有缺失的資料，將其插入到目標表格中
+if not missing_data_df.empty:
+    missing_data_df.to_sql(table_name, engine, if_exists='append', index=False)
+
+# SQL_data_df.to_sql(table_name, engine, index=False, if_exists='replace') # Change 'replace' to 'append' if you want to append data

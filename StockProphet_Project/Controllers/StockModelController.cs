@@ -321,25 +321,25 @@ namespace StockProphet_Project.Controllers {
 				CallPyApi cpa = new CallPyApi();
 				Console.WriteLine("KS: 呼叫UpdateOneStock(stockCode=" + stockCode + ")");
 				string fedback = await cpa.UpdateOneStock(stockCode, InputLatestDate.Replace("-", ""));
-				//var stockData = _context.Stock
-				//		.Where(x => x.SnCode == stockCode)
-				//		.OrderBy(x => x.StDate)
-				//		.ToList();
+				var stockData = _context.Stock
+						.Where(x => x.SnCode == stockCode)
+						.OrderBy(x => x.StDate)
+						.ToList();
 				//var stockData = from o in _context.Stock.ToList()
 				//				where o.SnCode == stockCode
 				//				select o;
 
 				string stockname;
 				bool stockexist;
-				//if (stockData == null || stockData.Count() == 0) {
-				//	stockname = "查無這支股票";
-				//	stockexist = false;
-				//} else {
-				//	stockname = stockData.First().SnName;
-				//	stockexist = true;
-				//}
-				stockname = "查無這支股票";
-				stockexist = false;
+				if (stockData == null || stockData.Count() == 0) {
+					stockname = "查無這支股票";
+					stockexist = false;
+				} else {
+					stockname = stockData.First().SnName;
+					stockexist = true;
+				}
+				//stockname = "查無這支股票";
+				//stockexist = false;
 				var result = new { stockname = stockname, stockexist = stockexist };
 				return Json(result);
 			}
