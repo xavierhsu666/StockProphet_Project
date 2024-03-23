@@ -348,4 +348,4 @@ mean_without_nan = SQL_data_df['SI_PE'].dropna().mean()
 # 使用fillna将NaN填充为平均值
 SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(mean_without_nan)
 
-SQL_data_df.to_sql(table_name, engine, index=False, if_exists='append') # Change 'replace' to 'append' if you want to append data
+SQL_data_df.to_sql(table_name, engine, index=False, if_exists='replace') # Change 'replace' to 'append' if you want to append data
