@@ -29,31 +29,31 @@ namespace StockProphet_Project.Controllers
             _configuration = configuration;
         }
 
-        //會員主頁
+        //會員主頁-1
         public IActionResult Index()
         {
             return View();
         }
-        //修改個人資料頁面
+        //修改個人資料頁面-1-1
         public IActionResult Edit()
         {
             return View();
         }
         //確認舊密碼是否正確
-        public bool checkPassword(string checkPassword)
+        [HttpGet]
+        public bool checkPassword(string Account, string checkPassword)
         {
-            System.Diagnostics.Debug.WriteLine("舊密碼:" + checkPassword);
+            System.Diagnostics.Debug.WriteLine("帳號+舊密碼:" + Account+ checkPassword);
 
             //判斷該會員的舊密碼是否一致            
-            HttpContext.Session.GetString("MID");
-            System.Diagnostics.Debug.WriteLine("登入會員的Id:" + HttpContext.Session.GetString("MID"));
-            var member = _context.DbMembers.Where(x => x.Mid.ToString() == HttpContext.Session.GetString("MID"));
+           
+            var member = _context.DbMembers.Where(x => x.MaccoMnt== Account);
             var result = member.Where(x => x.Mpassword == checkPassword);
             System.Diagnostics.Debug.WriteLine("測試會員" + member);
 
             return result.Any();
         }
-        // //儲存修改後的會員資料
+        //儲存修改後的會員資料
 
         [HttpPut]
         public bool SaveReviseMemberData(string Account, string NewPassword, string NewEmail, string NewName, string NewInvestYear)
@@ -205,16 +205,17 @@ namespace StockProphet_Project.Controllers
         //    return Json(query);
         //}
         //抓取會員預測過的結果
-        public IActionResult MemberPredictData(string LogAccount)
-        {
-            //找出登入的會員共有幾筆預測資料
+        //public IActionResult MemberPredictData(string LogAccount)
+        //{
+        //    //找出登入的會員共有幾筆預測資料
 
-            var query = from m in _context.DbModels
-                        where m.Paccount == LogAccount
-                        orderby m.PbulidTime descending
-                        select new { PID = m.Pid, Paccount = m.Paccount, Pvariable = m.Pvariable, Plabel = m.Plabel, PbulidTime = m.PbulidTime, PfinishTime = m.PfinishTime };
-            return Json(query);
-        }
+        //    var query = from m in _context.DbModels
+        //                where m.Paccount == LogAccount
+        //                orderby m.PbulidTime descending
+        //                select new { PID = m.Pid, Paccount = m.Paccount, Pvariable = m.Pvariable, Plabel = m.Plabel, PbulidTime = m.PbulidTime, PfinishTime = m.PfinishTime };
+        //    return Json(query);
+        //}
+
         //註冊頁面-2		
         public IActionResult Register()
         {
@@ -242,9 +243,12 @@ namespace StockProphet_Project.Controllers
             //System.Diagnostics.Debug.WriteLine(MInvestYear);
             //System.Diagnostics.Debug.WriteLine(MLevel);
 
+            
+            DateTime dateTime = DateTime.Parse(registerTime);
+
             //轉換日期格式 字串->DateOnly
-            DateOnly CurrentTime = DateOnly.Parse("2024-03-14");
-            DateOnly MregisterTime = DateOnly.Parse(CurrentTime.ToString("yyyy-MM-dd"));
+            DateOnly currentDate = new DateOnly(dateTime.Year, dateTime.Month, dateTime.Day);
+            DateOnly MregisterTime = DateOnly.Parse(currentDate.ToString("yyyy-MM-dd"));
             System.Diagnostics.Debug.WriteLine(MregisterTime);
 
 
@@ -270,8 +274,7 @@ namespace StockProphet_Project.Controllers
         {
             return View();
         }
-        //判斷登入會員等級並決定可看到頁面的權限
-
+        
         //判斷登入會員等級並決定可看到頁面的權限
         [HttpGet]
         public string checkLogin(string MAccoMnt, string MPassword)
@@ -330,7 +333,7 @@ namespace StockProphet_Project.Controllers
             {
                 var member = _context.DbMembers.FirstOrDefault(x => x.MaccoMnt == MAccoMnt);
                 Console.WriteLine(member);
-                Console.WriteLine("登入會員的ID" + member.Mid);
+                //Console.WriteLine("登入會員的ID" + member.Mid);
 
                 //先檢查是否存在該會員
 
