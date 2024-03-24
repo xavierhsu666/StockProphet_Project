@@ -439,6 +439,7 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             var yData = [Ddata[i].Label];
             var preDate = xData[0]; //預測日 懶人傳值
             var preBuildDate = Ddata[i].BuildTime;
+
             //console.log("預測日: "+ xData)
             //用BuildDate去找列表中最近的日子(closestDate)，closestDate可能等於BuildDate，也可能是前一天
             var closestDate = dateList.reduce((prev, curr) => {
@@ -447,7 +448,7 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
 
                 return currDiff < prevDiff ? curr : prev;
             })
-/*            console.log("最近近的日子: " + closestDate);*/
+            /*            console.log("最近近的日子: " + closestDate);*/
 
             var Today = (new Date()).toISOString().split('T')[0];
             var preState;   //判斷結案狀態
@@ -476,29 +477,44 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
                 preData[z] = { Date: parseDate(xData[z]), Close: yData[z] };
             }
             var index = i;
-            //console.log(preData);
-            drawPre(preData, index, preState, preDate, PID, preBuildDate);
+
+            //整理字串
+            var preVariable = JSON.parse(Ddata[i].Variable);    //所選變數
+            var preDummy = JSON.parse(Ddata[i].Dummyblock);     //結果參數
+
+            drawPre(preData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy);
         }
     })
 })
 
-function drawPre(myData, index, preState, preDate, PID, preBuildDate) {
+function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy ) {
 
-    //console.log(myData);
+    
+    //console.log(preDummy);
+
+    var prelist = "";
+    if (preVariable[0] != null) {
+        prelist += `<button class="copyAll" id="card${PID}" onclick="copyAllList(this)">複製全部</button>`;
+        for (var i = 0; i < preVariable.length; i++) {
+            prelist += `<button class="pre-list-btn" onclick="copyList(this)">${preVariable[i]}</button>`
+        };
+    };
+    /*console.log(prelist);*/
     $(".predictionArea").prepend(`<label class='prediction-card ${index}'>
     <input type='checkbox' class='card-btn' />
     <div class='card-content'><div class='card-front'><p class="pre-state">${preState}+${PID}</p>
     <table><tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preBuildDate}</td></tr>
     <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${preDate}</td></tr>
     <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5].Close}</td></tr>
-    <tr><th class="pre-th">模型參數</th><td class="pre-td">--</td></tr>
+    <tr><th class="pre-th">結果參數</th><td class="pre-td">MSE:${preDummy.MSE}</td></tr>
     </table>
     <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
     </div>
     <div class='card-back'>
     <div class='forPrediction'>
-
-    </div></div></div></label>`);
+    </div></div></div>
+    <div class="preVar">${prelist}</div>
+    </label>`);
     //重新整理日期
     var dateList = [];
     for (var i = 0; i < myData.length; i++) {
@@ -748,3 +764,42 @@ setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
 
 
 }, 500);
+
+console.log("wTF");
+
+$("li").on("click", function () {
+    console.log(":P");
+})
+
+function copyList(obj) {
+    $(obj).addClass("pre-list-btn-click");
+    setTimeout(function () {
+        $(obj).removeClass("pre-list-btn-click")
+        $(obj).addClass("pre-list-btn-click-again");
+    }, 1000);
+
+    console.log($(obj).text());
+    //
+    var content = $(obj).text();
+    navigator.clipboard.writeText(content);
+}
+
+function copyAllList(obj) {
+    $(obj).addClass("copyAllCopied");
+    setTimeout(function () {
+        $(obj).removeClass("copyAllCopied");
+    }, 1000)
+    var thisCard = $(obj).attr("id");
+    var thisCardList = $(`#${thisCard} ~ .pre-list-btn`);
+
+ 
+
+
+    var content="";
+    for (var i = 0; i < thisCardList.length; i++) {
+        if (i != 0) content += ",";
+        content += thisCardList[i].innerText;
+    }
+    navigator.clipboard.writeText(content);
+        
+}

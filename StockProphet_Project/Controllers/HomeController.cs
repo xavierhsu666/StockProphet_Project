@@ -72,13 +72,13 @@ namespace StockProphet_Project.Controllers {
                         where p.Pstock == id
                         select new {
                             Account = p.Paccount,
-                            Dummyblock = p.Dummyblock,
+                            Dummyblock = p.Dummyblock,  //成果參數
                             Label = p.Plabel,
                             FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd"),
                             PID = p.Pid,
                             BuildTime = Convert.ToDateTime(p.PbulidTime).ToString("yyyy-MM-dd"),
-                            Variable = p.Pvariable
-                          };
+                            Variable = p.Pvariable  //選擇的變數
+						};
               return Json(query);
           }
 

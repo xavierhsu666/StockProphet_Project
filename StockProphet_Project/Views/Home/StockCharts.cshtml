@@ -75,8 +75,7 @@
 
 
 <div class="predictionArea">
-    @*<button class='prediction-collect' id="PID${PID}" onclick=" btnTestCard()">♥</button> *@
-	@* <label class='prediction-card ${index}'>
+	<label class='prediction-card ${index}'>
 		<input type='checkbox' class='card-btn' />
 		<div class='card-content'>
 			<div class='card-front'>
@@ -85,7 +84,7 @@
 					<tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">2024/03/22</td></tr>
 					<tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">2024/04/22</td></tr>
 					<tr><th class="pre-th">預測價格</th><td class="pre-td">555</td></tr>
-					<tr><th class="pre-th">模型資料</th><td class="pre-td">--</td></tr>
+					<tr><th class="pre-th">模型資料</th><td class="pre-td"></td></tr>
 				</table>
 				<button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
 			</div>
@@ -94,7 +93,17 @@
 				</div>
 			</div>
 		</div>
-	</label> *@
+		<div class="preVar">
+			<button class="copyAll" onclick="copyAllList(this)">複製全部</button>
+			<button class="pre-list-btn" onclick="copyList(this)">V1</button>
+			<button class="pre-list-btn" onclick="copyList(this)">V2</button>
+			<button class="pre-list-btn" onclick="copyList(this)">V3</button>
+			<button class="pre-list-btn" onclick="copyList(this)">V3</button>
+			<button class="pre-list-btn" onclick="copyList(this)">V3</button>
+			<button class="pre-list-btn" onclick="copyList(this)">V3</button>
+		
+		</div>
+	</label>
 
 	@* <label class="prediction-card">
 	<input type="checkbox" class="card-btn" />
