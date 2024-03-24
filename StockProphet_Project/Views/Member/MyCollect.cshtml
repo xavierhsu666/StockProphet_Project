@@ -113,8 +113,8 @@
 
     /*預測股票的那點*/
     /*.myCircle:hover {
-                                                                    stroke: red;
-                                                                }*/
+                    stroke: red;
+                }*/
 
     .card-front {
         padding: 20px;
@@ -144,15 +144,6 @@
     </div>
 
     <div class="col-md-8">
-        @* Session 傳值 *@
-        @* <div style="background-color:lightpink">
-        <p> <b>Session傳值1:</b> @Context.Session.GetString("MID") </p><br>
-        <p> <b>Session傳值2:</b> @Context.Session.GetString("MEmail")</p>
-        <p> <b>Session傳值3:</b> @Context.Session.GetString("Mlevel")</p>
-        <p> <b>Session傳值4:</b> @MInvestYear</p>
-        </div> *@
-
-
 
         <div id="beforeLog">
 
@@ -164,114 +155,51 @@
 
         </div>
 
-        @* <div id="afterLog">
-
-        @if (sessionStorage.getItem("LogMemberLevel") == "high")
-        {
-        <p class="align-right">(@ViewBag.PidStringsCount/∞)已收藏筆數</p>
-        }
-        else if (sessionStorage.getItem("LogMemberLevel") == "normal")
-        {
-        <p class="align-right">(@ViewBag.PidStringsCount/5)已收藏筆數</p>
-        }
-        else
-        {
-        <p class="align-right">无法获取会员等级</p>
-        }
-
-
-        <!-- 搜索表单 -->
-        <form id="searchForm" method="post">
-        <input type="text" id="searchTerm" name="searchTerm" placeholder="輸入股票代號" required>
-        <button type="submit">GO</button>
-        </form>
-        <p>@ViewBag.SearchResults = searchResults;</p>
-        <!-- 搜索结果 -->
-        <div id="searchResultsDisplay" style="display: none;">
-        @if (ViewBag.SearchResults != null && ViewBag.SearchResults.Count > 0)
-        {
-        <ul>
-        @foreach (var result in ViewBag.SearchResults)
-        {
-        <li>@result.Pstock </li>
-        }
-        </ul>
-        }
-        else
-        {
-        <p>尚無股票預測結果。</p>
-        }
-        </div>
-
-
-
-
-
-        <div class="align-right">
-        <label for="arrange">排序按</label>
-        <select id="arrange" name="arrange">
-        <option value="StockNo">股票代號</option>
-        <option value="PredictDate">預測日期</option>
-        <option value="Price">預測價格</option>
-
-        </select>
-        </div>
-        <hr />
-        <div style="display: flex; flex-wrap: wrap;">
-
-
-        @if (ViewBag.FavoriteItems != null)
-        {
-        @foreach (var item in ViewBag.FavoriteItems)
-        {
-        <div class="col-md-4 mb-4">
-        <div class="card">
-        <div class="card-header">
-        股票代號：@item.Pstock
-        </div>
-        <div class="card-body">
-        <h5 class="card-title">預測價格：@item.Plabel</h5>
-        <p class="card-text">預測時間：@item.PbulidTime</p>
-        </div>
-        </div>
-        </div>
-        }
-        }
-        else
-        {
-        <p>沒有收藏的項目。</p>
-        }
-
-        </div>
-
-
-
-
-        </div> *@
-
-        <!-- 在视图页面中 -->
         <div id="afterLog">
-            <div id="favoriteItems"></div>
-            <div id="results">
-                <!-- 这里将显示从控制器返回的数据 -->
-            </div>
+            @*  @if (sessionStorage.getItem("LogMemberLevel") == "high")
+            {
+            <p class="align-right">(@ViewBag.PidStringsCount/∞)已收藏筆數</p>
+            }
+            else if (sessionStorage.getItem("LogMemberLevel") == "normal")
+            {
+            <p class="align-right">(@ViewBag.PidStringsCount/5)已收藏筆數</p>
+            }
+            else
+            {
+            <p class="align-right">无法获取会员等级</p>
+            } *@
+            <b>我的最愛</b>
+            <div class="FavoritesPage"></div>
 
-            <!-- 搜索表单 -->
-            <form id="searchForm" method="post">
+            <hr />
+            <!-- 搜尋欄 -->
+            <form id="searchForm" method="GET">
+                <div class="align-right">
+                    <label for="arrange">排序按</label>
+                    <select id="arrange" name="arrange">
+                        <option value="StockNo">股票代號</option>
+                        <option value="PredictDate">預測日期</option>
+                        <option value="Price">預測價格</option>
+                    </select>
+                </div>
                 <input type="text" id="searchTerm" name="searchTerm" placeholder="輸入股票代號" required>
                 <button type="submit">GO</button>
             </form>
-            <p id="searchResults"></p> <!-- 搜索结果 -->
 
-            <div class="align-right">
-                <label for="arrange">排序按</label>
-                <select id="arrange" name="arrange">
-                    <option value="StockNo">股票代號</option>
-                    <option value="PredictDate">預測日期</option>
-                    <option value="Price">預測價格</option>
-                </select>
-            </div>
-            <hr />
+
+
+            <hr>
+            <b>搜尋結果卡片</b>
+            @* <!-- 卡片都會塞這裡 --> *@
+            <div class="searchResults"></div>
+
+
+
+
+            <hr>
+
+            <div id="dataContainer"></div>
+
             <div id="favoriteItemsDisplay" style="display: flex; flex-wrap: wrap;"></div>
 
 
@@ -280,9 +208,11 @@
         </div>
 
         <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
+
+
         <script>
             //判斷會員是否登入
-            var MID = sessionStorage.getItem("LogAccount")
+            var MID = sessionStorage.getItem("LogAccount");
 
             if (MID == '') {
                 $('#beforeLog').show();
@@ -291,137 +221,631 @@
                 $('#beforeLog').hide();
                 $('#afterLog').show();
             }
-            console.log("顯示MID:" + MID);
 
             $(function () {
                 // 1.點擊回到會員頁
                 $('#showMemberIndex').on("click", function () {
                     window.location.href = "/Member/Index";
-                })
+                });
 
                 // 2.點擊修改個人資料
                 $('#showRevise').on("click", function () {
                     window.location.href = "/Member/Edit";
-                })
+                });
                 // 3.點擊我的收藏
                 $('#showFavoritesPage').on("click", function () {
                     window.location.href = "/Member/MyCollect";
-                })
+                });
 
                 // 4.點擊我要預測
                 $('#showPredictFunc').on("click", function () {
                     window.location.href = "/StockModel/Predictindex";
-                })
+                });
 
                 // 5.點擊我的預測結果
                 $('#showHistoryPage').on("click", function () {
                     window.location.href = "/Member/MyPredictResult";
-                })
+                });
 
                 // 6.點擊登入會員
                 $('#MemberLogin').on("click", function () {
                     window.location.href = "/Member/Login";
-                })
+                });
 
-                // 5.點擊我的預測結果
-                $('#searchbtn').on("click", function () {
-                    window.location.href = "/Member/MyCollect";
-                })
-
-                // 从 sessionStorage 中獲取當前登入 Favorite
-                // var MFavorite = sessionStorage.getItem("LogMemberfavoriteModel");
-                
+                // // 個人收藏清單
+                // 从 sessionStorage 中獲取當前登入的會員ID
+                // var MId = sessionStorage.getItem("LogMemderId");
 
                 // $.ajax({
                 //     method: "get",
-                //     url: "/Member/MyCollect1", // 根据实际的路由配置调整路径
-                //     data: { sessionFavorite: MFavorite }, // 传递的数据
+                //     url: "/Member/MyCollect1",
+                //     data: { sessionMID: MId },
                 //     success: function (data) {
-                //         console.log(data)
+                //         console.log(data);
+
+                //         $.ajax({
+                //             method: "GET",
+                //             url: "/Member/Test",
+                //             data: { sessionPID: MId },
+                //             success: function (data) {
+                //                 console.log(data);
+
+                //                 // // 在頁面上顯示收藏總數
+                //                 // var dataContainer = document.getElementById("dataContainer");
+
+                //                 // data.forEach(function (item) {
+                //                 //     var element = document.createElement("p");
+                //                 //     element.textContent = "Name: " + item.name + ", Age: " + item.age;
+                //                 //     dataContainer.appendChild(element);
+                //                 // });
+
+
+                //                 // 清空原有内容
+                //                 $('#results').empty();
+
+                //                 // 檢查返回的數據是否為空
+                //                 if (data && data.length > 0) {
+                //                     // 逐一檢視數據
+                //                     data.forEach(function (item) {
+                //                         // 創建新的卡片元素
+                //                         var card = $('<div>');
+                //                         card.addClass('card');
+
+                //                         // 添加卡片内容
+                //                         card.append('<p>ST Date: ' + item.STdate + '</p>');
+                //                         card.append('<p>P Account: ' + item.PAcount + '</p>');
+                //                         card.append('<p>P Stock: ' + item.PStock + '</p>');
+                //                         card.append('<p>P Label: ' + item.PLabel + '</p>');
+                //                         card.append('<p>Parameter: ' + item.Parameter + '</p>');
+                //                         card.append('<p>P Build Time: ' + item.PBuildTime + '</p>');
+                //                         card.append('<p>P Finish Time: ' + item.PFinsihTime + '</p>');
+                //                         card.append('<p>Ste Close: ' + item.SteClose + '</p>');
+
+                //                         // 添加新卡片
+                //                         $('#results').append(card);
+                //                         // 调用 drawPre 函数生成预测卡片
+                //                         //drawPre(item.MyData, item.Index, item.PreState, item.PreDate);
+
+                //                     });
+                //                 } else {
+                //                     // 無取得數據的提示
+                //                     $('#results').append('<p>No data available</p>');
+                //                 }
+                //             },
+                //             error: function (xhr, status, error) {
+                //                 // 處理錯誤情況
+                //                 console.error('Request failed with status:', status);
+                //             }
+                //         });
                 //     }
                 // });
+
+
+                // var MId = sessionStorage.getItem("LogMemderId");
+                // var data = { customername: sessionStorage.getItem("LogMemderId") }
+                // var data = { sessionMID:sessionStorage.getItem("LogMemderId") }
+                // var jsonforplot;
+                // var plotarray = [];
+
                 // $.ajax({
                 //     method: "get",
-                //     url: "/Member/Test",
-                //     data: { sessionMID: 104 },
-                //     success: function (data) {
-                //         console.log(data)
+                //     url: "/Member/MyCollect1",
+                //     data: data,
+                //     success: function (e) {
+                //         console.log(e); //[2,8]
+
+                //         for (var i = 0; i < e.length; i++) {
+                //             var number = e[i];
+                //             console.log(number);
 
 
+                //             $.ajax({
+                //                 method: "get",
+                //                 url: "/Member/Test",
+                //                 data: { sessionPID: number },
+                //                 success: function (e) {
+                //                     console.log(e)
+                //                     for (var i = 0; i < e.length; i++) {
+                //                         // console.log("----------"+i)
+                //                         var subarray = [];
+                //                         for (var j = 0; j < 5; j++) {
+                //                             jsonforplot = ({
+                //                                 date: e[j]["STdate"], close: e[j]["SteClose"]
+                //                             })
+                //                             subarray.push(jsonforplot);
+                //                         }
+                //                         subarray.push({ date: e[i]["PFinsihTime"], close: e[i]["PLabel"] })
+                //                         plotarray.push(subarray)
+
+                //                     }
+                //                     $.each(plotarray, function (index, element) {
+                //                         // console.log(index);
+                //                         var finishtime = element[5]["Date"];
+                //                         var currentdate = new Date()
+                //                         var result;
+
+                //                         if (finishtime > currentdate) {
+                //                             result = "未結案"
+                //                         } else {
+                //                             result = "結案"
+                //                         }
+
+                //                         // console.log(currentdate)
+                //                         //在这里执行你的操作
+                //                         // console.log(element[])
+                //                         //結案狀態
+                //                         drawPre(element, index, result, element[5]["Date"])
+
+                //                     });
+                //                 }
+                //             });
+                //         }
                 //     }
                 // });
+
+                // 個人收藏清單
+                // 從 sessionstorage 中獲取當前登入的會員 ID
+                // var data = { sessionMID: sessionStorage.getItem("LogMemderId") };
+                // var jsonforplot;
+                // var plotarray = [];
+
+                // $.ajax({
+                //     method: "get",
+                //     url: "/Member/MyCollect1",
+                //     data: data,
+                //     success: function (e) {
+                //         // Batch processing: Create an array of promises for AJAX requests
+                //         var promises = e.map(function (number) {
+                //             return $.ajax({
+                //                 method: "get",
+                //                 url: "/Member/Test",
+                //                 data: { sessionPID: number }
+
+                //             });
+                //         });
+
+                //         // Resolve all promises asynchronously
+                //         Promise.all(promises).then(function (results) {
+                //             results.forEach(function (e) {
+                //                 var subarray = [];
+                //                 for (var j = 0; j < 5; j++) {
+                //                     var jsonforplot = {
+                //                         date: e[j]["STdate"],
+                //                         close: e[j]["SteClose"]
+                //                     };
+                //                     subarray.push(jsonforplot);
+                //                 }
+                //                 subarray.push({
+                //                     date: e[e.length - 1]["PFinsihTime"],
+                //                     close: e[e.length - 1]["PLabel"]
+                //                 });
+                //                 plotarray.push(subarray);
+                //             });
+
+                //             // Process plotarray
+                //             plotarray.forEach(function (element, index) {
+                //                 var finishtime = element[5]["Date"];
+                //                 var currentdate = new Date();
+                //                 var result = finishtime > currentdate ? "未結案" : "結案";
+                //                 drawPre(element, index, result, finishtime);
+                //             });
+                //         }).catch(function (error) {
+                //             console.error("Error:", error);
+                //         });
+                //     },
+                //     error: function (xhr, status, error) {
+                //         console.error("AJAX Error:", error);
+                //     }
+                // });
+
+                // 定義全域變數來存儲從 AJAX 請求中獲得的資料
+                var plotarrayData = [];
+
+                // 個人收藏清單 AJAX 請求
+                var data = { sessionMID: sessionStorage.getItem("LogMemderId") };
 
                 $.ajax({
-                    method: "GET",
-                    url: "/Member/Test",
-                    data: { sessionMID: "104" },
-                    success: function (data) {
-                        console.log(data)
-                        // 清空原有内容
-                        $('#results').empty();
-
-                        // 检查返回的数据是否为空
-                        if (data && data.length > 0) {
-                            // 遍历返回的数据并创建 HTML 元素来显示每个对象的属性
-                            data.forEach(function (item) {
-                                // 创建新的卡片元素
-                                var card = $('<div>');
-                                card.addClass('card');
-
-                                // 添加卡片内容
-                                card.append('<p>ST Date: ' + item.STdate + '</p>');
-                                card.append('<p>P Account: ' + item.PAcount + '</p>');
-                                card.append('<p>P Stock: ' + item.PStock + '</p>');
-                                card.append('<p>P Label: ' + item.PLabel + '</p>');
-                                card.append('<p>Parameter: ' + item.Parameter + '</p>');
-                                card.append('<p>P Build Time: ' + item.PBuildTime + '</p>');
-                                card.append('<p>P Finish Time: ' + item.PFinsihTime + '</p>');
-                                card.append('<p>Ste Close: ' + item.SteClose + '</p>');
-
-                                // 将新卡片添加到页面中
-                                $('#results').append(card);
+                    method: "get",
+                    url: "/Member/MyCollect1",
+                    data: data,
+                    success: function (e) {
+                        var promises = e.map(function (number) {
+                            return $.ajax({
+                                method: "get",
+                                url: "/Member/Test",
+                                data: { sessionPID: number }
                             });
-                        } else {
-                            // 如果没有数据，显示相应的消息
-                            $('#results').append('<p>No data available</p>');
-                        }
+                        });
+
+                        Promise.all(promises).then(function (results) {
+                            results.forEach(function (e) {
+                                var subarray = [];
+                                for (var j = 0; j < 5; j++) {
+                                    var jsonforplot = {
+                                        date: e[j]["STdate"],
+                                        close: e[j]["SteClose"]
+                                    };
+                                    subarray.push(jsonforplot);
+                                }
+                                subarray.push({
+                                    date: e[e.length - 1]["PFinsihTime"],
+                                    close: e[e.length - 1]["PLabel"]
+                                });
+                                plotarrayData.push(subarray);
+                            });
+
+                            // 更新頁面元素
+                            //updatePageElements(plotarrayData);
+                            // 更新頁面元素
+                            updatePageElements(plotarrayData, ".FavoritesPage");
+                        }).catch(function (error) {
+                            console.error("Error:", error);
+                        });
                     },
                     error: function (xhr, status, error) {
-                        // 处理错误情况
-                        console.error('Request failed with status:', status);
+                        console.error("AJAX Error:", error);
                     }
                 });
 
+                // 函數：更新頁面元素
+                // function updatePageElements(plotarrayData) {
+                //     // 清空之前的內容
+                //     $('#results').empty();
+
+                //     // 檢查是否有資料
+                //     if (plotarrayData.length > 0) {
+                //         // 逐一處理每筆資料
+                //         plotarrayData.forEach(function (element, index) {
+                //             var finishtime = element[5]["date"];
+                //             var currentdate = new Date();
+                //             var result = finishtime > currentdate ? "未結案" : "結案";
+                //             drawPre(element, index, result, finishtime);
+                            
+                //                 // addCardToParent(".FavoritesPage", index, preState, preDate);
+                //             // 在 FavoritesPage 中創建相應的卡片
+                //             addCardToParent(".FavoritesPage", index, result, finishtime);
+                //         });
+                //     } else {
+                //         // 如果沒有資料，顯示相應的提示訊息
+                //         $('#results').append('<p>No data available</p>');
+                //     }
+                // }
+
+                // 函數：更新頁面元素
+                function updatePageElements(plotarrayData, targetSelector) {
+                    // 檢查是否有資料
+                    if (plotarrayData.length > 0) {
+                        // 逐一處理每筆資料
+                        plotarrayData.forEach(function (element, index) {
+                            var finishtime = element[5]["date"];
+                            var currentdate = new Date();
+                            var result = finishtime > currentdate ? "未結案" : "結案";
+
+                            // 如果目標元素存在，則在其中創建卡片
+                            if ($(targetSelector).length > 0) {
+                                addCardToParent(targetSelector, index, result, finishtime);
+                            }
+                        });
+                    } else {
+                        // 如果沒有資料，顯示相應的提示訊息
+                        $(targetSelector).append('<p>No data available</p>');
+                    }
+                }
 
 
-                // 監聽表單提交事件
-                document.getElementById('searchForm').addEventListener('submit', function (event) {
+
+
+
+
+
+
+
+                //取得搜尋欄的值
+                $("#searchForm").submit(function (event) {
+                    // Prevent the default form submission behavior
                     event.preventDefault();
-                    var searchTerm = document.getElementById('searchTerm').value; // 獲取搜索關鍵字
-                    searchStock(searchTerm); // 調用搜索函數
+                    // 清空個人收藏清單的內容
+                    //$('.FavoritesPage').empty();
+
+                    var searchNum = $("#searchTerm").val();
+                    // var data = { searchTerm: searchNum }
+                    var jsonforplot;
+                    var plotarray = [];
+                    console.log(searchNum);
+                    $.ajax({
+                        method: "GET",
+                        url: "/Member/Search",
+                        data: { searchTerm: searchNum },
+                        success: function (e) {
+                            console.log(e);
+                            // 搜尋結果處理
+                            updatePageElements(plotarrayData, ".searchResults");
+                            // 清空之前的搜索结果
+                            $('#searchResults').empty();
+                            
+                            
+                            
+                            for (var i = 0; i < e.length; i++) {
+                                console.log("----------" + i)
+                                var subArray = [];
+                                for (var j = 0; j < 5; j++) {
+                                    jsonforplot = ({
+                                        Date: e[j]["STdate"], Close: e[j]["SteClose"]
+                                    })
+                                    subArray.push(jsonforplot);
+                                }
+                                subArray.push({ Date: e[i]["PFinsihTime"], Close: e[i]["PLabel"] })
+                                plotarray.push(subArray)
+
+                            }
+                            $.each(plotarray, function (index, element) {
+                                console.log(index);
+                                var finishtime = element[5]["Date"];
+                                var currentdate = new Date()
+                                var result;
+
+                                if (finishtime > currentdate) {
+                                    result = "未結案"
+                                } else {
+                                    result = "結案"
+                                }
+
+                                drawPre(element, index, result, element[5]["Date"])
+                                if (searchNum) {
+                                    addCardToParent(".searchResults", index, result, element[5]["Date"]);
+                                }
+                            });
+                        }
+
+                    });
+
+
                 });
 
-                // 搜索函數
-                function searchStock(searchTerm) {
-                    // 使用 fetch API 發起 POST 請求到服務器端的 Search 方法
-                    fetch('/MyCollect/Search', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(searchTerm), // 將搜索關鍵字轉換為 JSON 格式並作為請求體發送
-                    })
-                        .then(response => response.text())
-                        .then(data => {
-                            document.getElementById('searchResultsDisplay').innerHTML = data; // 更新搜索結果顯示區域的內容
-                            document.getElementById('searchResultsDisplay').style.display = 'block'; // 顯示搜索結果區域
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
+                // 開始
+                // 生卡片
+                // 新增一個函數，用於動態生成卡片並添加到指定的父元素中
+                // function addCardToParent(parentSelector, index, preState, preDate) {
+                // $(parentSelector).prepend(`<label class='prediction-card ${index}'>
+                //                             <input type='checkbox' class='card-btn' />
+                //                             <div class='card-content'><div class='card-front'><p class="pre-state">${preState}</p>
+                //                             <table><tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
+                //                             <tr><th class="pre-th">預測價格</th><td class ="pre-td">-</td></tr>
+                //                             <tr><th class="pre-th">選擇參數</th><td class="pre-td">--</td></tr>
+                //                             </table>
+                //                             <button class='prediction-collect' id="PID${0}" onclick="btnTest(this)">♥</button>
+                //                             </div>
+                //                             <div class='card-back'>
+                //                             <div class='forPrediction'></div></div></div></label>`);
+                // }
+
+                // 修改 addCardToParent 函數
+                function addCardToParent(parentSelector, index, preState, preDate) {
+                    $(parentSelector).prepend(`<label class='prediction-card ${index}'>
+                                            <input type='checkbox' class='card-btn' />
+                                            <div class='card-content'><div class='card-front'><p class="pre-state">${preState}</p>
+                                            <table><tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
+                                            <tr><th class="pre-th">預測價格</th><td class ="pre-td">-</td></tr>
+                                            <tr><th class="pre-th">選擇參數</th><td class="pre-td">--</td></tr>
+                                            </table>
+                                            <button class='prediction-collect' id="PID${0}" onclick="btnTest(this)">♥</button>
+                                            </div>
+                                            <div class='card-back'>
+                                            <div class='forPrediction'></div></div></div></label>`);
                 }
+
+
+                function drawPre(myData, index, preState, preDate) {
+                    var pa
+                    console.log("-------");
+                    console.log(myData);
+
+                //addCardToParent(".FavoritesPage", index, preState, preDate); // 添加到收藏夾頁面
+                
+                //addCardToParent(".searchResults", index, preState, preDate); // 添加到搜尋區域
+
+                
+
+
+
+                    //重新整理日期
+                    var dateList = [];
+                    for (var i = 0; i < myData.length; i++) {
+                        dateList.push(myData[i].Date);
+                    }
+
+                    //圖表大小的設置
+                    var preMargin = { top: 20, right: 50, bottom: 30, left: 50 },
+                        preWidth = 325 - preMargin.left - preMargin.right,
+                        preHeight = 200 - preMargin.top - preMargin.bottom;
+
+                    //X、Y軸scale
+                    var preScaleX = d3.scaleBand().range([10, preWidth]).domain(dateList);
+                    var preScaleY = d3
+                        .scaleLinear()
+                        .range([preHeight - 10, 0])
+                        .domain(d3.extent(myData, (d) => d.Close));
+
+                    //X、Y軸
+                    var preAxisX = d3.axisBottom(preScaleX);
+                    var preAxisY = d3.axisLeft(preScaleY);
+
+                    //生成線
+                    var linePre = d3
+                        .line()
+                        .x((d) => preScaleX(d.Date))
+                        .y((d) => preScaleY(d.Close));
+                    /*.curve(d3.curveBasis);*/ //讓折線有弧度
+
+                    //生SVG
+                    var preSvg = d3
+                        .select(".forPrediction")
+                        .append("svg")
+                        .attr("class", "forPre")
+                        .attr("width", preWidth + preMargin.left + preMargin.right)
+                        .attr("height", preHeight + preMargin.top + preMargin.bottom)
+                        .append("g")
+                        .attr(
+                            "transform",
+                            "translate(" + preMargin.left + "," + preMargin.top + ")"
+                        );
+
+                    //顏色
+                    var maxDPre = d3.max(myData, function (d) {
+                        return +d.Date;
+                    });
+                    var maxCPre = d3.max(myData, function (d) {
+                        return +d.Close;
+                    });
+                    var minCPre = d3.min(myData, function (d) {
+                        return +d.Close;
+                    });
+
+                    var colorX = d3.scaleLinear().domain([0, maxDPre]).range([preWidth, 0]);
+
+                    preSvg
+                        .append("linearGradient")
+                        .attr("id", "line-gradient")
+                        .attr("gradientUnits", "userSpaceOnUse")
+                        .attr("x1", colorX(0))
+                        .attr("y1", 0)
+                        .attr("x2", colorX(maxDPre))
+                        .attr("y2", 0)
+                        .selectAll("stop")
+                        .data([
+                            { offset: "0%", color: "#51a1b7" },
+                            { offset: "100%", color: "#cedba0" },
+                        ])
+                        .enter()
+                        .append("stop")
+                        .attr("offset", function (d) {
+                            return d.offset;
+                        })
+                        .attr("stop-color", function (d) {
+                            return d.color;
+                        });
+
+                    preSvg
+                        .append("g")
+                        .datum(myData)
+                        .attr("class", "predictionLine here")
+                        .attr("transform", "translate(18,0)"); //折線
+                    preSvg
+                        .append("g")
+                        .attr("class", "x axis pre")
+                        .attr("transform", "translate(0," + preHeight + ")"); //X軸
+                    preSvg.append("g").attr("class", "y axis pre"); //Y軸
+
+                    preSvg
+                        .select("g.predictionLine.here")
+                        .append("path")
+                        .attr("class", "pathPre")
+                        .attr("d", linePre(myData))
+                        .attr("fill", "none")
+                        .attr("stroke", "url(#line-gradient)")
+                        .attr("stroke-width", 2);
+                    preSvg
+                        .select("g.x.axis.pre")
+                        .call(
+                            preAxisX
+                                .tickValues(dateList)
+                                .tickFormat(d3.timeFormat("%m/%d"))
+                                .tickPadding(10)
+                                .tickSizeInner(-preHeight - 10, -preHeight)
+                        )
+                        .selectAll("text")
+                        .style("text-anchor", "end")
+                        .attr("dx", "-.8em")
+                        .attr("dy", ".15em")
+                        .attr("transform", "rotate(-25) translate(20, 10)");
+
+                    preSvg.select("g.y.axis.pre").call(
+                        preAxisY
+                            .tickSizeInner(-preWidth - 10, -preWidth)
+                            .tickPadding(10)
+                            .tickFormat(d3.format(".1f"))
+                            .tickValues([minCPre, d3.mean([minCPre, maxCPre]), maxCPre])
+                    );
+
+                    //--點點--//
+                    //提示框
+                    var Tooltip = d3
+                        .select(".forPrediction")
+                        .append("div")
+                        .style("opacity", 0)
+                        .attr("class", "tooltip")
+                        .style("background-color", "white")
+                        .style("border", "solid")
+                        .style("border-width", "2px")
+                        .style("border-radius", "5px")
+                        .style("padding", "5px")
+                        .style("width", "100px")
+                        .style("height", "33px")
+                        .style("text-align", "center");
+
+                    var mouseover = function (d) {
+                        Tooltip.style("opacity", 1);
+                    };
+                    var mousemove = function (d) {
+                        Tooltip.html("價格: " + d.Close)
+                            .style("left", d3.mouse(this)[0] + 20 + "px")
+                            .style("top", d3.mouse(this)[1] + "px");
+                    };
+                    //console.log($(".circleGroup"));
+                    var mouseleave = function (d) {
+                        Tooltip.style("opacity", 0);
+                    };
+                    //加圓點
+                    preSvg
+                        .append("g")
+                        .attr("class", `circleGroup${index}`)
+                        .attr("transform", "translate(18,0)")
+                        .selectAll("dot")
+                        .data(myData)
+                        .enter()
+                        .append("circle")
+                        .attr("class", "myCircle")
+                        .attr("cx", (d) => preScaleX(d.Date))
+                        .attr("cy", (d) => preScaleY(d.Close))
+                        .attr("r", 5)
+                        .attr("stroke", "#69b3a2")
+                        .attr("fill", "#FFF")
+                        .on("mouseover", mouseover)
+                        .on("mousemove", mousemove)
+                        .on("mouseleave", mouseleave);
+
+                    //動畫?
+                    pointAni(index);
+                    function pointAni(index) {
+                        var strokeC = myData[5].Close > myData[4].Close ? "#b84121" : "#69b3a2";
+                        var fillC = myData[5].Close > myData[4].Close ? "#f77465" : "#cedba0";
+                        /*        console.log("strokeC:" + strokeC + "  fillC:" + fillC);*/
+
+                        d3.select(`.circleGroup${index} :last-child`)
+                            .attr("stroke", strokeC)
+                            .style("stroke-width", 3)
+                            .style("stroke-opacity", 1)
+                            .style("r", 5);
+
+                        d3.select(`.circleGroup${index} :last-child`)
+                            .attr("fill", fillC)
+                            .transition()
+                            .duration(1000)
+                            .style("stroke-width", 10)
+                            .style("stroke-opacity", 0)
+                            .style("r", 7)
+                            .on("end", function () {
+                                pointAni(index);
+                            });
+                    }
+                }
+
+                //結束
             });
+
         </script>
+
+
 
 
 
