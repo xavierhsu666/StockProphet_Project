@@ -63,54 +63,37 @@
 
 							var LogMember = JSON.parse(e);
 
-							//使用sessionStorage進行跨頁面傳值
-							sessionStorage.setItem("LogAccount", LogMember.MaccoMnt);
-							sessionStorage.setItem("LogMemberLevel", LogMember.Mlevel);
-							//供修改會員使用
-							sessionStorage.setItem("LogMemderId", LogMember.Mid);
-							sessionStorage.setItem("LogMemberEmail", LogMember.Memail);
-							sessionStorage.setItem("LogMemberName", LogMember.MtrueName);
-							sessionStorage.setItem("LogMemberBirthday", LogMember.Mbirthday);
-							sessionStorage.setItem("LogMemberGender", LogMember.Mgender);
-							sessionStorage.setItem("LogMemberInvestYear", LogMember.MinvestYear);
-							sessionStorage.setItem("LogMemberfavoriteModel", LogMember.MfavoriteModel);
-							if (sessionStorage.getItem("LogMemberName") == "管理者") {
-								window.location.href = "/Admin/Index";
-							} else {
-							
-							
-							
-							try {
-								var para1 = new URL(window.location.href).searchParams.toString().split('&')[0].split('=')[1];
-								var para2 = new URL(window.location.href).searchParams.toString().split('&')[1].split('=')[1];
-							} catch (e) {
+                            //使用sessionStorage進行跨頁面傳值
+                            sessionStorage.setItem("LogAccount", LogMember.MaccoMnt);
+                            sessionStorage.setItem("LogMemberLevel", LogMember.Mlevel);
+                            //供修改會員使用
+                            sessionStorage.setItem("LogMemderId", LogMember.Mid);
+                            sessionStorage.setItem("LogMemberEmail", LogMember.Memail);
+                            sessionStorage.setItem("LogMemberName", LogMember.MtrueName);
+                            sessionStorage.setItem("LogMemberBirthday", LogMember.Mbirthday);
+                            sessionStorage.setItem("LogMemberGender", LogMember.Mgender);
+                            sessionStorage.setItem("LogMemberInvestYear", LogMember.MinvestYear);
+                            sessionStorage.setItem("LogMemberfavoriteModel", LogMember.MfavoriteModel);
+                            if (sessionStorage.getItem("LogMemberName") == "管理者") {
+                                window.location.href = "/Admin/Index";
+                            } else {
 
-							}
-							// $.ajax({
-							//     url: "/Member/RedirectToPrevPage",
-							//     method: "get",
-							//     data: { provider: para1 },
-							//     success: function (e) {
-							//         alert(para1);
-							//         if (e == true) {
-							//             //跳轉回"會員中心"
-							//             // window.location.href = "/Member/Index";
-							//             window.location.href = "/"+para1+"/"+para2;
-							//         }
-							//         else {
-							//             //跳轉回"首頁"
-							//             window.location.href = "/Home/Index";
-							//         }
-							//     }
-							// })
-							if (para1 == null)
-								window.location.href = "/home/index";
-							else
-								window.location.href = "/" + para1 + "/" + para2;
-							}
-						}
-					}
-				})
+                                try {
+                                var para1 = new URL(window.location.href).searchParams.toString().split('&')[0].split('=')[1];
+                                var para2 = new URL(window.location.href).searchParams.toString().split('&')[1].split('=')[1];
+                            } catch (e) {
+                                
+                            }
+                          
+                            if (para1 == null)
+                                window.location.href = "/home/index";
+                            else
+                                window.location.href = "/" + para1 + "/" + para2;
+
+                            }
+                        }
+                    }
+                })
 
 			}
 		})

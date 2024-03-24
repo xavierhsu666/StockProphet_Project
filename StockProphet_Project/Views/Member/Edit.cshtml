@@ -1,8 +1,8 @@
 ﻿@{
-    //修改會員資料
-    var MInvestYear = @Context.Session.GetString("MinvestYear")!;
-    var Mlevel = @Context.Session.GetString("Mlevel")!;
+    string PasswordPattern = @"^(?=.*[!@#$%^&*])(?=.{8,})[a-zA-Z0-9!@#$%^&*]+$";
+    string MEmailPattern = @"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$";
 }
+
 <h1 class="text-">會員功能-修改個人資料</h1>
 
 <div class="row">
@@ -22,28 +22,34 @@
         <div id="afterLog">
             @* 2.修改個人資料 *@
             <div id="Revise">
+                <form>
                 <div>
                     <label for="Account" id="Account">帳號:</label>
                 </div>
 
                 <div>
                     <label for="Password">舊密碼:</label>
-                    <input type="password" pattern="" size="20" minlength="20" name="MPassword" id="Password" title="請輸入原始密碼" value="">
-                </div>
+                    <input type="password" pattern="@PasswordPattern" size="20" minlength="20" name="MPassword" id="Password" title="請輸入原始密碼" value="">
+                    <div id="passwordError" style="color: red;"></div>
 
+                </div>
                 <div>
                     <label for="Password">輸入新密碼:</label>
-                    <input type="password" pattern="" size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼" value="">
+                    <input type="password" pattern="@PasswordPattern" size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼" value="">
+                    <div id="passwordError" style="color: red;"></div>
                 </div>
                 <div>
                     <label for="Password">請再輸入一次新密碼:</label>
                     <input type="password" pattern="" size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="">
                     @* 再次輸入密碼不同時，顯示提示字 *@
                     <div id="pwdnoteword"><p style="color:red; ">您輸入的密碼不相同</p></div>
+                    <div id="passwordError" style="color: red;"></div>
+
                 </div>
 
                 <label for="Email">信箱:</label>
-                <input type="email" pattern="" name="MEmail" id="Email" value="">
+                <input type="email" pattern="@MEmailPattern" name="MEmail" id="Email" value="" required>
+
                 <br>
 
                 <label for="UserName">姓名:</label>
@@ -57,7 +63,7 @@
                 <br>
 
                 <label for="MInvestYear">您的投資年數:</label>
-                <select name="MInvestYear" id="InvestYear">
+                <select name="MInvestYear" id="InvestYear" required>
                     <option value="1">未滿1年</option>
                     <option value="2">1-3年</option>
                     <option value="3">3-5年</option>
@@ -66,13 +72,14 @@
                 <br>
 
                 <label for="MLevel" id="MLevel">會員等級:</label>
-
-
                 <br>
+
+
+
 
                 <button id="ReviseData">修改資料</button>
                 <button id="Reset">取消</button>
-
+                </form>
             </div>
         </div>
     </div>
@@ -89,7 +96,6 @@
         $('#beforeLog').hide();
         $('#afterLog').show();
     }
-    // console.log("顯示MID:" + MID);
 
     // 設定新密碼的提示字
     $('#pwdnoteword').hide();
@@ -109,7 +115,7 @@
         })
         // 3.點擊我的收藏
         $('#showFavoritesPage').on("click", function () {
-            window.location.href = "/Member/Index";
+            window.location.href = "/Member/MyCollect";
         })
         // 4.點擊我要預測
         $('#showPredictFunc').on("click", function () {
@@ -117,7 +123,7 @@
         })
         // 5.點擊我的預測結果
         $('#showHistoryPage').on("click", function () {
-            window.location.href = "/Member/Index";
+            window.location.href = "/Member/MyPredictResult";
         })
         //將登入的會員資料帶到前台-不可修改的(帳號、生日、性別、會員等級)
         var LogAccount = sessionStorage.getItem("LogAccount");
@@ -127,9 +133,8 @@
         var LogMemberGender = sessionStorage.getItem("LogMemberGender");
         $('#MGender').append(`<label>${LogMemberGender}</label>`);
         var LogMemberLevel = sessionStorage.getItem("LogMemberLevel");
-        console.log(LogMemberLevel);
+        // console.log(LogMemberLevel);
         switch (LogMemberLevel) {
-
             case "normal":
                 $("#MLevel").append("<label>一般會員</label>");
                 break;
@@ -157,7 +162,6 @@
         var LogMemberInvestYear = sessionStorage.getItem("LogMemberInvestYear");
         // console.log(LogMemberInvestYear);
         switch (LogMemberInvestYear) {
-
             case "1":
                 $("#InvestYear").val("1");
                 // console.log("1")
@@ -188,17 +192,54 @@
             $('#Password2').on("change", function () {
                 var MPassword1 = $('#Password1').val();
                 var MPassword2 = $('#Password2').val();
-                if (MPassword1 != MPassword2) {
-                    $('#pwdnoteword').show();
-                }
-                else {
-                    $('#pwdnoteword').hide();
-                    console.log("ok");
-                }
                 if (MPassword2 == "") {
-                    $('#pwdnoteword').hide();
+                    $('#pwdnoteword').show();
+                    $('#pwdnoteword').text("必填")
+                } else {
+                    if (MPassword1 != MPassword2) {
+                        $('#pwdnoteword').show();
+                    }
+                    else {
+                        $('#pwdnoteword').hide();
+                        console.log("ok");
+                    }
                 }
             })
+            //+ 正則
+            $('#Password').on('change', function () {
+                var passwordValue = $(this).val();
+                var passwordPattern = new RegExp(@Html.Raw(Json.Serialize(PasswordPattern)));
+
+                // 检查输入值是否匹配正则表达式
+                if (!passwordPattern.test(passwordValue)) {
+                    $('#passwordError').text('密码格式不符合要求，"需至少包含一個特殊符號，且長度須超過8碼"');
+                } else {
+                    $('#passwordError').text('');
+                }
+            });
+
+            $('#Password1').on('change', function () {
+                var passwordValue = $(this).val();
+                var passwordPattern = new RegExp(@Html.Raw(Json.Serialize(PasswordPattern)));
+
+                // 检查输入值是否匹配正则表达式
+                if (!passwordPattern.test(passwordValue)) {
+                    $('#passwordError').text('密码格式不符合要求，"需至少包含一個特殊符號，且長度須超過8碼"');
+                } else {
+                    $('#passwordError').text('');
+                }
+            });
+            $('#Password2').on('change', function () {
+                var passwordValue = $(this).val();
+                var passwordPattern = new RegExp(@Html.Raw(Json.Serialize(PasswordPattern)));
+
+                // 检查输入值是否匹配正则表达式
+                if (!passwordPattern.test(passwordValue)) {
+                    $('#passwordError').text('密码格式不符合要求，"需至少包含一個特殊符號，且長度須超過8碼"');
+                } else {
+                    $('#passwordError').text('');
+                }
+            });
         }
 
         //(1).判斷該會員的舊密碼是否一致
@@ -206,13 +247,17 @@
         //NO  =>不能修改
 
         $('#Password').on("change", function () {
-            var checkPassword = $('#Password').val()
+            var checkPassword = {
+                Account: LogAccount,
+                checkPassword: $('#Password').val()
+            }
+
             console.log(checkPassword);
 
             $.ajax({
                 url: "/Member/checkPassword",
                 method: "get",
-                data: { checkPassword },
+                data: checkPassword,
                 success: function (e) {
                     console.log(e)
                     if (e) {
@@ -225,24 +270,30 @@
                 }
             })
         })
-
+       
 
         // (2).將修改的資料存回資料庫
         $('#ReviseData').on("click", function () {
-            
+
             NewEmail = $('#Email').val(),
-                NewName = $('#UserName').val(),
-                NewInvestYear = $('#InvestYear').val()
-            
+            NewName = $('#UserName').val(),
+            NewInvestYear = $('#InvestYear').val()
+            //是否修改密碼
+            NewPassword = $('#Password2').val()
+            if (NewPassword!=null) { NewPassword = $('#Password2').val() } 
+            else {
+                NewPassword = $('#Password1').val()
+            }
+
             var dataToServer = {
                 Account: `${LogAccount}`,
-                NewPassword: $('#Password1').val(),
+                NewPassword: `${NewPassword}`,
                 NewEmail: $('#Email').val(),
                 NewName: $('#UserName').val(),
                 NewInvestYear: $('#InvestYear').val()
             }
             console.log(dataToServer)
-            
+
             $.ajax({
                 url: "/Member/SaveReviseMemberData",
                 method: "put",
