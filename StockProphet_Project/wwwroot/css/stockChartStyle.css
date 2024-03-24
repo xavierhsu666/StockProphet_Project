@@ -563,10 +563,11 @@ path {
     height: 30px;
     margin-bottom: 10px;
     border: none;
-    background-color: none;
-    text-align:left;
-    margin-left:5px;
-    position:relative;
+    background-color: #f3f2f1;
+    text-align: left;
+    margin-left: 5px;
+    position: relative;
+    transition: all 0.2s
 }
 
     .pre-list-btn::before {
@@ -601,7 +602,11 @@ path {
 .pre-list-btn-click-again::before {
     content: '已複製過';
 }
-.pre-list-btn :hover {
+.pre-list-btn-he {
+    background-color: #e3e1de;
+}
+.pre-list-btn-hl {
+    background-color: #f3f2f1;
 }
 .prediction-card:hover .preVar {
     left: -50px;
@@ -622,19 +627,27 @@ path {
     margin-top: 5px;
     position: relative;
     overflow: hidden;
+    transition:all 0.5s;
+}
+/*全部複製按鈕的hover*/
+.copyAll-he {
+    color:black;
+}
+.copyAll-hl {
+    color: black;
 }
 
 .copyAllCopied::after {
     content: "已複製全部";
     left: 0;
-    top:0;
+    top: 0;
     background-color: #cedba0;
     position: absolute;
     width: 100%;
     height: 100%;
     animation: copyAllCopiedAni 1s;
-    color:white;
-    overflow:hidden;
+    color: white;
+    overflow: hidden;
 }
 
 @keyframes copyAllCopiedAni {

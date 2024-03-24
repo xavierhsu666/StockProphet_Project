@@ -765,11 +765,8 @@ setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
 
 }, 500);
 
-console.log("wTF");
 
-$("li").on("click", function () {
-    console.log(":P");
-})
+
 
 function copyList(obj) {
     $(obj).addClass("pre-list-btn-click");
@@ -802,4 +799,20 @@ function copyAllList(obj) {
     }
     navigator.clipboard.writeText(content);
         
+
 }
+
+setTimeout(function () {
+    $(".pre-list-btn").on({
+        mouseenter: function () {
+            $(this).removeClass("pre-list-btn-he");
+            $(this).removeClass("pre-list-btn-hl");
+            $(this).addClass("pre-list-btn-he");
+        },
+        mouseleave: function () {
+            $(this).addClass("pre-list-btn-hl");
+        }
+    })
+}, 500);
+
+console.log("wTF");

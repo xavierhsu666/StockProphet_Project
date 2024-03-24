@@ -2,7 +2,6 @@
 $("#search").on("keydown", function (e) {
     if (e.which == 13) changePage();
 });
-console.log("wfe");
 function changePage() {
     $.ajax({
         url: `/Home/checkStocks/${$("#search").val()}`,
@@ -16,7 +15,6 @@ function changePage() {
     })
 }
 
-console.log("???");
 $.widget("custom.catcomplete", $.ui.autocomplete, {
     _create: function () {
         this._super();
