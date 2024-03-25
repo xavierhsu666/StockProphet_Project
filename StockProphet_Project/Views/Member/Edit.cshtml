@@ -28,17 +28,17 @@
                 </div>
 
                 <div>
-                    <label for="Password">舊密碼:</label>
+                    <label for="Password">修改密碼:</label>
                     <input type="password" pattern="@PasswordPattern" size="20" minlength="20" name="MPassword" id="Password" title="請輸入原始密碼" value="">
                     <div id="passwordError" style="color: red;"></div>
 
                 </div>
-                <div>
+                <div id="pass1">
                     <label for="Password">輸入新密碼:</label>
                     <input type="password" pattern="@PasswordPattern" size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼" value="">
                     <div id="passwordError" style="color: red;"></div>
                 </div>
-                <div>
+                <div id="pass2">
                     <label for="Password">請再輸入一次新密碼:</label>
                     <input type="password" pattern="" size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="">
                     @* 再次輸入密碼不同時，顯示提示字 *@
@@ -100,9 +100,9 @@
     // 設定新密碼的提示字
     $('#pwdnoteword').hide();
 
-    //輸入正確舊密碼前不能修改
-    $('#Password1').prop("disabled", true);
-    $('#Password2').prop("disabled", true);
+    //輸入正確舊密碼前不能修改   
+    $('#pass1').css('display', 'none');
+    $('#pass2').css('display', 'none');
 
     $(function () {
         // 1.點擊回到會員頁
@@ -185,8 +185,8 @@
 
         function RevisePassword() {
             //打開密碼欄位可以編輯
-            $('#Password1').prop("disabled", false);
-            $('#Password2').prop("disabled", false);
+            $('#pass1').css('display', 'block');
+            $('#pass2').css('display', 'block');
 
             //檢查兩次輸入的密碼是否一致
             $('#Password2').on("change", function () {

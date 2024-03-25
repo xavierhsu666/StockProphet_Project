@@ -130,7 +130,7 @@ namespace StockProphet_Project.Controllers
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
             string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-                        B.PBulidTime, B.Pfinishtime, A.ST_Date, A.ste_Close 
+                        B.PBulidTime,B.Pvariable, B.Pfinishtime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code
                         FROM DB_model AS B 
                         OUTER APPLY (
                             SELECT TOP 5 *
@@ -159,9 +159,13 @@ namespace StockProphet_Project.Controllers
                     Parameter = reader["dummyblock"],
                     PBuildTime = reader["PBulidTime"],
                     PFinsihTime = reader["Pfinishtime"],
-                    SteClose = reader["Ste_Close"]
+                    SteClose = reader["Ste_Close"],
+                    PID = reader["Pid"],
+					preVariable= reader["Pvariable"],
+                    SName = reader["SN_Name"],
+                    SCode = reader["SN_Code"]
 
-                });
+				});
             }
 
 
@@ -419,8 +423,8 @@ namespace StockProphet_Project.Controllers
                 //收件者email
                 mail.To.Add(MEmail);//result\
                                     //mail.To.Add("wryi636@gmail.com");//result\
-                                    //mail.To.Add("boris83418@gmail.com");//result
-                                    //設定優先權
+                mail.To.Add("boris83418@gmail.com");//result
+                                                    //設定優先權
                 mail.Priority = MailPriority.Normal;
                 //標題
                 mail.Subject = "StockProphet_身分驗證，此為系統自動發信，請勿回信";

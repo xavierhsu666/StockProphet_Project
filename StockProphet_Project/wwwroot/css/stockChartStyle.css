@@ -324,6 +324,7 @@ path {
 }
 
 /*翻轉卡片*/
+/*翻轉卡片*/
 .prediction-card {
     -webkit-perspective: 1000px;
     perspective: 1000px;
@@ -346,6 +347,7 @@ path {
     -webkit-transition: all 500ms;
     transition: all 500ms;
     z-index: 1;
+    animation: cardmoveLeft 0.5s forwards;
 }
 
     .card-content div {
@@ -355,7 +357,6 @@ path {
         background: #FFF;
         -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
-
     }
 
     .card-content .card-back {
@@ -364,11 +365,31 @@ path {
         display: flex;
         justify-content: center; /*上下置中*/
         align-items: center; /*左右置中*/
-
     }
 
 .prediction-card:hover .card-content {
     box-shadow: 0 20px 20px rgba(50, 50, 50, 0.2);
+    animation: cardmoveRight 0.5s forwards;
+}
+
+@keyframes cardmoveRight {
+    0% {
+        right: 0;
+    }
+
+    100% {
+        right: -50px;
+    }
+}
+
+@keyframes cardmoveLeft {
+    0% {
+        right: -50px;
+    }
+
+    100% {
+        right: 0;
+    }
 }
 
 .card-btn {
@@ -390,7 +411,6 @@ path {
     top: 50%;
     left: 50%;
     transform: translate(-48%, -50%);
-    transform: translate(-48%, -50%);
 }
 
 /*預測股票的那點*/
@@ -401,6 +421,7 @@ path {
 .card-front {
     padding: 20px;
     z-index: 1;
+    right: 0px;
 }
 
 .pre-state {
@@ -419,7 +440,7 @@ path {
     width: 50px;
     border-radius: 50%;
     z-index: 10;
-    font-size:30px;
+    font-size: 30px;
 }
 
 .collectBtnStart::after {
@@ -455,9 +476,9 @@ path {
 @keyframes visitorAlert {
     0% {
         transform: translateY(30px);
-        opacity:0;
-
+        opacity: 0;
     }
+
     70% {
         opacity: 1;
     }
@@ -473,6 +494,7 @@ path {
         opacity: 0;
         /*transform: rotateZ(45deg);*/
     }
+
     100% {
         transform: translateY(0);
         opacity: 1;
@@ -492,12 +514,14 @@ path {
     0% {
         transform: translateY(0);
     }
+
     50% {
         opacity: 1;
     }
+
     100% {
         transform: translateY(30px);
-        opacity:0;
+        opacity: 0;
     }
 }
 
@@ -506,8 +530,139 @@ path {
         opacity: 1;
         transform: rotateZ(45deg);
     }
+
     80% {
         opacity: 0;
         transform: rotateZ(45deg);
+    }
+}
+
+
+.preVar {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    width: 0px;
+    height: 250px;
+    background-color: #FCFCFC;
+    transition: all 0.5s;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    padding: 5px;
+    justify-items: center;
+}
+
+    .preVar::-webkit-scrollbar {
+        display: none;
+    }
+
+
+.pre-list-btn {
+    width: 100%;
+    height: 30px;
+    margin-bottom: 10px;
+    border: none;
+    background-color: #f3f2f1;
+    text-align: left;
+    margin-left: 5px;
+    position: relative;
+    transition: all 0.2s
+}
+
+    .pre-list-btn::before {
+        content: '複製成功';
+        padding-left: 10px;
+        top: 0px;
+        padding-top: 2px;
+        width: 0px;
+        position: absolute;
+        height: 30px;
+        background-color: #cedba0;
+        left: -10px;
+        overflow: hidden;
+        font-size: 16px;
+        transition: width 0.5s;
+    }
+
+.pre-list-btn-click::before {
+    animation: listCopy 1s;
+}
+
+@keyframes listCopy {
+    0% {
+        width: 0px;
+    }
+
+    40%,60% {
+        width: 100px;
+    }
+
+    100% {
+        width: 0px;
+    }
+}
+
+.pre-list-btn-click-again::before {
+    content: '已複製過';
+}
+
+.pre-list-btn-he {
+    background-color: #e3e1de;
+}
+
+.pre-list-btn-hl {
+    background-color: #f3f2f1;
+}
+
+.prediction-card:hover .preVar {
+    left: -50px;
+    width: 100px;
+}
+
+
+.copyAll {
+    background-color: white;
+    transform: translateX(1px);
+    border-radius: 25px;
+    height: 30px;
+    width: 90px;
+    border: 2px solid #cedba0;
+    color: #cedba0;
+    text-align: center;
+    margin-bottom: 10px;
+    margin-top: 5px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s;
+}
+/*全部複製按鈕的hover*/
+.copyAll-he {
+    color: black;
+}
+
+.copyAll-hl {
+    color: black;
+}
+
+.copyAllCopied::after {
+    content: "已複製全部";
+    left: 0;
+    top: 0;
+    background-color: #cedba0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    animation: copyAllCopiedAni 1s;
+    color: white;
+    overflow: hidden;
+}
+
+@keyframes copyAllCopiedAni {
+    0%,100% {
+        transform: translateX(-90px)
+    }
+
+    30%,60% {
+        transform: translateX(0)
     }
 }
