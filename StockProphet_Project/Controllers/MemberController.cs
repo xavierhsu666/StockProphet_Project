@@ -147,7 +147,7 @@ namespace StockProphet_Project.Controllers
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
             string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-    B.PBulidTime, B.Pfinishtime, A.ST_Date, A.ste_Close 
+    B.PBulidTime,B.PVariable, B.Pfinishtime, A.ST_Date, A.ste_Close 
     FROM DB_model AS B 
     OUTER APPLY (
         SELECT TOP 5 *
@@ -175,8 +175,10 @@ namespace StockProphet_Project.Controllers
                     PLabel = reader["Plabel"],
                     Parameter = reader["dummyblock"],
                     PBuildTime = reader["PBulidTime"],
+                    preVariable = reader["PVariable"],
                     PFinsihTime = reader["Pfinishtime"],
-                    SteClose = reader["Ste_Close"]
+                    SteClose = reader["Ste_Close"],
+                    PID = reader["Pid"]
 
                 });
             }
@@ -335,11 +337,12 @@ namespace StockProphet_Project.Controllers
         [HttpGet]
         public IActionResult Search(string searchTerm)
         {
-            int searchNum = Convert.ToInt32(searchTerm);
+            
+                int searchNum = Convert.ToInt32(searchTerm);
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
             string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-    B.PBulidTime, B.Pfinishtime, A.ST_Date, A.ste_Close 
+    B.PBulidTime,B.PVariable, B.Pfinishtime, A.ST_Date, A.ste_Close 
     FROM DB_model AS B 
     OUTER APPLY (
         SELECT TOP 5 *
@@ -368,7 +371,10 @@ namespace StockProphet_Project.Controllers
                     Parameter = reader["dummyblock"],
                     PBuildTime = reader["PBulidTime"],
                     PFinsihTime = reader["Pfinishtime"],
-                    SteClose = reader["Ste_Close"]
+                    SteClose = reader["Ste_Close"],
+                    preVariable = reader["PVariable"],
+                    PID = reader["Pid"]
+
 
                 });
             }
@@ -772,6 +778,11 @@ namespace StockProphet_Project.Controllers
                 _context.SaveChanges();
             }
             return true;
+        }
+
+        public IActionResult Search()
+        {
+            return View();
         }
 
 
