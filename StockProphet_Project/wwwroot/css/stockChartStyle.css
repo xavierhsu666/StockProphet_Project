@@ -330,6 +330,7 @@ path {
 }
 
 /*翻轉卡片*/
+/*翻轉卡片*/
 .prediction-card {
     -webkit-perspective: 1000px;
     perspective: 1000px;
@@ -362,7 +363,6 @@ path {
         background: #FFF;
         -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
-
     }
 
     .card-content .card-back {
@@ -445,7 +445,7 @@ path {
     width: 50px;
     border-radius: 50%;
     z-index: 10;
-    font-size:30px;
+    font-size: 30px;
 }
 
 .collectBtnStart::after {
@@ -481,9 +481,9 @@ path {
 @keyframes visitorAlert {
     0% {
         transform: translateY(30px);
-        opacity:0;
-
+        opacity: 0;
     }
+
     70% {
         opacity: 1;
     }
@@ -499,6 +499,7 @@ path {
         opacity: 0;
         /*transform: rotateZ(45deg);*/
     }
+
     100% {
         transform: translateY(0);
         opacity: 1;
@@ -518,12 +519,14 @@ path {
     0% {
         transform: translateY(0);
     }
+
     50% {
         opacity: 1;
     }
+
     100% {
         transform: translateY(30px);
-        opacity:0;
+        opacity: 0;
     }
 }
 
@@ -532,6 +535,7 @@ path {
         opacity: 1;
         transform: rotateZ(45deg);
     }
+
     80% {
         opacity: 0;
         transform: rotateZ(45deg);
