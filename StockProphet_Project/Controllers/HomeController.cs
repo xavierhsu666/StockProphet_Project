@@ -3,6 +3,7 @@ using StockProphet_Project.Models;
 using System.Diagnostics;
 using ChoETL;
 using Microsoft.VisualBasic;
+using Tensorflow;
 
 namespace StockProphet_Project.Controllers {
     public class HomeController : Controller {
@@ -21,15 +22,17 @@ namespace StockProphet_Project.Controllers {
             ViewBag.stockID = id;
             return View();
         }
+        
 
         //網址傳資料|從資料庫抓股票資料
         public IActionResult showStocks(string id) {
-
+            var myDateNow = DateOnly.FromDateTime(DateTime.Now);    //測試日是03/22
+            var myDate = DateOnly.FromDateTime(DateTime.Now.AddYears(-1));
             var viewModel = _context.Stock.ToList();
-            var query = (from p in viewModel
-                         where p.SnCode == id
+            var query =  from p in viewModel
+                         where p.SnCode == id && p.StDate <= myDateNow && p.StDate >= myDate
                          //先顛倒順序
-                         orderby p.StDate descending
+                         //orderby p.StDate descending
                          select new {
                              Date = p.StDate,
                              Open = p.SteOpen,
@@ -55,26 +58,27 @@ namespace StockProphet_Project.Controllers {
                              //NonBussinessIncome = p.SbNonBussinessIncome,
                              //NonBussinessIncomeRatio = p.SbNonBussinessIncomeRatio
 
-                         }).Take(100);   //取前一百筆
+                         };   //取前一百筆
             //->這樣表會顛倒啊朋友
             Console.WriteLine(query);
             //記得顛倒回來
-            return Json(query.Reverse());
+            return Json(query);
         }
 
         //網址傳資料|回傳預測內容
           public IActionResult showPredictions(string id) {
               var viewModel = _context.DbModels.ToList();
-              var query = from p in viewModel
-                          where p.Pstock == id
-                          select new {
-                              Account = p.Paccount,
-                              Variable = p.Pvariable,
-                              Label = p.Plabel,
-                              FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd"),
-        	                  PID = p.Pid,
-                              BuildTime = Convert.ToDateTime(p.PbulidTime).ToString("yyyy-MM-dd")
-                          };
+            var query = from p in viewModel
+                        where p.Pstock == id
+                        select new {
+                            Account = p.Paccount,
+                            Dummyblock = p.Dummyblock,  //成果參數
+                            Label = p.Plabel,
+                            FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd"),
+                            PID = p.Pid,
+                            BuildTime = Convert.ToDateTime(p.PbulidTime).ToString("yyyy-MM-dd"),
+                            Variable = p.Pvariable  //選擇的變數
+						};
               return Json(query);
           }
 
@@ -99,8 +103,10 @@ namespace StockProphet_Project.Controllers {
         [HttpPost]
         public string CheckCard(string user, string cardID) {
             var member = _context.DbMembers.SingleOrDefault(e => e.MaccoMnt == user);
+            Console.WriteLine("--------------"+user+"/" + cardID);
             char[] delimiterChars = ['{', '}', ','];
-            string[] myCard = (member.MfavoriteModel).Split(delimiterChars);
+            string[] myCard = [];
+            if ((member.MfavoriteModel) != null) { myCard = (member.MfavoriteModel).Split(delimiterChars); }
             //不知道為什麼會有空格:(
             myCard = myCard.Where((source, index) => index != 0).ToArray();
             myCard = myCard.Where((source, index) => index != myCard.Length-1).ToArray();
@@ -111,35 +117,37 @@ namespace StockProphet_Project.Controllers {
             if (member.MfavoriteModel == "{}" || member.MfavoriteModel == null) {   //如果表資料為空
                 member.MfavoriteModel = "{" + cardID + "}";
                 _context.SaveChanges();
-                change = "add";
+                change = "A";
             } else  {    //資料不為空
                     int i = Array.IndexOf(myCard, cardID);
                 if (i > -1) {   //列表有這個值
                     myCard = myCard.Where((source, index) => index != i).ToArray();
                     saveChange = string.Join(",", myCard);  //array整理成字串
-                    change = "delete";
+                    change = "D";
                 } else if (i == -1) {   //列表沒這個值
                     if (myCard.Length > 4) { //已超過五筆，拒絕新增
                         saveChange = string.Join(",", myCard);
-                        change = "reject";
+                        change = "R";
                     } else {
                         myCard = myCard.Concat(new string[] { cardID }).ToArray();
                         saveChange = string.Join(",", myCard);  //array整理成字串
-                        change = "add";
+                        change = "A";
                     }
                 }
                 member.MfavoriteModel = "{" + saveChange + "}";
                 _context.SaveChanges();
             }
+            string nowList = member.MfavoriteModel;
 
-            return change;
+            return change+nowList;
         }
 
         //抓登入者的最愛清單
         public IActionResult cardCheck(string id) {
             var member = _context.DbMembers.SingleOrDefault(e => e.MaccoMnt == id);
             char[] delimiterChars = ['{', '}', ','];
-            string[] myCard = (member.MfavoriteModel).Split(delimiterChars);
+            string[] myCard = [];
+            if ((member.MfavoriteModel) != null) { myCard = (member.MfavoriteModel).Split(delimiterChars); }
             myCard = myCard.Where((source, index) => index != 0).ToArray();
             myCard = myCard.Where((source, index) => index != myCard.Length - 1).ToArray();
 
@@ -155,7 +163,8 @@ namespace StockProphet_Project.Controllers {
             foreach (var stock in stocksList) {
                 if (stock.Code == id || stock.Name == id) {
                     ans = stock.Code;
-                }
+                    break;
+                } else ans = "wrongCode";
             }
             return ans;
         }
@@ -173,6 +182,9 @@ namespace StockProphet_Project.Controllers {
         }
 
 
+        public IActionResult Visitor() {
+            return View();
+        }
 
 
 

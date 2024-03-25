@@ -32,6 +32,8 @@ var allY = d3.scaleLinear()
 var y = d3.scaleLinear()
     .range([height - 60, 0])
 
+var yZoom = d3.scaleLinear().range([height - 60, 0])
+
 //成交量的X、Y軸範圍
 var xVolume = d3.scaleBand().range([0, width]).padding(0.15);
 var yVolume = d3.scaleLinear().range([height, height - 60]);
@@ -48,8 +50,9 @@ var sma = techan.plot.sma().xScale(x).yScale(y);
 //XY軸顯示的位置
 var xAxis = d3.axisBottom(x)
 var yAxis = d3.axisLeft(y)
+var YzoomAxis = d3.axisLeft(yZoom);
 ////詳細數值顯示在右側
-var yRightAxis = d3.axisRight(y);
+var yRightAxis = d3.axisRight(yZoom);
 var VyRightAxis = d3.axisRight(yVolume);
 
 
@@ -190,7 +193,8 @@ d3.json(`/Home/showStocks/${stocksID}`, function (data) {
     });
 
     //K棒X、Y軸
-    svg.append("g").attr("class", "y axis")
+    svg.append("g").attr("class", "y axis");
+    svg.append("g").attr("class", "y axis zoom");
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
@@ -248,6 +252,7 @@ function draw(data, volumeData) {
     x.domain(data.map(candlestick.accessor().d));
     //y的資料範圍
     y.domain(techan.scale.plot.ohlc(data, candlestick.accessor()).domain());
+    yZoom.domain(techan.scale.plot.ohlc(data, candlestick.accessor()).domain());
     //成交量
     yVolume.domain(techan.scale.plot.volume(data).domain());
     xVolume.domain(data.map(function (d) { return d.date; }))
@@ -291,8 +296,9 @@ function draw(data, volumeData) {
 
     //ticks(幾個刻度?縮放比例?) timeFormat(什麼樣的數值) tickSize(表格內的格線)
     svg.select("g.candlestick").call(candlestick).attr("clip-path", "url(#candlestickClip)");  //K棒
-    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 1).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
+    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 2).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
     svg.selectAll("g.y.axis").call(yAxis.ticks(5).tickSize(-width, 0).tickPadding(10));   //Y軸
+    svg.selectAll("g.y.axis.zoom").call(YzoomAxis.ticks(5).tickSize(-width, 0).tickPadding(10));   //Y軸
     svg.select("g.sma.ma-5").attr("clip-path", "url(#candlestickClip)").call(sma);
     svg.select("g.sma.ma-30").attr("clip-path", "url(#candlestickClip)").call(sma);
 
@@ -433,6 +439,7 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             var yData = [Ddata[i].Label];
             var preDate = xData[0]; //預測日 懶人傳值
             var preBuildDate = Ddata[i].BuildTime;
+
             //console.log("預測日: "+ xData)
             //用BuildDate去找列表中最近的日子(closestDate)，closestDate可能等於BuildDate，也可能是前一天
             var closestDate = dateList.reduce((prev, curr) => {
@@ -441,11 +448,11 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
 
                 return currDiff < prevDiff ? curr : prev;
             })
-/*            console.log("最近近的日子: " + closestDate);*/
+            /*            console.log("最近近的日子: " + closestDate);*/
 
             var Today = (new Date()).toISOString().split('T')[0];
             var preState;   //判斷結案狀態
-            if (Today == preDate) {
+            if (Today >= preDate) {
                 preState = "已結案"
 
             } else {
@@ -470,29 +477,44 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
                 preData[z] = { Date: parseDate(xData[z]), Close: yData[z] };
             }
             var index = i;
-            //console.log(preData);
-            drawPre(preData, index, preState, preDate, PID, preBuildDate);
+
+            //整理字串
+            var preVariable = JSON.parse(Ddata[i].Variable);    //所選變數
+            var preDummy = JSON.parse(Ddata[i].Dummyblock);     //結果參數
+
+            drawPre(preData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy);
         }
     })
 })
 
-function drawPre(myData, index, preState, preDate, PID, preBuildDate) {
+function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy ) {
 
-    //console.log(myData);
+    
+    //console.log(preDummy);
+
+    var prelist = "";
+    if (preVariable[0] != null) {
+        prelist += `<button class="copyAll" id="card${PID}" onclick="copyAllList(this)">複製全部</button>`;
+        for (var i = 0; i < preVariable.length; i++) {
+            prelist += `<button class="pre-list-btn" onclick="copyList(this)">${preVariable[i]}</button>`
+        };
+    };
+    /*console.log(prelist);*/
     $(".predictionArea").prepend(`<label class='prediction-card ${index}'>
     <input type='checkbox' class='card-btn' />
     <div class='card-content'><div class='card-front'><p class="pre-state">${preState}+${PID}</p>
-    <table><tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${preDate}</td></tr>
-    <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preBuildDate}</td></tr>
+    <table><tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preBuildDate}</td></tr>
+    <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${preDate}</td></tr>
     <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5].Close}</td></tr>
-    <tr><th class="pre-th">選擇參數</th><td class="pre-td">--</td></tr>
+    <tr><th class="pre-th">結果參數</th><td class="pre-td">MSE:${preDummy.MSE}</td></tr>
     </table>
     <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
     </div>
     <div class='card-back'>
     <div class='forPrediction'>
-
-    </div></div></div></label>`);
+    </div></div></div>
+    <div class="preVar">${prelist}</div>
+    </label>`);
     //重新整理日期
     var dateList = [];
     for (var i = 0; i < myData.length; i++) {
@@ -652,15 +674,18 @@ function zooming() {
     candlestick.yScale(rescaledY);
     sma.yScale(rescaledY);
 
+
     //X座標
     x.zoomable().domain(d3.event.transform.rescaleX(zoomableInit).domain());
+
+    yZoom.range([height - 60, 0].map(d => d3.event.transform.applyY(d)));
     xVolume.range([0, width].map(d => d3.event.transform.applyX(d)));
     redraw();
 }
 
 function redraw() {
     svg.select("g.candlestick").call(candlestick);  //K棒
-    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 1).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
+    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 2).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
     svg.selectAll("g.y.axis").call(yAxis.ticks(5).tickSize(-width, 0).tickPadding(10));   //Y軸
     svg.select("g.sma.ma-5").call(sma);
     svg.select("g.sma.ma-30").call(sma);
@@ -679,22 +704,26 @@ function btnTest(btn) {
     if (logging) {      //如果有登入
         //到時候user要改成抓目前登入者的帳號ㄛ
         var dataToServer = { user: user, cardID: $(btn).attr("id").substring(3) };
-
         $.ajax({
             url: "/Home/CheckCard",
             method: "POST",
             data: dataToServer,
             success: function (e) {
-                switch (e) {
-                    case "add":
+                console.log(e);
+                switch (e.substring(0,1)) {
+                    case "A": {
                         $(btn).css("color", "red");
                         console.log("新增一筆");
+                        sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
                         break
-                    case "delete":
+                    }
+                    case "D": {
                         $(btn).css("color", "black");
                         console.log("刪除一筆");
+                        sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
                         break;
-                    case "reject":
+                    }
+                    case "R":
                         console.log("收藏上限了朋友");
                         break;
                 }
@@ -706,17 +735,7 @@ function btnTest(btn) {
     
 }
 setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
-    if (logging) { //這邊要判斷是否有登入
-        d3.json(`/Home/cardCheck/${user}`, function (list) {
-            list.forEach(function (item, i) {
-                //針對會員有按愛心的按鈕 變化
-                $(`#PID${parseInt(item)}`).css({
-                    color: "red",
-                    /* fontSize: "32px" */
-                });
-            })
-        });
-    } else {
+    if (MID == null) { //這邊要判斷是否有登入
         //沒登入時按鈕
         $(".prediction-collect").on({
             mouseenter: function () {
@@ -729,9 +748,71 @@ setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
                 $(this).addClass("collectBtnLeave");
             }
         })
+    } else {
+        d3.json(`/Home/cardCheck/${user}`, function (list) {
+            list.forEach(function (item, i) {
+                //針對會員有按愛心的按鈕 變化
+                $(`#PID${parseInt(item)}`).css({
+                    color: "red",
+                    /* fontSize: "32px" */
+                });
+            })
+        });
 
 
     }//else尾
 
 
-}, 100);
+}, 500);
+
+
+
+
+function copyList(obj) {
+    $(obj).addClass("pre-list-btn-click");
+    setTimeout(function () {
+        $(obj).removeClass("pre-list-btn-click")
+        $(obj).addClass("pre-list-btn-click-again");
+    }, 1000);
+
+    console.log($(obj).text());
+    //
+    var content = $(obj).text();
+    navigator.clipboard.writeText(content);
+}
+
+function copyAllList(obj) {
+    $(obj).addClass("copyAllCopied");
+    setTimeout(function () {
+        $(obj).removeClass("copyAllCopied");
+    }, 1000)
+    var thisCard = $(obj).attr("id");
+    var thisCardList = $(`#${thisCard} ~ .pre-list-btn`);
+
+ 
+
+
+    var content="";
+    for (var i = 0; i < thisCardList.length; i++) {
+        if (i != 0) content += ",";
+        content += thisCardList[i].innerText;
+    }
+    navigator.clipboard.writeText(content);
+        
+
+}
+
+setTimeout(function () {
+    $(".pre-list-btn").on({
+        mouseenter: function () {
+            $(this).removeClass("pre-list-btn-he");
+            $(this).removeClass("pre-list-btn-hl");
+            $(this).addClass("pre-list-btn-he");
+        },
+        mouseleave: function () {
+            $(this).addClass("pre-list-btn-hl");
+        }
+    })
+}, 500);
+
+console.log("wTF");
