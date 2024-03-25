@@ -8,7 +8,7 @@
 	<button id="AdminStock">Stock</button>
 	<button id="AdminMember">Member</button>
 	<button id="AdminModel">Model</button>
-
+	<button id="updateAllStockBtn">update All Stock (未測試)</button>
 </div>
 <div id="stockdiv">
 	<table class="table">
@@ -162,18 +162,18 @@
 						// 格式化日期为 "yyyy-mm-dd" 格式
 						var formattedDate = originalDate.toISOString().split('T')[0];
 						$("#mydemo1").append(`
-									<tr>
-										<th scope="row">${index + 1}</th>
-											<td>${stock.SNCode}</td>
-											<td>${stock.SNName}</td>
-											<td>${formattedDate}</td>
-											<td>${stock.SteOpen}</td>
-											<td>${stock.SteClose}</td>
-											<td>${stock.SteMax}</td>
-											<td>${stock.SteMin}</td>
+										<tr>
+											<th scope="row">${index + 1}</th>
+												<td>${stock.SNCode}</td>
+												<td>${stock.SNName}</td>
+												<td>${formattedDate}</td>
+												<td>${stock.SteOpen}</td>
+												<td>${stock.SteClose}</td>
+												<td>${stock.SteMax}</td>
+												<td>${stock.SteMin}</td>
 
-									</tr>
-								`);
+										</tr>
+									`);
 					});
 				}
 			});
@@ -189,21 +189,21 @@
 					$.each(data, function (index, members) {
 						console.log(members)
 						$("#mydemo2").append(`
-										<tr>
-											<th scope="row">${index + 1}</th>
-														<td>${members.MaccoMnt}</td>
-														<td>${members.Mpassword}</td>
-														<td>${members.MtrueName}</td>
-														<td>${members.Mgender}</td>
-														<td>${members.Mbirthday}</td>
-														<td>${members.MinvestYear}</td>
-														 <td>${members.Memail}</td>
-														<td>${members.Mlevel}</td>
-														<td>${members.Mprefer}</td>
-														<td>${members.MlastLoginTime}</td>
+											<tr>
+												<th scope="row">${index + 1}</th>
+															<td>${members.MaccoMnt}</td>
+															<td>${members.Mpassword}</td>
+															<td>${members.MtrueName}</td>
+															<td>${members.Mgender}</td>
+															<td>${members.Mbirthday}</td>
+															<td>${members.MinvestYear}</td>
+															 <td>${members.Memail}</td>
+															<td>${members.Mlevel}</td>
+															<td>${members.Mprefer}</td>
+															<td>${members.MlastLoginTime}</td>
 
-										</tr>
-									`);
+											</tr>
+										`);
 					});
 				}
 			});
@@ -221,22 +221,25 @@
 					$.each(data, function (index, model) {
 
 						$("#mydemo3").append(`
-								<tr>
-										<th scope="row">${index + 1}</th>
-										<td>${model.Paccount}</td>
-										<td>${model.Pvariable}</td>
-										<td>${model.Plabel}</td>
-										<td>${model.Pprefer}</td>
-										<td>${model.PbulidTime}</td>
-										<td>${model.PfinishTime}</td>
-										<td>${model.Pstatus}</td>
-								</tr>
-							`);
+									<tr>
+											<th scope="row">${index + 1}</th>
+											<td>${model.Paccount}</td>
+											<td>${model.Pvariable}</td>
+											<td>${model.Plabel}</td>
+											<td>${model.Pprefer}</td>
+											<td>${model.PbulidTime}</td>
+											<td>${model.PfinishTime}</td>
+											<td>${model.Pstatus}</td>
+									</tr>
+								`);
 					});
 				}
 			});
 
 		});
+		$("#updateAllStockBtn").on("click", function () {
+			window.location.href = '/stockmodel/updateAllStock';
+		})
 
 	});
 
