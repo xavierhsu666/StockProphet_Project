@@ -190,7 +190,7 @@ namespace StockProphet_Project.Controllers
 
         //我的收藏頁面
         [HttpGet]
-        public IActionResult MyCollect1(string sessionMID)
+        public IActionResult MyCollect(string sessionMID)
         {
             // 定義 pidList 變數
             List<int> pidList = new List<int>();
@@ -783,10 +783,7 @@ namespace StockProphet_Project.Controllers
             return true;
         }
 
-        public IActionResult Search()
-        {
-            return View();
-        }
+       
 
 
     }
