@@ -11,8 +11,8 @@
         <div>
             <label for="Account">帳號:</label>
             @* +正則 *@
-            <input type="text" pattern=@AccountPattern size="20" maxlength="20" name="MAccoMnt" id="Account" title="限輸入英數字，請設定8碼以上" value="" >
-            <div id="checkName" style="color: red;"></div>@* 檢查帳戶名稱是否重複 *@
+            <input type="text" pattern=@AccountPattern size="20" maxlength="20" name="MAccoMnt" id="Account" title="限輸入英數字，請設定8碼以上" value="" required="required">
+            <div id="checkName" ></div>@* 檢查帳戶名稱是否重複 *@
             <div id="accountError" style="color: red;"></div> @* 不符合格式跳提示 *@
 
         </div>
