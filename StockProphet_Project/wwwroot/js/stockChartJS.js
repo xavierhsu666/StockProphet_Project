@@ -184,6 +184,7 @@ d3.json(`/Home/showStocks/${stocksID}`, function (data) {
         };
     })
     dataAll = data;
+    defultStockInfo();  //預設股票資料
     //成交量的data
     var volumeData = data.map(function (d) {
         return {
@@ -191,6 +192,8 @@ d3.json(`/Home/showStocks/${stocksID}`, function (data) {
             volume: d.volume
         }
     });
+
+
 
     //K棒X、Y軸
     svg.append("g").attr("class", "y axis");
@@ -365,8 +368,25 @@ function enter() {
 }
 
 function out() {
-    $(".tb-content").text("-");
-    $(".td-date").css('display', 'none')
+    //$(".tb-content").text("-");
+    //$(".td-date").css('display', 'none')
+    defultStockInfo();
+}
+
+function defultStockInfo(){
+    //預設資料顯示
+    $(".tb-open").text(dataAll[dataAll.length - 1].open);
+    $(".tb-close").text(dataAll[dataAll.length - 1].close);
+    $(".tb-SR").text(d3.format(".2f")(dataAll[dataAll.length - 1].spreadRatio) + "%");
+    $(".tb-max").text(dataAll[dataAll.length - 1].high);
+    $(".tb-min").text(dataAll[dataAll.length - 1].low);
+    $(".tb-TM").text(d3.format(",")(dataAll[dataAll.length - 1].tradeMoney));
+    $(".tb-TQ").text(d3.format(",")(dataAll[dataAll.length - 1].tradeQuantity));
+    $(".tb-EPS").text(d3.format(".2f")(dataAll[dataAll.length - 1].eps));
+    $(".tb-BI").text(d3.format(",")(dataAll[dataAll.length - 1].bussinessIncome));
+    $(".td-date").text(d3.timeFormat('%Y-%m-%d')(dataAll[dataAll.length - 1].date));
+    //
+
 }
 
 function move(coords) {
@@ -382,8 +402,6 @@ function move(coords) {
             $(".tb-TQ").text(d3.format(",")(dataAll[i].tradeQuantity));
             $(".tb-EPS").text(d3.format(".2f")(dataAll[i].eps));
             $(".tb-BI").text(d3.format(",")(dataAll[i].bussinessIncome));
-            //$(".tb-NBI").text(d3.format(",")(dataAll[i].nonBussinessIncome));
-            //$(".tb-NBIR").text(d3.format(".0%")(dataAll[i].nonBussinessIncomeRatio));
             $(".td-date").text(d3.timeFormat('%Y-%m-%d')(dataAll[i].date));
         }
     }
@@ -481,13 +499,14 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             //整理字串
             var preVariable = JSON.parse(Ddata[i].Variable);    //所選變數
             var preDummy = JSON.parse(Ddata[i].Dummyblock);     //結果參數
+            var pAccount = Ddata[i].Account;
 
-            drawPre(preData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy);
+            drawPre(preData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy, pAccount);
         }
     })
 })
 
-function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy ) {
+function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy, pAccount) {
 
     
     //console.log(preDummy);
@@ -503,7 +522,8 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
     $(".predictionArea").prepend(`<label class='prediction-card ${index}'>
     <input type='checkbox' class='card-btn' />
     <div class='card-content'><div class='card-front'><p class="pre-state">${preState}+${PID}</p>
-    <table><tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preBuildDate}</td></tr>
+    <table><tr><th class="pre-th">建立帳號</th><td class="pre-td pre-date">${pAccount}</td></tr>
+    <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preBuildDate}</td></tr>
     <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${preDate}</td></tr>
     <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5].Close}</td></tr>
     <tr><th class="pre-th">結果參數</th><td class="pre-td">MSE:${preDummy.MSE}</td></tr>
@@ -528,7 +548,7 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
     
     //X、Y軸scale
     var preScaleX = d3.scaleBand().range([10, preWidth]).domain(dateList);
-    var preScaleY = d3.scaleLinear().range([preHeight - 10, 0]).domain(d3.extent(myData, d => d.Close));
+    var preScaleY = d3.scaleLinear().range([preHeight - 35, 25]).domain(d3.extent(myData, d => d.Close));
 
     //X、Y軸
     var preAxisX = d3.axisBottom(preScaleX)
@@ -575,12 +595,13 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
         .attr("offset", function (d) { return d.offset; })
         .attr("stop-color", function (d) { return d.color; });
 
-    preSvg.append("g").datum(myData).attr("class", "predictionLine here").attr("transform", "translate(18,0)");   //折線
+    
     preSvg.append("g").attr("class", "x axis pre").attr("transform", "translate(0," + preHeight + ")");     //X軸
     preSvg.append("g").attr("class", "y axis pre");     //Y軸
+    preSvg.append("g").datum(myData).attr("class", "predictionLine here").attr("transform", "translate(18,0)");   //折線
 
     preSvg.select("g.predictionLine.here").append("path").attr("class", "pathPre").attr("d", linePre(myData)).attr("fill", "none")
-        .attr("stroke", "url(#line-gradient)").attr("stroke-width", 2);
+        .attr("stroke", "#bbbdbe").attr("stroke-width", 2);
     preSvg.select("g.x.axis.pre").call(preAxisX.tickValues(dateList).tickFormat(d3.timeFormat("%m/%d")).tickPadding(10).tickSizeInner(-preHeight - 10, -preHeight))
         .selectAll("text")
         .style("text-anchor", "end")
@@ -588,7 +609,7 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
         .attr("dy", ".15em")
         .attr("transform", "rotate(-25) translate(20, 10)");
 
-    preSvg.select("g.y.axis.pre").call(preAxisY.tickSizeInner(-preWidth - 10, -preWidth).tickPadding(10).tickFormat(d3.format(".1f")).tickValues([minCPre, d3.mean([minCPre, maxCPre]), maxCPre]));
+    preSvg.select("g.y.axis.pre").call(preAxisY.tickSizeInner(-preWidth - 10, -preWidth).tickPadding(10).tickFormat(d3.format(".1f")).tickValues([minCPre-10, d3.mean([minCPre, maxCPre]), maxCPre+10]));
 
     //--點點--//
     //提示框
@@ -630,34 +651,39 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
         .attr("cx", d => preScaleX(d.Date))
         .attr("cy", d => preScaleY(d.Close))
         .attr("r", 5)
-        .attr("stroke", "#69b3a2")
-        .attr("fill", "#FFF")
+        .attr("stroke", "#cedba0")
+        .attr("fill", "#cedba0")
         .on("mouseover", mouseover)
         .on("mousemove", mousemove)
         .on("mouseleave", mouseleave);
 
+    d3.selectAll(".prediction-card")
+        .each(function () {
+            var lastTick = d3.select(this).selectAll(".x.axis.pre .tick:last-child");
+            lastTick.select("line").style("stroke-dasharray", "6,6");
+        });
 
     //動畫?
     pointAni(index);
     function pointAni(index) {
         var strokeC = (myData[5].Close > myData[4].Close) ? "#b84121" : "#69b3a2";
-        var fillC = (myData[5].Close > myData[4].Close) ? "#f77465" : "#cedba0";
+        //var fillC = (myData[5].Close > myData[4].Close) ? "#f77465" : "#cedba0";
     /*        console.log("strokeC:" + strokeC + "  fillC:" + fillC);*/
 
         d3.select(`.circleGroup${index} :last-child`)
             .attr("stroke", strokeC)
-            .style("stroke-width", 3)
-            .style("stroke-opacity", 1)
+            .style("stroke-width", 2)
+            //.style("stroke-opacity", 1)
             .style("r", 5)
 
         d3.select(`.circleGroup${index} :last-child`)
-            .attr("fill", fillC)
-            .transition()
-            .duration(1000)
-            .style("stroke-width", 10)
-            .style("stroke-opacity", 0)
-            .style("r", 7)
-            .on("end", function () { pointAni(index) });
+            .attr("fill", "white")
+            //.transition()
+            //.duration(1000)
+            //.style("stroke-width", 10)
+            //.style("stroke-opacity", 0)
+            //.style("r", 7)
+            //.on("end", function () { pointAni(index) });
     }
 }
 
@@ -769,11 +795,30 @@ setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
 
 
 function copyList(obj) {
-    $(obj).addClass("pre-list-btn-click");
-    setTimeout(function () {
-        $(obj).removeClass("pre-list-btn-click")
-        $(obj).addClass("pre-list-btn-click-again");
-    }, 1000);
+    var myList = $(".var-tag .var-tag-a");
+    var copyAlready = false;
+    console.log(myList[0])
+    if (myList[0] != null) {
+        for (var i = 0; i < myList.length; i++) {
+            if (myList[i].innerText == $(obj).text()) {
+                copyAlready = true;
+                $(obj).addClass("pre-list-btn-click-again");
+                $(obj).addClass("pre-list-btn-click");
+                setTimeout(function () {
+                    $(obj).removeClass("pre-list-btn-click")
+                }, 1000);
+                break;
+            }
+        }
+    }
+    if (!copyAlready) {
+        $(".var-tag").append(`<div class="var-tag-a" id="${$(obj).text()}">${$(obj).text()}</div>`);
+        $(obj).addClass("pre-list-btn-click");
+        setTimeout(function () {
+            $(obj).removeClass("pre-list-btn-click")
+            $(obj).addClass("pre-list-btn-click-again");
+        }, 1000);
+    }
 
     console.log($(obj).text());
     //

@@ -7,9 +7,11 @@ function changePage() {
         url: `/Home/checkStocks/${$("#search").val()}`,
         method: "post"
     }).done(function (ans) {
+        
         if (ans == "wrongCode") {
             $(".search-hint").css("display", "block");
         } else {
+
             document.location.href = `/Home/StockCharts/${ans}`;
         } 
     })
@@ -54,5 +56,4 @@ $(".btn-t").on("click", function () {   //訪客體驗按鈕
     console.log("wwf");
 })
 
-console.log("wdfe");
 
