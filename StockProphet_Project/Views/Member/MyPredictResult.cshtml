@@ -86,7 +86,7 @@
 			method: "get",
 			data: data,
 			success: function (e) {
-				console.log(e)
+				//console.log(e)
 				
 				for (var i = 0; i < e.length; i+=5) {
 					// console.log("----------"+i)
@@ -143,7 +143,7 @@
 					var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
 					//選擇變數
 					var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]); 
-					console.log((otherprarmeter[index]["Buildtime"]))
+					//console.log((otherprarmeter[index]["Buildtime"]))
 					drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"])
 				});
 			}
@@ -210,7 +210,8 @@
 
 		//生卡片
 		function drawPre(myData, index, preState, preDate, PID, preVariable, parameter, PAcount, SName, SCode, PFinsihTime) {
-			console.log(PAcount + "/" + SName + "/" + SCode)
+			//console.log(PAcount + "/" + SName + "/" + SCode)
+			console.log(myData)
 			var prelist = "";
 			if (preVariable[0] != null) {
 				prelist += `<button class="copyAll" id="card${PID}" onclick="copyAllList(this)">複製全部</button>`;

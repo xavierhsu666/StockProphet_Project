@@ -134,20 +134,27 @@ namespace StockProphet_Project.Controllers
             return View();
         }
 
+        //public IActionResult MyCollect()
+        //{
+
+        //    return View();
+        //}
+
         public IActionResult MyCollect()
         {
-
             return View();
         }
+
 
         [HttpGet]
         public IActionResult Test(string sessionPID)
         {
+            Console.WriteLine(sessionPID);
             int PID = Convert.ToInt32(sessionPID);
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
             string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-    B.PBulidTime,B.PVariable, B.Pfinishtime, A.ST_Date, A.ste_Close 
+                 B.PBulidTime,B.Pvariable, B.Pfinishtime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code
     FROM DB_model AS B 
     OUTER APPLY (
         SELECT TOP 5 *
@@ -175,10 +182,12 @@ namespace StockProphet_Project.Controllers
                     PLabel = reader["Plabel"],
                     Parameter = reader["dummyblock"],
                     PBuildTime = reader["PBulidTime"],
-                    preVariable = reader["PVariable"],
                     PFinsihTime = reader["Pfinishtime"],
                     SteClose = reader["Ste_Close"],
-                    PID = reader["Pid"]
+                    PID = reader["Pid"],
+                    preVariable = reader["PVariable"],
+                    SName = reader["SN_Name"],
+                    SCode = reader["SN_Code"]
 
                 });
             }
@@ -190,10 +199,11 @@ namespace StockProphet_Project.Controllers
 
         //我的收藏頁面
         [HttpGet]
-        public IActionResult MyCollect(string sessionMID)
+        public IActionResult MyCollect2(string sessionMID)
         {
             // 定義 pidList 變數
-            List<int> pidList = new List<int>();
+            List<object> pidList = new List<object>();
+
 
             //int MID = Convert.ToInt32(sessionMID);
             //List<object> results = new List<object>();
@@ -342,7 +352,7 @@ namespace StockProphet_Project.Controllers
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
             string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-    B.PBulidTime,B.PVariable, B.Pfinishtime, A.ST_Date, A.ste_Close 
+                 B.PBulidTime,B.Pvariable, B.Pfinishtime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code
     FROM DB_model AS B 
     OUTER APPLY (
         SELECT TOP 5 *
@@ -372,8 +382,10 @@ namespace StockProphet_Project.Controllers
                     PBuildTime = reader["PBulidTime"],
                     PFinsihTime = reader["Pfinishtime"],
                     SteClose = reader["Ste_Close"],
+                    PID = reader["Pid"],
                     preVariable = reader["PVariable"],
-                    PID = reader["Pid"]
+                    SName = reader["SN_Name"],
+                    SCode = reader["SN_Code"]
 
 
                 });
