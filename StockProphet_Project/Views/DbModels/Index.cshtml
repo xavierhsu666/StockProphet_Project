@@ -3,7 +3,7 @@
 @{
 	ViewData["Title"] = "管理者頁面-Model資訊";
 }
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <h1>管理者頁面(Model)</h1>
 <br>
 <button onclick="loadModel('DbMembers')">Member</button>
@@ -12,8 +12,11 @@
 
 <br>
 <br>
+<div class="d-xl-flex justify-content-around">
+	<canvas id="barChart" width="400" height="400"></canvas>
+	<canvas id="accountprefer" width="400" height="400"></canvas>
 
-
+</div>
 <p>
 	<a asp-action="Create">Create New</a>
 </p>
@@ -135,15 +138,146 @@
 			});
 		}
 	});
+	var stocknumber = [];
+	var accountprefer = [];
 	$.ajax({
+
 		url: "/DbModels/barchart",
 		method: "get",
 		success: function (e) {
 			console.log(e)
-
+			$.each(e, function (index,element) { 
+				
+				stocknumber.push({ stockname: element["Pstock"] })
+				accountprefer.push({ accountname: element["Paccount"], accountprefer: element["Pprefer"] })
+			
+			})
+			drawBarChart(stocknumber);
+			drawcustomerChart(accountprefer);
+			
 
 		}
 
 	})
+	function drawBarChart(data) {
+		var ctx = document.getElementById('barChart').getContext('2d');
+		var labels = [];
+		var counts = {};
 
+		// 遍历数据，计算每个股票的出现次数
+		data.forEach(function (item) {
+			var stockname = item.stockname;
+			counts[stockname] = counts[stockname] ? counts[stockname] + 1 : 1;
+		});
+
+		// 将股票名称添加到标签中
+		labels = Object.keys(counts);
+
+		// 将每个股票的出现次数添加到数据中
+		var data = labels.map(function (label) {
+			return counts[label];
+		});
+
+		// 使用Chart.js绘制柱状图
+		var myChart = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: labels,
+				datasets: [{
+					label: 'Stock Counts',
+					data: data,
+					backgroundColor: 'rgba(54, 162, 235, 0.2)',
+					borderColor: 'rgba(54, 162, 235, 1)',
+					borderWidth: 1
+				}]
+			},
+			options: {
+				scales: {
+					yAxes: [{
+						ticks: {
+							beginAtZero: true
+						}
+					}]
+				},
+				responsive: false // 禁用响应式
+			}
+		});
+	}
+	function drawcustomerChart(accountprefer) {
+		// Convert preference numbers to labels
+		accountprefer.forEach(function (item) {
+			item.accountprefer = item.accountprefer === 1 ? 'Short-term' : 'Long-term';
+		});
+
+		var counts = {};
+		var labels = [];
+		var datasets = {};
+
+		// Count the occurrences of each accountprefer for each accountname
+		accountprefer.forEach(function (item) {
+			var accountName = item.accountname;
+			var preference = item.accountprefer;
+
+			if (!counts[accountName]) {
+				counts[accountName] = { 'Short-term': 0, 'Long-term': 0 };
+			}
+
+			counts[accountName][preference]++;
+		});
+
+		// Extract unique accountnames and preferences
+		labels = Object.keys(counts);
+		var preferences = ['Short-term', 'Long-term'];
+
+		// Initialize datasets
+		preferences.forEach(function (preference) {
+			datasets[preference] = {
+				label: preference,
+				data: [],
+				backgroundColor: preference === 'Short-term' ? 'rgba(255, 99, 132, 0.5)' : 'rgba(54, 162, 235, 0.5)',
+				borderColor: preference === 'Short-term' ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)',
+				borderWidth: 1
+			};
+		});
+
+		// Populate data for each dataset
+		labels.forEach(function (label) {
+			preferences.forEach(function (preference) {
+				datasets[preference].data.push(counts[label][preference] || 0);
+			});
+		});
+
+		// Create chart
+		var ctx = document.getElementById('accountprefer').getContext('2d');
+		var myChart = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: labels,
+				datasets: Object.values(datasets)
+			},
+			options: {
+				responsive: false, // Disable responsiveness
+				scales: {
+					x: {
+						stacked: true,
+						title: {
+							display: true,
+							text: 'Account Name'
+						}
+					},
+					y: {
+						stacked: true,
+						title: {
+							display: true,
+							text: 'Number of Preferences'
+						}
+					}
+				}
+			}
+		});
+	}
+
+
+
+	
 </script>
