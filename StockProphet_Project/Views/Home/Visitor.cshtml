@@ -1,1 +1,31 @@
-﻿<h1>哈囉　訪客頁desu</h1>
+﻿<style>
+    #lottie {
+        width: 50px;
+        height: 50px;
+    }
+</style>
+<div id="lottie" style="display: none"></div>
+<button onclick="playAni()">click me</button>
+
+<script>
+    // 看你是要做什麼事之後觸發動畫
+    function playAni() {
+        document.getElementById("lottie").style.display = "block";
+        animation.play();
+    }
+    var animationPath = '@Url.Content("~/Animation.json")';
+    // 載入 Lottie 動畫
+    var animation = lottie.loadAnimation({
+        container: document.getElementById("lottie"), //要動畫的地方
+        renderer: "svg",
+        loop: false,
+        autoplay: false,
+        path: animationPath
+
+    });
+
+    // 動畫跑完後隱藏
+    animation.addEventListener("complete", function () {
+        document.getElementById("lottie").style.display = "none";
+    });
+</script>
