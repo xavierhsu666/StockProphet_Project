@@ -148,6 +148,7 @@ public partial class Stock
     public double? SiPe { get; set; }
 
     public double? SiMa { get; set; }
+	public DateOnly StUpdateDate { get; set; }
 }
 public class StockDBA {
 	// 根據SCRIPT，新的

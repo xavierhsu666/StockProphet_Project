@@ -549,7 +549,8 @@
 								',"tSize":' + paras.InputModelPara[3] +
 								',"cLev":' + paras.InputModelPara[4] +
 								'}',
-							Paccount: paras.account
+							Paccount: paras.account,
+							Pmodel:paras.usingModel
 						}
 
 						SaveModelResultToDB(datatoserver)
@@ -609,7 +610,8 @@
 								',"RMSE":' + e.output_M_RMSE.toFixed(2) +
 								',"Iters":' + paras.InputModelPara[0] +
 								']',
-							Paccount: paras.account
+							Paccount: paras.account,
+							Pmodel: paras.usingModel
 						}
 
 						SaveModelResultToDB(datatoserver)
@@ -1172,7 +1174,8 @@
 								PBuildTime: isoString,
 								PfinishTime: finishString,
 								PAccount: sessionStorage.getItem("LogAccount"),
-								Pparameter: predictedloss
+								Pparameter: predictedloss,
+								Pmodel:(number==1)?"LSTM":"FNN" 
 							}
 
 							$.ajax({

@@ -65,7 +65,7 @@ namespace StockProphet_Project.Controllers {
 
 		//}
 		public async Task<IActionResult> updateAllStock() {
-			var query = _context.Stock
+			var query = _context.Stock.ToList()
 				   .AsEnumerable()
 				   .GroupBy(o => o.SnCode)
 				   .Select(g => g.First());
@@ -73,38 +73,51 @@ namespace StockProphet_Project.Controllers {
 			log = "KS: Start Update all stock.\r\n";
 			int i = 0;
 			foreach (var item in query) {
-				CallPyApi cpa = new CallPyApi();
+				var q2 = from o in _context.Stock.ToList()
+						 where o.SnCode == item.SnCode
+						 orderby o.StDate descending
+						 select o;
+				if (q2.Count() <= 0)
+					break;
 				Console.WriteLine("KS: 呼叫UpdateOneStock(stockCode=" + item.SnCode + ")");
 				log += "_________________ " + i + " \"_________________ \"\r\n";
-				log += "KS: 呼叫UpdateOneStock(stockCode=" + item.SnCode + ") for "+i+" Time .\r\n";
-				string fedback = await cpa.UpdateOneStock(item.SnCode, InputLatestDate.Replace("-", ""));
-				log += "KS: Finished.\r\n";
+				log += q2.First().StUpdateDate.ToString("yyyy-MM-dd") + " vs " + DateTime.Now.ToString("yyyy-MM-dd") + " == " + (item.StUpdateDate.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd")).ToString() + "\r\n";
+				if (q2.First().StUpdateDate.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd")) {
+					log += "KS: 呼叫UpdateOneStock(stockCode=" + item.SnCode + ") for " + i + " Time .\r\n";
+					log += "KS: 已是最新.跳過webapi Finished.\r\n";
+
+				} else {
+					CallPyApi cpa = new CallPyApi();
+					log += "KS: 呼叫UpdateOneStock(stockCode=" + item.SnCode + ") for " + i + " Time .\r\n";
+					string fedback = await cpa.UpdateOneStock(item.SnCode, InputLatestDate.Replace("-", ""));
+					log += "KS: Finished.\r\n";
+
+				}
 				i++;
 			}
+			UpdateModelResultsStatusAndRatio();
 			return Content(log);
 
 		}
 
-		public async Task<IActionResult> TestWepAPI() {
-			WebAPI_Class wac = new WebAPI_Class();
-			wac.stockCode = "2330";
-			wac.date = DateTime.Now.AddDays(-10);
-			wac.stockName = "台積電";
-			//List<Table3OBJ> result = await wac.ajax_3();
-			//List<Table1OBJ> result = await wac.ajax_1();
-			//List<Table2OBJ> result = await wac.ajax_2();
-			wac.run();
+		public IActionResult TestWebAPI() {
+			string tmp = "";
+			var q = from o in _context.DbModels.ToList()
+					where o.Pstatus == "Tracing"
+					select o;
 
-			////// 使用 result 中的元素
-			//foreach (var item in result) {
-			//	Console.WriteLine($"Stock Code: {item.date}, " +
-			//		$"Stock date: {item.SB_PBRatio}, " +
-			//		$"Stock OpenPrice: {item.SB_Yield}, " +
-			//		$"Stock MaxPrice: {item.ST_Year_Quarter}, " +
-			//		$"Stock MinPrice: {item.STe_Dividend_Year}, " +
-			//		$"Stock ClosePrice: {item.SI_PE}"
-			//		);
-			//}
+			if (q.Count() > 0) {
+				foreach (var item in q) {
+					var q2 = from o in _context.Stock.ToList()
+							 where o.SnCode == item.Pstock
+							 orderby o.StDate descending
+							 select o.SteClose;
+					item.Pstatus = (item.PfinishTime > DateTime.Now) ? "Tracing" : "Close";
+					item.PAccuracyRatio = Convert.ToDouble(item.Plabel / q2.First().Value);
+					_context.DbModels.Update(item);
+					_context.SaveChanges();
+				}
+			}
 
 
 			return Content("OK");
@@ -305,7 +318,26 @@ namespace StockProphet_Project.Controllers {
 				return new double[] { esti, u, l };
 			}
 		}
+		public void UpdateModelResultsStatusAndRatio() {
+			string tmp = "";
+			var q = from o in _context.DbModels.ToList()
+					where o.Pstatus == "Tracing"
+					select o;
 
+			if (q.Count() > 0) {
+				foreach (var item in q) {
+					var q2 = from o in _context.Stock.ToList()
+							 where o.SnCode == item.Pstock
+							 orderby o.StDate descending
+							 select o.SteClose;
+					item.Pstatus = (item.PfinishTime > DateTime.Now) ? "Tracing" : "Close";
+					item.PAccuracyRatio = Convert.ToDouble(item.Plabel / q2.First().Value);
+					_context.DbModels.Update(item);
+					_context.SaveChanges();
+				}
+			}
+
+		}
 		// <功能開發測試區>
 
 		// <WEB API 區>
@@ -321,14 +353,32 @@ namespace StockProphet_Project.Controllers {
 		}
 		[HttpGet]
 		public async Task<IActionResult> UpdateOneStock( string stockCode ) {
+			bool issame = false;
+			string stockName = "";
+			try {
+				var q = from o in _context.Stock
+						where o.SnCode == stockCode
+						orderby o.StUpdateDate descending
+						select o;
+				var r = q.First().StUpdateDate.ToString("yyyy-MM-dd");
+				stockName = q.First().SnName;
+				issame = r == DateTime.Now.ToString("yyyy-MM-dd");
+			} catch {
+			}
 			if (checkStockCodeIsRight(stockCode) == "Nah") {
 				var result = new { stockname = "查無這支股票", stockexist = false };
+				Console.WriteLine("call UpdateOneStock: csv找不到");
+				return Json(result);
+			} else if (issame) {
+				Console.WriteLine("call UpdateOneStock:" + stockCode + " 資料庫有最新資料，不執行webapi");
+
+				var result = new { stockname = stockName, stockexist = true };
 				return Json(result);
 			} else {
 
 
 				CallPyApi cpa = new CallPyApi();
-				Console.WriteLine("KS: 呼叫UpdateOneStock(stockCode=" + stockCode + ")");
+				Console.WriteLine("call UpdateOneStock(stockCode=" + stockCode + ")");
 				string fedback = await cpa.UpdateOneStock(stockCode, InputLatestDate.Replace("-", ""));
 				var stockData = _context.Stock
 						.Where(x => x.SnCode == stockCode)
@@ -492,7 +542,9 @@ namespace StockProphet_Project.Controllers {
 				PbulidTime = buildTime,
 				PfinishTime = finishTime,
 				Dummyblock = mr.dummyblock,
-				Paccount = mr.Paccount
+				Paccount = mr.Paccount,
+				Pmodel = mr.Pmodel,
+				Pstatus = "Tracing"
 			};
 			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
 			query.DbModels.Add(newdata);
@@ -533,6 +585,7 @@ namespace StockProphet_Project.Controllers {
 			public string PfinishTime { get; set; }
 			public string dummyblock { get; set; }
 			public string Paccount { get; set; }
+			public string Pmodel { get; set; }
 		}
 
 		// <類別區>
@@ -1174,7 +1227,7 @@ namespace StockProphet_Project.Controllers {
 		//}
 
 		[HttpPost]
-		public IActionResult Predictsavedata( string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime, string PAccount, string Pparameter ) {
+		public IActionResult Predictsavedata( string Pmodel, string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime, string PAccount, string Pparameter ) {
 			var query = new StocksContext();
 			DateTime buildTime = DateTime.Parse(PBuildTime);
 			DateTime finishTime = DateTime.Parse(PfinishTime);
@@ -1189,7 +1242,9 @@ namespace StockProphet_Project.Controllers {
 				PbulidTime = buildTime,
 				PfinishTime = finishTime,
 				Paccount = PAccount,
-				Dummyblock = parametertodb
+				Dummyblock = parametertodb,
+				Pmodel = Pmodel,
+				Pstatus = "Tracing"
 			};
 			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
 			query.DbModels.Add(newdata);

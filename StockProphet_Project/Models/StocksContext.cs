@@ -134,7 +134,8 @@ public partial class StocksContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("SN_Name");
             entity.Property(e => e.StDate).HasColumnName("ST_Date");
-            entity.Property(e => e.StQuarter)
+			entity.Property(e => e.StUpdateDate).HasColumnName("ST_UpdateDate");
+			entity.Property(e => e.StQuarter)
                 .HasMaxLength(20)
                 .HasColumnName("ST_Quarter");
             entity.Property(e => e.StYear)
