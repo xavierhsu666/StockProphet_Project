@@ -6,8 +6,8 @@ import os
 current_file_path = os.path.abspath(__file__).replace('PyAPI.py','')
 combinePath = os.path.join(current_file_path,'requirements.txt')
 
-# print("当前文件的位置1:", current_file_path)
-# print("当前文件的位置2:", combinePath)
+print("当前文件的位置1:", current_file_path)
+print("当前文件的位置2:", combinePath)
 
 def install_requirements():
     try:

@@ -3,7 +3,6 @@ html5lib
 pyodbc
 lxml
 sqlalchemy
-create_engine
 numpy
 pandas
 requests
