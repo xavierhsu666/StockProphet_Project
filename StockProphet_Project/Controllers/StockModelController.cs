@@ -37,7 +37,7 @@ using System.Text;
 using static StockProphet_Project.Models.WebAPI_Class;
 using ChoETL;
 using System.Security.Cryptography.X509Certificates;
-
+using System.Web;
 
 namespace StockProphet_Project.Controllers {
 	public class StockModelController : Controller {
@@ -70,6 +70,7 @@ namespace StockProphet_Project.Controllers {
 				   .GroupBy(o => o.SnCode)
 				   .Select(g => g.First());
 			string log;
+			var port = Request.Host.Port; // will get the port
 			log = "KS: Start Update all stock.\r\n";
 			int i = 0;
 			foreach (var item in query) {
@@ -89,7 +90,7 @@ namespace StockProphet_Project.Controllers {
 				} else {
 					CallPyApi cpa = new CallPyApi();
 					log += "KS: 呼叫UpdateOneStock(stockCode=" + item.SnCode + ") for " + i + " Time .\r\n";
-					string fedback = await cpa.UpdateOneStock(item.SnCode, InputLatestDate.Replace("-", ""));
+					string fedback = await cpa.UpdateOneStock(item.SnCode, InputLatestDate.Replace("-", ""), port);
 					log += "KS: Finished.\r\n";
 
 				}
@@ -363,7 +364,9 @@ namespace StockProphet_Project.Controllers {
 
 				CallPyApi cpa = new CallPyApi();
 				Console.WriteLine("call UpdateOneStock(stockCode=" + stockCode + ")");
-				string fedback = await cpa.UpdateOneStock(stockCode, InputLatestDate.Replace("-", ""));
+				var port = Request.Host.Port; // will get the port
+				//Console.WriteLine("当前服务器端口号: " + port);
+				string fedback = await cpa.UpdateOneStock(stockCode, InputLatestDate.Replace("-", ""), port);
 				var stockData = _context.Stock
 						.Where(x => x.SnCode == stockCode)
 						.OrderBy(x => x.StDate)
