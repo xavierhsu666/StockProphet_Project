@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/StockProphet_Project.styles.css" asp-append-version="true" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @* 其他共用CSS *@
     <link rel="stylesheet" href="~/css/note.css" type="text/css" />
+    <link rel="stylesheet" href="~/css/drawCard.css" type="text/css" />
     @* d3.js及圖表會用的到的 *@
     <script src="https://d3js.org/d3.v4.js"></script>
     <script src="https://techanjs.org/techan.min.js"></script>
@@ -130,11 +132,11 @@
     $(".text-content").hide();
     $(".slide-btn").click(function () {
         if ($(".text-content").is(":hidden")) {
-            $(".text-content").show("slide", { direction: "right" }, 1000, "ease-in-out");
+            $(".text-content").show("slide", { direction: "right" }, 500, "ease-in-out");
             $(".slide-btn").css('margin-left', '-40px');
 
         } else {
-            $(".text-content").hide("slide", { direction: "right" }, 1000, "ease-in-out");
+            $(".text-content").hide("slide", { direction: "right" }, 500, "ease-in-out");
             $(".slide-btn").css('margin-left', '220px');
         }
         
@@ -142,11 +144,42 @@
     
     var textMaxLen = 100;
     function checkMaxInput() {
-
+        console.log($("textarea").val());
+        sessionStorage.setItem("note", $("textarea").val());
         var c = $("textarea").val().length;
         if (c <= textMaxLen) $(".count-down").text(100-c);
     }
-    console.log("hi");
 
-    // $("textarea").on(")
+    function tagClick(a) {
+        a.remove();
+        saveTag();
+
+    }
+    var tagforSession = "";
+    function saveTag() {
+        tagforSession = "";
+        var myList = $(".var-tag .var-tag-a");
+        console.log(myList);
+
+        if (myList[0] != null) {
+            for (var i = 0; i < myList.length; i++) {
+                if (i != 0) tagforSession += ",";
+                tagforSession += myList[i].innerText;
+            }
+        }
+        sessionStorage.setItem("VarTag", tagforSession);
+    }
+
+    //每次進網站都要抓sessio重新塞tag、note、字數
+    var varTag = sessionStorage.getItem("VarTag");
+    console.log(varTag);
+    if (varTag != "") {
+        varTag = varTag.split(",");
+        for (var i = 0; i < varTag.length; i++) {
+            $(".var-tag").append(`<div class="var-tag-a" id="${varTag[i]}" onClick="tagClick(this)">${varTag[i]}</div>`);
+        }
+    }
+    $("textarea").val(sessionStorage.getItem("note"));
+    var c = $("textarea").val().length;
+    if (c <= textMaxLen) $(".count-down").text(100 - c);
 </script>

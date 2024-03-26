@@ -4,15 +4,22 @@ var logging;
 var user;
 if (MID == null) {
     console.log("沒有登入");
+    $(".member-logging").css("display", "none");
+    $(".member-logout").css("display", "block");
     logging = false;
 } else {
     console.log("顯示MID:" + MID);
     user = MID;
+    $(".member-logout").css("display", "none");
+    $(".member-logging").css("display", "block");
     logging = true;
 }
 
 var stocksID = $("#stocks-id").text();
 
+$("#memberLogging").on("click", function () {
+    window.location.href = "/Member/Login"
+})
 //圖表大小的設置
 var margin = { top: 20, right: 50, bottom: 30, left: 50 },
     width = 600 - margin.left - margin.right,
@@ -667,6 +674,7 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
     pointAni(index);
     function pointAni(index) {
         var strokeC = (myData[5].Close > myData[4].Close) ? "#b84121" : "#69b3a2";
+        var fillC = preState == "已結案" ? strokeC : "white"
         //var fillC = (myData[5].Close > myData[4].Close) ? "#f77465" : "#cedba0";
     /*        console.log("strokeC:" + strokeC + "  fillC:" + fillC);*/
 
@@ -677,7 +685,7 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
             .style("r", 5)
 
         d3.select(`.circleGroup${index} :last-child`)
-            .attr("fill", "white")
+            .attr("fill", fillC)
             //.transition()
             //.duration(1000)
             //.style("stroke-width", 10)
@@ -797,7 +805,6 @@ setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
 function copyList(obj) {
     var myList = $(".var-tag .var-tag-a");
     var copyAlready = false;
-    console.log(myList[0])
     if (myList[0] != null) {
         for (var i = 0; i < myList.length; i++) {
             if (myList[i].innerText == $(obj).text()) {
@@ -812,15 +819,18 @@ function copyList(obj) {
         }
     }
     if (!copyAlready) {
-        $(".var-tag").append(`<div class="var-tag-a" id="${$(obj).text()}">${$(obj).text()}</div>`);
+        $(".var-tag").append(`<div class="var-tag-a" id="${$(obj).text()}" onClick="tagClick(this)">${$(obj).text()}</div>`);
+        saveTag();
+        $(obj).removeClass("pre-list-btn-click-again");
         $(obj).addClass("pre-list-btn-click");
         setTimeout(function () {
             $(obj).removeClass("pre-list-btn-click")
             $(obj).addClass("pre-list-btn-click-again");
         }, 1000);
+       
     }
 
-    console.log($(obj).text());
+    //console.log($(obj).text());
     //
     var content = $(obj).text();
     navigator.clipboard.writeText(content);
@@ -860,4 +870,17 @@ setTimeout(function () {
     })
 }, 500);
 
-console.log("wTF");
+var tagforSession = "";
+function saveTag() {
+    tagforSession = "";
+    var myList = $(".var-tag .var-tag-a");
+    console.log(myList);
+    
+    if (myList[0] != null) {
+        for (var i = 0; i < myList.length; i++) {
+            if (i != 0) tagforSession += ",";
+            tagforSession += myList[i].innerText;
+        }
+    }
+    sessionStorage.setItem("VarTag", tagforSession);
+}
