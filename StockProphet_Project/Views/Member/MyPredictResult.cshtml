@@ -35,9 +35,7 @@
 
 <script>
 	//判斷會員是否登入
-	var MID = sessionStorage.getItem("LogAccount")
-
-	
+	var MID = sessionStorage.getItem("LogAccount")	
 
 	if (MID == null) {
 		$('#beforeLog').show();
@@ -46,7 +44,7 @@
 		$('#beforeLog').hide();
 		$('#afterLog').show();
 	}
-	console.log("顯示MID:" + MID);
+	// console.log("顯示MID:" + MID);
 
 
 	$(function () {
@@ -54,7 +52,6 @@
 		$('#showMemberIndex').on("click", function () {
 			window.location.href = "/Member/Index";
 		})
-
 		// 2.點擊修改個人資料
 		$('#showRevise').on("click", function () {
 			window.location.href = "/Member/Edit";
@@ -63,12 +60,10 @@
 		$('#showFavoritesPage').on("click", function () {
 			window.location.href = "/Member/MyCollect";
 		})
-
 		// 4.點擊我要預測
 		$('#showPredictFunc').on("click", function () {
 			window.location.href = "/StockModel/Predictindex";
 		})
-
 		// 5.點擊我的預測結果
 		$('#showHistoryPage').on("click", function () {
 			window.location.href = "/Member/MyPredictResult";
@@ -86,22 +81,35 @@
 			method: "get",
 			data: data,
 			success: function (e) {
-				//console.log(e)
-				
+			
+				console.log(e); 
 				for (var i = 0; i < e.length; i+=5) {
 					// console.log("----------"+i)
 					var subArray = [];
-					for (var j = 0; j < 5; j++) {
+					for (var j = i; j <i+ 5; j++) {
 						var historydate1 = new Date (e[j]["STdate"])
 						jsonforplot = ({ Date: historydate1, Close: e[j]["SteClose"] })
 						subArray.push(jsonforplot);
 					}
-					// console.log(jsonforplot)
+					//console.log(jsonforplot)
 					var finishdate2 = new Date(e[i]["PFinsihTime"])
 					subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] })
 					plotarray.push(subArray)
 				}
-				// console.log(plotarray)
+				for (var i = 0; i < plotarray.length; i++) {
+					plotarray[i].sort(function (a, b) {
+						// 获取当前子数组中每个对象的日期属性，并转换为日期对象
+						var dateA = new Date(a.Date);
+						var dateB = new Date(b.Date);
+
+						return dateA - dateB; // 降序排列
+					});
+				}
+
+				
+
+				console.log(plotarray); // 输出降序排列后的数组
+				
 				for (var w = 0; w< e.length; w += 5) {
 					var builddate3 = new Date(e[w]["PBuildTime"])
 					var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate()
@@ -119,10 +127,7 @@
 						SCode: e[w]["SCode"],
 						PFinsihTime: FinsihTime2
 					})
-				}
-
-				
-
+				}			
 				
 				$.each(plotarray, function (index, element) {
 					var finishtime = new Date(element[5]["Date"]);
@@ -143,14 +148,13 @@
 					var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
 					//選擇變數
 					var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]); 
-					//console.log((otherprarmeter[index]["Buildtime"]))
+					// console.log((otherprarmeter[index]["Buildtime"]))
 					drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"])
 				});
 			}
 		})
 
 		// 抓預測資料-某某會員預測過XX股票的資料值
-
 		// var PAccount = sessionStorage.getItem("LogAccount");
 		// d3.json(`/Member/showAllStocks/${PAccount}`, function (Alldata) {
 		//     var dateList = []; //把所有日期資料整理成陣列
@@ -160,8 +164,6 @@
 
 		//如果該會員有10筆預測資料，就要跑10次!!!
 		// d3.json(`/Member/${PID}`)
-
-
 
 		//抓所有資料，方便之後比對預測日的前五筆
 		// d3.json(`/Member/showPredictions/${stocksID}`, function (Ddata) {
@@ -210,8 +212,7 @@
 
 		//生卡片
 		function drawPre(myData, index, preState, preDate, PID, preVariable, parameter, PAcount, SName, SCode, PFinsihTime) {
-			//console.log(PAcount + "/" + SName + "/" + SCode)
-			console.log(myData)
+			// console.log(PAcount + "/" + SName + "/" + SCode)
 			var prelist = "";
 			if (preVariable[0] != null) {
 				prelist += `<button class="copyAll" id="card${PID}" onclick="copyAllList(this)">複製全部</button>`;
@@ -431,12 +432,7 @@
 						pointAni(index);
 					});
 			}
-
-
-
-		}
-
-		
+		}		
 	});
 	function copyList(obj) {
 		$(obj).addClass("pre-list-btn-click");
@@ -445,8 +441,8 @@
 			$(obj).addClass("pre-list-btn-click-again");
 		}, 1000);
 
-		console.log($(obj).text());
-		//
+		// console.log($(obj).text());
+		
 		var content = $(obj).text();
 		navigator.clipboard.writeText(content);
 	}
@@ -459,17 +455,12 @@
 		var thisCard = $(obj).attr("id");
 		var thisCardList = $(`#${thisCard} ~ .pre-list-btn`);
 
-
-
-
 		var content = "";
 		for (var i = 0; i < thisCardList.length; i++) {
 			if (i != 0) content += ",";
 			content += thisCardList[i].innerText;
 		}
 		navigator.clipboard.writeText(content);
-
-
 	}
 
 	setTimeout(function () {

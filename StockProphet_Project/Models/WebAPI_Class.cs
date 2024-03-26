@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using Humanizer;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -499,10 +500,10 @@ namespace StockProphet_Project.Models {
 			//			select o.StDate;
 			//	()
 			//}
-			public async Task<string> UpdateOneStock( string stockCode, string date ) {
+			public async Task<string> UpdateOneStock( string stockCode, string date ,int? port) {
 				// 設定 Python 腳本的路徑
-				string pythonScriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory.Replace(@"\bin\Debug\net8.0\", string.Empty), "wwwroot", "py", "PyAPI.py");
-
+				string pythonScriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory.Replace(@"\bin\Debug\net8.0\", "").Replace(@"\bin\Release\net8.0\", ""), "wwwroot", "py", "PyAPI.py");
+				Console.WriteLine(pythonScriptPath); 
 				// 檢查腳本檔案是否存在
 				if (!System.IO.File.Exists(pythonScriptPath)) {
 					return "Python script file does not exist." + pythonScriptPath;
@@ -510,7 +511,9 @@ namespace StockProphet_Project.Models {
 
 				// 創建 ProcessStartInfo 對象以啟動 Python 解釋器
 				ProcessStartInfo startInfo = new ProcessStartInfo();
-				startInfo.FileName = "python"; // 假設 Python 已經添加到系統的 PATH 中
+				
+				//startInfo.FileName = "python"; // 假設 Python 已經添加到系統的 PATH 中
+				startInfo.FileName = (port==80)?@"C:\Users\-I\AppData\Local\Programs\Python\Python311\python.exe": "python"; // 假設 Python 已經添加到系統的 PATH 中
 				startInfo.Arguments = pythonScriptPath;
 				startInfo.RedirectStandardInput = true;
 				startInfo.RedirectStandardOutput = true;
@@ -526,7 +529,8 @@ namespace StockProphet_Project.Models {
 
 					// 讀取 Python 腳本的輸出
 					using (StreamReader reader = process.StandardOutput) {
-						string result = await reader.ReadToEndAsync();
+						string result = "";
+						 result += await reader.ReadToEndAsync();
 						return result;
 					}
 				}

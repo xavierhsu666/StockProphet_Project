@@ -24,4 +24,6 @@ public partial class DbModel
     public string? Pstatus { get; set; }
 
     public string? Dummyblock { get; set; }
+	public string? Pmodel { get; set; }
+	public double? PAccuracyRatio { get; set; }
 }
