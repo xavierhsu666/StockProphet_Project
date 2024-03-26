@@ -81,22 +81,35 @@
 			method: "get",
 			data: data,
 			success: function (e) {
-				console.log(e)
-				
+			
+				console.log(e); 
 				for (var i = 0; i < e.length; i+=5) {
 					// console.log("----------"+i)
 					var subArray = [];
-					for (var j = 0; j < 5; j++) {
+					for (var j = i; j <i+ 5; j++) {
 						var historydate1 = new Date (e[j]["STdate"])
 						jsonforplot = ({ Date: historydate1, Close: e[j]["SteClose"] })
 						subArray.push(jsonforplot);
 					}
-					// console.log(jsonforplot)
+					//console.log(jsonforplot)
 					var finishdate2 = new Date(e[i]["PFinsihTime"])
 					subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] })
 					plotarray.push(subArray)
 				}
-				// console.log(plotarray)
+				for (var i = 0; i < plotarray.length; i++) {
+					plotarray[i].sort(function (a, b) {
+						// 获取当前子数组中每个对象的日期属性，并转换为日期对象
+						var dateA = new Date(a.Date);
+						var dateB = new Date(b.Date);
+
+						return dateA - dateB; // 降序排列
+					});
+				}
+
+				
+
+				console.log(plotarray); // 输出降序排列后的数组
+				
 				for (var w = 0; w< e.length; w += 5) {
 					var builddate3 = new Date(e[w]["PBuildTime"])
 					var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate()
@@ -135,7 +148,7 @@
 					var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
 					//選擇變數
 					var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]); 
-					console.log((otherprarmeter[index]["Buildtime"]))
+					// console.log((otherprarmeter[index]["Buildtime"]))
 					drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"])
 				});
 			}

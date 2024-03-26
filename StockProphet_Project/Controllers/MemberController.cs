@@ -392,7 +392,7 @@ namespace StockProphet_Project.Controllers
                             FROM Stock
                             WHERE SN_code = B.Pstock
                                   AND ST_Date <= B.PBulidTime
-                            ORDER BY ST_Date DESC
+                            ORDER BY ST_Date desc
                         ) AS A 
                         WHERE B.PAccount = '{customername}'";
             Console.WriteLine(sqlQuery);

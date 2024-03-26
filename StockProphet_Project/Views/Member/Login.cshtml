@@ -1,9 +1,15 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@* <h1>會員登入頁面</h1><hr> *@
+﻿<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
+<style>
+	#checkEye {
+		position: absolute;
+		top: 50%;
+		right: 10px;
+		transform: translateY(-50%);
+	}
+
+</style>
+<script src="wwwroot/icon"></script>
+
 @* 占版面1/3 *@
 <div class="row">
 	<div class="col-md-4">
@@ -11,14 +17,15 @@
 		<div id="LoginForm">
 			<h2>歡迎登入</h2>
 			<p id="WrongMsg" style="color:red">帳號/密碼 輸入錯誤</p>
-			<div class="form-floating mb-3">
-				@* 想要讓使用者在登入時，可以輸入帳號名稱/Email，這個欄位的name??  MAccoMnt MEmail*@
+			<div class="form-floating mb-3">				
 				<input id="Account" class="form-control" aria-required="true" name="MAccoMnt" value="" />
 				<label class="form-label">帳號名稱/Email</label>
 			</div>
 			<div class="form-floating mb-3">
-				<input id="Password" class="form-control" aria-required="true" name="MPassword" value="" />
-				<label class="form-label">密碼</label>
+				<input type="password" id="Password" class="form-control" aria-required="true" name="MPassword" value="" />
+				<label class="form-label">密碼</label>					
+				<i id="checkEye" class="fas fa-eye-slash"></i>
+
 			</div>
 			<div>
 				<div id="LoginSubmit" class="w-100 btn btn-lg btn-primary" rel="prev">登入</div>
@@ -38,6 +45,16 @@
 	$('#WrongMsg').hide();
 
 	$(function () {
+		//密碼欄位
+		$("#checkEye").click(function () {
+			if ($(this).hasClass('fa-eye-slash')) {
+				$("#Password").attr('type', 'text');
+		}else{				
+				$("#Password").attr('type', 'password');
+		}
+			$(this).toggleClass('fa-eye-slash').toggleClass('fa-eye');
+		});
+
 		//按下登入按鈕需驗證身分別
 		$('#LoginSubmit').on("click", function () {
 			var Account = $('#Account').val()
