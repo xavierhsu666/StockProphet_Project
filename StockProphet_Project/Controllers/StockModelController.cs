@@ -52,7 +52,7 @@ namespace StockProphet_Project.Controllers {
 		// ------------------------------------------------------------------------------<KAZUO>------------------------------------------------------------------------------
 
 		// <參數區>改過需要調整的地方
-		public string InputLatestDate = DateTime.Parse("2024-3-8").ToString("yyyy-MM-dd");
+		public string InputLatestDate = DateTime.Now.ToString("yyyy-MM-dd");
 		public int InputMinCount = 30;
 		// <參數區>改過需要調整的地方
 
@@ -101,26 +101,10 @@ namespace StockProphet_Project.Controllers {
 		}
 
 		public IActionResult TestWebAPI() {
-			string tmp = "";
-			var q = from o in _context.DbModels.ToList()
-					where o.Pstatus == "Tracing"
-					select o;
-
-			if (q.Count() > 0) {
-				foreach (var item in q) {
-					var q2 = from o in _context.Stock.ToList()
-							 where o.SnCode == item.Pstock
-							 orderby o.StDate descending
-							 select o.SteClose;
-					item.Pstatus = (item.PfinishTime > DateTime.Now) ? "Tracing" : "Close";
-					item.PAccuracyRatio = Convert.ToDouble(item.Plabel / q2.First().Value);
-					_context.DbModels.Update(item);
-					_context.SaveChanges();
-				}
-			}
+			var q = from o in _context.DbCollect select o;
 
 
-			return Content("OK");
+			return Content(q.First().CAccount);
 		}
 		[EnableCors("MyAllowSpecificOrigins")]
 		[HttpGet]
