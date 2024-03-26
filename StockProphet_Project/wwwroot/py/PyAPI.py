@@ -136,8 +136,14 @@ for date in dates:
     data2[['年', '季']] = data2['財報年/季'].str.split('/', expand=True)
     # 下午3點跑的時候 有機率會data1/2 對不上(更新時間不一樣)
     if(data1.shape[0]!=data2.shape[0]):
-        print("要出錯囉~~晚點再試，等表1表2更新就好")
-        
+        # 要出錯囉~~晚點再試，等表1表2更新就好...才怪
+        # 檢查看誰比較長，把比較長的刪除一行看看
+        if(max(data1.shape[0],data2.shape[0])==data2.shape[0]):
+            data2 = data2.drop(data2.index[-1])
+        elif(max(data1.shape[0],data2.shape[0])==data1.shape[0]):
+            data1 = data1.drop(data1.index[-1])
+    print("data1 shape:", data1.shape)
+    print("data2 shape:", data2.shape)
     data2.iloc[:,0]=data1.iloc[:,0]
 
     # Ensure both DataFrames have a common column for merging
