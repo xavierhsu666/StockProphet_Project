@@ -47,11 +47,25 @@ namespace StockProphet_Project.Controllers
         {
             return View();
         }
+		[HttpGet]
+		public IActionResult selectcustomername(string data)
+		{
+			var query = _context.DbMembers.Where(x => x.MtrueName == data);
+			return Json(query);
 
-        // POST: DbMembers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+		}
+		[HttpGet]
+		public IActionResult piechart()
+		{
+			var query = _context.DbMembers;
+			return Json(query);
+
+		}
+
+		// POST: DbMembers/Create
+		// To protect from overposting attacks, enable the specific properties you want to bind to.
+		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Mid,MaccoMnt,Mpassword,MtrueName,Mgender,Mbirthday,MinvestYear,Memail,Mlevel,Mprefer,MregisterTime,MlastLoginTime,MfavoriteModel")] DbMember dbMember)
         {

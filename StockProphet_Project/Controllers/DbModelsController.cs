@@ -47,11 +47,21 @@ namespace StockProphet_Project.Controllers
         {
             return View();
         }
+		public IActionResult orderdata(string data)
+		{
+			var query = _context.DbModels.Where(x => x.Pstock == data);
+			return Json(query);
+		}
+		public IActionResult barchart()
+		{
+			var query = _context.DbModels;
+			return Json(query);
+		}
 
-        // POST: DbModels/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+		// POST: DbModels/Create
+		// To protect from overposting attacks, enable the specific properties you want to bind to.
+		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Pid,Pstock,Pvariable,Plabel,Pprefer,Paccount,PbulidTime,PfinishTime,Pstatus,Dummyblock,Pmodel,PAccuracyRatio")] DbModel dbModel)
         {
