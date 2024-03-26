@@ -7,44 +7,46 @@
 <h2>請填寫註冊資料</h2>
 
 <div id="RegisterData">
-    <form>
+    <form autocomplete="on">
         <div>
             <label for="Account">帳號:</label>
             @* +正則 *@
-            <input type="text" pattern=@AccountPattern size="20" maxlength="20" name="MAccoMnt" id="Account" title="限輸入英數字，請設定8碼以上" value="" required="required">
-            <div id="checkName" ></div>@* 檢查帳戶名稱是否重複 *@
-            <div id="accountError" style="color: red;"></div> @* 不符合格式跳提示 *@
+            <input type="text" pattern=@AccountPattern size="20" maxlength="20" name="MAccoMnt" id="Account" title="請輸入英數字，並設定8碼以上" value="" required="required">
+            <span id="lottie" style="display: none; width:30px; height:30px " ></span>  @* 打勾動畫 30*30*@           
+            <span id="checkName"></span>@* 檢查帳戶名稱是否重複 *@
+            <span id="accountError" style="color: red;"></span> @* 不符合格式跳提示 *@
 
         </div>
         <div>
             <label for="Password">密碼:</label>
             @* +正則 *@
-            <input type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼" >
-            <div id="passwordError" style="color: red;"></div>
+            <input type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼">
+            <span id="passwordError" style="color: red;"></span>
         </div>
         <div>
             <label for="Password">請再次輸入密碼:</label>
             @* +正則 *@
-            <input type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="" >
+            <input type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="">
+            <span id="confirmPasswordError" style="color: red;"></span>
             @* 再次輸入密碼不同時，顯示提示字 *@
-            <div id="pwdnoteword" style="color: red;">您輸入的密碼不相同</div>
-            <div id="confirmPasswordError" style="color: red;"></div>
+            <span id="pwdnoteword" style="color: red;">您輸入的密碼不相同</span>
+
         </div>
         <label for="MEmail">信箱:</label>
         @* +正則 *@
-        <input type="email" pattern=@MEmailPattern name="MEmail" id="Email" value="" >
-        <div id="emailError" style="color: red;"></div>
+        <input type="email" pattern=@MEmailPattern name="MEmail" id="Email" value="">
+        <span id="emailError" style="color: red;"></span>
         <br>
 
         <label for="MTrueName">姓名:</label>
-        <input type="text" name="MTrueName" id="UserName" value="" >
+        <input type="text" name="MTrueName" id="UserName" value="">
         <br>
 
         <label for="Birthday">生日:</label>
-        <input type="date" name="MBirthday" id="Birthday" value="" >
+        <input type="date" name="MBirthday" id="Birthday" value="">
         <br>
 
-        <label for="MGender">性別:</label>
+        <label for="MGender" required="required">性別:</label>
         <input type="radio" name="MGender" id="Male" value="男" required>
         <label for="Male">男</label>
         <input type="radio" name="MGender" id="Female" value="女" required>
@@ -79,19 +81,18 @@
     $('#checkName').hide();
     //再次輸入密碼不同時，顯示提示字
     $('#pwdnoteword').hide();
-    
 
-    $(function () {                   
+    $(function () {
 
         $('#Account').on('change', function () {
             var accountValue = $(this).val();
             var accountPattern = new RegExp(@Html.Raw(Json.Serialize(AccountPattern)));
             // 检查输入值是否匹配正则表达式
             if (!accountPattern.test(accountValue)) {
-                $('#accountError').text('帳號格式不符合要求，"限輸入英數字，請設定8碼以上"');
+                $('#accountError').text('"限輸入英數字，請設定8碼以上"');
             } else {
                 $('#accountError').text('');
-                console.log("沒事")
+                // console.log("沒事")
             }
         });
         // 监听密码输入框的输入事件
@@ -101,7 +102,7 @@
 
             // 检查输入值是否匹配正则表达式
             if (!passwordPattern.test(passwordValue)) {
-                $('#passwordError').text('密码格式不符合要求，"需至少包含一個特殊符號，且長度須超過8碼"');
+                $('#passwordError').text('"需至少包含一個特殊符號，且長度須超過8碼"');
             } else {
                 $('#passwordError').text('');
             }
@@ -133,6 +134,25 @@
             }
         });
 
+        //畫打勾
+        function playAni() {
+            document.getElementById("lottie").style.display = "block";
+            animation.play();
+        }
+
+        // 載入 Lottie 動畫-引用json檔?
+        var animation = lottie.loadAnimation({
+            container: document.getElementById("lottie"), //要動畫的地方
+            renderer: "svg",
+            loop: false,
+            autoplay: false,
+            path: "/wwwroot/RegisterAnimation.json", //載下來的動畫json檔
+        });
+        // 動畫跑完後隱藏
+        // animation.addEventListener("complete", function () {
+        //     document.getElementById("lottie").style.display = "none";
+        // });
+
 
         // 1.判斷帳戶名是否有重複
         $('#Account').on("change", function () {
@@ -144,17 +164,20 @@
                 method: "get",
                 data: { MAccoMnt: checkAccount },
                 success: function (e) {
-                    console.log(e)
+                    // console.log(e)
                     if (checkAccount == "") {
                         $('#checkName').show();
-                        $('#checkName').text("必填")
+                        $('#checkName').text("必填");
                     } else {
-                    if (e) {
-                        $('#checkName').show();
-                        $('#checkName').text("帳號名稱已被註冊")
-                    } else {
-                        $('#checkName').show();
-                        $('#checkName').text("帳號名稱尚未被使用")
+                        if (e) {
+                            $('#checkName').show();
+                            $('#checkName').text("帳號名稱已被註冊");
+                        } else {
+                            $('#checkName').hide();
+                            // $('#accountError').hide();
+                            playAni();
+                            // alert('帳號未使用')
+                           
                         }
                     }
                     // alert(e);
@@ -167,8 +190,9 @@
             var MPassword1 = $('#Password1').val();
             var MPassword2 = $('#Password2').val();
             if (MPassword2 == "") {
-                $('#pwdnoteword').show();
-                $('#pwdnoteword').text("必填")
+                $('#confirmPasswordError').show();
+                $('#pwdnoteword').hide();
+                $('#confirmPasswordError').text("必填")
             } else {
                 if (MPassword1 != MPassword2) {
                     $('#pwdnoteword').show();
@@ -178,51 +202,49 @@
                     console.log("ok");
                 }
             }
-        })
+        })             
 
         //3.按下立即註冊=>將註冊的資料存至Server
-        //若有欄位沒填不送出資料
+        //若有欄位沒填不送出資料?
         $('#RegisterSubmit').on("click", function () {
-       
-                var GetCurrentTime = new Date();
+            var GetCurrentTime = new Date();
+            // console.log(GetCurrentTime.getFullYear())
+            // console.log(GetCurrentTime.getMonth()+1);
+            // console.log(GetCurrentTime.getDate());
+            if ($('#Account').val() == "" || $('#Password1').val() == "" || $('#Password2').val() == "" || $('#Email').val() == "" || $('#UserName').val() == "" || $('#Birthday').val() == "" || $('input[name="MGender"]').val() == "" || $('#InvestYear').val() == "" || $('#MLevel').val() == "") {
+            alert('必填欄位未填寫')
+            // console.log("擋下註冊")
+            } else { 
+            var dataToServer = {
+                MAccoMnt: $('#Account').val(),
+                MPassword: $('#Password1').val(),
+                MEmail: $('#Email').val(),
+                MTrueName: $('#UserName').val(),
+                MBirthday: $('#Birthday').val(),
+                MGender: $('input[name="MGender"]:checked').val(),
+                MInvestYear: $('#InvestYear').val(),
+                MLevel: $('#MLevel').val(),
+                registerTime: GetCurrentTime.toISOString()
+            }
+            // console.log(dataToServer);
+            // console.log(GetCurrentTime);
 
-                // console.log(GetCurrentTime.getFullYear())
-                // console.log(GetCurrentTime.getMonth()+1);
-                // console.log(GetCurrentTime.getDate());
-
-                var dataToServer = {
-                    MAccoMnt: $('#Account').val(),
-                    MPassword: $('#Password1').val(),
-                    MEmail: $('#Email').val(),
-                    MTrueName: $('#UserName').val(),
-                    MBirthday: $('#Birthday').val(),
-                    MGender: $('input[name="MGender"]:checked').val(),
-                    MInvestYear: $('#InvestYear').val(),
-                    MLevel: $('#MLevel').val(),
-                    registerTime: GetCurrentTime.toISOString()
+            $.ajax({
+                url: "/Member/Register",
+                method: "post",
+                data: dataToServer,
+                success: function (e) {
+                    // console.log("註冊成功!");
+                    // alert("註冊成功!");
+                        window.location.href = "/Member/Login";
                 }
+            })
+            }
 
-                console.log(dataToServer);
-                console.log(GetCurrentTime);
-
-
-                $.ajax({
-                    url: "/Member/Register",
-                    method: "post",
-                    data: dataToServer,
-                    success: function (e) {
-                        // console.log("註冊成功!");
-                        alert("註冊成功");
-                        window.location.href = "/Home/Index";
-
-                    }
-                })
-            
         })
 
         //4.按下取消註冊=>清空input的值
         $('#Reset').on("click", function () {
-
             $('#Account').val("");
             $('#Password1').val("");
             $('#Password2').val("");
@@ -239,12 +261,8 @@
                 $('#pwdnoteword').hide();
             }
         })
+
         
         // ---end of function
     })
-
-
-
-
-
 </script>

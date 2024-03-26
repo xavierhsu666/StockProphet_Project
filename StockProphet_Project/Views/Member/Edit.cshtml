@@ -30,25 +30,26 @@
                 <div>
                     <label for="Password">修改密碼:</label>
                     <input type="password" pattern="@PasswordPattern" size="20" minlength="20" name="MPassword" id="Password" title="請輸入原始密碼" value="">
-                    <div id="passwordError" style="color: red;"></div>
+                    <span id="passwordError" style="color: red;"></span>
 
                 </div>
                 <div id="pass1">
                     <label for="Password">輸入新密碼:</label>
                     <input type="password" pattern="@PasswordPattern" size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼" value="">
-                    <div id="passwordError" style="color: red;"></div>
+                    <span id="passwordError" style="color: red;"></span>
                 </div>
                 <div id="pass2">
                     <label for="Password">請再輸入一次新密碼:</label>
                     <input type="password" pattern="" size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="">
                     @* 再次輸入密碼不同時，顯示提示字 *@
-                    <div id="pwdnoteword"><p style="color:red; ">您輸入的密碼不相同</p></div>
-                    <div id="passwordError" style="color: red;"></div>
-
+                    <span id="passwordError" style="color: red;"></span>
+                    <span id="pwdnoteword"><p style="color:red; ">您輸入的密碼不相同</p></span>
+                    
                 </div>
 
                 <label for="Email">信箱:</label>
                 <input type="email" pattern="@MEmailPattern" name="MEmail" id="Email" value="" required>
+                <span id="emailError" style="color: red;"></span>
 
                 <br>
 
