@@ -609,10 +609,10 @@
 							PPrefer: data.userPrefer,
 							PBuildTime: paras.currentDate,
 							PfinishTime: paras.finishDate,
-							dummyblock: '["MSE":' + e.output_M_MSE.toFixed(2) +
+							dummyblock: '{"MSE":' + e.output_M_MSE.toFixed(2) +
 								',"RMSE":' + e.output_M_RMSE.toFixed(2) +
 								',"Iters":' + paras.InputModelPara[0] +
-								']',
+								'}',
 							Paccount: paras.account,
 							Pmodel: paras.usingModel
 						}
