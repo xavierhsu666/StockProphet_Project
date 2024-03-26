@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace StockProphet_Project.Models;
 
@@ -99,11 +100,13 @@ public partial class StocksContext : DbContext
 
         modelBuilder.Entity<Stock>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("Stock");
+            entity.HasKey(e => e.SPk);
 
-            entity.Property(e => e.SPk)
+
+
+		   entity.ToTable("Stock");
+
+			entity.Property(e => e.SPk)
                 .HasMaxLength(50)
                 .HasColumnName("S_PK");
             entity.Property(e => e.SbBussinessIncome).HasColumnName("SB_BussinessIncome");

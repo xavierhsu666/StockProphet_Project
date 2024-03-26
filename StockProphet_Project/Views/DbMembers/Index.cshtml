@@ -1,0 +1,101 @@
+﻿@model IEnumerable<StockProphet_Project.Models.DbMember>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.MaccoMnt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mpassword)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MtrueName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mgender)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mbirthday)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MinvestYear)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Memail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mlevel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mprefer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MregisterTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MlastLoginTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MfavoriteModel)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaccoMnt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mpassword)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MtrueName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mgender)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mbirthday)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MinvestYear)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Memail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mlevel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mprefer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MregisterTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MlastLoginTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MfavoriteModel)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Mid">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Mid">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Mid">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

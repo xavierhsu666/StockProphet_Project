@@ -1,0 +1,239 @@
+﻿@model IEnumerable<StockProphet_Project.Models.Stock>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.StDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StYearQuarter)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StQuarter)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StYear)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SnCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SnName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SteOpen)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SteClose)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SteMax)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SteMin)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SteSpreadRatio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SteTradeMoney)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SteTradeQuantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SteTransActions)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SteDividendYear)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SbYield)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SbPbratio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SbEps)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SbBussinessIncome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SiMovingAverage5)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SiMovingAverage30)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SiRsv5)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SiRsv30)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SiK5)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SiK30)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SiD5)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SiD30)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SiLongEma)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SiShortEma)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SiDif)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SiMacd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SiOsc)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SiPe)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SiMa)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StUpdateDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StYearQuarter)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StQuarter)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StYear)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SnCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SnName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SteOpen)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SteClose)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SteMax)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SteMin)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SteSpreadRatio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SteTradeMoney)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SteTradeQuantity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SteTransActions)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SteDividendYear)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SbYield)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SbPbratio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SbEps)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SbBussinessIncome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SiMovingAverage5)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SiMovingAverage30)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SiRsv5)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SiRsv30)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SiK5)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SiK30)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SiD5)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SiD30)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SiLongEma)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SiShortEma)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SiDif)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SiMacd)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SiOsc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SiPe)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SiMa)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StUpdateDate)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.SPk">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.SPk">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.SPk">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
