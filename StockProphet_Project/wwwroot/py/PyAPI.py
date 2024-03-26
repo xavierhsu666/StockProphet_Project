@@ -134,7 +134,10 @@ for date in dates:
     
 
     data2[['年', '季']] = data2['財報年/季'].str.split('/', expand=True)
-    
+    # 下午3點跑的時候 有機率會data1/2 對不上(更新時間不一樣)
+    if(data1.shape[0]!=data2.shape[0]):
+        print("要出錯囉~~晚點再試，等表1表2更新就好")
+        
     data2.iloc[:,0]=data1.iloc[:,0]
 
     # Ensure both DataFrames have a common column for merging
