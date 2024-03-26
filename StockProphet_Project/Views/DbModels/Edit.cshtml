@@ -1,0 +1,84 @@
+﻿@model StockProphet_Project.Models.DbModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>DbModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Pid" />
+            <div class="form-group">
+                <label asp-for="Pstock" class="control-label"></label>
+                <input asp-for="Pstock" class="form-control" />
+                <span asp-validation-for="Pstock" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Pvariable" class="control-label"></label>
+                <input asp-for="Pvariable" class="form-control" />
+                <span asp-validation-for="Pvariable" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Plabel" class="control-label"></label>
+                <input asp-for="Plabel" class="form-control" />
+                <span asp-validation-for="Plabel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Pprefer" class="control-label"></label>
+                <input asp-for="Pprefer" class="form-control" />
+                <span asp-validation-for="Pprefer" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Paccount" class="control-label"></label>
+                <input asp-for="Paccount" class="form-control" />
+                <span asp-validation-for="Paccount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PbulidTime" class="control-label"></label>
+                <input asp-for="PbulidTime" class="form-control" />
+                <span asp-validation-for="PbulidTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PfinishTime" class="control-label"></label>
+                <input asp-for="PfinishTime" class="form-control" />
+                <span asp-validation-for="PfinishTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Pstatus" class="control-label"></label>
+                <input asp-for="Pstatus" class="form-control" />
+                <span asp-validation-for="Pstatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Dummyblock" class="control-label"></label>
+                <input asp-for="Dummyblock" class="form-control" />
+                <span asp-validation-for="Dummyblock" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Pmodel" class="control-label"></label>
+                <input asp-for="Pmodel" class="form-control" />
+                <span asp-validation-for="Pmodel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PAccuracyRatio" class="control-label"></label>
+                <input asp-for="PAccuracyRatio" class="form-control" />
+                <span asp-validation-for="PAccuracyRatio" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
