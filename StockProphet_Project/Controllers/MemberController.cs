@@ -80,8 +80,6 @@ namespace StockProphet_Project.Controllers
                     _context.SaveChanges();
                     Console.WriteLine(1);
 
-
-
                 }
                 else
                 {
@@ -104,8 +102,6 @@ namespace StockProphet_Project.Controllers
                 Console.WriteLine(3);
                 return false;
             }
-
-
         }
 
         //讀取更新後的會員資料
@@ -348,18 +344,6 @@ namespace StockProphet_Project.Controllers
             }
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
         //     //我的收藏 - 網址傳資料|回傳預測內容
         //     public IActionResult showPredictions(string id)
         //     {
@@ -438,8 +422,6 @@ namespace StockProphet_Project.Controllers
 
 				});
             }
-
-
             return Json(results);
         }
 
@@ -449,7 +431,6 @@ namespace StockProphet_Project.Controllers
         ////網址傳資料|回傳預測內容
         //public IActionResult showPredictions(string id)
         //{
-
         //    var viewModel = _context.DbModels.ToList();
         //    var query = from p in viewModel
         //                where p.Paccount == id
@@ -516,9 +497,7 @@ namespace StockProphet_Project.Controllers
             //System.Diagnostics.Debug.WriteLine(MBirthday);
             //System.Diagnostics.Debug.WriteLine(MGender);
             //System.Diagnostics.Debug.WriteLine(MInvestYear);
-            //System.Diagnostics.Debug.WriteLine(MLevel);
-
-            
+            //System.Diagnostics.Debug.WriteLine(MLevel);            
             DateTime dateTime = DateTime.Parse(registerTime);
 
             //轉換日期格式 字串->DateOnly
@@ -561,7 +540,6 @@ namespace StockProphet_Project.Controllers
             {
                 var member = _context.DbMembers.FirstOrDefault(x => x.Memail == MAccoMnt);
                 Console.WriteLine(member);
-
                 //先檢查是否存在該會員
 
                 if (member != null)
@@ -611,14 +589,12 @@ namespace StockProphet_Project.Controllers
                 //Console.WriteLine("登入會員的ID" + member.Mid);
 
                 //先檢查是否存在該會員
-
                 if (member != null)
                 {
                     //再判斷密碼是否正確					
                     if (member.Mpassword == MPassword)
                     {
                         //2.包成Json傳值
-
                         var LogMember = new
                         {
                             Mid = member.Mid,
@@ -672,9 +648,7 @@ namespace StockProphet_Project.Controllers
                 //抓取忘記密碼的會員Id
                 var memberId = resultmid;
                 System.Diagnostics.Debug.WriteLine("顯示忘記密碼的會員ID" + memberId);
-
             }
-
             return result.Any();
         }
 
@@ -727,7 +701,6 @@ namespace StockProphet_Project.Controllers
         }
 
 
-
         //未登入時的修改密碼頁面-5      
         public IActionResult RevisePassword()
         {
@@ -751,8 +724,8 @@ namespace StockProphet_Project.Controllers
         }
 
 
-    }
 
+    }
 }
 
 

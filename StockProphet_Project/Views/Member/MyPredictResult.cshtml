@@ -35,9 +35,7 @@
 
 <script>
 	//判斷會員是否登入
-	var MID = sessionStorage.getItem("LogAccount")
-
-	
+	var MID = sessionStorage.getItem("LogAccount")	
 
 	if (MID == null) {
 		$('#beforeLog').show();
@@ -46,7 +44,7 @@
 		$('#beforeLog').hide();
 		$('#afterLog').show();
 	}
-	console.log("顯示MID:" + MID);
+	// console.log("顯示MID:" + MID);
 
 
 	$(function () {
@@ -54,7 +52,6 @@
 		$('#showMemberIndex').on("click", function () {
 			window.location.href = "/Member/Index";
 		})
-
 		// 2.點擊修改個人資料
 		$('#showRevise').on("click", function () {
 			window.location.href = "/Member/Edit";
@@ -63,12 +60,10 @@
 		$('#showFavoritesPage').on("click", function () {
 			window.location.href = "/Member/MyCollect";
 		})
-
 		// 4.點擊我要預測
 		$('#showPredictFunc').on("click", function () {
 			window.location.href = "/StockModel/Predictindex";
 		})
-
 		// 5.點擊我的預測結果
 		$('#showHistoryPage').on("click", function () {
 			window.location.href = "/Member/MyPredictResult";
@@ -119,10 +114,7 @@
 						SCode: e[w]["SCode"],
 						PFinsihTime: FinsihTime2
 					})
-				}
-
-				
-
+				}			
 				
 				$.each(plotarray, function (index, element) {
 					var finishtime = new Date(element[5]["Date"]);
@@ -150,7 +142,6 @@
 		})
 
 		// 抓預測資料-某某會員預測過XX股票的資料值
-
 		// var PAccount = sessionStorage.getItem("LogAccount");
 		// d3.json(`/Member/showAllStocks/${PAccount}`, function (Alldata) {
 		//     var dateList = []; //把所有日期資料整理成陣列
@@ -160,8 +151,6 @@
 
 		//如果該會員有10筆預測資料，就要跑10次!!!
 		// d3.json(`/Member/${PID}`)
-
-
 
 		//抓所有資料，方便之後比對預測日的前五筆
 		// d3.json(`/Member/showPredictions/${stocksID}`, function (Ddata) {
@@ -210,7 +199,7 @@
 
 		//生卡片
 		function drawPre(myData, index, preState, preDate, PID, preVariable, parameter, PAcount, SName, SCode, PFinsihTime) {
-			console.log(PAcount + "/" + SName + "/" + SCode)
+			// console.log(PAcount + "/" + SName + "/" + SCode)
 			var prelist = "";
 			if (preVariable[0] != null) {
 				prelist += `<button class="copyAll" id="card${PID}" onclick="copyAllList(this)">複製全部</button>`;
@@ -430,12 +419,7 @@
 						pointAni(index);
 					});
 			}
-
-
-
-		}
-
-		
+		}		
 	});
 	function copyList(obj) {
 		$(obj).addClass("pre-list-btn-click");
@@ -444,8 +428,8 @@
 			$(obj).addClass("pre-list-btn-click-again");
 		}, 1000);
 
-		console.log($(obj).text());
-		//
+		// console.log($(obj).text());
+		
 		var content = $(obj).text();
 		navigator.clipboard.writeText(content);
 	}
@@ -458,17 +442,12 @@
 		var thisCard = $(obj).attr("id");
 		var thisCardList = $(`#${thisCard} ~ .pre-list-btn`);
 
-
-
-
 		var content = "";
 		for (var i = 0; i < thisCardList.length; i++) {
 			if (i != 0) content += ",";
 			content += thisCardList[i].innerText;
 		}
 		navigator.clipboard.writeText(content);
-
-
 	}
 
 	setTimeout(function () {
