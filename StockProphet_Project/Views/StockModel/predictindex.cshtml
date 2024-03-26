@@ -453,6 +453,7 @@
 			var createmodelTime;
 			var iterationtimeforpredict;
 			var predictedloss;
+			var mymodelselect
 			// <ks area--------------------->
 
 			// ####<預設值待更新-------------------------------------->
@@ -789,6 +790,7 @@
 
 
 							})
+							mymodelselect="LSTM"
 							break;
 						case "2":
 							window.location.href = `#borisform${choosewhichmodel}`;
@@ -799,6 +801,7 @@
 							$.each(borislist, function (index, element) {
 								$(`input[id=${element}]`).prop("checked", true);
 							});
+							mymodelselect = "FNN"
 							break;
 						case "3":
 							window.location.href = `#kazuoform3`;
@@ -816,7 +819,9 @@
 								"</td></tr ></table>");
 
 							$("#ModelParaInputArea").append(R_maximumNumberOfIterations);
+							mymodelselect = "迴歸"
 							break;
+
 						case "4":
 							window.location.href = `#kazuoform3`;
 							$(`#kazuoform3`).css("display", "block");
@@ -851,6 +856,7 @@
 							// $("#ModelParaInputArea").append(seriesLength);
 							// $("#ModelParaInputArea").append(trainSize);
 							// $("#ModelParaInputArea").append(confidenceLevel);
+							mymodelselect = "時間序列"
 							break;
 						default:
 							break;
@@ -1200,7 +1206,7 @@
 								$(`#progress${number}`).css("width", '99%');
 
 								setTimeout(function () {
-									var predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode;
+									var predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode + "&mymodelselect=" + mymodelselect;
 									window.location.href = predicturl;
 								}, 3000); // 第四个setTimeout在第三个setTimeout执行完后3秒再执行
 
