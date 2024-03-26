@@ -19,7 +19,7 @@ def install_requirements():
 
 # 调用函数来安装 requirements.txt 中的依赖项
 install_requirements()
-os.system('cls')
+# os.system('cls')
 
 import requests
 import pandas as pd
