@@ -557,7 +557,9 @@
 						SaveModelResultToDB(datatoserver)
 						increaseProgress(70);
 						increaseProgress(100);
-						window.location.href = "/stockmodel/predictphoto?predictedData=" + e.Output_F_estimate + "&snCode=" + data.stockCode;
+						// window.location.href = "/stockmodel/predictphoto?predictedData=" + e.Output_F_estimate + "&snCode=" + data.stockCode;
+						window.location.href = "/StockModel/predictphoto?predictedData=" + e.Output_F_estimate + "&predictedloss=" + e.Output_M_MAE.toFixed(2) + "&snCode=" + data.stockCode + "&mymodelselect=時間序列";
+
 						// alert("OKOK" + e);
 					}
 				})
@@ -619,7 +621,9 @@
 						console.log(e);
 						increaseProgress(70);
 						increaseProgress(100);
-						window.location.href = "/stockmodel/predictphoto?predictedData=" + e.output_F_Forcast + "&snCode=" + data.stockCode;
+						// window.location.href = "/stockmodel/predictphoto?predictedData=" + e.output_F_Forcast + "&snCode=" + data.stockCode;
+						window.location.href = "/StockModel/predictphoto?predictedData=" + e.output_F_Forcast + "&predictedloss=" + e.output_M_MSE.toFixed(2) + "&snCode=" + data.stockCode + "&mymodelselect=回歸模型";
+
 						// alert("OKOK" + e);
 					}
 				})
