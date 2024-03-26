@@ -350,13 +350,13 @@ namespace StockProphet_Project.Controllers {
 			} catch {
 			}
 			if (checkStockCodeIsRight(stockCode) == "Nah") {
-				var result = new { stockname = "查無這支股票", stockexist = false };
+				var result = new { stockname = "查無這支股票", stockexist = false, fedback = "csv找不到" };
 				Console.WriteLine("call UpdateOneStock: csv找不到");
 				return Json(result);
 			} else if (issame) {
 				Console.WriteLine("call UpdateOneStock:" + stockCode + " 資料庫有最新資料，不執行webapi");
 
-				var result = new { stockname = stockName, stockexist = true };
+				var result = new { stockname = stockName, stockexist = true, fedback = "資料庫有最新資料，不執行webapi" };
 				return Json(result);
 			} else {
 
@@ -383,7 +383,7 @@ namespace StockProphet_Project.Controllers {
 				}
 				//stockname = "查無這支股票";
 				//stockexist = false;
-				var result = new { stockname = stockname, stockexist = stockexist };
+				var result = new { stockname = stockname, stockexist = stockexist, fedback= fedback };
 				return Json(result);
 			}
 		}

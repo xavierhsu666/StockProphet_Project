@@ -510,7 +510,8 @@ namespace StockProphet_Project.Models {
 
 				// 創建 ProcessStartInfo 對象以啟動 Python 解釋器
 				ProcessStartInfo startInfo = new ProcessStartInfo();
-				startInfo.FileName = "python"; // 假設 Python 已經添加到系統的 PATH 中
+				//startInfo.FileName = "python"; // 假設 Python 已經添加到系統的 PATH 中
+				startInfo.FileName = @"C:\Users\-I\AppData\Local\Programs\Python\Python311\python.exe"; // 假設 Python 已經添加到系統的 PATH 中
 				startInfo.Arguments = pythonScriptPath;
 				startInfo.RedirectStandardInput = true;
 				startInfo.RedirectStandardOutput = true;
@@ -526,7 +527,8 @@ namespace StockProphet_Project.Models {
 
 					// 讀取 Python 腳本的輸出
 					using (StreamReader reader = process.StandardOutput) {
-						string result = await reader.ReadToEndAsync();
+						string result = "";
+						 result += await reader.ReadToEndAsync();
 						return result;
 					}
 				}
