@@ -309,7 +309,16 @@ namespace StockProphet_Project.Controllers {
 		// <功能開發測試區>
 
 		// <WEB API 區>
+		public IActionResult stocksListACA() {
+			var stocksList = (from obj in new ChoCSVReader<stocksCheck>("wwwroot\\stocksListCode.csv").WithFirstLineHeader()
+							  select new {
+								  label = obj.Name,
+								  category = obj.type
+							  })
+							  .ToList();
 
+			return Json(stocksList);
+		}
 		[HttpGet]
 		public async Task<IActionResult> UpdateOneStock( string stockCode ) {
 			if (checkStockCodeIsRight(stockCode) == "Nah") {
