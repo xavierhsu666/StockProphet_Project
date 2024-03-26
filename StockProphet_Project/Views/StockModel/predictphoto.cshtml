@@ -1,91 +1,107 @@
 ﻿@{
     ViewData["Title"] = "股票預測";
+    int finsihdate;
+    switch (@ViewBag.usingModel)
+    {
+        case "LSTM":
+            finsihdate = 30;
+            break;
+        case "FNN":
+            finsihdate = 5;
+            break;
+        case "迴歸":
+            finsihdate = 30;
+            break;
+        case "時間序列":
+            finsihdate = 5;
+            break;
+        default:
+            finsihdate = 0;
+            break;
+    }
 }
-
 <!-- 引入 Chart.js 库 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <h1>股票預測</h1>
-<h1>預測值:@ViewBag.PredictedData</h1>
-<h1>MSE-Loss:@ViewBag.PredictedLoss</h1>
+<h1>使用模型: @ViewBag.usingModel</h1>
+<h1>預測值: @ViewBag.PredictedData</h1>
+<h1>MSE-Loss: @ViewBag.PredictedLoss</h1>
 
 <!-- 创建一个 canvas 元素用于绘制图表 -->
 <canvas id="stockChart" width="800" height="400"></canvas>
 
 <script>
-    // 从 ViewBag 中获取后端传递的股票数据和预测数据
     var actualData = @Html.Raw(Json.Serialize(ViewBag.ChartData));
     var predictedData = @Html.Raw(Json.Serialize(ViewBag.PredictedData));
-    // 只取最后五条记录
-    var lastFiveRecords = actualData.slice(-5);
-    // 解析实际数据的日期和收盘价
-    var actualDates = lastFiveRecords.map(function (item) {
-        return item.stDate;
+
+    var formattedData = actualData.map(function (item) {
+        var date = moment(item.StDate).format('YYYY-MM-DD');
+        return {
+            x: date,
+            y: item.SteClose,
+            label: '日期: ' + date + ', 收盤價: ' + item.SteClose
+        };
     });
 
-    var actualClosePrices = lastFiveRecords.map(function (item) {
-        return item.steClose;
-    });
-
-    // 获取实际数据的最后一个日期
-    var lastActualDate = moment(actualDates[actualDates.length - 1]);
-
-    // 获取隔天的日期
-    var predictedDate = moment(lastActualDate).add(30, 'day');
-
-    // 格式化预测日期为 YYYY-MM-DD
+    var lastActualDate = moment(formattedData[formattedData.length - 1].x);
+    var predictedDate = moment(lastActualDate).add(@finsihdate, 'day');
     var formattedPredictedDate = predictedDate.format('YYYY-MM-DD');
-    var predictedClosePrice = predictedData; // 设置预测的收盘价
+    var predictedClosePrice = predictedData;
 
-    // 获取 canvas 元素的引用
     var ctx = document.getElementById('stockChart').getContext('2d');
 
-    // 创建图表对象
     var stockChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: actualDates, // 实际数据的日期
+            labels: [], // 將刻度值放在這裡
             datasets: [{
                 label: '實際收盤價',
-                data: actualClosePrices, // 实际收盘价数据
-                borderColor: 'blue', // 线条颜色
-                fill: false // 不填充区域
+                data: formattedData,
+                borderColor: 'blue',
+                fill: false
             }, {
                 label: '預測收盤價',
                 data: [{
                     x: formattedPredictedDate,
                     y: predictedClosePrice
                 }],
-                borderColor: 'red', // 线条颜色
-                fill: false, // 不填充区域
-                pointRadius: 10 // 数据点的大小
+                borderColor: 'red',
+                fill: false,
+                pointRadius: 10
             }, {
                 label: '趨勢線',
-                data: [{ // 添加一个数据点，将 actualClosePrices 的最后一个值与 predictedClosePrice 相连
-                    x: actualDates[actualDates.length - 1], 
-                    y: actualClosePrices[actualClosePrices.length - 1]
+                data: [{
+                    x: formattedData[formattedData.length - 1].x,
+                    y: formattedData[formattedData.length - 1].y
                 }, {
                     x: formattedPredictedDate,
                     y: predictedClosePrice
                 }],
-                borderColor: 'red', // 线条颜色
-                fill: false, // 不填充区域
-                pointRadius: 0, // 不显示数据点
-                borderWidth: 0.5, // 线条宽度
-                borderDash: [5, 5] // 设置虚线样式
+                borderColor: 'red',
+                fill: false,
+                pointRadius: 0,
+                borderWidth: 0.5,
+                borderDash: [5, 5]
             }]
         },
         options: {
             scales: {
                 xAxes: [{
-                    type: 'time', // x 轴类型为时间
+                    type: 'time',
                     time: {
-                        unit: 'day' // 时间单位为天
+                        unit: 'month', // 指定刻度的時間單位
+                        displayFormats: {
+                            month: 'YYYY-MM' // 指定月份的顯示格式
+                        }
+                    },
+                    ticks: {
+                        maxTicksLimit: 7 // 限制最大刻度數
                     }
                 }],
                 yAxes: [{
                     ticks: {
-                        beginAtZero: true // 将 Y 轴的起始点设置为 0
+                        beginAtZero: true
                     }
                 }]
             }

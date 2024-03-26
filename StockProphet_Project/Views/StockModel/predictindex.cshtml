@@ -132,7 +132,7 @@
 		<button id="Okbutton1">確認變數及參數</button>
 		<br><br>
 		<label>Step2:</label> *@
-		<button id="predict1">建立模型</button>
+		<button id="predict1" class="btn btn-outline-primary">建立模型</button>
 		<br>
 		<div id="predictionResult1"></div>
 		<div class="progress">
@@ -217,7 +217,7 @@
 		<button id="Okbutton2">確認變數及參數</button>
 		<br><br>
 		<label>Step2:</label> *@
-		<button id="predict2">建立模型</button>
+		<button id="predict2" class="btn btn-outline-primary">建立模型</button>
 		<br>
 		<div id="predictionResult2"></div>
 		<div class="progress">
@@ -326,7 +326,7 @@
 		<div id="ModelParaInputArea">
 		</div>
 		<br>
-		<button id="ksOkbutton2">Build</button>
+		<button id="ksOkbutton2" class="btn btn-outline-primary">Build</button>
 		<br>
 		<br>
 		<div id="predictionResult2"></div>
@@ -453,6 +453,7 @@
 			var createmodelTime;
 			var iterationtimeforpredict;
 			var predictedloss;
+			var mymodelselect
 			// <ks area--------------------->
 
 			// ####<預設值待更新-------------------------------------->
@@ -549,13 +550,16 @@
 								',"tSize":' + paras.InputModelPara[3] +
 								',"cLev":' + paras.InputModelPara[4] +
 								'}',
-							Paccount: paras.account
+							Paccount: paras.account,
+							Pmodel:paras.usingModel
 						}
 
 						SaveModelResultToDB(datatoserver)
 						increaseProgress(70);
 						increaseProgress(100);
-						window.location.href = "/stockmodel/predictphoto?predictedData=" + e.Output_F_estimate + "&snCode=" + data.stockCode;
+						// window.location.href = "/stockmodel/predictphoto?predictedData=" + e.Output_F_estimate + "&snCode=" + data.stockCode;
+						window.location.href = "/StockModel/predictphoto?predictedData=" + e.Output_F_estimate + "&predictedloss=" + e.Output_M_MAE.toFixed(2) + "&snCode=" + data.stockCode + "&mymodelselect=時間序列";
+
 						// alert("OKOK" + e);
 					}
 				})
@@ -609,14 +613,17 @@
 								',"RMSE":' + e.output_M_RMSE.toFixed(2) +
 								',"Iters":' + paras.InputModelPara[0] +
 								']',
-							Paccount: paras.account
+							Paccount: paras.account,
+							Pmodel: paras.usingModel
 						}
 
 						SaveModelResultToDB(datatoserver)
 						console.log(e);
 						increaseProgress(70);
 						increaseProgress(100);
-						window.location.href = "/stockmodel/predictphoto?predictedData=" + e.output_F_Forcast + "&snCode=" + data.stockCode;
+						// window.location.href = "/stockmodel/predictphoto?predictedData=" + e.output_F_Forcast + "&snCode=" + data.stockCode;
+						window.location.href = "/StockModel/predictphoto?predictedData=" + e.output_F_Forcast + "&predictedloss=" + e.output_M_MSE.toFixed(2) + "&snCode=" + data.stockCode + "&mymodelselect=回歸模型";
+
 						// alert("OKOK" + e);
 					}
 				})
@@ -787,6 +794,7 @@
 
 
 							})
+							mymodelselect="LSTM"
 							break;
 						case "2":
 							window.location.href = `#borisform${choosewhichmodel}`;
@@ -797,6 +805,7 @@
 							$.each(borislist, function (index, element) {
 								$(`input[id=${element}]`).prop("checked", true);
 							});
+							mymodelselect = "FNN"
 							break;
 						case "3":
 							window.location.href = `#kazuoform3`;
@@ -814,7 +823,9 @@
 								"</td></tr ></table>");
 
 							$("#ModelParaInputArea").append(R_maximumNumberOfIterations);
+							mymodelselect = "迴歸"
 							break;
+
 						case "4":
 							window.location.href = `#kazuoform3`;
 							$(`#kazuoform3`).css("display", "block");
@@ -849,6 +860,7 @@
 							// $("#ModelParaInputArea").append(seriesLength);
 							// $("#ModelParaInputArea").append(trainSize);
 							// $("#ModelParaInputArea").append(confidenceLevel);
+							mymodelselect = "時間序列"
 							break;
 						default:
 							break;
@@ -1172,7 +1184,8 @@
 								PBuildTime: isoString,
 								PfinishTime: finishString,
 								PAccount: sessionStorage.getItem("LogAccount"),
-								Pparameter: predictedloss
+								Pparameter: predictedloss,
+								Pmodel:(number==1)?"LSTM":"FNN" 
 							}
 
 							$.ajax({
@@ -1197,7 +1210,7 @@
 								$(`#progress${number}`).css("width", '99%');
 
 								setTimeout(function () {
-									var predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode;
+									var predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode + "&mymodelselect=" + mymodelselect;
 									window.location.href = predicturl;
 								}, 3000); // 第四个setTimeout在第三个setTimeout执行完后3秒再执行
 
