@@ -3,7 +3,15 @@
     string PasswordPattern = @"^(?=.*[!@#$%^&*])(?=.{8,})[a-zA-Z0-9!@#$%^&*]+$";
     string MEmailPattern = @"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$";
 }
-
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
+<style>
+    #checkEye {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+    }
+</style>
 <h2>請填寫註冊資料</h2>
 
 <div id="RegisterData">
@@ -20,13 +28,14 @@
         <div>
             <label for="Password">密碼:</label>
             @* +正則 *@
-            <input type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼">
+            <input type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼" autocomplete=“off”>
+            <i id="checkEye" class="fas fa-eye-slash"></i>
             <span id="passwordError" style="color: red;"></span>
         </div>
         <div>
             <label for="Password">請再次輸入密碼:</label>
             @* +正則 *@
-            <input type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="">
+            <input type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="" autocomplete=“off”>           
             <span id="confirmPasswordError" style="color: red;"></span>
             @* 再次輸入密碼不同時，顯示提示字 *@
             <span id="pwdnoteword" style="color: red;">您輸入的密碼不相同</span>
@@ -83,6 +92,18 @@
     $('#pwdnoteword').hide();
 
     $(function () {
+        //密碼欄位
+        $("#checkEye").click(function () {
+            if ($(this).hasClass('fa-eye-slash')) {
+                $("#Password1").attr('type', 'text');
+                $("#Password2").attr('type', 'text');
+
+            } else {
+                $("#Password1").attr('type', 'password');
+                $("#Password2").attr('type', 'password');
+            }
+            $(this).toggleClass('fa-eye-slash').toggleClass('fa-eye');
+        });
 
         $('#Account').on('change', function () {
             var accountValue = $(this).val();
