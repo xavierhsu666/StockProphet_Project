@@ -2,7 +2,22 @@
     string PasswordPattern = @"^(?=.*[!@#$%^&*])(?=.{8,})[a-zA-Z0-9!@#$%^&*]+$";
     string MEmailPattern = @"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$";
 }
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
+<style>
+    #checkEye1 {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+    }
 
+    #checkEye2 {
+        position: absolute;
+        top: 60%;
+        right: 10px;
+        transform: translateY(-50%);
+    }
+</style>
 <h1 class="text-">會員功能-修改個人資料</h1>
 
 <div class="row">
@@ -28,27 +43,31 @@
                 </div>
 
                 <div>
-                    <label for="Password">舊密碼:</label>
+                    <label for="Password">修改密碼:</label>
                     <input type="password" pattern="@PasswordPattern" size="20" minlength="20" name="MPassword" id="Password" title="請輸入原始密碼" value="">
-                    <div id="passwordError" style="color: red;"></div>
+                        <i id="checkEye1" class="fas fa-eye-slash"></i>
+                        <span id="passwordError" style="color: red;"></span>
 
                 </div>
-                <div>
+                <div id="pass1">
                     <label for="Password">輸入新密碼:</label>
                     <input type="password" pattern="@PasswordPattern" size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼" value="">
-                    <div id="passwordError" style="color: red;"></div>
+                        <i id="checkEye2" class="fas fa-eye-slash"></i>
+                        <span id="passwordError" style="color: red;"></span>
                 </div>
-                <div>
+                <div id="pass2">
                     <label for="Password">請再輸入一次新密碼:</label>
                     <input type="password" pattern="" size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="">
-                    @* 再次輸入密碼不同時，顯示提示字 *@
-                    <div id="pwdnoteword"><p style="color:red; ">您輸入的密碼不相同</p></div>
-                    <div id="passwordError" style="color: red;"></div>
-
+                       
+                        @* 再次輸入密碼不同時，顯示提示字 *@
+                    <span id="passwordError" style="color: red;"></span>
+                    <span id="pwdnoteword"><p style="color:red; ">您輸入的密碼不相同</p></span>
+                    
                 </div>
 
                 <label for="Email">信箱:</label>
                 <input type="email" pattern="@MEmailPattern" name="MEmail" id="Email" value="" required>
+                <span id="emailError" style="color: red;"></span>
 
                 <br>
 
@@ -74,9 +93,6 @@
                 <label for="MLevel" id="MLevel">會員等級:</label>
                 <br>
 
-
-
-
                 <button id="ReviseData">修改資料</button>
                 <button id="Reset">取消</button>
                 </form>
@@ -100,11 +116,38 @@
     // 設定新密碼的提示字
     $('#pwdnoteword').hide();
 
-    //輸入正確舊密碼前不能修改
-    $('#Password1').prop("disabled", true);
-    $('#Password2').prop("disabled", true);
+    //輸入正確舊密碼前不能修改   
+    $('#pass1').css('display', 'none');
+    $('#pass2').css('display', 'none');
 
     $(function () {
+        //密碼欄位
+        $("#checkEye1").click(function () {
+            if ($(this).hasClass('fa-eye-slash')) {
+                $("#Password").attr('type', 'text');
+            } else {
+                $("#Password").attr('type', 'password');
+
+            }
+            $(this).toggleClass('fa-eye-slash').toggleClass('fa-eye');
+        });      
+        
+        $("#checkEye2").click(function () {
+            if ($(this).hasClass('fa-eye-slash')) {
+                $("#Password1").attr('type', 'text');
+                $("#Password2").attr('type', 'text');
+
+            } else {
+                $("#Password1").attr('type', 'password');
+                $("#Password2").attr('type', 'password');
+            }
+            $(this).toggleClass('fa-eye-slash').toggleClass('fa-eye');
+        });
+        
+        
+        
+        
+        
         // 1.點擊回到會員頁
         $('#showMemberIndex').on("click", function () {
             window.location.href = "/Member/Index";
@@ -185,8 +228,8 @@
 
         function RevisePassword() {
             //打開密碼欄位可以編輯
-            $('#Password1').prop("disabled", false);
-            $('#Password2').prop("disabled", false);
+            $('#pass1').css('display', 'block');
+            $('#pass2').css('display', 'block');
 
             //檢查兩次輸入的密碼是否一致
             $('#Password2').on("change", function () {

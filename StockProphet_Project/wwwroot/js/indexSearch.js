@@ -45,7 +45,12 @@ $.getJSON("/Home/stocksListAC", function (myData) {
         source: myData
     });
 })
-
+$.getJSON("/stockmodel/stocksListACA", function (myData) {
+    $("#stockid").catcomplete({
+        delay: 0,
+        source: myData
+    });
+})
 //按鈕網頁跳轉
 $(".btn-m").on("click", function () {   //會員專區按鈕
     

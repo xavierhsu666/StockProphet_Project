@@ -32,24 +32,27 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1" id="mynavgation">
-                        <li class="nav-item">
+                        <li class="nav-item">                           
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                        
                         @* 新增會員中心的下拉選單 *@
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown" >
                             <a class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">會員中心</a>
                             <div class="dropdown-menu">
-
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Login" asp-route-provider="Member" asp-route-act="Index">會員登入/註冊</a>
+                               @*  <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Login" asp-route-provider="Member" asp-route-act="Index">會員登入/註冊</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index" asp-route-provider="Member" asp-route-act="Index">會員主頁</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Edit" asp-route-provider="Member" asp-route-act="Edit">個人資料修改</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="StockModel" asp-action="Predictindex" asp-route-provider="StockModel" asp-route-act="Predictindex">我要預測</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="MyCollect" asp-route-provider="Member" asp-route-act="MyCollect"> 我的收藏頁面</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="MyPredictResult" asp-route-provider="Member" asp-route-act="MyPredictResult">我的預測結果頁面</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="MyPredictResult" asp-route-provider="Member" asp-route-act="MyPredictResult">我的預測結果頁面</a> *@
                             </div>
                         </li>
                         @* 要設定靠右對齊-未完成 *@
+                        <li class="nav-item">
+                            <a class="dropdown-item" asp-area="" asp-controller="StockModel" asp-action="Predictindex" asp-route-provider="StockModel" asp-route-act="Predictindex">我要預測</a>
+                        </li>
+                        
                         <p>
                         <li class="nav-item">
                             <a class="nav-link text-dark text-right" asp-area="" asp-controller="Member" asp-action="Register">註冊</a>
@@ -96,12 +99,18 @@
 
 			if (sessionStorage.getItem("LogAccount") == null) {
                 console.log(1)
-
+                $('.dropdown-menu').css("display", "none")
                 $('#mynavgation').append(`<li class="nav-item" ><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login">登入</a></li>`);
 				$('#loginlink').show();
 				$('#logoutlink').hide();
 			} else {
                 console.log(2)
+                $('.dropdown-menu').append(` <a class="dropdown-item" href="/Member/Index">會員主頁</a>
+                                             <a class="dropdown-item" href="/Member/Edit">個人資料修改</a>
+                                             <a class="dropdown-item" href="/StockModel/Predictindex">我要預測</a>
+                                             <a class="dropdown-item" href="/Member/MyCollect"> 我的收藏頁面</a>
+                                             <a class="dropdown-item" href="/Member/MyPredictResult">我的預測結果頁面</a>`)
+
 				$("#mynavgation").append(`<li class="nav-item"><a class="nav-link text-dark text-right" id="logoutlink" href="/Home/Index">登出</a></li> `)
 				$('#loginlink').hide();
 				$('#logoutlink').show();

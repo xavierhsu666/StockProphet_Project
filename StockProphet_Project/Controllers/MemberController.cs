@@ -19,6 +19,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
+using static HDF.PInvoke.H5T;
 
 namespace StockProphet_Project.Controllers
 {
@@ -80,8 +81,6 @@ namespace StockProphet_Project.Controllers
                     _context.SaveChanges();
                     Console.WriteLine(1);
 
-
-
                 }
                 else
                 {
@@ -104,8 +103,6 @@ namespace StockProphet_Project.Controllers
                 Console.WriteLine(3);
                 return false;
             }
-
-
         }
 
         //讀取更新後的會員資料
@@ -140,13 +137,13 @@ namespace StockProphet_Project.Controllers
         }
 
         [HttpGet]
-        public IActionResult Test(string sessionMID)
+        public IActionResult Test(string sessionPID)
         {
-            int MID = Convert.ToInt32(sessionMID);
+            int PID = Convert.ToInt32(sessionPID);
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
             string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-    B.PBulidTime, B.Pfinishtime, A.ST_Date, A.ste_Close 
+    B.PBulidTime,B.PVariable, B.Pfinishtime, A.ST_Date, A.ste_Close 
     FROM DB_model AS B 
     OUTER APPLY (
         SELECT TOP 5 *
@@ -155,7 +152,7 @@ namespace StockProphet_Project.Controllers
               AND ST_Date <= B.PBulidTime
         ORDER BY ST_Date DESC
     ) AS A 
-    WHERE B.Pid = {MID}";
+    WHERE B.Pid = {PID}";
             Console.WriteLine(sqlQuery);
             SqlConnection sqlconnect = new SqlConnection(connectionString);
             sqlconnect.Open();
@@ -174,8 +171,10 @@ namespace StockProphet_Project.Controllers
                     PLabel = reader["Plabel"],
                     Parameter = reader["dummyblock"],
                     PBuildTime = reader["PBulidTime"],
+                    preVariable = reader["PVariable"],
                     PFinsihTime = reader["Pfinishtime"],
-                    SteClose = reader["Ste_Close"]
+                    SteClose = reader["Ste_Close"],
+                    PID = reader["Pid"]
 
                 });
             }
@@ -184,17 +183,23 @@ namespace StockProphet_Project.Controllers
             return Json(results);
 
         }
+
         //我的收藏頁面
         [HttpGet]
-        public IActionResult MyCollect1(string sessionFavorite)
+        public IActionResult MyCollect(string sessionMID)
         {
+            // 定義 pidList 變數
+            List<int> pidList = new List<int>();
 
-            // 從 Session 中獲取 MID
-            //var sessionMID = HttpContext.Session.GetString(SessionKeys.MID);
+            //int MID = Convert.ToInt32(sessionMID);
+            //List<object> results = new List<object>();
+            string connectionString = _configuration.GetConnectionString("StocksConnstring");
+            string sqlQuery = $@"SELECT MFavoriteModel
+                                 FROM DB_Member
+                                 WHERE MID = {sessionMID};";
 
-            int MID = Convert.ToInt32(sessionFavorite);
             // 將 MID 轉換為整數
-            if (int.TryParse(sessionFavorite, out int mid))
+            if (int.TryParse(sessionMID, out int mid))
             {
                 // 查詢 MID 對應的資料列
                 var item = _context.DbMembers.FirstOrDefault(item => item.Mid == mid);
@@ -204,17 +209,17 @@ namespace StockProphet_Project.Controllers
 
 
                     // 將 MfavoriteModel 的值整理成字串，以空白分隔數字
-                    string formattedMfavoriteModel = string.Empty; // 若為 NULL，則設為空字串
+                    string MFavoriteModel = string.Empty; // 若為 NULL，則設為空字串
 
                     if (!string.IsNullOrEmpty(item.MfavoriteModel))
                     {
 
-                        formattedMfavoriteModel = item.MfavoriteModel.Trim('{', '}'); // 先移除大括號
+                        MFavoriteModel = item.MfavoriteModel.Trim('{', '}'); // 先移除大括號
 
                         // 檢查是否為空字串，若是則直接將 pidStrings.Length 設為 0
-                        if (formattedMfavoriteModel == "")
+                        if (MFavoriteModel == "")
                         {
-                            ViewBag.FormattedMfavoriteModel = "尚無收藏項目";
+                            ViewBag.MFavoriteModel = "尚無收藏項目";
                             ViewBag.PidStringsCount = 0;
                         }
 
@@ -222,10 +227,10 @@ namespace StockProphet_Project.Controllers
                         else
                         {
 
-                            var pidStrings = formattedMfavoriteModel.Split(',');
+                            var pidStrings = MFavoriteModel.Split(',');
 
                             // 將字串轉換為整數並存儲在列表中
-                            var pidList = new List<int>();
+                            //var pidList = new List<int>();
                             foreach (var pidString in pidStrings)
                             {
                                 if (int.TryParse(pidString, out int pid))
@@ -263,7 +268,8 @@ namespace StockProphet_Project.Controllers
 
             }
 
-            return View();
+            return Json(pidList);
+            // return View();
 
         }
 
@@ -324,41 +330,56 @@ namespace StockProphet_Project.Controllers
 
 
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult Search(string searchTerm)
         {
-            // 从数据库中检索与搜索关键字匹配的数据
-            var searchResults = (from DbModel in _context.DbModels
-                                 where DbModel.Pstock == searchTerm
-                                 orderby DbModel.PbulidTime descending
-                                 select new { P = DbModel.Pstock, G = DbModel.PbulidTime })
-                    .Take(5)
-                    .ToList();
+            
+                int searchNum = Convert.ToInt32(searchTerm);
+            List<object> results = new List<object>();
+            string connectionString = _configuration.GetConnectionString("StocksConnstring");
+            string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
+    B.PBulidTime,B.PVariable, B.Pfinishtime, A.ST_Date, A.ste_Close 
+    FROM DB_model AS B 
+    OUTER APPLY (
+        SELECT TOP 5 *
+        FROM Stock
+        WHERE SN_code = B.Pstock
+              AND ST_Date <= B.PBulidTime
+        ORDER BY ST_Date DESC
+    ) AS A 
+    WHERE B.Pstock = {searchNum}";
+            Console.WriteLine(sqlQuery);
+            SqlConnection sqlconnect = new SqlConnection(connectionString);
+            sqlconnect.Open();
+            SqlCommand sqlCommand = new SqlCommand(sqlQuery, sqlconnect);
+            SqlDataReader reader = sqlCommand.ExecuteReader();
 
-            // 如果搜索结果不为空，则将其存储在 ViewBag 中，并返回显示搜索结果的视图
-            if (searchResults != null /*&& searchResults.Any()*/)
+
+            while (reader.Read())
             {
-                ViewBag.SearchResults = searchResults;
-                return View("MyCollect"); // 返回显示搜索结果的视图
+
+                results.Add(new
+                {
+                    STdate = reader["ST_Date"],
+                    PAcount = reader["PAccount"],
+                    PStock = reader["Pstock"],
+                    PLabel = reader["Plabel"],
+                    Parameter = reader["dummyblock"],
+                    PBuildTime = reader["PBulidTime"],
+                    PFinsihTime = reader["Pfinishtime"],
+                    SteClose = reader["Ste_Close"],
+                    preVariable = reader["PVariable"],
+                    PID = reader["Pid"]
+
+
+                });
             }
-            else
-            {
-                ViewBag.NoResultsMessage = "未找到匹配的结果。";
-                return View("MyCollect"); // 返回显示搜索结果为空的视图
-            }
+
+
+            return Json(results);
+
+
         }
-
-
-
-
-
-
-
-
-
-
-
-
 
         //     //我的收藏 - 網址傳資料|回傳預測內容
         //     public IActionResult showPredictions(string id)
@@ -401,14 +422,14 @@ namespace StockProphet_Project.Controllers
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
             string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-                        B.PBulidTime, B.Pfinishtime, A.ST_Date, A.ste_Close 
+                        B.PBulidTime,B.Pvariable, B.Pfinishtime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code
                         FROM DB_model AS B 
                         OUTER APPLY (
                             SELECT TOP 5 *
                             FROM Stock
                             WHERE SN_code = B.Pstock
                                   AND ST_Date <= B.PBulidTime
-                            ORDER BY ST_Date DESC
+                            ORDER BY ST_Date desc
                         ) AS A 
                         WHERE B.PAccount = '{customername}'";
             Console.WriteLine(sqlQuery);
@@ -430,12 +451,14 @@ namespace StockProphet_Project.Controllers
                     Parameter = reader["dummyblock"],
                     PBuildTime = reader["PBulidTime"],
                     PFinsihTime = reader["Pfinishtime"],
-                    SteClose = reader["Ste_Close"]
+                    SteClose = reader["Ste_Close"],
+                    PID = reader["Pid"],
+					preVariable= reader["Pvariable"],
+                    SName = reader["SN_Name"],
+                    SCode = reader["SN_Code"]
 
-                });
+				});
             }
-
-
             return Json(results);
         }
 
@@ -445,7 +468,6 @@ namespace StockProphet_Project.Controllers
         ////網址傳資料|回傳預測內容
         //public IActionResult showPredictions(string id)
         //{
-
         //    var viewModel = _context.DbModels.ToList();
         //    var query = from p in viewModel
         //                where p.Paccount == id
@@ -512,9 +534,7 @@ namespace StockProphet_Project.Controllers
             //System.Diagnostics.Debug.WriteLine(MBirthday);
             //System.Diagnostics.Debug.WriteLine(MGender);
             //System.Diagnostics.Debug.WriteLine(MInvestYear);
-            //System.Diagnostics.Debug.WriteLine(MLevel);
-
-            
+            //System.Diagnostics.Debug.WriteLine(MLevel);            
             DateTime dateTime = DateTime.Parse(registerTime);
 
             //轉換日期格式 字串->DateOnly
@@ -557,7 +577,6 @@ namespace StockProphet_Project.Controllers
             {
                 var member = _context.DbMembers.FirstOrDefault(x => x.Memail == MAccoMnt);
                 Console.WriteLine(member);
-
                 //先檢查是否存在該會員
 
                 if (member != null)
@@ -607,14 +626,12 @@ namespace StockProphet_Project.Controllers
                 //Console.WriteLine("登入會員的ID" + member.Mid);
 
                 //先檢查是否存在該會員
-
                 if (member != null)
                 {
                     //再判斷密碼是否正確					
                     if (member.Mpassword == MPassword)
                     {
                         //2.包成Json傳值
-
                         var LogMember = new
                         {
                             Mid = member.Mid,
@@ -668,9 +685,7 @@ namespace StockProphet_Project.Controllers
                 //抓取忘記密碼的會員Id
                 var memberId = resultmid;
                 System.Diagnostics.Debug.WriteLine("顯示忘記密碼的會員ID" + memberId);
-
             }
-
             return result.Any();
         }
 
@@ -690,8 +705,8 @@ namespace StockProphet_Project.Controllers
                 //收件者email
                 mail.To.Add(MEmail);//result\
                                     //mail.To.Add("wryi636@gmail.com");//result\
-                                    //mail.To.Add("boris83418@gmail.com");//result
-                                    //設定優先權
+                mail.To.Add("boris83418@gmail.com");//result
+                                                    //設定優先權
                 mail.Priority = MailPriority.Normal;
                 //標題
                 mail.Subject = "StockProphet_身分驗證，此為系統自動發信，請勿回信";
@@ -723,7 +738,6 @@ namespace StockProphet_Project.Controllers
         }
 
 
-
         //未登入時的修改密碼頁面-5      
         public IActionResult RevisePassword()
         {
@@ -746,9 +760,11 @@ namespace StockProphet_Project.Controllers
             return true;
         }
 
+       
+
+
 
     }
-
 }
 
 

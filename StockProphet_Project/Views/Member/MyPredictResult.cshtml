@@ -1,104 +1,7 @@
-﻿@{	//修改會員資料
-	var MInvestYear = @Context.Session.GetString("MinvestYear")!;
-	var Mlevel = @Context.Session.GetString("Mlevel")!;
-}
+﻿
 <script src="https://d3js.org/d3.v4.js"></script>
+<link rel="stylesheet" href="~/css/stockChartStyle.css" type="text/css" />
 
-<style>
-	/*翻轉卡片*/
-	.prediction-card {
-		-webkit-perspective: 1000px;
-		perspective: 1000px;
-		-webkit-transform-style: preserve-3d;
-		transform-style: preserve-3d;
-		display: block;
-		width: 350px;
-		height: 250px;
-		cursor: pointer;
-		margin: 20px;
-	}
-
-	.card-content {
-		position: relative;
-		height: 100%;
-		width: 100%;
-		-webkit-transform-style: preserve-3d;
-		transform-style: preserve-3d;
-		-webkit-transition: all 500ms;
-		transition: all 500ms;
-	}
-
-		.card-content div {
-			position: absolute;
-			height: 100%;
-			width: 100%;
-			background: #fff;
-			-webkit-backface-visibility: hidden;
-			backface-visibility: hidden;
-		}
-
-		.card-content .card-back {
-			-webkit-transform: rotateY(180deg);
-			transform: rotateY(180deg);
-			display: flex;
-			justify-content: center; /*上下置中*/
-			align-items: center; /*左右置中*/
-		}
-
-	.prediction-card:hover .card-content {
-		box-shadow: 0 20px 20px rgba(50, 50, 50, 0.2);
-	}
-
-	.card-btn {
-		display: none;
-	}
-
-	:checked + .card-content {
-		transform: rotateY(180deg);
-		-webkit-transform: rotateY(180deg);
-	}
-
-	.prediction-card:hover :checked + .card-content {
-		box-shadow: 0 -20px 20px rgba(50, 50, 50, 0.2);
-	}
-
-	.prediction-collect {
-		position: absolute;
-		right: 20px;
-		bottom: 10px;
-		height: 3em;
-		width: 3em;
-		border-radius: 50%;
-		z-index: 10;
-	}
-
-	.forPre {
-		position: relative;
-		top: 50%;
-		left: 50%;
-		transform: translate(-48%, -50%);
-		transform: translate(-48%, -50%);
-	}
-
-	/*預測股票的那點*/
-	/*.myCircle:hover {
-				stroke: red;
-			}*/
-
-	.card-front {
-		padding: 20px;
-		z-index: 1;
-	}
-
-	.pre-state {
-		font-size: 32px;
-	}
-
-	.pre-td {
-		padding-left: 10px;
-	}
-
-</style>
 <h1 class="text-">會員功能-我的預測結果</h1>
 
 <div class="row">
@@ -132,7 +35,7 @@
 
 <script>
 	//判斷會員是否登入
-	var MID = sessionStorage.getItem("LogAccount")
+	var MID = sessionStorage.getItem("LogAccount")	
 
 	if (MID == null) {
 		$('#beforeLog').show();
@@ -141,7 +44,7 @@
 		$('#beforeLog').hide();
 		$('#afterLog').show();
 	}
-	console.log("顯示MID:" + MID);
+	// console.log("顯示MID:" + MID);
 
 
 	$(function () {
@@ -149,7 +52,6 @@
 		$('#showMemberIndex').on("click", function () {
 			window.location.href = "/Member/Index";
 		})
-
 		// 2.點擊修改個人資料
 		$('#showRevise').on("click", function () {
 			window.location.href = "/Member/Edit";
@@ -158,18 +60,17 @@
 		$('#showFavoritesPage').on("click", function () {
 			window.location.href = "/Member/MyCollect";
 		})
-
 		// 4.點擊我要預測
 		$('#showPredictFunc').on("click", function () {
 			window.location.href = "/StockModel/Predictindex";
 		})
-
 		// 5.點擊我的預測結果
 		$('#showHistoryPage').on("click", function () {
 			window.location.href = "/Member/MyPredictResult";
 		})
 
 		//預測資料
+		var parseDate = d3.timeParse("%Y-%m-%d");
 		var data = { customername: sessionStorage.getItem("LogAccount") }
 		var jsonforplot;
 		var Pbuildate;
@@ -180,31 +81,53 @@
 			method: "get",
 			data: data,
 			success: function (e) {
-				// console.log(e)
-				
+			
+				console.log(e); 
 				for (var i = 0; i < e.length; i+=5) {
 					// console.log("----------"+i)
 					var subArray = [];
-					for (var j = 0; j < 5; j++) {
+					for (var j = i; j <i+ 5; j++) {
 						var historydate1 = new Date (e[j]["STdate"])
 						jsonforplot = ({ Date: historydate1, Close: e[j]["SteClose"] })
 						subArray.push(jsonforplot);
 					}
-					// console.log(jsonforplot)
+					//console.log(jsonforplot)
 					var finishdate2 = new Date(e[i]["PFinsihTime"])
 					subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] })
 					plotarray.push(subArray)
 				}
-				// console.log(plotarray)
+				for (var i = 0; i < plotarray.length; i++) {
+					plotarray[i].sort(function (a, b) {
+						// 获取当前子数组中每个对象的日期属性，并转换为日期对象
+						var dateA = new Date(a.Date);
+						var dateB = new Date(b.Date);
+
+						return dateA - dateB; // 降序排列
+					});
+				}
+
+				
+
+				console.log(plotarray); // 输出降序排列后的数组
+				
 				for (var w = 0; w< e.length; w += 5) {
 					var builddate3 = new Date(e[w]["PBuildTime"])
+					var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate()
+
+					var FinsihTime = new Date(e[w]["PFinsihTime"])
+					var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate()
 					otherprarmeter.push({
-						Buildtime: builddate3,
-					stockname: e[w]["PStock"],
-					parameter: e[w]["Parameter"] })
-				}
-				
-				console.log(otherprarmeter)
+						Buildtime: builddate4,
+						stockname: e[w]["PStock"],
+						parameter: e[w]["Parameter"],
+						PID: e[w]["PID"],
+						preVariable: e[w]["preVariable"],
+						PAcount: e[w]["PAcount"],
+						SName: e[w]["SName"],
+						SCode: e[w]["SCode"],
+						PFinsihTime: FinsihTime2
+					})
+				}			
 				
 				$.each(plotarray, function (index, element) {
 					var finishtime = new Date(element[5]["Date"]);
@@ -219,15 +142,19 @@
 						result = "結案"
 					}					
 					//在这里执行你的操作
-					// console.log(element[])
 					//結案狀態
-					drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"])
+
+					//結果參數
+					var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
+					//選擇變數
+					var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]); 
+					// console.log((otherprarmeter[index]["Buildtime"]))
+					drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"])
 				});
 			}
 		})
 
 		// 抓預測資料-某某會員預測過XX股票的資料值
-
 		// var PAccount = sessionStorage.getItem("LogAccount");
 		// d3.json(`/Member/showAllStocks/${PAccount}`, function (Alldata) {
 		//     var dateList = []; //把所有日期資料整理成陣列
@@ -237,8 +164,6 @@
 
 		//如果該會員有10筆預測資料，就要跑10次!!!
 		// d3.json(`/Member/${PID}`)
-
-
 
 		//抓所有資料，方便之後比對預測日的前五筆
 		// d3.json(`/Member/showPredictions/${stocksID}`, function (Ddata) {
@@ -286,25 +211,37 @@
 
 
 		//生卡片
-		function drawPre(myData, index, preState, preDate) {
-			// console.log(myData)
-
+		function drawPre(myData, index, preState, preDate, PID, preVariable, parameter, PAcount, SName, SCode, PFinsihTime) {
+			// console.log(PAcount + "/" + SName + "/" + SCode)
+			var prelist = "";
+			if (preVariable[0] != null) {
+				prelist += `<button class="copyAll" id="card${PID}" onclick="copyAllList(this)">複製全部</button>`;
+				for (var i = 0; i < preVariable.length; i++) {
+					prelist += `<button class="pre-list-btn" onclick="copyList(this)">${preVariable[i]}</button>`
+				};
+			};
 			// console.log(index)
 			// console.log(preState)
 			// console.log(preDate)
 			$(".predictionArea").prepend(`<label class='prediction-card ${index}'>
 			<input type='checkbox' class='card-btn' />
-			<div class='card-content'><div class='card-front'><p class="pre-state">${preState}</p>
-			<table><tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
-					<tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
-			<tr><th class="pre-th">選擇參數</th><td class="pre-td">--</td></tr>
+			<div class='card-content'><div class='card-front'>
+					<p class="pre-code" style="display:inline;">${SCode}</p>
+						<p class="pre-name" style="display:inline;margin-left:10px;">${SName}</p>
+				<p class="pre-state" style="display:inline;margin-left:10px;">${preState}</p>
+			<table>
+			<tr><th class="pre-th">建立帳號</th><td class="pre-td pre-date">${PAcount}</td></tr>
+			<tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
+			<tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${PFinsihTime}</td></tr>
+			<tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
+			<tr><th class="pre-th">結果參數</th><td class="pre-td">MSE:${parameter.MSE}</td></tr>
 			</table>
-			<button class='prediction-collect' id="PID${0}" onclick="btnTest(this)">♥</button>
+			
 			</div>
 			<div class='card-back'>
 			<div class='forPrediction'>
-
-			</div></div></div></label>`);
+			</div></div></div>
+			<div class="preVar">${prelist}</div></label>`);
 			//重新整理日期
 			var dateList = [];
 			for (var i = 0; i < myData.length; i++) {
@@ -495,8 +432,49 @@
 						pointAni(index);
 					});
 			}
+		}		
+	});
+	function copyList(obj) {
+		$(obj).addClass("pre-list-btn-click");
+		setTimeout(function () {
+			$(obj).removeClass("pre-list-btn-click")
+			$(obj).addClass("pre-list-btn-click-again");
+		}, 1000);
+
+		// console.log($(obj).text());
+		
+		var content = $(obj).text();
+		navigator.clipboard.writeText(content);
+	}
+
+	function copyAllList(obj) {
+		$(obj).addClass("copyAllCopied");
+		setTimeout(function () {
+			$(obj).removeClass("copyAllCopied");
+		}, 1000)
+		var thisCard = $(obj).attr("id");
+		var thisCardList = $(`#${thisCard} ~ .pre-list-btn`);
+
+		var content = "";
+		for (var i = 0; i < thisCardList.length; i++) {
+			if (i != 0) content += ",";
+			content += thisCardList[i].innerText;
 		}
-	})
+		navigator.clipboard.writeText(content);
+	}
+
+	setTimeout(function () {
+		$(".pre-list-btn").on({
+			mouseenter: function () {
+				$(this).removeClass("pre-list-btn-he");
+				$(this).removeClass("pre-list-btn-hl");
+				$(this).addClass("pre-list-btn-he");
+			},
+			mouseleave: function () {
+				$(this).addClass("pre-list-btn-hl");
+			}
+		})
+	}, 500);
 
 </script>
 

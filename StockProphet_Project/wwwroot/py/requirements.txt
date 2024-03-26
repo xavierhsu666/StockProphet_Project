@@ -1,4 +1,8 @@
-numpy==1.26.4
-pandas==2.2.1
-Requests==2.31.0
-SQLAlchemy==2.0.28
+beautifulsoup4
+html5lib
+pyodbc
+lxml
+sqlalchemy
+numpy
+pandas
+requests
