@@ -18,14 +18,36 @@ namespace StockProphet_Project.Controllers
             _context = context;
         }
 
-        // GET: Stocks
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Stock.ToListAsync());
-        }
+		// GET: Stocks
+		public async Task<IActionResult> Index(int? page)
+		{
+			// 每页显示的数据条数
+			int pageSize = 10;
 
-        // GET: Stocks/Details/5
-        public async Task<IActionResult> Details(string id)
+			// 查询数据总数
+			var totalCount = await _context.Stock.CountAsync();
+
+			// 计算总页数
+			var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+			// 当前页数，默认为第一页
+			int pageNumber = page ?? 1;
+
+			// 根据当前页数和每页显示的数据条数来计算要跳过的数据条数
+			int skip = (pageNumber - 1) * pageSize;
+
+			// 查询当前页需要显示的数据
+			var stocks = await _context.Stock.OrderBy(x=>x.SnCode).ThenByDescending(x=>x.StDate).Skip(skip).Take(pageSize).ToListAsync();
+
+			// 将分页信息传递给视图
+			ViewData["TotalPages"] = totalPages;
+			ViewData["CurrentPage"] = pageNumber;
+
+			return View(stocks);
+		}
+
+		// GET: Stocks/Details/5
+		public async Task<IActionResult> Details(string id)
         {
             if (id == null)
             {
@@ -47,6 +69,7 @@ namespace StockProphet_Project.Controllers
         {
             return View();
         }
+        
 
         // POST: Stocks/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.

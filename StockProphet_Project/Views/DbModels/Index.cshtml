@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<StockProphet_Project.Models.DbModel>
 
 @{
-    ViewData["Title"] = "管理者頁面-Model資訊";
+	ViewData["Title"] = "管理者頁面-Model資訊";
 }
 
-<h1>管理者頁面(Member)</h1>
+<h1>管理者頁面(Model)</h1>
 <br>
 <button onclick="loadModel('DbMembers')">Member</button>
 <button onclick="loadModel('DbModels')">Models</button>
@@ -12,84 +12,138 @@
 
 <br>
 <br>
+
+
 <p>
-    <a asp-action="Create">Create New</a>
+	<a asp-action="Create">Create New</a>
 </p>
+<label>Stock搜尋欄</label>
+<input type="type" name="name" id="stockselect" value="" />
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Pstock)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Pvariable)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Plabel)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Pprefer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Paccount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PbulidTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PfinishTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Pstatus)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Dummyblock)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pstock)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pvariable)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Plabel)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pprefer)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Paccount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PbulidTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PfinishTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pstatus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Dummyblock)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Pid">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Pid">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Pid">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Pstock)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Pvariable)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Plabel)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Pprefer)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Paccount)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.PbulidTime)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.PfinishTime)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Pstatus)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Dummyblock)
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody id="tableBody">
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Pstock)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Pvariable)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Plabel)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Pprefer)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Paccount)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.PbulidTime)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.PfinishTime)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Pstatus)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Dummyblock)
+				</td>
+				<td>
+					<a asp-action="Edit" asp-route-id="@item.Pid">Edit</a> |
+					<a asp-action="Details" asp-route-id="@item.Pid">Details</a> |
+					<a asp-action="Delete" asp-route-id="@item.Pid">Delete</a>
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>
 <script>
-    function loadModel(model) {
-        console.log(model)
-        window.location.href = `/${model}/Index`
-    }
+	
+	function loadModel(model) {
+		console.log(model)
+		window.location.href = `/${model}/Index`
+	}
+
+	$("#stockselect").on("change", function () {
+		if ($("#stockselect").val() == "") {
+			location.reload(); // 重新加载页面
+		} else {
+			$.ajax({
+				url: "/DbModels/orderdata",
+				method: "get",
+				data: { data: $("#stockselect").val() },
+				success: function (e) {
+					console.log(e);
+					// 清空表格
+					$("#tableBody").empty();
+					// 遍历响应数据，将每个项目添加到表格中
+					$.each(e, function (index, item) {
+						var row = "<tr>" +
+							"<td>" + item.Pstock + "</td>" +
+							"<td>" + item.Pvariable + "</td>" +
+							"<td>" + item.Plabel + "</td>" +
+							"<td>" + item.Pprefer + "</td>" +
+							"<td>" + item.Paccount + "</td>" +
+							"<td>" + item.PbulidTime + "</td>" +
+							"<td>" + item.PfinishTime + "</td>" +
+							"<td>" + item.Pstatus + "</td>" +
+							"<td>" + item.Dummyblock + "</td>" +
+							"<td>" +
+							"<a asp-action='Edit' asp-route-id='" + item.Pid + "'>Edit</a> |" +
+							"<a asp-action='Details' asp-route-id='" + item.Pid + "'>Details</a> |" +
+							"<a asp-action='Delete' asp-route-id='" + item.Pid + "'>Delete</a>" +
+							"</td>" +
+							"</tr>";
+						$("#tableBody").append(row);
+					});
+				}
+			});
+		}
+	});
+	$.ajax({
+		url: "/DbModels/barchart",
+		method:"get",
+		success: function (e) {
+			console.log(e)
+		
+		
+		}
+	
+	})
+
 </script>

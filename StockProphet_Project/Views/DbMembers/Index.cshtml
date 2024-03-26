@@ -1,9 +1,9 @@
 ﻿@model IEnumerable<StockProphet_Project.Models.DbMember>
 
 @{
-    ViewData["Title"] = "管理者頁面-Member資訊";
+	ViewData["Title"] = "管理者頁面-Member資訊";
 }
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <h1>管理者頁面(Member)</h1>
 <br>
 <button onclick="loadModel('DbMembers')">Member</button>
@@ -13,101 +13,285 @@
 <br>
 <br>
 <p>
-    <a asp-action="Create">Create New</a>
+	<a asp-action="Create">Create New</a>
 </p>
+
+<div class="d-xl-inline-flex">
+
+
+<canvas id="genderChart" width="400" height="400"></canvas>
+<canvas id="preferChart" width="400" height="400"></canvas>
+<canvas id="levelChart" width="400" height="400"></canvas>
+</div>
+<br>
+<br>
+<br>
+<label>客戶名稱搜尋欄</label>
+<input type="type" name="name" id="customerselect" value="" />
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.MaccoMnt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Mpassword)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MtrueName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Mgender)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Mbirthday)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MinvestYear)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Memail)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Mlevel)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Mprefer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MregisterTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MlastLoginTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MfavoriteModel)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaccoMnt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Mpassword)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MtrueName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Mgender)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Mbirthday)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MinvestYear)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Memail)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Mlevel)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Mprefer)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MregisterTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MlastLoginTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MfavoriteModel)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Mid">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Mid">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Mid">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.MaccoMnt)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Mpassword)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.MtrueName)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Mgender)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Mbirthday)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.MinvestYear)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Memail)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Mlevel)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Mprefer)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.MregisterTime)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.MlastLoginTime)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.MfavoriteModel)
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody id="membertable">
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.MaccoMnt)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Mpassword)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.MtrueName)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Mgender)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Mbirthday)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.MinvestYear)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Memail)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Mlevel)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Mprefer)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.MregisterTime)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.MlastLoginTime)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.MfavoriteModel)
+				</td>
+				<td>
+					<a asp-action="Edit" asp-route-id="@item.Mid">Edit</a> |
+					<a asp-action="Details" asp-route-id="@item.Mid">Details</a> |
+					<a asp-action="Delete" asp-route-id="@item.Mid">Delete</a>
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>
 <script>
-    function loadModel(model) {
-        console.log(model)
-        window.location.href = `/${model}/Index`
-    }
+	function loadModel(model) {
+		window.location.href = `/${model}/Index`;
+	}
+	var genders = [];
+	var prefers = [];
+	var levels = [];
+	$("#customerselect").on("change", function () {
+		if ($("#customerselect").val() == "") {
+			location.reload(); // 重新加载页面
+		}
+		else {
+			$.ajax({
+				url: "/DbMembers/selectcustomername",
+				method: "get",
+				data: { data: $("#customerselect").val() },
+				success: function (e) {
+					// 清空表格
+					$("#membertable").empty();
+					// 遍历响应数据，将每个项目添加到表格中
+					$.each(e, function (index, item) {
+
+						var row = "<tr>" +
+							"<td>" + item.MaccoMnt + "</td>" +
+							"<td>" + item.Mpassword + "</td>" +
+							"<td>" + item.MtrueName + "</td>" +
+							"<td>" + item.Mgender + "</td>" +
+							"<td>" + item.Mbirthday + "</td>" +
+							"<td>" + item.MinvestYear + "</td>" +
+							"<td>" + item.Memail + "</td>" +
+							"<td>" + item.Mlevel + "</td>" +
+							"<td>" + item.Mprefer + "</td>" +
+							"<td>" + item.MregisterTime + "</td>" +
+							"<td>" + item.MlastLoginTime + "</td>" +
+							"<td>" + item.MfavoriteModel + "</td>" +
+							"<td>" +
+							"<a asp-action='Edit' asp-route-id='" + item.Mid + "'>Edit</a> |" +
+							"<a asp-action='Details' asp-route-id='" + item.Mid + "'>Details</a> |" +
+							"<a asp-action='Delete' asp-route-id='" + item.Mid + "'>Delete</a>" +
+							"</td>" +
+							"</tr>";
+						$("#membertable").append(row);
+					});
+				}
+			});
+		}
+	});
+	$.ajax({
+		url: "/DbMembers/piechart",
+		method:"get",
+		success: function (e) {
+			
+			$.each(e, function (index,element) {
+				if (element["Mgender"] === null || element["Mprefer"] === null || element["Mgender"] === 'NA' || element["Mlevel"] === '管理者') {
+					return;
+				}
+				genders.push(element["Mgender"].trim())
+				prefers.push(element["Mprefer"])
+				levels.push(element["Mlevel"].trim())
+				
+			
+			})
+			generateCharts();
+			preferCharts();
+			levelCharts();
+
+		}
+	
+	
+	})
+	// console.log(genders)
+	// console.log(prefers)
+	// console.log(levels)
+	// 生成性別圓餅圖
+	function generateCharts() {
+		var genderCount = genders.reduce(function (obj, val) {
+			obj[val] = obj[val] ? obj[val] + 1 : 1;
+			return obj;
+		}, {});
+
+		var genderChartCtx = document.getElementById('genderChart').getContext('2d');
+		var genderChart = new Chart(genderChartCtx, {
+			type: 'pie',
+			data: {
+				labels: Object.keys(genderCount),
+				datasets: [{
+					label: 'Gender Distribution',
+					data: Object.values(genderCount),
+					backgroundColor: [
+						'rgba(54, 162, 235, 0.5)', // 將原本的'rgba(255, 99, 132, 0.5)'改為藍色
+						'rgba(255, 99, 132, 0.5)', // 將原本的'rgba(54, 162, 235, 0.5)'改為紅色
+						'rgba(255, 206, 86, 0.5)',
+					],
+					borderColor: [
+						'rgba(54, 162, 235, 1)', // 將原本的'rgba(255, 99, 132, 1)'改為藍色
+						'rgba(255, 99, 132, 1)', // 將原本的'rgba(54, 162, 235, 1)'改為紅色
+						'rgba(255, 206, 86, 1)',
+					],
+					borderWidth: 1
+				}]
+			},
+			options: {
+				responsive: false,
+			}
+		});
+	}
+	// 生成偏好圓餅圖
+	function preferCharts() {
+		var preferCount = prefers.reduce(function (obj, val) {
+			obj[val] = obj[val] ? obj[val] + 1 : 1;
+			return obj;
+		}, {});
+
+		var preferChartCtx = document.getElementById('preferChart').getContext('2d');
+		var preferChart = new Chart(preferChartCtx, {
+			type: 'pie',
+			data: {
+				labels: Object.keys(preferCount).map(function (key) {
+					// 將標籤1/2轉換為短期/長期
+					return (key === '1') ? '短期' : '長期';
+				}),
+				datasets: [{
+					label: 'Preference Distribution',
+					data: Object.values(preferCount),
+					backgroundColor: [
+						'rgba(54, 162, 235, 0.5)',
+						'rgba(255, 99, 132, 0.5)',
+						'rgba(255, 206, 86, 0.5)',
+					],
+					borderColor: [
+						'rgba(54, 162, 235, 1)',
+						'rgba(255, 99, 132, 1)',
+						'rgba(255, 206, 86, 1)',
+					],
+					borderWidth: 1
+				}]
+			},
+			options: {
+				responsive: false
+			}
+		});
+	}
+	function levelCharts() {
+		// 生成等級圓餅圖
+		var levelCount = levels.reduce(function (obj, val) {
+			obj[val] = obj[val] ? obj[val] + 1 : 1;
+			return obj;
+		}, {});
+
+		var levelChartCtx = document.getElementById('levelChart').getContext('2d');
+		var levelChart = new Chart(levelChartCtx, {
+			type: 'pie',
+			data: {
+				labels: Object.keys(levelCount),
+				datasets: [{
+					label: 'Level Distribution',
+					data: Object.values(levelCount),
+					backgroundColor: [
+						'rgba(54, 162, 235, 0.5)',
+						'rgba(255, 99, 132, 0.5)',
+						'rgba(255, 206, 86, 0.5)',
+					],
+					borderColor: [
+						'rgba(54, 162, 235, 1)',
+						'rgba(255, 99, 132, 1)',
+						'rgba(255, 206, 86, 1)',
+					],
+					borderWidth: 1
+				}]
+			},
+			options: {
+				responsive: false
+			}
+		});
+	}
 </script>

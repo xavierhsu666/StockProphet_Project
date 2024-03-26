@@ -4,6 +4,8 @@
     ViewData["Title"] = "管理者頁面-Stock資訊";
 }
 
+
+
 <h1>管理者頁面(Member)</h1>
 <br>
 <button onclick="loadModel('DbMembers')">Member</button>
@@ -15,6 +17,39 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<!-- 分页导航 -->
+@if (ViewData["TotalPages"] != null && ViewData["CurrentPage"] != null)
+{
+    int totalPages = (int)ViewData["TotalPages"];
+    int currentPage = (int)ViewData["CurrentPage"];
+
+    <!-- 首页 -->
+    @if (currentPage > 1)
+    {
+        <a href="@Url.Action("Index", new { page = 1 })">First</a>
+    }
+
+    <!-- 上一页 -->
+    @if (currentPage > 1)
+    {
+        <a href="@Url.Action("Index", new { page = currentPage - 1 })">Previous</a>
+    }
+
+    <!-- 显示当前页和总页数 -->
+    <span>Page @currentPage of @totalPages</span>
+
+    <!-- 下一页 -->
+    @if (currentPage < totalPages)
+    {
+        <a href="@Url.Action("Index", new { page = currentPage + 1 })">Next</a>
+    }
+
+    <!-- 最后一页 -->
+    @if (currentPage < totalPages)
+    {
+        <a href="@Url.Action("Index", new { page = totalPages })">Last</a>
+    }
+}
 <table class="table">
     <thead>
         <tr>
@@ -237,6 +272,7 @@
 }
     </tbody>
 </table>
+
 <script>
     function loadModel(model) {
         console.log(model)
