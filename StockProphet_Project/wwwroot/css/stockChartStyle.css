@@ -41,13 +41,7 @@ path.candle {
 
 
 /* --- */
-.x.axis.pre path {
-    display: none;
-}
 
-.y.axis.pre path {
-    display: none;
-}
 
 .y.annotation.left path {
     fill: #00AA00;

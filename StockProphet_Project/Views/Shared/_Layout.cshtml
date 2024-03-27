@@ -40,29 +40,24 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between ">
-                    <ul class="navbar-nav flex-grow-1" id="mynavgation">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark text-right " asp-area="" asp-controller="StockModel" asp-action="Predictindex">我要預測</a>
+                    <ul class="navbar-nav" id="mynavgation-left">
+                        <li class="nav-item" id="myPre" >
+                            <a class="nav-link text-dark text-right " asp-area="" asp-controller="StockModel" asp-action="Predictindex" >我要預測</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" id="myVisitor">
                             <a class="nav-link text-dark text-right" asp-area="" asp-controller="Home" asp-action="Visitor">體驗預測</a>
                         </li>
                         @* 新增會員中心的下拉選單 *@
-                        <li class="nav-item dropdown" id="member-center">
+                        <li class="nav-item dropdown" id="myMember">
                             <a class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">會員中心</a>
-                            <div class="dropdown-menu">
-                               @*  <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Login" asp-route-provider="Member" asp-route-act="Index">會員登入/註冊</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index" asp-route-provider="Member" asp-route-act="Index">會員主頁</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Edit" asp-route-provider="Member" asp-route-act="Edit">個人資料修改</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="StockModel" asp-action="Predictindex" asp-route-provider="StockModel" asp-route-act="Predictindex">我要預測</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="MyCollect" asp-route-provider="Member" asp-route-act="MyCollect"> 我的收藏頁面</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="MyPredictResult" asp-route-provider="Member" asp-route-act="MyPredictResult">我的預測結果頁面</a> *@
-                            </div>
+                            <div class="dropdown-menu"></div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark text-right" asp-area="" asp-controller="Member" asp-action="Register">註冊</a>
-                        </li>
+                    </ul>
 
+                    <ul class="navbar-nav" id="mynavgation-right">
+                        <li class="nav-item" id="myRegister">
+                            <a class="nav-link text-dark text-right" asp-area="" asp-controller="Member" asp-action="Register" id="sign-up">註冊</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -104,7 +99,7 @@
                 console.log(1)
                 
                 $('.dropdown-menu').css("display", "none")
-                $('#member-center').after(`<li b-1ez45loqxb class="nav-item" ><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login">登入</a></li>`);
+                $('#mynavgation-right').prepend(`<li b-1ez45loqxb class="nav-item" id="myLogin"><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login">登入</a></li>`);
 				$('#loginlink').show();
 				$('#logoutlink').hide();
                 $('.dropdown-toggle').on("click", function () {
@@ -118,7 +113,7 @@
                                              <a class="dropdown-item" href="/Member/MyCollect"> 我的收藏頁面</a>
                                              <a class="dropdown-item" href="/Member/MyPredictResult">我的預測結果頁面</a>`)
 
-				$("#mynavgation").append(`<li class="nav-item"><a class="nav-link text-dark text-right" id="logoutlink" href="/Home/Index">登出</a></li> `)
+                $("#mynavgation-right").append(`<li b-1ez45loqxb class="nav-item" id="myLogout"><a class="nav-link text-dark text-right" id="logoutlink" href="/Home/Index">登出</a></li> `)
 				$('#loginlink').hide();
 				$('#logoutlink').show();
 			}
@@ -160,7 +155,7 @@
     
     var textMaxLen = 100;
     function checkMaxInput() {
-        console.log($("textarea").val());
+
         sessionStorage.setItem("note", $("textarea").val());
         var c = $("textarea").val().length;
         if (c <= textMaxLen) $(".count-down").text(100-c);
@@ -175,7 +170,6 @@
     function saveTag() {
         tagforSession = "";
         var myList = $(".var-tag .var-tag-a");
-        console.log(myList);
 
         if (myList[0] != null) {
             for (var i = 0; i < myList.length; i++) {
@@ -188,7 +182,6 @@
 
     //每次進網站都要抓sessio重新塞tag、note、字數
     var varTag = sessionStorage.getItem("VarTag");
-    console.log(varTag);
     if (varTag != "" && varTag != null) {
         varTag = varTag.split(",");
         for (var i = 0; i < varTag.length; i++) {
@@ -199,7 +192,6 @@
     var c = $("textarea").val().length;
     if (c <= textMaxLen) $(".count-down").text(100 - c);
 
-    console.log("wd");
 
     function backHome() {
         window.location.href = "/Home/Index";

@@ -8,6 +8,13 @@
     fill: none;
     stroke: #edeae6;
 }
+.x.axis.pre path {
+    display: none;
+}
+
+.y.axis.pre path {
+    display: none;
+}
 
 path {
     fill: none;
