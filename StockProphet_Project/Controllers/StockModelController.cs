@@ -37,7 +37,7 @@ using System.Text;
 using static StockProphet_Project.Models.WebAPI_Class;
 using ChoETL;
 using System.Security.Cryptography.X509Certificates;
-
+using System.Web;
 
 namespace StockProphet_Project.Controllers {
 	public class StockModelController : Controller {
@@ -52,7 +52,7 @@ namespace StockProphet_Project.Controllers {
 		// ------------------------------------------------------------------------------<KAZUO>------------------------------------------------------------------------------
 
 		// <參數區>改過需要調整的地方
-		public string InputLatestDate = DateTime.Parse("2024-3-8").ToString("yyyy-MM-dd");
+		public string InputLatestDate = DateTime.Now.ToString("yyyy-MM-dd");
 		public int InputMinCount = 30;
 		// <參數區>改過需要調整的地方
 
@@ -70,6 +70,7 @@ namespace StockProphet_Project.Controllers {
 				   .GroupBy(o => o.SnCode)
 				   .Select(g => g.First());
 			string log;
+			var port = Request.Host.Port; // will get the port
 			log = "KS: Start Update all stock.\r\n";
 			int i = 0;
 			foreach (var item in query) {
@@ -89,7 +90,7 @@ namespace StockProphet_Project.Controllers {
 				} else {
 					CallPyApi cpa = new CallPyApi();
 					log += "KS: 呼叫UpdateOneStock(stockCode=" + item.SnCode + ") for " + i + " Time .\r\n";
-					string fedback = await cpa.UpdateOneStock(item.SnCode, InputLatestDate.Replace("-", ""));
+					string fedback = await cpa.UpdateOneStock(item.SnCode, InputLatestDate.Replace("-", ""), port);
 					log += "KS: Finished.\r\n";
 
 				}
@@ -101,26 +102,10 @@ namespace StockProphet_Project.Controllers {
 		}
 
 		public IActionResult TestWebAPI() {
-			string tmp = "";
-			var q = from o in _context.DbModels.ToList()
-					where o.Pstatus == "Tracing"
-					select o;
-
-			if (q.Count() > 0) {
-				foreach (var item in q) {
-					var q2 = from o in _context.Stock.ToList()
-							 where o.SnCode == item.Pstock
-							 orderby o.StDate descending
-							 select o.SteClose;
-					item.Pstatus = (item.PfinishTime > DateTime.Now) ? "Tracing" : "Close";
-					item.PAccuracyRatio = Convert.ToDouble(item.Plabel / q2.First().Value);
-					_context.DbModels.Update(item);
-					_context.SaveChanges();
-				}
-			}
+			var q = from o in _context.DbCollect select o;
 
 
-			return Content("OK");
+			return Content(q.First().CAccount);
 		}
 		[EnableCors("MyAllowSpecificOrigins")]
 		[HttpGet]
@@ -366,20 +351,22 @@ namespace StockProphet_Project.Controllers {
 			} catch {
 			}
 			if (checkStockCodeIsRight(stockCode) == "Nah") {
-				var result = new { stockname = "查無這支股票", stockexist = false };
+				var result = new { stockname = "查無這支股票", stockexist = false, fedback = "csv找不到" };
 				Console.WriteLine("call UpdateOneStock: csv找不到");
 				return Json(result);
 			} else if (issame) {
 				Console.WriteLine("call UpdateOneStock:" + stockCode + " 資料庫有最新資料，不執行webapi");
 
-				var result = new { stockname = stockName, stockexist = true };
+				var result = new { stockname = stockName, stockexist = true, fedback = "資料庫有最新資料，不執行webapi" };
 				return Json(result);
 			} else {
 
 
 				CallPyApi cpa = new CallPyApi();
 				Console.WriteLine("call UpdateOneStock(stockCode=" + stockCode + ")");
-				string fedback = await cpa.UpdateOneStock(stockCode, InputLatestDate.Replace("-", ""));
+				var port = Request.Host.Port; // will get the port
+				//Console.WriteLine("当前服务器端口号: " + port);
+				string fedback = await cpa.UpdateOneStock(stockCode, InputLatestDate.Replace("-", ""), port);
 				var stockData = _context.Stock
 						.Where(x => x.SnCode == stockCode)
 						.OrderBy(x => x.StDate)
@@ -399,7 +386,7 @@ namespace StockProphet_Project.Controllers {
 				}
 				//stockname = "查無這支股票";
 				//stockexist = false;
-				var result = new { stockname = stockname, stockexist = stockexist };
+				var result = new { stockname = stockname, stockexist = stockexist, fedback= fedback };
 				return Json(result);
 			}
 		}

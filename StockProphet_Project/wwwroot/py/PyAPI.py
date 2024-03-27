@@ -20,13 +20,12 @@ def install_requirements():
 # 调用函数来安装 requirements.txt 中的依赖项
 install_requirements()
 os.system('cls')
-
+from datetime import datetime
 import requests
 import pandas as pd
 import numpy as np
 from io import StringIO
 from sqlalchemy import create_engine, Numeric
-from datetime import datetime
 
         
  
@@ -135,7 +134,16 @@ for date in dates:
     
 
     data2[['年', '季']] = data2['財報年/季'].str.split('/', expand=True)
-    
+    # 下午3點跑的時候 有機率會data1/2 對不上(更新時間不一樣)
+    if(data1.shape[0]!=data2.shape[0]):
+        # 要出錯囉~~晚點再試，等表1表2更新就好...才怪
+        # 檢查看誰比較長，把比較長的刪除一行看看
+        if(max(data1.shape[0],data2.shape[0])==data2.shape[0]):
+            data2 = data2.drop(data2.index[-1])
+        elif(max(data1.shape[0],data2.shape[0])==data1.shape[0]):
+            data1 = data1.drop(data1.index[-1])
+    # print("data1 shape:", data1.shape)
+    # print("data2 shape:", data2.shape)
     data2.iloc[:,0]=data1.iloc[:,0]
 
     # Ensure both DataFrames have a common column for merging
@@ -313,7 +321,6 @@ engine = create_engine(connection_string)
 table_name = "Stock"
 SQL_data_df=SQL_data_df.reset_index(drop=True)
 
-
 for i in range(len(SQL_data_df)):
     SQL_data_df.at[i,'ST_Date']=str(int(SQL_data_df.iloc[i][0].replace('/',''))+19110000)
     if i==0:
@@ -341,10 +348,7 @@ SQL_data_df['SI_MA'] = SQL_data_df['SI_MA'].fillna(SQL_data_df['SI_MA'].mean())
 # SQL_data_df['S_PK'] = SQL_data_df['ST_Date'][0:4]+"-"+SQL_data_df['ST_Date'][4:6]+"-"+SQL_data_df['ST_Date'][6:8]+"_"+SQL_data_df['SN_Code']
 SQL_data_df['S_PK'] =  SQL_data_df['ST_Date'].str[0:4]+"-"+SQL_data_df['ST_Date'].str[4:6]+"-"+SQL_data_df['ST_Date'].str[6:8]+"_"+SQL_data_df['SN_Code']
 SQL_data_df['ST_Date']=  SQL_data_df['ST_Date'].str[0:4]+"-"+SQL_data_df['ST_Date'].str[4:6]+"-"+SQL_data_df['ST_Date'].str[6:8]
-
-current_date = datetime.now().strftime("%Y-%m-%d")
-print("Current date:", current_date)
-SQL_data_df['ST_UpdateDate']=  datetime.now()
+SQL_data_df['ST_UpdateDate']= datetime.now().strftime("%Y-%m-%d")
 # 将'SI_PE'列中的值转换为数字，错误值将转换为0
 SQL_data_df['SI_PE'] = pd.to_numeric(SQL_data_df['SI_PE'], errors='coerce')
 
@@ -357,6 +361,7 @@ SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(0)
 
 
 
+# print(SQL_data_df)
 # 從資料庫讀取目標表格的資料到 DataFrame 中
 existing_data_df = pd.read_sql('SELECT * FROM Stock where SN_Code = '+stockNo, engine)
 

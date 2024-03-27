@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/StockProphet_Project.styles.css" asp-append-version="true" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @* 其他共用CSS *@
+    <link rel="stylesheet" href="~/css/note.css" type="text/css" />
+    <link rel="stylesheet" href="~/css/drawCard.css" type="text/css" />
     @* d3.js及圖表會用的到的 *@
     <script src="https://d3js.org/d3.v4.js"></script>
     <script src="https://techanjs.org/techan.min.js"></script>
@@ -17,48 +20,68 @@
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js" integrity="sha256-xLD7nhI62fcsEZK2/v8LsBcb4lG7dgULkuXoXB/j91c=" crossorigin="anonymous"></script>
     @* lottie動畫 *@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js" integrity="sha512-jEnuDt6jfecCjthQAJ+ed0MTVA++5ZKmlUcmDGBv2vUI/REn6FuIdixLNnQT+vKusE2hhTk2is3cFvv5wA+Sgg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    @* icon *@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">StockProphet_Project</a>
+        <nav class="logo-bar">
+            <img src="~/Logo.svg" class="main-logo" style="height:50%;margin-left:20px;cursor: pointer;" onclick="backHome()"/>
+            <div class="media-icon">
+                <i class="fa-brands fa-square-facebook"></i>
+                <i class="fa-brands fa-square-instagram"></i>
+                <i class="fa-brands fa-youtube"></i>
+            </div>
+        </nav>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background-color:#51a2b7;">
+            <div class="container-fluid" >
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between ">
                     <ul class="navbar-nav flex-grow-1" id="mynavgation">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark text-right " asp-area="" asp-controller="StockModel" asp-action="Predictindex">我要預測</a>
                         </li>
-                       
+                        <li class="nav-item">
+                            <a class="nav-link text-dark text-right" asp-area="" asp-controller="Home" asp-action="Visitor">體驗預測</a>
+                        </li>
                         @* 新增會員中心的下拉選單 *@
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown" id="member-center">
                             <a class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">會員中心</a>
                             <div class="dropdown-menu">
-
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Login" asp-route-provider="Member" asp-route-act="Index">會員登入/註冊</a>
+                               @*  <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Login" asp-route-provider="Member" asp-route-act="Index">會員登入/註冊</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index" asp-route-provider="Member" asp-route-act="Index">會員主頁</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Edit" asp-route-provider="Member" asp-route-act="Edit">個人資料修改</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="StockModel" asp-action="Predictindex" asp-route-provider="StockModel" asp-route-act="Predictindex">我要預測</a>
                                 <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="MyCollect" asp-route-provider="Member" asp-route-act="MyCollect"> 我的收藏頁面</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="MyPredictResult" asp-route-provider="Member" asp-route-act="MyPredictResult">我的預測結果頁面</a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="MyPredictResult" asp-route-provider="Member" asp-route-act="MyPredictResult">我的預測結果頁面</a> *@
                             </div>
                         </li>
-                        @* 要設定靠右對齊-未完成 *@
-                        <p>
                         <li class="nav-item">
                             <a class="nav-link text-dark text-right" asp-area="" asp-controller="Member" asp-action="Register">註冊</a>
                         </li>
-                     
-                      
-                        </p>
+
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
+    @* !! *@
+    <div class="note-area">
+        <div class="slide-btn"><p>》</p></div>
+        <div class="text-content">
+            <div class="write-note">
+                <textarea class="text-count" onKeyUp="checkMaxInput()" maxlength="100"></textarea>
+                <div><p style="display:inline;float:right;">/100</p><p class="count-down" style="float:right;">100</p></div>
+            </div>
+            <div class="var-tag">
+                
+            </div>
+        </div>
+    </div>
+    @* !! *@
     <div class="container">
         <main role="main" class="pb-3 mainArea">
             @RenderBody()
@@ -79,12 +102,18 @@
 
 			if (sessionStorage.getItem("LogAccount") == null) {
                 console.log(1)
-
-                $('#mynavgation').append(`<li class="nav-item" ><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login">登入</a></li>`);
+                $('.dropdown-menu').css("display", "none")
+                $('#member-center').after(`<li b-1ez45loqxb class="nav-item" ><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login">登入</a></li>`);
 				$('#loginlink').show();
 				$('#logoutlink').hide();
 			} else {
                 console.log(2)
+                $('.dropdown-menu').append(` <a class="dropdown-item" href="/Member/Index">會員主頁</a>
+                                             <a class="dropdown-item" href="/Member/Edit">個人資料修改</a>
+                                             <a class="dropdown-item" href="/StockModel/Predictindex">我要預測</a>
+                                             <a class="dropdown-item" href="/Member/MyCollect"> 我的收藏頁面</a>
+                                             <a class="dropdown-item" href="/Member/MyPredictResult">我的預測結果頁面</a>`)
+
 				$("#mynavgation").append(`<li class="nav-item"><a class="nav-link text-dark text-right" id="logoutlink" href="/Home/Index">登出</a></li> `)
 				$('#loginlink').hide();
 				$('#logoutlink').show();
@@ -108,3 +137,67 @@
 	</script>
 </body>
 </html>
+
+
+<script>
+    //預設隱藏
+    $(".text-content").hide();
+    $(".slide-btn").click(function () {
+        if ($(".text-content").is(":hidden")) {
+            $(".text-content").show("slide", { direction: "right" }, 500, "ease-in-out");
+            $(".slide-btn").css('margin-left', '-40px');
+
+        } else {
+            $(".text-content").hide("slide", { direction: "right" }, 500, "ease-in-out");
+            $(".slide-btn").css('margin-left', '220px');
+        }
+        
+    });
+    
+    var textMaxLen = 100;
+    function checkMaxInput() {
+        console.log($("textarea").val());
+        sessionStorage.setItem("note", $("textarea").val());
+        var c = $("textarea").val().length;
+        if (c <= textMaxLen) $(".count-down").text(100-c);
+    }
+
+    function tagClick(a) {
+        a.remove();
+        saveTag();
+
+    }
+    var tagforSession = "";
+    function saveTag() {
+        tagforSession = "";
+        var myList = $(".var-tag .var-tag-a");
+        console.log(myList);
+
+        if (myList[0] != null) {
+            for (var i = 0; i < myList.length; i++) {
+                if (i != 0) tagforSession += ",";
+                tagforSession += myList[i].innerText;
+            }
+        }
+        sessionStorage.setItem("VarTag", tagforSession);
+    }
+
+    //每次進網站都要抓sessio重新塞tag、note、字數
+    var varTag = sessionStorage.getItem("VarTag");
+    console.log(varTag);
+    if (varTag != "" && varTag != null) {
+        varTag = varTag.split(",");
+        for (var i = 0; i < varTag.length; i++) {
+            $(".var-tag").append(`<div class="var-tag-a" id="${varTag[i]}" onClick="tagClick(this)">${varTag[i]}</div>`);
+        }
+    }
+    $("textarea").val(sessionStorage.getItem("note"));
+    var c = $("textarea").val().length;
+    if (c <= textMaxLen) $(".count-down").text(100 - c);
+
+    console.log("wd");
+
+    function backHome() {
+        window.location.href = "/Home/Index";
+    }
+</script>

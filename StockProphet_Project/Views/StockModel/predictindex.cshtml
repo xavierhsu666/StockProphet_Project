@@ -132,7 +132,7 @@
 		<button id="Okbutton1">確認變數及參數</button>
 		<br><br>
 		<label>Step2:</label> *@
-		<button id="predict1">建立模型</button>
+		<button id="predict1" class="btn btn-outline-primary">建立模型</button>
 		<br>
 		<div id="predictionResult1"></div>
 		<div class="progress">
@@ -217,7 +217,7 @@
 		<button id="Okbutton2">確認變數及參數</button>
 		<br><br>
 		<label>Step2:</label> *@
-		<button id="predict2">建立模型</button>
+		<button id="predict2" class="btn btn-outline-primary">建立模型</button>
 		<br>
 		<div id="predictionResult2"></div>
 		<div class="progress">
@@ -326,7 +326,7 @@
 		<div id="ModelParaInputArea">
 		</div>
 		<br>
-		<button id="ksOkbutton2">Build</button>
+		<button id="ksOkbutton2" class="btn btn-outline-primary">Build</button>
 		<br>
 		<br>
 		<div id="predictionResult2"></div>
@@ -557,7 +557,9 @@
 						SaveModelResultToDB(datatoserver)
 						increaseProgress(70);
 						increaseProgress(100);
-						window.location.href = "/stockmodel/predictphoto?predictedData=" + e.Output_F_estimate + "&snCode=" + data.stockCode;
+						// window.location.href = "/stockmodel/predictphoto?predictedData=" + e.Output_F_estimate + "&snCode=" + data.stockCode;
+						window.location.href = "/StockModel/predictphoto?predictedData=" + e.Output_F_estimate + "&predictedloss=" + e.Output_M_MAE.toFixed(2) + "&snCode=" + data.stockCode + "&mymodelselect=時間序列";
+
 						// alert("OKOK" + e);
 					}
 				})
@@ -607,10 +609,10 @@
 							PPrefer: data.userPrefer,
 							PBuildTime: paras.currentDate,
 							PfinishTime: paras.finishDate,
-							dummyblock: '["MSE":' + e.output_M_MSE.toFixed(2) +
+							dummyblock: '{"MSE":' + e.output_M_MSE.toFixed(2) +
 								',"RMSE":' + e.output_M_RMSE.toFixed(2) +
 								',"Iters":' + paras.InputModelPara[0] +
-								']',
+								'}',
 							Paccount: paras.account,
 							Pmodel: paras.usingModel
 						}
@@ -619,7 +621,9 @@
 						console.log(e);
 						increaseProgress(70);
 						increaseProgress(100);
-						window.location.href = "/stockmodel/predictphoto?predictedData=" + e.output_F_Forcast + "&snCode=" + data.stockCode;
+						// window.location.href = "/stockmodel/predictphoto?predictedData=" + e.output_F_Forcast + "&snCode=" + data.stockCode;
+						window.location.href = "/StockModel/predictphoto?predictedData=" + e.output_F_Forcast + "&predictedloss=" + e.output_M_MSE.toFixed(2) + "&snCode=" + data.stockCode + "&mymodelselect=回歸模型";
+
 						// alert("OKOK" + e);
 					}
 				})
