@@ -1137,6 +1137,7 @@
 									setTimeout(function () {
 										$(`#progress${number}`).css("width", '70%');
 
+
 									}, 2000); // 第三个setTimeout在第二个setTimeout执行完后4秒再执行
 
 								}, 3000); // 第二个setTimeout在第一个setTimeout执行完后5秒再执行
@@ -1145,11 +1146,7 @@
 
 						},
 						success: function (response) {
-							$(`#progress${number}`).css("width", '100%');
-
-							setTimeout(function () {
-								$(`.progress`).hide();
-							}, 1000);
+							
 							var values = response.split(','); // 拆分字符串为数组
 							borisprediction = parseFloat(values[0]);
 							if (borisprediction < 0) {
@@ -1207,15 +1204,15 @@
 
 
 							setTimeout(function () {
-								$(`#progress${number}`).css("width", '99%');
-
+								$(`#progress${number}`).css("width", '90%');
 								setTimeout(function () {
-									var predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode + "&mymodelselect=" + mymodelselect;
-									window.location.href = predicturl;
-								}, 3000); // 第四个setTimeout在第三个setTimeout执行完后3秒再执行
-
-							}, 2000); // 第三个setTimeout在第二个setTimeout执行完后4秒再执行
-
+									$(`#progress${number}`).css("width", '99%');
+									setTimeout(function () {
+										var predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode + "&mymodelselect=" + mymodelselect;
+										window.location.href = predicturl;
+									}, 3000); // 第三个setTimeout在第二个setTimeout执行完后3秒再执行
+								}, 1000); // 第二个setTimeout在第一个setTimeout执行完后1秒再执行
+							}, 2000); // 第一个setTimeout在0秒后执行
 
 
 						},

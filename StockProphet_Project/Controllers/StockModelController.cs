@@ -1261,5 +1261,10 @@ namespace StockProphet_Project.Controllers {
 			var Finalresult = new { resulttoformer = result };
 			return Json(Finalresult);
 		}
-	}
+
+        public IActionResult HomeStockData()
+        {
+            return View();
+        }
+    }
 }
