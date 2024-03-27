@@ -191,6 +191,16 @@ SQL_data_df = pd.DataFrame(all_data)
 # 使用 rename 函數進行欄位名稱轉換
 SQL_data_df.rename(columns=SQL_data, inplace=True)
 
+# 避免數值類的出現其他奇怪的字串，先全部轉為Nah
+SQL_data_df['STe_Close']=pd.to_numeric(SQL_data_df['STe_Close'], errors='coerce')
+SQL_data_df['STe_Open']=pd.to_numeric(SQL_data_df['STe_Open'], errors='coerce')
+SQL_data_df['STe_Max']=pd.to_numeric(SQL_data_df['STe_Max'], errors='coerce')
+SQL_data_df['STe_Min']=pd.to_numeric(SQL_data_df['STe_Min'], errors='coerce')
+SQL_data_df['STe_TradeQuantity']=pd.to_numeric(SQL_data_df['STe_TradeQuantity'], errors='coerce')
+SQL_data_df['STe_TradeMoney']=pd.to_numeric(SQL_data_df['STe_TradeMoney'], errors='coerce')
+SQL_data_df['SI_PE'] = pd.to_numeric(SQL_data_df['SI_PE'], errors='coerce')
+SQL_data_df['STe_TransActions']=pd.to_numeric(SQL_data_df['STe_TransActions'], errors='coerce')
+
 # 指數五日平均線
 # 假設 SQL_data_df 是包含收盤價的 DataFrame
 # 使用當日的值填充空值
@@ -315,6 +325,7 @@ password = 'sa'
 
 connection_string = f'mssql+pyodbc://{server_name}/{database_name}?trusted_connection=yes&driver=ODBC+Driver+17+for+SQL+Server'
 engine = create_engine(connection_string)
+
 
 
 # 將所有數據儲存到 SQL Server
