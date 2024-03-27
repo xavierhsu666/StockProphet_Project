@@ -3,13 +3,9 @@
 
 <div class="row">
     <div class="col-md-4">
-        <button id="showMemberIndex">回到會員頁</button><br>
-        <button id="showRevise">修改個人資料</button><br>
-        <button id="showFavoritesPage">我的收藏</button><br>
+        
         <button id="MemberExplore">探索</button><br>
-        <button id="showPredictFunc">我要預測</button><br>
-        <button id="showHistoryPage">我的預測結果</button><br>
-
+        
     </div>
 
     <div class="col-md-8">
@@ -21,20 +17,29 @@
         <div id="afterLog">
 
             <div id="Search">
-                <h1>會員功能 - 探索更多</h1>
+                <i class="fa-duotone fa-magnifying-glass fa-beat-fade fa-xl" style="--fa-primary-color: #3d8bc7; --fa-secondary-color: #3d8bc7;"></i>
                 <!-- 搜尋欄 -->
                 <div id="searchForm">
                     <input type="text" id="searchTerm" name="searchTerm" placeholder="輸入股票代號" required>
-                    <button type="submit">GO</button>
+                    <button type="submit">
+                        <i class="fa-duotone fa-magnifying-glass fa-beat-fade fa-xl" style="--fa-primary-color: #4778cd; --fa-secondary-color: #2d60b9;"></i>
+                    </button>
                 </div>
 
-                <div>
-                    <label for="arrange">排序按</label>
-                    <select id="sortOptions" name="arrange">
-                        <option value="STdate">建立日期</option>
-                        <option value="price">預測價格</option>
+                <div id="sortDropdown">
+                    <label for="sortSelection">显示：</label>
+                    <select id="sortOption">
+                        <option value="stockname">股票名称</option>
+                        <option value="Buildtime">建立时间</option>
+                        <!-- 添加其他排序选项 -->
                     </select>
                 </div>
+                <div class="predictionArea">
+                    <!-- 这里是生成的卡片 -->
+                </div>
+
+               
+
 
                 <b>搜尋結果卡片</b>
                 @* <!-- 卡片都會塞這裡 --> *@
@@ -70,7 +75,7 @@
 
 </div>
 
-
+<script src="https://kit.fontawesome.com/fe876fcce4.js" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
 <script>
     //判斷會員是否登入
@@ -121,181 +126,12 @@
             window.location.href = "/Member/Login";
         });
 
-        // var MId = sessionStorage.getItem("LogMemderId");
-        //var data = { customername: sessionStorage.getItem("LogMemderId") }
-        // var data = { sessionMID: sessionStorage.getItem("LogMemderId") }
-        // var jsonforplot;
-        // var plotarray = [];
-
-        // $.ajax({
-        //     method: "get",
-        //     url: "/Member/MyCollect1",
-        //     data: data,
-        //     success: function (e) {
-        //         for (var i = 0; i < e.length; i++) {
-        //             var number = e[i];
-        //             //console.log(number);
-
-        //             $.ajax({
-        //                 method: "get",
-        //                 url: "/Member/Test",
-        //                 data: { sessionPID: number },
-        //                 success: function (e) {
-        //                     //console.log(e)
-        //                     for (var i = 0; i < e.length; i++) {
-        //                         //console.log("----------" + i)
-        //                         var subarray = [];
-        //                         for (var j = 0; j < 5; j++) {
-        //                             jsonforplot = ({
-        //                                 date: e[j]["STdate"], close: e[j]["SteClose"]
-        //                             })
-        //                             subarray.push(jsonforplot);
-        //                         }
-        //                         subarray.push({ date: e[i]["PFinsihTime"], close: e[i]["PLabel"] })
-        //                         plotarray.push(subarray)
-
-        //                     }
-        //                     $.each(plotarray, function (index, element) {
-        //                         //console.log(index);
-        //                         var finishtime = element[5]["Date"];
-        //                         var currentdate = new Date()
-        //                         var result;
-
-        //                         if (finishtime > currentdate) {
-        //                             result = "未結案"
-        //                         } else {
-        //                             result = "結案"
-        //                         }
-
-        //                         // console.log(currentdate)
-        //                         //在这里执行你的操作
-        //                         // console.log(element[])
-        //                         //結案狀態
-        //                         drawPre(element, index, result, element[5]["Date"])
-
-        //                     });
-        //                 }
-        //             });
-        //         }
-        //     }
-        // });
-
-        // 個人收藏清單
-        // 從 sessionstorage 中獲取當前登入的會員 ID
-        //         var parseDate = d3.timeParse("%Y-%m-%d");
-        //         var sessionMID = sessionStorage.getItem("LogMemberId");
-        //         //var data = { sessionMID: sessionStorage.getItem("LogMemderId") };
-        //         var data = { sessionMID: sessionMID };
-        //         console.log(data)
-
-        //         var jsonforplot;
-        //         var Pbuildate;
-        //         var plotarray = [];
-        //         var otherprarmeter = [];
-        //         var parameter
-        //         $.ajax({
-        //             url: "/Member/MyCollect2",
-        //             method: "get",
-        //             data: data,
-        //             success: function (e) {
-        //                 // console.log(e)
-        //                 for (var i = 0; i < e.length; i++) {
-        //                     plotarray = [];
-        //                     var number = e[i];
-        //                     //console.log(number)
-
-        //                     $.ajax({
-        //                         method: "get",
-        //                         url: "/Member/Test",
-        //                         data: { sessionPID: number },
-        //                         success: function (testData) {
-        //                             console.log(testData);
-        //                             var plotarray = [];
-        //                             // 在這裡將 testData 加入新的數組中
-
-        //                             //for (var i = 0; i < testData.length; i += 5)
-        //                             for (var i = 0; i < testData.length; i++) {
-
-        //                                 // console.log("-----------");
-        //                                 // console.log(testData[i]);
-        //                                 // plotarray.push({ date: testData[i].STdate, Close: testData[i].SteClose });
-        //                                 for (var j = 0; j < 5; j++) {
-        //                                     var historydate1 = new Date(e[j]["STdate"])
-        //                                     jsonforplot = ({ Date: historydate1, Close: e[j]["SteClose"] })
-        //                                     subArray.push(jsonforplot);
-        //                                 }
-        //                                 //plotarray.push({ date: testData[0]["PFinsihTime"], Close: testData[0]["PLabel"] });
-        //                                 var finishdate2 = new Date(e[i]["PFinsihTime"])
-        //                                 subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] })
-        //                                 plotarray.push(subArray)
-        //                             }
-
-        //                             for (var w = 0; w < e.length; w += 5) {
-        //                                 var builddate3 = new Date(e[w]["PBuildTime"]);
-        //                                 var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate();
-
-        //                                 var FinsihTime = new Date(e[w]["PFinsihTime"]);
-        //                                 var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate();
-
-
-        //                                 plotarray.push(subArray);
-        //                                 otherprarmeter.push({
-        //                                     Buildtime: builddate4,
-        //                                     stockname: e[w]["PStock"],
-        //                                     parameter: e[w]["Parameter"],
-        //                                     PID: e[w]["PID"],
-        //                                     preVariable: e[w]["preVariable"],
-        //                                     PAcount: e[w]["PAcount"],
-        //                                     SName: e[w]["SName"],
-        //                                     SCode: e[w]["SCode"],
-        //                                     PFinsihTime: FinsihTime2
-        //                                 });
-        //                             }
-        //                         }
-        //                             $.each(plotarray, function (index, element) {
-        //                             var finishtime = new Date(element[5]["Date"]);
-        //                             var currentdate = new Date();
-        //                             var result;
-        //                             if (finishtime > currentdate) {
-        //                                 result = "未結案";
-        //                             } else {
-        //                                 result = "結案";
-        //                             })
-        //                     })
-        //                     // 在这里执行你的操作
-        //                     //結案狀態
-
-        //                     // console.log(JSON.parse(otherprarmeter[0]["parameter"]))
-        //                     //結果參數
-        //                     var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
-
-        //                     //選擇變數
-        //                     var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
-
-        //                     drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], '.MyFavorite');
-        //                 }
-        // });
-
-
-
-
-        //             },
-        //     error: function (xhr, status, error) {
-        //         //console.log(error);
-        //         // 这里处理错误
-        //     }
-        //                     });
-
-
-
-        // console.log("-----------");
-        // console.log(testDa
-
-
+        
+        // 個人收藏頁面
         var parseDate = d3.timeParse("%Y-%m-%d");
         var sessionMID = sessionStorage.getItem("LogMemberId");
         var data = { sessionMID: sessionMID };
-        console.log(data)
+        //console.log(data)
 
         var jsonforplot = [];
         var Pbuildate;
@@ -312,7 +148,7 @@
                 console.log(e);
                 e.forEach(function (element) {
                     var number = element;
-                    console.log(number);
+                    //console.log(number);
                     $.ajax({
                         method: "get",
                         url: "/Member/Test",
@@ -333,6 +169,17 @@
                             var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate();
                             var FinsihTime = new Date(e[0]["PFinsihTime"]);
                             var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate();
+                            
+                           
+                                jsonforplot.sort(function (a, b) {
+                                    // 获取当前子数组中每个对象的日期属性，并转换为日期对象
+                                    var dateA = new Date(a.Date);
+                                    var dateB = new Date(b.Date);
+
+                                    return dateA - dateB; // 降序排列
+                                });
+                            
+                            
                             otherprarmeter = [];
                             otherprarmeter.push({
                                 Buildtime: builddate4,
@@ -376,189 +223,8 @@
         });
 
 
-        //         var parseDate = d3.timeParse("%Y-%m-%d");
-        //         var sessionMID = sessionStorage.getItem("LogMemberId");
-        //         var data = { sessionMID: sessionMID };
-        //         console.log(data)
-
-        //         var jsonforplot;
-        //         var Pbuildate;
-        //         var plotarray = [];
-        //         var otherprarmeter = [];
-        //         var parameter;
-
-        //         $.ajax({
-        //             url: "/Member/MyCollect2",
-        //             method: "get",
-        //             data: data,
-        //             success: function (e) {
-
-        //                 for (var i = 0; i < e.length; i += 5) {
-        //                     var subArray = [];
-        //                     for (var j = 0; j < 5; j++) {
-        //                         var historydate1 = new Date(e[j]["STdate"])
-        //                         jsonforplot = ({ Date: historydate1, Close: e[j]["SteClose"] })
-        //                         subArray.push(jsonforplot);
-        //                     }
-        //                     console.log(jsonforplot)
-        //                     var finishdate2 = new Date(e[i]["PFinsihTime"])
-        //                     subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] })
-        //                     plotarray.push(subArray)
-        //                 }
-        //                 // console.log(plotarray)
-        //                 for (var w = 0; w < e.length; w += 5) {
-        //                     var builddate3 = new Date(e[w]["PBuildTime"])
-        //                     var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate()
-
-        //                     var FinsihTime = new Date(e[w]["PFinsihTime"])
-        //                     var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate()
-        //                     otherprarmeter.push({
-        //                         Buildtime: builddate4,
-        //                         stockname: e[w]["PStock"],
-        //                         parameter: e[w]["Parameter"],
-        //                         PID: e[w]["PID"],
-        //                         preVariable: e[w]["preVariable"],
-        //                         PAcount: e[w]["PAcount"],
-        //                         SName: e[w]["SName"],
-        //                         SCode: e[w]["SCode"],
-        //                         PFinsihTime: FinsihTime2
-        //                     });
-        //                 }
-
-        //                     $.each(plotarray, function (index, element) {
-        //                         var finishtime = new Date(element[5]["Date"]);
-        //                         var currentdate = new Date()
-        //                         var result;
-
-        //                         // console.log(finishtime)
-        //                         // console.log(currentdate)
-        //                         if (finishtime > currentdate) {
-        //                             result = "未結案"
-        //                         } else {
-        //                             result = "結案"
-        //                         }
-        //                         //在这里执行你的操作
-        //                         //結案狀態
-
-        //                         //結果參數
-        //                         var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
-        //                         //選擇變數
-        //                         var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
-        //                         console.log((otherprarmeter[index]["Buildtime"]))
-        //                         drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], '.MyFavorite')
-        //                     });
-
-        // },
-        //     error: function (xhr, status, error) {
-        //         console.log(error);
-        //         // 这里处理错误
-        //     }
-        //                 });
-        // // 定義全域變數來存儲從 AJAX 請求中獲得的資料
-        // var plotarrayData = [];
-
-        // 個人收藏清單 AJAX 請求
-        // var data = { sessionMID: sessionStorage.getItem("LogMemderId") };
-        // var jsonforplot;
-        // //var plotarray = [];
-        // $.ajax({
-        //     method: "get",
-        //     url: "/Member/MyCollect1",
-        //     data: data,
-        //     success: function (e) {
-        //         var promises = e.map(function (number) {
-        //             return $.ajax({
-        //                 method: "get",
-        //                 url: "/Member/Test",
-        //                 data: { sessionPID: number }
-        //             });
-        //         });
-
-        //         Promise.all(promises).then(function (results) {
-        //             results.forEach(function (e) {
-        //                 var subarray = [];
-        //                 for (var j = 0; j < 5; j++) {
-        //                     var jsonforplot = {
-        //                         date: e[j]["STdate"],
-        //                         close: e[j]["SteClose"]
-        //                     };
-        //                     subarray.push(jsonforplot);
-        //                 }
-        //                 subarray.push({
-        //                     Date: e[e.length - 1]["PFinsihTime"],
-        //                     Close: e[e.length - 1]["PLabel"]
-        //                 });
-        //                 plotarrayData.push(subarray);
-        //plotarray.push(subarray);
-
-        // });
-
-        //             // 更新頁面元素
-        //             //updatePageElements(plotarrayData);
-        //             // 更新頁面元素
-        //             updatePageElements(plotarrayData, ".FavoritesPage");
-        //         }).catch(function (error) {
-        //             console.error("Error:", error);
-        //         });
-        //     },
-        //     error: function (xhr, status, error) {
-        //         console.error("AJAX Error:", error);
-        //     }
-        // });
-
-        // 函數：更新頁面元素
-        // function updatePageElements(plotarrayData) {
-        //     // 清空之前的內容
-        //     $('#results').empty();
-
-        //     // 檢查是否有資料
-        //     if (plotarrayData.length > 0) {
-        //         // 逐一處理每筆資料
-        //         plotarrayData.forEach(function (element, index) {
-        //             var finishtime = element[5]["date"];
-        //             var currentdate = new Date();
-        //             var result = finishtime > currentdate ? "未結案" : "結案";
-        //             drawPre(element, index, result, finishtime);
-
-        //                 // addCardToParent(".FavoritesPage", index, preState, preDate);
-        //             // 在 FavoritesPage 中創建相應的卡片
-        //             addCardToParent(".FavoritesPage", index, result, finishtime);
-        //         });
-        //     } else {
-        //         // 如果沒有資料，顯示相應的提示訊息
-        //         $('#results').append('<p>No data available</p>');
-        //     }
-        // }
-
-        //函數：更新頁面元素
-        // function updatepageelements(plotarraydata, targetselector) {
-        //     //$('#results').empty();
-        //     //$('#favoritespage').empty();
-        //     // 檢查是否有資料
-        //     if (plotarraydata.length > 0) {
-        //         // 逐一處理每筆資料
-        //         plotarraydata.foreach(function (element, index) {
-        //             var finishtime = element[5]["date"];
-        //             var currentdate = new date();
-        //             var result = finishtime > currentdate ? "未結案" : "結案";
-
-        //             // 如果目標元素存在，則在其中創建卡片
-        //             //drawpre(element, index, result, element[5]["date"])
-        //             if ($(targetselector).length > 0) {
-        //                 addcardtoparent(targetselector, index, result, finishtime);
-        //             }
-        //         });
-        //     } else {
-        //         // 如果沒有資料，顯示相應的提示訊息
-        //         $(targetselector).append('<p>尚無收藏卡片</p>');
-        //     }
-        // }
-
-
-
-
-        //取得搜尋欄的值
-
+        
+        // 股票卡片搜尋欄
         $('#searchForm button').click(function (e) {
             e.preventDefault();
             var searchTerm = $('#searchTerm').val();
@@ -566,11 +232,11 @@
             var Pbuildate;
             var plotarray = [];
             var otherprarmeter = [];
-            //console.log(searchTerm);
+            console.log(searchTerm);
 
             $.ajax({
                 type: 'get',
-                url: 'Member/Search',
+                url: '/Member/Search',
                 data: { searchTerm: searchTerm },
                 success: function (e) {
                     console.log("這裡");
@@ -586,7 +252,7 @@
                             subArray.push(jsonforplot);
                         }
 
-                        // console.log(jsonforplot)
+                        console.log(jsonforplot)
                         var finishdate2 = new Date(e[i]["PFinsihTime"])
                         subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] })
                         plotarray.push(subArray)
@@ -634,7 +300,7 @@
                         } else {
                             result = "結案"
                         }
-                        //在这里执行你的操作
+                        
                         //結案狀態
 
                         //結果參數
@@ -649,51 +315,10 @@
         })
 
 
+        
 
 
 
-
-
-        // $(document).ready(function () {
-        //     // 下拉選單變化
-        //     $('#sortOptions').change(function () {
-        //         var selectedOption = $(this).val();
-        //         sortResults(selectedOption);
-        //     });
-        // });
-
-        // // 函數：根據選擇的排序方式重新排列卡片
-        // function sortResults(option) {
-        //     var resultsContainer = $('#results');
-        //     var cards = resultsContainer.children('.prediction-card');
-
-        //     cards.sort(function (a, b) {
-        //         var aValue, bValue;
-        //         // 根據所選擇的選項獲取卡片的排序值
-        //         switch (option) {
-        //             case 'STdate':
-        //                 aValue = $(a).find('.pre-date').text();
-        //                 bValue = $(b).find('.pre-date').text();
-        //                 console.log(aValue);
-        //                 console.log(bValue);
-        //                 break;
-
-        //             case 'price':
-        //                 aValue = parseFloat($(a).find('.predicted-price').text());
-        //                 bValue = parseFloat($(b).find('.predicted-price').text());
-        //                 console.log(aValue);
-        //                 console.log(bValue);
-        //                 break;
-        //         }
-        //         // 根據排序值比較卡片
-        //         if (aValue < bValue) return -1;
-        //         if (aValue > bValue) return 1;
-        //         return 0;
-        //     });
-
-        //     // 將排序後的卡片重新添加到容器中
-        //     resultsContainer.empty().append(cards);
-        // }
 
         // 開始
         // 生卡片

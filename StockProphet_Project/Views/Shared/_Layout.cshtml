@@ -183,10 +183,10 @@
     var varTag = sessionStorage.getItem("VarTag");
     console.log(varTag);
     if (varTag != "") {
-        varTag = varTag.split(",");
-        for (var i = 0; i < varTag.length; i++) {
-            $(".var-tag").append(`<div class="var-tag-a" id="${varTag[i]}" onClick="tagClick(this)">${varTag[i]}</div>`);
-        }
+        //varTag = varTag.split(",");
+        // for (var i = 0; i < varTag.length; i++) {
+        //     $(".var-tag").append(`<div class="var-tag-a" id="${varTag[i]}" onClick="tagClick(this)">${varTag[i]}</div>`);
+        // }
     }
     $("textarea").val(sessionStorage.getItem("note"));
     var c = $("textarea").val().length;

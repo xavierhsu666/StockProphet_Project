@@ -255,10 +255,10 @@ namespace StockProphet_Project.Controllers
 
 
                             // 使用 LINQ 查詢 DbModels 資料表，找出符合條件的資料列
-                            var favoriteItems = _context.DbModels.Where(model => pidList.Contains(model.Pid)).ToList();
+                            //var favoriteItems = _context.DbModels.Where(model => pidList.Contains(model.Pid)).ToList();
 
                             // 將查詢結果傳遞到 View
-                            ViewBag.FavoriteItems = favoriteItems;
+                            //ViewBag.FavoriteItems = favoriteItems;
 
 
 
