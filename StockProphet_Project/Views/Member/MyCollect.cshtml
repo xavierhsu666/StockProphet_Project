@@ -641,7 +641,46 @@
 
     })
 
+    var dataToServer = { user: sessionStorage.getItem("LogAccount"), cardID: $(btn).attr("id").substring(3) };
+    $.ajax({
+        url: "/Home/CheckCard",
+        method: "POST",
+        data: dataToServer,
+        success: function (e) {
+            console.log(e);
+            switch (e.substring(0, 1)) {
+                case "A": {
+                    $(btn).css("color", "red");
+                    console.log("新增一筆");
+                    sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                    break
+                }
+                case "D": {
+                    $(btn).css("color", "black");
+                    console.log("刪除一筆");
+                    sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                    break;
+                }
+                case "R":
+                    console.log("收藏上限了朋友");
+                    break;
+            }
+        }
+    })
 
+    // 檢視愛心狀態
+    setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
+        
+            d3.json(`/Home/cardCheck/${user}`, function (list) {
+                list.forEach(function (item, i) {
+                    //針對會員有按愛心的按鈕 變化
+                    $(`#PID${parseInt(item)}`).css({
+                        color: "red",
+                        /* fontSize: "32px" */
+                    });
+                })
+            });
+    }, 500);
 </script>
 
 
