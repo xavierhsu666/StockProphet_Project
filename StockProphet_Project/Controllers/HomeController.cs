@@ -161,7 +161,7 @@ namespace StockProphet_Project.Controllers {
             var stocksList = (from obj in new ChoCSVReader<stocksCheck>("wwwroot\\stocksList.csv").WithFirstLineHeader()
                               select obj).ToList();
             foreach (var stock in stocksList) {
-                if (stock.Code == id || ((stock.Name).Split(' '))[0] == id) {
+                if (stock.Code == id || ((stock.Name).Split(' '))[0] == id || stock.Name == id) {
                     ans = stock.Code;
                     break;
                 } else ans = "wrongCode";
