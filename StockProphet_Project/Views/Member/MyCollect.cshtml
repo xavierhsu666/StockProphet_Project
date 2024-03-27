@@ -1,5 +1,16 @@
-﻿<script src="https://d3js.org/d3.v4.js"></script>
-<link rel="stylesheet" href="~/css/stockChartStyle.css" type="text/css" />
+﻿@* <script src="https://d3js.org/d3.v4.js"></script> *@
+@* <link rel="stylesheet" href="~/css/stockChartStyle.css" type="text/css" /> *@
+<link rel="stylesheet" href="~/css/drawCard.css" type="text/css" />
+
+<style>
+    .x.axis.pre path {
+        display: none;
+    }
+
+    .y.axis.pre path {
+        display: none;
+    }
+</style>
 
 <div class="row">
     <div class="col-md-4">
@@ -204,11 +215,12 @@
                             }
 
                             // console.log(otherprarmeter);
-                            var parameter = otherprarmeter[0]["parameter"];
-                            var preVariable = otherprarmeter[0]["preVariable"];
+                            var parameter = JSON.parse(otherprarmeter[0]["parameter"]);
+                            var preVariable = JSON.parse(otherprarmeter[0]["preVariable"]);
                             // // console.log(otherprarmeter[index]["Buildtime"]);
                             // console.log(parameter)
-                            // console.log(preVariable)
+                            console.log(parameter)
+                            console.log(preVariable)
                             drawPre(jsonforplot, number, result, otherprarmeter[0]["Buildtime"], otherprarmeter[0]["PID"], preVariable, parameter, otherprarmeter[0]["PAcount"], otherprarmeter[0]["SName"], otherprarmeter[0]["SCode"], otherprarmeter[0]["PFinsihTime"], '.MyFavorite');
 
 
@@ -370,7 +382,7 @@
             var preScaleX = d3.scaleBand().range([10, preWidth]).domain(dateList);
             var preScaleY = d3
                 .scaleLinear()
-                .range([preHeight - 10, 0])
+                .range([preHeight - 35, 25])
                 .domain(d3.extent(myData, (d) => d.Close));
 
             //X、Y軸
@@ -436,7 +448,7 @@
                 .append("g")
                 .datum(myData)
                 .attr("class", "predictionLine here")
-                .attr("transform", "translate(18,0)"); //折線
+                .attr("transform", "translate(18,0)");   //折線
             preSvg
                 .append("g")
                 .attr("class", "x axis pre")
@@ -449,7 +461,7 @@
                 .attr("class", "pathPre")
                 .attr("d", linePre(myData))
                 .attr("fill", "none")
-                .attr("stroke", "url(#line-gradient)")
+                .attr("stroke", "#bbbdbe")
                 .attr("stroke-width", 2);
             preSvg
                 .select("g.x.axis.pre")
@@ -466,13 +478,11 @@
                 .attr("dy", ".15em")
                 .attr("transform", "rotate(-25) translate(20, 10)");
 
-            preSvg.select("g.y.axis.pre").call(
-                preAxisY
-                    .tickSizeInner(-preWidth - 10, -preWidth)
-                    .tickPadding(10)
-                    .tickFormat(d3.format(".1f"))
-                    .tickValues([minCPre, d3.mean([minCPre, maxCPre]), maxCPre])
-            );
+            preSvg.select("g.y.axis.pre")
+                .call(preAxisY.tickSizeInner(-preWidth - 10, -preWidth)
+                .tickPadding(10)
+                .tickFormat(d3.format(".1f"))
+                .tickValues([minCPre - 10, d3.mean([minCPre, maxCPre]), maxCPre + 10]));
 
             //--點點--//
             //提示框
@@ -503,8 +513,7 @@
                 Tooltip.style("opacity", 0);
             };
             //加圓點
-            preSvg
-                .append("g")
+            preSvg.append("g")
                 .attr("class", `circleGroup${index}`)
                 .attr("transform", "translate(18,0)")
                 .selectAll("dot")
@@ -512,135 +521,85 @@
                 .enter()
                 .append("circle")
                 .attr("class", "myCircle")
-                .attr("cx", (d) => preScaleX(d.Date))
-                .attr("cy", (d) => preScaleY(d.Close))
+                .attr("cx", d => preScaleX(d.Date))
+                .attr("cy", d => preScaleY(d.Close))
                 .attr("r", 5)
-                .attr("stroke", "#69b3a2")
-                .attr("fill", "#FFF")
+                .attr("stroke", "#cedba0")
+                .attr("fill", "#cedba0")
                 .on("mouseover", mouseover)
                 .on("mousemove", mousemove)
                 .on("mouseleave", mouseleave);
 
+
+            d3.selectAll(".prediction-card")
+                .each(function () {
+                    var lastTick = d3.select(this).selectAll(".x.axis.pre .tick:last-child");
+                    lastTick.select("line").style("stroke-dasharray", "6,6");
+                });
+
             //動畫?
             pointAni(index);
             function pointAni(index) {
-                var strokeC = myData[5].Close > myData[4].Close ? "#b84121" : "#69b3a2";
-                var fillC = myData[5].Close > myData[4].Close ? "#f77465" : "#cedba0";
+                var strokeC = (myData[5].Close > myData[4].Close) ? "#b84121" : "#69b3a2";
+                var fillC = preState == "已結案" ? strokeC : "white"
+                //var fillC = (myData[5].Close > myData[4].Close) ? "#f77465" : "#cedba0";
                 /*        console.log("strokeC:" + strokeC + "  fillC:" + fillC);*/
 
                 d3.select(`.circleGroup${index} :last-child`)
                     .attr("stroke", strokeC)
-                    .style("stroke-width", 3)
-                    .style("stroke-opacity", 1)
-                    .style("r", 5);
+                    .style("stroke-width", 2)
+                    //.style("stroke-opacity", 1)
+                    .style("r", 5)
 
                 d3.select(`.circleGroup${index} :last-child`)
                     .attr("fill", fillC)
-                    .transition()
-                    .duration(1000)
-                    .style("stroke-width", 10)
-                    .style("stroke-opacity", 0)
-                    .style("r", 7)
-                    .on("end", function () {
-                        pointAni(index);
-                    });
+                //.transition()
+                //.duration(1000)
+                //.style("stroke-width", 10)
+                //.style("stroke-opacity", 0)
+                //.style("r", 7)
+                //.on("end", function () { pointAni(index) });
             }
         }
-
-        function copyList(obj) {
-
-            $(obj).addClass("pre-list-btn-click");
-
-            setTimeout(function () {
-
-                $(obj).removeClass("pre-list-btn-click")
-
-                $(obj).addClass("pre-list-btn-click-again");
-
-            }, 1000);
-
-
-
-            //console.log($(obj).text());
-
-
-
-            var content = $(obj).text();
-
-            navigator.clipboard.writeText(content);
-
-        }
-
-
-
-        function copyAllList(obj) {
-
-            $(obj).addClass("copyAllCopied");
-
-            setTimeout(function () {
-
-                $(obj).removeClass("copyAllCopied");
-
-            }, 1000)
-
-            var thisCard = $(obj).attr("id");
-
-            var thisCardList = $(`#${thisCard} ~ .pre-list-btn`);
-
-
-
-
-
-
-
-
-
-            var content = "";
-
-            for (var i = 0; i < thisCardList.length; i++) {
-
-                if (i != 0) content += ",";
-
-                content += thisCardList[i].innerText;
-
-            }
-
-            navigator.clipboard.writeText(content);
-
-
-
-        }
-
-
-        setTimeout(function () {
-
-            $(".pre-list-btn").on({
-
-                mouseenter: function () {
-
-                    $(this).removeClass("pre-list-btn-he");
-
-                    $(this).removeClass("pre-list-btn-hl");
-
-                    $(this).addClass("pre-list-btn-he");
-
-                },
-
-                mouseleave: function () {
-
-                    $(this).addClass("pre-list-btn-hl");
-
-                }
-
-            })
-
-        }, 500);
-
-
-
 
     })
+    function copyList(obj) {
+        $(obj).addClass("pre-list-btn-click");
+        setTimeout(function () {
+            $(obj).removeClass("pre-list-btn-click")
+            $(obj).addClass("pre-list-btn-click-again");
+        }, 1000);
+        var content = $(obj).text();
+        navigator.clipboard.writeText(content);
+    }
 
+    function copyAllList(obj) {
+        $(obj).addClass("copyAllCopied");
+        setTimeout(function () {
+            $(obj).removeClass("copyAllCopied");
+        }, 1000)
+        var thisCard = $(obj).attr("id");
+        var thisCardList = $(`#${thisCard} ~ .pre-list-btn`);
+        var content = "";
+        for (var i = 0; i < thisCardList.length; i++) {
+            if (i != 0) content += ",";
+            content += thisCardList[i].innerText;
+        }
+        navigator.clipboard.writeText(content);
+    }
+
+    setTimeout(function () {
+        $(".pre-list-btn").on({
+            mouseenter: function () {
+                $(this).removeClass("pre-list-btn-he");
+                $(this).removeClass("pre-list-btn-hl");
+                $(this).addClass("pre-list-btn-he");
+            },
+            mouseleave: function () {
+                $(this).addClass("pre-list-btn-hl");
+            }
+        })
+    }, 500);
 
 </script>
 
