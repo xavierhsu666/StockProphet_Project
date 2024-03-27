@@ -196,16 +196,24 @@ SQL_data_df['STe_Close']=pd.to_numeric(SQL_data_df['STe_Close'], errors='coerce'
 SQL_data_df['STe_Open']=pd.to_numeric(SQL_data_df['STe_Open'], errors='coerce')
 SQL_data_df['STe_Max']=pd.to_numeric(SQL_data_df['STe_Max'], errors='coerce')
 SQL_data_df['STe_Min']=pd.to_numeric(SQL_data_df['STe_Min'], errors='coerce')
-SQL_data_df['STe_TradeQuantity']=pd.to_numeric(SQL_data_df['STe_TradeQuantity'], errors='coerce')
+SQL_data_df['STe_TradeQuantity']=pd.to_numeric(SQL_data_df['STe_TradeQuantity'])
 SQL_data_df['STe_TradeMoney']=pd.to_numeric(SQL_data_df['STe_TradeMoney'], errors='coerce')
 SQL_data_df['SI_PE'] = pd.to_numeric(SQL_data_df['SI_PE'], errors='coerce')
-SQL_data_df['STe_TransActions']=pd.to_numeric(SQL_data_df['STe_TransActions'], errors='coerce')
+SQL_data_df['STe_TransActions']=pd.to_numeric(SQL_data_df['STe_TransActions'])
+SQL_data_df['STe_Close'] = SQL_data_df['STe_Close'].fillna(SQL_data_df['STe_Close'].mean())
+SQL_data_df['STe_Open'] = SQL_data_df['STe_Open'].fillna(SQL_data_df['STe_Open'].mean())
+SQL_data_df['STe_Max'] = SQL_data_df['STe_Max'].fillna(SQL_data_df['STe_Max'].mean())
+SQL_data_df['STe_Min'] = SQL_data_df['STe_Min'].fillna(SQL_data_df['STe_Min'].mean())
+SQL_data_df['STe_TradeQuantity'] = SQL_data_df['STe_TradeQuantity'].fillna(SQL_data_df['STe_TradeQuantity'].mean())
+SQL_data_df['STe_TradeMoney'] = SQL_data_df['STe_TradeMoney'].fillna(SQL_data_df['STe_TradeMoney'].mean())
+SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(SQL_data_df['SI_PE'].mean())
+SQL_data_df['STe_TransActions'] = SQL_data_df['STe_TransActions'].fillna(SQL_data_df['STe_TransActions'].mean())
 
 # 指數五日平均線
 # 假設 SQL_data_df 是包含收盤價的 DataFrame
 # 使用當日的值填充空值
 # SQL_data_df['SI_MovingAverage_5'] = pd.to_numeric(SQL_data_df['STe_Close'].fillna(method='ffill').rolling(window=5).mean())
-SQL_data_df['SI_MovingAverage_5'] = pd.to_numeric(SQL_data_df['STe_Close'].ffill().rolling(window=5).mean())
+SQL_data_df['SI_MovingAverage_5'] = pd.to_numeric(SQL_data_df['STe_Close'].ffill().rolling(window=5).mean(), errors='coerce')
 SQL_data_df['SI_MovingAverage_5'] = pd.to_numeric(SQL_data_df['SI_MovingAverage_5'], errors='coerce')
 
 # 指數三十日平均線
@@ -333,11 +341,14 @@ table_name = "Stock"
 SQL_data_df=SQL_data_df.reset_index(drop=True)
 
 for i in range(len(SQL_data_df)):
-    SQL_data_df.at[i,'ST_Date']=str(int(SQL_data_df.iloc[i][0].replace('/',''))+19110000)
+    # SQL_data_df.at[i,'ST_Date']=str(int(SQL_data_df.iloc[i][0].replace('/',''))+19110000)
+    SQL_data_df.at[i,'ST_Date'] = str(int(SQL_data_df.iloc[i][0].replace('/',''))+19110000)
     if i==0:
-        SQL_data_df.at[i,'STe_SpreadRatio']=(SQL_data_df.iloc[i][7]-SQL_data_df.iloc[i][8])/(SQL_data_df.iloc[i][9]+float(SQL_data_df.iloc[i][8]))*100
+        # SQL_data_df.at[i,'STe_SpreadRatio']=(SQL_data_df.iloc[i][7]-SQL_data_df.iloc[i][8])/(SQL_data_df.iloc[i][9]+float(SQL_data_df.iloc[i][8]))*100
+        SQL_data_df.at[i,'STe_SpreadRatio'] = (SQL_data_df.iloc[i][7] - SQL_data_df.iloc[i][8]) / (SQL_data_df.iloc[i][9] + float(SQL_data_df.iloc[i][8])) * 100
     else:
-        SQL_data_df.at[i,'STe_SpreadRatio']=(SQL_data_df.iloc[i][7]-SQL_data_df.iloc[i][8])/SQL_data_df.iloc[i-1][9]*100
+        # SQL_data_df.at[i,'STe_SpreadRatio']=(SQL_data_df.iloc[i][7]-SQL_data_df.iloc[i][8])/SQL_data_df.iloc[i-1][9]*100
+        SQL_data_df.at[i,'STe_SpreadRatio'] = (SQL_data_df.iloc[i][7] - SQL_data_df.iloc[i][8]) / SQL_data_df.iloc[i-1][9] * 100
 
 SQL_data_df['STe_SpreadRatio'] = pd.to_numeric(SQL_data_df['STe_SpreadRatio'], errors='coerce')
 
