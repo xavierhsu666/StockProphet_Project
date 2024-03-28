@@ -3,27 +3,7 @@
     Layout = "_Layout2";
 }
 
-<link rel="stylesheet" href="~/css/indexStyle.css" type="text/css" />
-@*股票資訊表格 *@
- <style>
-    table {
-        border-collapse: collapse;
-        width: 100%;
-    }
-
-    th, td {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-    }
-
-    th {
-        background-color: #f2f2f2;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
+@* <link rel="stylesheet" href="~/css/indexStyle.css" type="text/css" /> *@
 
     #tableContainer1 {
         margin-bottom: 20px;
@@ -50,12 +30,8 @@
 </div>
 
 
-
-<div class="get-stocks-info">
-    <div id="tableContainer1"></div>
-    <div id="tableContainer2"></div>
-</div> 
-
+<div></div>
+<div class="get-stocks-info"></div>
 <div class="area-left">
     <div class="group">
         <svg class="icon" aria-hidden="true" viewBox="0 0 24 24">
@@ -69,9 +45,7 @@
     <p class="search-hint" style="display:none">是不是輸錯了呢？再確認一下股票代碼或名稱吧！</p>
 </div>
 <div class="area-right">
-    <img class="bg-water-blue" src="~/homePage/water.gif" />
-    <img class="bg-right-hand" src="~/homePage/right_H.gif" />
-    <img class="bg-left-hand" src="~/homePage/left_H.gif" />
+
 </div>
 <img class="bg-chart" src="~/homePage/chart.png" />
 <img class="bg-line" src="~/homePage/chart2.png" />
@@ -80,6 +54,10 @@
     <i class="fa-brands fa-square-instagram"></i>
     <i class="fa-brands fa-youtube"></i>
 </div> *@
-
+<div class="hand-ani">
+    <img class="bg-water-blue" src="~/homePage/water.gif" />
+    <img class="bg-right-hand" src="~/homePage/right_H.gif" />
+    <img class="bg-left-hand" src="~/homePage/left_H.gif" />
+</div>
 
 <script src="~/js/indexSearch.js"></script>

@@ -1067,10 +1067,10 @@ namespace StockProphet_Project.Controllers {
 			//    Console.WriteLine();
 			//}
 			//return Ok("Some result");
-			foreach (var item in features) {
-				System.Diagnostics.Debug.WriteLine("swith" + item);
+			//foreach (var item in features) {
+			//	System.Diagnostics.Debug.WriteLine("swith" + item);
 
-			}
+			//}
 
 
 			// 將數據轉換為 NumPy格式
@@ -1174,6 +1174,8 @@ namespace StockProphet_Project.Controllers {
 			return View();
 		}
 		public IActionResult predictphoto( string predicteddata, string sncode, string predictedloss,string mymodelselect) {
+
+			UpdateModelResultsStatusAndRatio();
 			// 檢索資料庫中的資料筆數
 			int dataCount = _context.Stock.Where(x => x.SnCode == sncode).Count();
 

@@ -147,7 +147,7 @@
 					// console.log(finishtime)
 					// console.log(currentdate)
 					if (finishtime > currentdate) {
-						result = "未結案"
+						result = "追蹤中"
 					} else {
 						result = "結案"
 					}					
@@ -221,7 +221,7 @@
 
 
 		//生卡片
-		function drawPre(myData, index, preState, preDate, PID, preVariable, parameter, PAcount, SName, SCode, PFinsihTime) {
+		function drawPre(myData, index, preState, preDate, PID, preVariable, parameter, PAcount, SName, SCode, PFinsihTime, Pmodel, PAccuracyRatio) {
 			// console.log(PAcount + "/" + SName + "/" + SCode)
 			var prelist = "";
 			if (preVariable[0] != null) {
