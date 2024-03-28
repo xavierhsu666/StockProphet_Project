@@ -1,22 +1,22 @@
 ﻿@{
     ViewData["Title"] = "股票預測";
-    int finsihdate;
+    int finishdate;
     switch (@ViewBag.usingModel)
     {
         case "LSTM":
-            finsihdate = 30;
+            finishdate = 30;
             break;
         case "FNN":
-            finsihdate = 5;
+            finishdate = 5;
             break;
         case "迴歸":
-            finsihdate = 30;
+            finishdate = 30;
             break;
         case "時間序列":
-            finsihdate = 5;
+            finishdate = 5;
             break;
         default:
-            finsihdate = 0;
+            finishdate = 0;
             break;
     }
 }
@@ -45,7 +45,7 @@
     });
 
     var lastActualDate = moment(formattedData[formattedData.length - 1].x);
-    var predictedDate = moment(lastActualDate).add(@finsihdate, 'day');
+    var predictedDate = moment(lastActualDate).add(@finishdate, 'day');
     var formattedPredictedDate = predictedDate.format('YYYY-MM-DD');
     var predictedClosePrice = predictedData;
 
@@ -54,7 +54,7 @@
     var stockChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: [], // 將刻度值放在這裡
+            labels: [], 
             datasets: [{
                 label: '實際收盤價',
                 data: formattedData,
@@ -87,24 +87,18 @@
         },
         options: {
             scales: {
-                xAxes: [{
-                    type: 'time',
-                    time: {
-                        unit: 'month', // 指定刻度的時間單位
-                        displayFormats: {
-                            month: 'YYYY-MM' // 指定月份的顯示格式
-                        }
-                    },
+                x: [{
                     ticks: {
-                        maxTicksLimit: 7 // 限制最大刻度數
+                        maxTicksLimit: 7 // 限制最大刻度數為 7
                     }
                 }],
-                yAxes: [{
+                y: [{
                     ticks: {
                         beginAtZero: true
                     }
                 }]
             }
+
         }
     });
 </script>

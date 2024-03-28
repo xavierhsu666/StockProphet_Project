@@ -1067,10 +1067,10 @@ namespace StockProphet_Project.Controllers {
 			//    Console.WriteLine();
 			//}
 			//return Ok("Some result");
-			foreach (var item in features) {
-				System.Diagnostics.Debug.WriteLine("swith" + item);
+			//foreach (var item in features) {
+			//	System.Diagnostics.Debug.WriteLine("swith" + item);
 
-			}
+			//}
 
 
 			// 將數據轉換為 NumPy格式
