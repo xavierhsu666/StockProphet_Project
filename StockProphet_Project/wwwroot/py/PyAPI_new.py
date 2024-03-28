@@ -31,9 +31,6 @@ from sqlalchemy import create_engine, Numeric,text
 def  mutiTimesApi_call(stockNo,dates_input):
         
     dates=[]
-
-
-
     month=int(str(dates_input)[4:6])
 
     for i in range(12-month):
@@ -377,41 +374,34 @@ def  mutiTimesApi_call(stockNo,dates_input):
     # 使用fillna将NaN填充为平均值
     SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(mean_without_nan)
     SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(0)
-    SQL_data_df['SB_EPS'] = SQL_data_df['SB_EPS'].fillna(0)
 
 
 
-    print(SQL_data_df.iloc[-1])
+    # print(SQL_data_df)
     # 從資料庫讀取目標表格的資料到 DataFrame 中
     existing_data_df = pd.read_sql('SELECT * FROM Stock where SN_Code = '+stockNo, engine)
-    # engine.execute('DELETE FROM Stock WHERE SN_Code = ' + stockNo)
-
-    # # 從 Engine 中獲取連接
-    # connection = engine.connect()
-
-    # # 使用連接執行 SQL 查詢
-    # connection.execute(text("UPDATE Stock SET ST_UpdateDate = '" + datetime.now().strftime("%Y-%m-%d") + "' WHERE SN_Code = " + stockNo))
-
-    # # 關閉連接
-    # connection.close()
-
-
+    # print(existing_data_df)
     # 找到目標表格中不存在的資料
     missing_data_df = SQL_data_df[~SQL_data_df.isin(existing_data_df)].dropna()
+    # print(missing_data_df)
 
     # 如果有缺失的資料，將其插入到目標表格中
-    if not missing_data_df.empty:
-        missing_data_df.to_sql(table_name, engine, if_exists='append', index=False)
+    if existing_data_df.empty:
+        SQL_data_df.to_sql(table_name, engine, if_exists='append', index=False)
+        print("資料庫沒值，全部灌進DB")
+    else:
+        if not missing_data_df.empty:
+            missing_data_df.to_sql(table_name, engine, if_exists='append', index=False)
+            print("資料庫有值，並且有差異，將差異灌進DB")
+        else:
+            print("資料庫有值，但無差異，不動作")
 
     # SQL_data_df.to_sql(table_name, engine, index=False, if_exists='replace') # Change 'replace' to 'append' if you want to append data
-     
+
+    
      
 def oneTimeApi_call(stockNo,dates_input):
-         
     dates=[]
-
-
-
     month=int(str(dates_input)[4:6])
 
     for i in range(12-month):
@@ -755,34 +745,30 @@ def oneTimeApi_call(stockNo,dates_input):
     # 使用fillna将NaN填充为平均值
     SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(mean_without_nan)
     SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(0)
-    SQL_data_df['SB_EPS'] = SQL_data_df['SB_EPS'].fillna(0)
 
 
 
-    print(SQL_data_df.iloc[-1])
+    # print(SQL_data_df)
     # 從資料庫讀取目標表格的資料到 DataFrame 中
     existing_data_df = pd.read_sql('SELECT * FROM Stock where SN_Code = '+stockNo, engine)
-    # engine.execute('DELETE FROM Stock WHERE SN_Code = ' + stockNo)
-
-    # # 從 Engine 中獲取連接
-    # connection = engine.connect()
-
-    # # 使用連接執行 SQL 查詢
-    # connection.execute(text("UPDATE Stock SET ST_UpdateDate = '" + datetime.now().strftime("%Y-%m-%d") + "' WHERE SN_Code = " + stockNo))
-
-    # # 關閉連接
-    # connection.close()
-
-
+    # print(existing_data_df)
     # 找到目標表格中不存在的資料
     missing_data_df = SQL_data_df[~SQL_data_df.isin(existing_data_df)].dropna()
+    # print(missing_data_df)
 
     # 如果有缺失的資料，將其插入到目標表格中
-    if not missing_data_df.empty:
-        missing_data_df.to_sql(table_name, engine, if_exists='append', index=False)
+    if existing_data_df.empty:
+        SQL_data_df.to_sql(table_name, engine, if_exists='append', index=False)
+        print("資料庫沒值，全部灌進DB")
+    else:
+        if not missing_data_df.empty:
+            missing_data_df.to_sql(table_name, engine, if_exists='append', index=False)
+            print("資料庫有值，並且有差異，將差異灌進DB")
+        else:
+            print("資料庫有值，但無差異，不動作")
 
     # SQL_data_df.to_sql(table_name, engine, index=False, if_exists='replace') # Change 'replace' to 'append' if you want to append data
-     
+
     
 #  Main----------------------------
 
@@ -790,5 +776,6 @@ def oneTimeApi_call(stockNo,dates_input):
 stockNo = input("請輸入股票代號: ")
 dates_input = input("請輸入日期(例如: 20230201,20230301): ")
 mutiTimesApi_call(stockNo,dates_input)
+# oneTimeApi_call(stockNo,dates_input)
 
 #  Main----------------------------
