@@ -27,6 +27,10 @@ import numpy as np
 from io import StringIO
 from sqlalchemy import create_engine, Numeric,text
  
+import warnings
+
+# 忽略所有警告
+warnings.filterwarnings("ignore")
 
 def  mutiTimesApi_call(stockNo,dates_input):
         
@@ -401,22 +405,32 @@ def  mutiTimesApi_call(stockNo,dates_input):
     
      
 def oneTimeApi_call(stockNo,dates_input):
+    from dateutil.relativedelta import relativedelta
     dates=[]
     month=int(str(dates_input)[4:6])
-
-    for i in range(12-month):
-        dates.append(int(dates_input)-10000+(1+i)*100)
-    for i in range(month):
-        dates.append(int(dates_input)-100*(month-i-1))
+    
+    curTime = datetime.strptime(dates_input, '%Y%m%d')
+    
+    result_date = curTime - relativedelta(months=1)
+    dates.append(int(result_date.strftime('%Y%m%d')))
+    dates.append(int(dates_input))
+    
+    
+    
+    
+    # for i in range(12-month):
+    #     dates.append(int(dates_input)-10000+(1+i)*100)
+    # for i in range(month):
+    #     dates.append(int(dates_input)-100*(month-i-1))
     url_template1 = "https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=html&date={}&stockNo={}"
     url_template2 = "https://www.twse.com.tw/rwd/zh/afterTrading/BWIBBU?response=html&date={}&stockNo={}"
     url_template3 = 'https://mops.twse.com.tw/nas/t21/sii/t21sc03_{}_0.html'
-
 
     # 建立一個空的 DataFrame 來存儲所有數據
     all_data = pd.DataFrame()
 
     for date in dates:
+        # print(date)
         # 取得第一個 API 的數據
         url1 = url_template1.format(date, stockNo)
         
@@ -445,6 +459,8 @@ def oneTimeApi_call(stockNo,dates_input):
         # Step3. 篩選出個股月營收資訊
         # 3.1 剃除行數錯誤的表格,並將表格合併
         month_df = pd.concat([df for df in html_df if df.shape[1] == 11]) 
+        # print(html_df)
+        # month_df = html_df
 
     
         
@@ -704,10 +720,10 @@ def oneTimeApi_call(stockNo,dates_input):
     # 將所有數據儲存到 SQL Server
     table_name = "Stock"
     SQL_data_df=SQL_data_df.reset_index(drop=True)
-
-    for i in range(len(SQL_data_df)):
-        # SQL_data_df.at[i,'ST_Date']=str(int(SQL_data_df.iloc[i][0].replace('/',''))+19110000)
-        SQL_data_df.at[i,'ST_Date'] = str(int(SQL_data_df.iloc[i][0].replace('/',''))+19110000)
+    
+    for i in range(len(SQL_data_df)-1):
+        # SQL_data_df.at[i,'ST_Date']=str(int(SQL_data_df.iloc[i][0].replace('/',''))+19110000)        
+        SQL_data_df.at[i,'ST_Date'] = str(int(str(SQL_data_df.iloc[i][0]).replace('/',''))+19110000)
         if i==0:
             # SQL_data_df.at[i,'STe_SpreadRatio']=(SQL_data_df.iloc[i][7]-SQL_data_df.iloc[i][8])/(SQL_data_df.iloc[i][9]+float(SQL_data_df.iloc[i][8]))*100
             SQL_data_df.at[i,'STe_SpreadRatio'] = (SQL_data_df.iloc[i][7] - SQL_data_df.iloc[i][8]) / (SQL_data_df.iloc[i][9] + float(SQL_data_df.iloc[i][8])) * 100
@@ -769,13 +785,31 @@ def oneTimeApi_call(stockNo,dates_input):
 
     # SQL_data_df.to_sql(table_name, engine, index=False, if_exists='replace') # Change 'replace' to 'append' if you want to append data
 
-    
+def isoneTimeApi_call(stockNo):
+     # SQL Server 連線部分
+    server_name = 'localhost'
+    database_name = 'StockProphet'
+    username = 'sa'
+    password = 'sa'
+
+    connection_string = f'mssql+pyodbc://{server_name}/{database_name}?trusted_connection=yes&driver=ODBC+Driver+17+for+SQL+Server'
+    engine = create_engine(connection_string)
+    existing_data_df = pd.read_sql('SELECT * FROM Stock where SN_Code = '+stockNo, engine)
+    if(existing_data_df.shape[0]>0):
+        print("資料庫有資料，只呼叫API抓兩個月數據")
+        return True
+    else:
+        print("資料庫無資料，呼叫API抓一年的數據")
+        return False
 #  Main----------------------------
 
 # 使用者輸入股票代號和日期
 stockNo = input("請輸入股票代號: ")
 dates_input = input("請輸入日期(例如: 20230201,20230301): ")
-mutiTimesApi_call(stockNo,dates_input)
+# mutiTimesApi_call(stockNo,dates_input)
 # oneTimeApi_call(stockNo,dates_input)
+isoneTimeApi = (isoneTimeApi_call(stockNo))
+
+oneTimeApi_call(stockNo,dates_input) if isoneTimeApi else mutiTimesApi_call(stockNo,dates_input)
 
 #  Main----------------------------
