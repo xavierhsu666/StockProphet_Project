@@ -12,13 +12,29 @@
     }
 
     #checkEye2 {
+      
         position: absolute;
-        top: 60%;
+        top: 50%;
         right: 10px;
         transform: translateY(-50%);
     }
+
+    .form-container {
+        max-width: 500px;
+        background-color: #fff;
+        padding: 32px 24px;
+        font-size: 14px;
+        font-family: inherit;
+        color: #212121;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
+    }
 </style>
-<h1 class="text-">會員功能-修改個人資料</h1>
+@* <h1 class="text-">會員功能-修改個人資料</h1> *@
 
 <div class="row">
     <div class="col-md-4">
@@ -36,65 +52,68 @@
 
         <div id="afterLog">
             @* 2.修改個人資料 *@
-            <div id="Revise">
+            <div id="Revise" class="form-container">
                 <form>
-                <div>
-                    <label for="Account" id="Account">帳號:</label>
-                </div>
+                    <div class="logo-container">修改個人資料</div>
+                    <div>
+                        <label for="Account" id="Account">帳號:</label>
+                    </div>
 
-                <div>
-                    <label for="Password">修改密碼:</label>
-                    <input type="password" pattern="@PasswordPattern" size="20" minlength="20" name="MPassword" id="Password" title="請輸入原始密碼" value="">
+                    <div class="form-floating mb-3">
+                        <input class="form-control" type="password" pattern="@PasswordPattern" size="20" minlength="20" name="MPassword" id="Password" title="請輸入原始密碼" value="">
+                        <label class="form-label" for="Password">修改密碼:</label>
                         <i id="checkEye1" class="fas fa-eye-slash"></i>
                         <span id="passwordError" style="color: red;"></span>
 
-                </div>
-                <div id="pass1">
-                    <label for="Password">輸入新密碼:</label>
-                    <input type="password" pattern="@PasswordPattern" size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼" value="">
+                    </div>
+                    <div id="pass1" class="form-floating mb-3">
+                        <input class="form-control" type="password" pattern="@PasswordPattern" size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼" value="">
+                        <label class="form-label" for="Password">輸入新密碼:</label>
+                        
                         <i id="checkEye2" class="fas fa-eye-slash"></i>
                         <span id="passwordError" style="color: red;"></span>
-                </div>
-                <div id="pass2">
-                    <label for="Password">請再輸入一次新密碼:</label>
-                    <input type="password" pattern="" size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="">
-                       
+                    </div>
+                    <div id="pass2" class="form-floating mb-3">
+                        <input class="form-control" type="password" pattern="" size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="">
+                        <label class="form-label" for="Password">請再輸入一次新密碼:</label>                       
                         @* 再次輸入密碼不同時，顯示提示字 *@
-                    <span id="passwordError" style="color: red;"></span>
-                    <span id="pwdnoteword"><p style="color:red; ">您輸入的密碼不相同</p></span>
+                        <span id="passwordError" style="color: red;"></span>
+                        <span id="pwdnoteword"><p style="color:red; ">您輸入的密碼不相同</p></span>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" type="email" pattern="@MEmailPattern" name="MEmail" id="Email" value="" required>
+                        <label class="form-label" for="Email">信箱:</label>
+                        <span id="emailError" style="color: red;"></span>
+                        <br>
+                    </div>
                     
-                </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" type="text" name="MTrueName" id="UserName" value="">
+                        <label class="form-label" for="UserName">姓名:</label>
+                        <br>
+                    </div>
+                    
 
-                <label for="Email">信箱:</label>
-                <input type="email" pattern="@MEmailPattern" name="MEmail" id="Email" value="" required>
-                <span id="emailError" style="color: red;"></span>
+                    <label for="Birthday" id="Birthday">生日:</label>
+                    <br>
 
-                <br>
+                    <label for="MGender" id="MGender">性別:</label>
+                    <br>
 
-                <label for="UserName">姓名:</label>
-                <input type="text" name="MTrueName" id="UserName" value="">
-                <br>
+                    <label for="MInvestYear">您的投資年數:</label>
+                    <select name="MInvestYear" id="InvestYear" required>
+                        <option value="1">未滿1年</option>
+                        <option value="2">1-3年</option>
+                        <option value="3">3-5年</option>
+                        <option value="4">5年以上</option>
+                    </select>
+                    <br>
 
-                <label for="Birthday" id="Birthday">生日:</label>
-                <br>
+                    <label for="MLevel" id="MLevel">會員等級:</label>
+                    <br>
 
-                <label for="MGender" id="MGender">性別:</label>
-                <br>
-
-                <label for="MInvestYear">您的投資年數:</label>
-                <select name="MInvestYear" id="InvestYear" required>
-                    <option value="1">未滿1年</option>
-                    <option value="2">1-3年</option>
-                    <option value="3">3-5年</option>
-                    <option value="4">5年以上</option>
-                </select>
-                <br>
-
-                <label for="MLevel" id="MLevel">會員等級:</label>
-                <br>
-
-                <button id="ReviseData">修改資料</button>
-                <button id="Reset">取消</button>
+                    <button id="ReviseData">修改資料</button>
+                    <button id="Reset">取消</button>
                 </form>
             </div>
         </div>
@@ -116,7 +135,7 @@
     // 設定新密碼的提示字
     $('#pwdnoteword').hide();
 
-    //輸入正確舊密碼前不能修改   
+    //輸入正確舊密碼前不能修改
     $('#pass1').css('display', 'none');
     $('#pass2').css('display', 'none');
 
@@ -127,27 +146,22 @@
                 $("#Password").attr('type', 'text');
             } else {
                 $("#Password").attr('type', 'password');
-
             }
             $(this).toggleClass('fa-eye-slash').toggleClass('fa-eye');
-        });      
-        
+        });
+
         $("#checkEye2").click(function () {
             if ($(this).hasClass('fa-eye-slash')) {
                 $("#Password1").attr('type', 'text');
                 $("#Password2").attr('type', 'text');
-
             } else {
                 $("#Password1").attr('type', 'password');
                 $("#Password2").attr('type', 'password');
             }
             $(this).toggleClass('fa-eye-slash').toggleClass('fa-eye');
         });
-        
-        
-        
-        
-        
+
+
         // 1.點擊回到會員頁
         $('#showMemberIndex').on("click", function () {
             window.location.href = "/Member/Index";
@@ -313,17 +327,17 @@
                 }
             })
         })
-       
+
 
         // (2).將修改的資料存回資料庫
         $('#ReviseData').on("click", function () {
 
             NewEmail = $('#Email').val(),
-            NewName = $('#UserName').val(),
-            NewInvestYear = $('#InvestYear').val()
+                NewName = $('#UserName').val(),
+                NewInvestYear = $('#InvestYear').val()
             //是否修改密碼
             NewPassword = $('#Password2').val()
-            if (NewPassword!=null) { NewPassword = $('#Password2').val() } 
+            if (NewPassword != null) { NewPassword = $('#Password2').val() }
             else {
                 NewPassword = $('#Password1').val()
             }

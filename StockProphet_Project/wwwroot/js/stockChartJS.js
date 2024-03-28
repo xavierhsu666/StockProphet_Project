@@ -893,6 +893,3 @@ function saveTag() {
     }
     sessionStorage.setItem("VarTag", tagforSession);
 }
-
-$(".bg-right-hand")
-$(".bg-left-hand")

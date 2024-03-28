@@ -100,10 +100,14 @@
 			if (sessionStorage.getItem("LogAccount") == null) {
                 $(".note-area").css("display", "none");
                 console.log(1)
+                
                 $('.dropdown-menu').css("display", "none")
                 $('#mynavgation-right').prepend(`<li b-1ez45loqxb class="nav-item" id="myLogin"><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login">登入</a></li>`);
 				$('#loginlink').show();
 				$('#logoutlink').hide();
+                $('.dropdown-toggle').on("click", function () {
+                    alert('請先註冊或登入會員');
+                })
 			} else {
                 console.log(2)
                 $('.dropdown-menu').append(` <a class="dropdown-item" href="/Member/Index">會員主頁</a>
