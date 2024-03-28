@@ -1174,6 +1174,8 @@ namespace StockProphet_Project.Controllers {
 			return View();
 		}
 		public IActionResult predictphoto( string predicteddata, string sncode, string predictedloss,string mymodelselect) {
+
+			UpdateModelResultsStatusAndRatio();
 			// 檢索資料庫中的資料筆數
 			int dataCount = _context.Stock.Where(x => x.SnCode == sncode).Count();
 
