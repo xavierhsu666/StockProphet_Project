@@ -1,104 +1,134 @@
 ﻿@{
-    ViewData["Title"] = "股票預測";
-    int finishdate;
-    switch (@ViewBag.usingModel)
-    {
-        case "LSTM":
-            finishdate = 30;
-            break;
-        case "FNN":
-            finishdate = 5;
-            break;
-        case "迴歸":
-            finishdate = 30;
-            break;
-        case "時間序列":
-            finishdate = 5;
-            break;
-        default:
-            finishdate = 0;
-            break;
-    }
+	ViewData["Title"] = "股票預測";
+	int finishdate;
+	switch (@ViewBag.usingModel)
+	{
+		case "LSTM":
+			finishdate = 30;
+			break;
+		case "FNN":
+			finishdate = 5;
+			break;
+		case "迴歸":
+			finishdate = 30;
+			break;
+		case "時間序列":
+			finishdate = 5;
+			break;
+		default:
+			finishdate = 0;
+			break;
+	}
 }
-<!-- 引入 Chart.js 库 -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <h1>股票預測</h1>
 <h1>使用模型: @ViewBag.usingModel</h1>
 <h1>預測值: @ViewBag.PredictedData</h1>
 <h1>MSE-Loss: @ViewBag.PredictedLoss</h1>
 
-<!-- 创建一个 canvas 元素用于绘制图表 -->
-<canvas id="stockChart" width="800" height="400"></canvas>
+
+<div id="stockChart"></div>
 
 <script>
-    var actualData = @Html.Raw(Json.Serialize(ViewBag.ChartData));
-    var predictedData = @Html.Raw(Json.Serialize(ViewBag.PredictedData));
 
-    var formattedData = actualData.map(function (item) {
-        var date = moment(item.StDate).format('YYYY-MM-DD');
-        return {
-            x: date,
-            y: item.SteClose,
-            label: '日期: ' + date + ', 收盤價: ' + item.SteClose
-        };
+	var actualData = @Html.Raw(Json.Serialize(ViewBag.ChartData));
+	var predictedData = @Html.Raw(Json.Serialize(ViewBag.PredictedData));
+
+	var formattedData = actualData.map(function (item) {
+		var date = moment(item.StDate).toDate();
+		return {
+			x: date,
+			y: item.SteClose,
+		};
+	});
+	var lastActualDate = moment(formattedData[formattedData.length - 1].x);
+	var predictedDate = moment(lastActualDate).add(@finishdate, 'day');
+	var formattedPredictedDate = predictedDate.toDate();
+	var predictedClosePrice = predictedData;
+	console.log(formattedData)
+	console.log(formattedPredictedDate)
+    // 等待 HTML 文件完全載入後再執行
+    document.addEventListener('DOMContentLoaded', function () {
+        photo(); // 呼叫繪製圖表的函式
     });
+    function photo() {
+        // 設置畫布尺寸
+        const width = 800;
+        const height = 400;
 
-    var lastActualDate = moment(formattedData[formattedData.length - 1].x);
-    var predictedDate = moment(lastActualDate).add(@finishdate, 'day');
-    var formattedPredictedDate = predictedDate.format('YYYY-MM-DD');
-    var predictedClosePrice = predictedData;
+        // 創建 SVG 容器
+        const svg = d3.select('#stockChart')
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
 
-    var ctx = document.getElementById('stockChart').getContext('2d');
+        // 定義 x 和 y 的比例尺
+        const x = d3.scaleTime().range([50, width - 50]);
+        const y = d3.scaleLinear().range([height - 50, 50]);
 
-    var stockChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [], 
-            datasets: [{
-                label: '實際收盤價',
-                data: formattedData,
-                borderColor: 'blue',
-                fill: false
-            }, {
-                label: '預測收盤價',
-                data: [{
-                    x: formattedPredictedDate,
-                    y: predictedClosePrice
-                }],
-                borderColor: 'red',
-                fill: false,
-                pointRadius: 10
-            }, {
-                label: '趨勢線',
-                data: [{
-                    x: formattedData[formattedData.length - 1].x,
-                    y: formattedData[formattedData.length - 1].y
-                }, {
-                    x: formattedPredictedDate,
-                    y: predictedClosePrice
-                }],
-                borderColor: 'red',
-                fill: false,
-                pointRadius: 0,
-                borderWidth: 0.5,
-                borderDash: [5, 5]
-            }]
-        },
-        options: {
-            scales: {
-                x: [{
-                    ticks: {
-                        maxTicksLimit: 7 // 限制最大刻度數為 7
-                    }
-                }],
-                y: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            }
+        // 定義 x 和 y 軸
+        const xAxis = d3.axisBottom(x);
+        const yAxis = d3.axisLeft(y);
 
-        }
-    });
+        // 繪製實際收盤價線
+        const actualLine = d3.line()
+            .x(d => x(d.x))
+            .y(d => y(d.y));
+
+        svg.append('path')
+            .attr('fill', 'none')
+            .attr('stroke', 'blue')
+            .attr('stroke-width', 1.5)
+            .attr('d', actualLine(formattedData));
+
+        // 添加實際資料點
+        svg.selectAll('.actualDataPoint')
+            .data(formattedData)
+            .enter()
+            .append('circle')
+            .attr('class', 'actualDataPoint')
+            .attr('cx', d => x(d.x))
+            .attr('cy', d => y(d.y))
+            .attr('r', 4)
+            .attr('fill', 'blue');
+
+        // 繪製預測收盤價點
+        svg.append('circle')
+            .attr('class', 'predictedDataPoint')
+            .attr('cx', x(formattedPredictedDate))
+            .attr('cy', y(predictedClosePrice))
+            .attr('r', 5)
+            .attr('fill', 'red');
+
+        // 繪製趨勢線
+        const trendLine = d3.line()
+            .x(d => x(d.x))
+            .y(d => y(d.y));
+
+        svg.append('path')
+            .datum([
+                { x: formattedData[formattedData.length - 1].x, y: formattedData[formattedData.length - 1].y },
+                { x: formattedPredictedDate, y: predictedClosePrice }
+            ])
+            .attr('fill', 'none')
+            .attr('stroke', 'red')
+            .attr('stroke-width', 1.5)
+            .attr('stroke-dasharray', '5, 5')
+            .attr('d', trendLine);
+
+        // 設置 x 和 y 比例尺的範圍
+        x.domain(d3.extent(formattedData, d => d.x));
+        y.domain(d3.extent(formattedData, d => d.y));
+
+        // 添加 x 和 y 軸
+        svg.append('g')
+            .attr('transform', `translate(0, ${height - 50})`)
+            .call(xAxis);
+
+        svg.append('g')
+            .attr('transform', 'translate(50, 0)')
+            .call(yAxis);
+    }
 </script>
