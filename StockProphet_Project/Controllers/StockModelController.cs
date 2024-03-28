@@ -38,6 +38,8 @@ using static StockProphet_Project.Models.WebAPI_Class;
 using ChoETL;
 using System.Security.Cryptography.X509Certificates;
 using System.Web;
+using Newtonsoft.Json;
+using NuGet.Protocol;
 
 namespace StockProphet_Project.Controllers {
 	public class StockModelController : Controller {
@@ -1267,10 +1269,8 @@ namespace StockProphet_Project.Controllers {
 			DateTime finishTime = DateTime.Parse(PfinishTime);
 			//System.Diagnostics.Debug.WriteLine($"PLabel: {PLabel}");
 			System.Diagnostics.Debug.WriteLine($"Pparameter111111111111: {Pparameter}");
-			dynamic parameterObj = JsonConvert.DeserializeObject(Pparameter);
-			decimal MSE = parameterObj.MSE;
-			int Layerchoose = parameterObj.Layerchoose;
-			int Iters = parameterObj.Iters;
+
+			
 			var newdata = new DbModel {
 				Pstock = PStock,
 				Pvariable = PVariable,

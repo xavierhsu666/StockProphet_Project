@@ -125,7 +125,7 @@
 			</thead>
 			<tr>
 				<td>
-					<input type="number" style="width:50%" class="appendTt" id="iterationtime1" name="iterationtime" value="200" min="100" max="300">
+					<input type="number" style="width:75%" class="appendTt" id="iterationtime1" name="iterationtime" value="200" min="100" max="300">
 				</td>
 				<td>
 					<input type="number" style="width:25%" class="appendTt" id="layer1" name="" value="0" min="0" max="10">
@@ -218,7 +218,7 @@
 			</thead>
 			<tr>
 				<td>
-					<input type="number" style="width:50%" class="appendTt" id="iterationtime2" name="iterationtime" value="200" min="100" max="300">
+					<input type="number" style="width:75%" class="appendTt" id="iterationtime2" name="iterationtime" value="200" min="100" max="300">
 				</td>
 				<td>
 					<input type="number" style="width:25%" class="appendTt" id="layer2" name="" value="0" min="0" max="10">
@@ -1199,7 +1199,7 @@
 							var keysWithoutBrackets = Object.keys(userselectparams).map(function (key) {
 								return key;
 							});
-
+							
 							var datatoserver = {
 								PStock: sncode,
 								PVariable: JSON.stringify(keysWithoutBrackets),
@@ -1208,11 +1208,9 @@
 								PBuildTime: isoString,
 								PfinishTime: finishString,
 								PAccount: sessionStorage.getItem("LogAccount"),
-								Pparameter: JSON.stringify({
-									"MSE": predictedloss,
-									"Layerchoose": layerforpredict,
-									"Iters": iterationtimeforpredict
-								}),
+								Pparameter: '{"MSE":' + parseFloat(predictedloss) +
+									',"Layerchoose":' + parseInt(layerforpredict) +
+									',"Iters":' + parseInt(iterationtimeforpredict)+'}',
 								Pmodel:(number==1)?"LSTM":"FNN" 
 							}
 							
