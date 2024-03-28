@@ -577,7 +577,7 @@
 						})
 						increaseProgress(100);
 						// window.location.href = "/stockmodel/predictphoto?predictedData=" + e.Output_F_estimate + "&snCode=" + data.stockCode;
-						window.location.href = "/StockModel/predictphoto?predictedData=" + e.Output_F_estimate + "&predictedloss=" + e.Output_M_MAE.toFixed(2) + "&snCode=" + data.stockCode + "&mymodelselect=時間序列";
+						window.location.href = "/StockModel/predictphoto?Pid=" + e.Pid;
 
 						// alert("OKOK" + e);
 					}
@@ -644,7 +644,8 @@
 						})
 						increaseProgress(100);
 						// window.location.href = "/stockmodel/predictphoto?predictedData=" + e.output_F_Forcast + "&snCode=" + data.stockCode;
-						window.location.href = "/StockModel/predictphoto?predictedData=" + e.output_F_Forcast + "&predictedloss=" + e.output_M_MSE.toFixed(2) + "&snCode=" + data.stockCode + "&mymodelselect=回歸模型";
+						// window.location.href = "/StockModel/predictphoto?predictedData=" + e.output_F_Forcast + "&predictedloss=" + e.output_M_MSE.toFixed(2) + "&snCode=" + data.stockCode + "&mymodelselect=回歸模型";
+						window.location.href = "/StockModel/predictphoto?Pid=" + e.Pid;
 
 						// alert("OKOK" + e);
 					}
@@ -1240,7 +1241,9 @@
 									setTimeout(function () {
 										$(`#progress${number}`).css("width", '99%');
 										setTimeout(function () {
-											var predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode + "&mymodelselect=" + mymodelselect;
+											// var predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode + "&mymodelselect=" + mymodelselect;
+											var predicturl = "/StockModel/predictphoto?Pid=" + e.Pid;
+
 											window.location.href = predicturl;
 										}, 3000);
 									}, 1000);
