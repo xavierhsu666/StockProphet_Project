@@ -528,8 +528,17 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
     /*console.log(prelist);*/
     $(".predictionArea").prepend(`<label class='prediction-card ${index}'>
     <input type='checkbox' class='card-btn' />
-    <div class='card-content'><div class='card-front'><p class="pre-state">${preState}+${PID}</p>
-    <table><tr><th class="pre-th">建立帳號</th><td class="pre-td pre-date">${pAccount}</td></tr>
+    <div class='card-content'><div class='card-front'>
+    <div class="card-o">
+        <p class="pre-state">${preState}</p>
+        <table >
+            <tr><th class="pre-th">準確率</th><td class="pre-td pre-date">-</td></tr>
+            <tr><th class="pre-th">建立帳號</th><td class="pre-td pre-date">${pAccount}</td></tr>
+            <tr><th class="pre-th">預測模型</th><td class="pre-td pre-date">-</td></tr>
+        </table>
+    </div>
+    <p class="pre-state">${preState}</p>
+    <table class="table-inside">
     <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preBuildDate}</td></tr>
     <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${preDate}</td></tr>
     <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5].Close}</td></tr>
@@ -884,3 +893,6 @@ function saveTag() {
     }
     sessionStorage.setItem("VarTag", tagforSession);
 }
+
+$(".bg-right-hand")
+$(".bg-left-hand")

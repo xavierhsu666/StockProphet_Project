@@ -393,8 +393,7 @@ path.difference {
         opacity: 0;
     }
 }
-
-@keyframes visitorAlert-DLeave {
+ visitorAlert-DLeave {
     0% {
         opacity: 1;
         transform: rotateZ(45deg);
