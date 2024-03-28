@@ -327,7 +327,7 @@ namespace StockProphet_Project.Controllers {
 
 		// <WEB API 區>
 		public IActionResult stocksListACA() {
-			var stocksList = (from obj in new ChoCSVReader<stocksCheck>("wwwroot\\stocksListCode.csv").WithFirstLineHeader()
+			var stocksList = (from obj in new ChoCSVReader<stocksCheck>("wwwroot\\stocksList.csv").WithFirstLineHeader()
 							  select new {
 								  label = obj.Name,
 								  category = obj.type
