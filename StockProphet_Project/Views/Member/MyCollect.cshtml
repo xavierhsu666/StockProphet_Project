@@ -87,8 +87,8 @@
 </div>
 
 <script src="https://kit.fontawesome.com/fe876fcce4.js" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
-<script>
+@* <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
+ *@<script>
     //判斷會員是否登入
     var MID = sessionStorage.getItem("LogAccount");
 
@@ -208,10 +208,10 @@
                             var currentdate = new Date()
                             var result;
                             if (otherprarmeter[0]["PFinsihTime"] > currentdate) { 
-                                result = "未結案";
+                                result = "追蹤中";
                             
                             } else {
-                                result = "結案";
+                                result = "已結案";
                             }
 
                             // console.log(otherprarmeter);
@@ -308,9 +308,9 @@
                         // console.log(finishtime)
                         // console.log(currentdate)
                         if (finishtime > currentdate) {
-                            result = "未結案"
+                            result = "追蹤中"
                         } else {
-                            result = "結案"
+                            result = "已結案"
                         }
                         
                         //結案狀態
@@ -361,8 +361,9 @@
                                                <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
                                                <tr><th class="pre-th">結果參數</th><td class="pre-td">MSE:${parameter.MSE}</td></tr>
                                                </table>
-
+                                                   <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
                                                </div>
+                                               
                                                <div class='card-back'>
                                                <div class='forPrediction'>
                                                </div></div></div>
@@ -604,39 +605,41 @@
 
 
 
-    })
+    
+    function btnTest(btn) {
+        var dataToServer = { user: sessionStorage.getItem("LogAccount"), cardID: $(btn).attr("id").substring(3) };
 
-    var dataToServer = { user: sessionStorage.getItem("LogAccount"), cardID: $(btn).attr("id").substring(3) };
-    $.ajax({
-        url: "/Home/CheckCard",
-        method: "POST",
-        data: dataToServer,
-        success: function (e) {
-            console.log(e);
-            switch (e.substring(0, 1)) {
-                case "A": {
-                    $(btn).css("color", "red");
-                    console.log("新增一筆");
-                    sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
-                    break
+        $.ajax({
+            url: "/Home/CheckCard",
+            method: "POST",
+            data: dataToServer,
+            success: function (e) {
+                console.log(e);
+                switch (e.substring(0, 1)) {
+                    case "A": {
+                        $(btn).css("color", "red");
+                        console.log("新增一筆");
+                        sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                        break
+                    }
+                    case "D": {
+                        $(btn).css("color", "black");
+                        console.log("刪除一筆");
+                        sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                        break;
+                    }
+                    case "R":
+                        console.log("收藏上限了朋友");
+                        break;
                 }
-                case "D": {
-                    $(btn).css("color", "black");
-                    console.log("刪除一筆");
-                    sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
-                    break;
-                }
-                case "R":
-                    console.log("收藏上限了朋友");
-                    break;
             }
-        }
-    })
+        })
+    }
 
     // 檢視愛心狀態
     setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
-        
-            d3.json(`/Home/cardCheck/${user}`, function (list) {
+
+        d3.json(`/Home/cardCheck/${sessionStorage.getItem("LogAccount")}`, function (list) {
                 list.forEach(function (item, i) {
                     //針對會員有按愛心的按鈕 變化
                     $(`#PID${parseInt(item)}`).css({
@@ -646,6 +649,7 @@
                 })
             });
     }, 500);
+    
 </script>
 
 
