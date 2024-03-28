@@ -570,13 +570,14 @@
 						}
 
 						increaseProgress(70);
+						// 新增PID
 						var SaveModelResultToDB_fb = SaveModelResultToDB(datatoserver);
 						SaveModelResultToDB_fb.then(function (e) {
-							console.log( e);
+							console.log(e.Pid);
 						})
 						increaseProgress(100);
 						// window.location.href = "/stockmodel/predictphoto?predictedData=" + e.Output_F_estimate + "&snCode=" + data.stockCode;
-						// window.location.href = "/StockModel/predictphoto?predictedData=" + e.Output_F_estimate + "&predictedloss=" + e.Output_M_MAE.toFixed(2) + "&snCode=" + data.stockCode + "&mymodelselect=時間序列";
+						window.location.href = "/StockModel/predictphoto?predictedData=" + e.Output_F_estimate + "&predictedloss=" + e.Output_M_MAE.toFixed(2) + "&snCode=" + data.stockCode + "&mymodelselect=時間序列";
 
 						// alert("OKOK" + e);
 					}
@@ -635,11 +636,11 @@
 							Pmodel: paras.usingModel
 						}
 
-
+						// 新增PID
 						increaseProgress(70);
 						var SaveModelResultToDB_fb = SaveModelResultToDB(datatoserver);
 						SaveModelResultToDB_fb.then(function (e) {
-							console.log(e);
+							console.log(e.Pid);
 						})
 						increaseProgress(100);
 						// window.location.href = "/stockmodel/predictphoto?predictedData=" + e.output_F_Forcast + "&snCode=" + data.stockCode;
@@ -1227,21 +1228,26 @@
 									// var errorMessage = xhr.responseText;
 									// alert(errorMessage);
 								}
-							})
-							console.log(borisprediction)
-							var predictedData = borisprediction;
+							}).then(function (e) {
+								console.log(borisprediction);
+								// 加入PID
+								console.log(e.Pid);
+								var predictedData = borisprediction;
 
 
-							setTimeout(function () {
-								$(`#progress${number}`).css("width", '90%');
 								setTimeout(function () {
-									$(`#progress${number}`).css("width", '99%');
+									$(`#progress${number}`).css("width", '90%');
 									setTimeout(function () {
-										var predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode + "&mymodelselect=" + mymodelselect;
-										window.location.href = predicturl;
-									}, 3000);
-								}, 1000);
-							}, 2000);
+										$(`#progress${number}`).css("width", '99%');
+										setTimeout(function () {
+											var predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode + "&mymodelselect=" + mymodelselect;
+											window.location.href = predicturl;
+										}, 3000);
+									}, 1000);
+								}, 2000);
+							
+							})
+							
 
 
 						},
