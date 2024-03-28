@@ -25,8 +25,7 @@ import requests
 import pandas as pd
 import numpy as np
 from io import StringIO
-from sqlalchemy import create_engine, Numeric
-
+from sqlalchemy import create_engine, Numeric,text
         
  
 
@@ -380,12 +379,24 @@ mean_without_nan = SQL_data_df['SI_PE'].dropna().mean()
 # 使用fillna将NaN填充为平均值
 SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(mean_without_nan)
 SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(0)
+SQL_data_df['SB_EPS'] = SQL_data_df['SB_EPS'].fillna(0)
 
 
 
-# print(SQL_data_df)
+print(SQL_data_df.iloc[-1])
 # 從資料庫讀取目標表格的資料到 DataFrame 中
 existing_data_df = pd.read_sql('SELECT * FROM Stock where SN_Code = '+stockNo, engine)
+# engine.execute('DELETE FROM Stock WHERE SN_Code = ' + stockNo)
+
+# # 從 Engine 中獲取連接
+# connection = engine.connect()
+
+# # 使用連接執行 SQL 查詢
+# connection.execute(text("UPDATE Stock SET ST_UpdateDate = '" + datetime.now().strftime("%Y-%m-%d") + "' WHERE SN_Code = " + stockNo))
+
+# # 關閉連接
+# connection.close()
+
 
 # 找到目標表格中不存在的資料
 missing_data_df = SQL_data_df[~SQL_data_df.isin(existing_data_df)].dropna()
