@@ -11,6 +11,7 @@
     @* 其他共用CSS *@
     <link rel="stylesheet" href="~/css/note.css" type="text/css" />
     <link rel="stylesheet" href="~/css/drawCard.css" type="text/css" />
+    <link rel="stylesheet" href="~/css/layerStyle.css" type="text/css" />
     @* d3.js及圖表會用的到的 *@
     <script src="https://d3js.org/d3.v4.js"></script>
     <script src="https://techanjs.org/techan.min.js"></script>
@@ -26,15 +27,16 @@
 <body>
     <header>
         <nav class="logo-bar">
-            <img src="~/Logo.svg" class="main-logo" style="height:50%;margin-left:20px;cursor: pointer;" onclick="backHome()"/>
+            <img src="~/Logo.svg" id="main-logo" onclick="backHome()" style="height:50%; margin-left:25px;"/>
             <div class="media-icon">
                 <i class="fa-brands fa-square-facebook"></i>
                 <i class="fa-brands fa-square-instagram"></i>
                 <i class="fa-brands fa-youtube"></i>
             </div>
         </nav>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background-color:#51a2b7;">
-            <div class="container-fluid" >
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style=" background-color:#87aeb4">
+            
+            <div class="container-fluid" style=" background-color:#87aeb4">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>

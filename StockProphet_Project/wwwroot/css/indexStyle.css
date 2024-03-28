@@ -1,5 +1,5 @@
 ﻿html {
-    overflow:hidden;
+    /*overflow:hidden;*/
 }
 body {
     padding:30px
@@ -12,44 +12,46 @@ main {
     justify-content:center;
 }
 
+.hand-ani {
+    height:800px;
+    width:750px;
+    position:absolute;
+    bottom:0;
+    right:0;
+    overflow:hidden;
+    z-index:-1;
+}
 .container {
     max-width: 100% !important;
-    display:flex;
-    padding:20px
-
+    display: flex;
+    padding: 20px
 }
 
 .area-left {
     width:50%;
-    min-width:575px;
    height:500px;
     position:relative;
+    /*border: 2px solid black;*/
 
 }
 .area-right {
     width: 50%;
-    min-width: 575px;
     height: 200px;
+    /*border: 2px solid black;*/
     /*position:relative*/
-
 }
 .area-left {
+    width: 50%;
     display: flex;
     justify-content: center;
 }
-/*bar的設定*/
-.container-fluid {
-}
-.navbar {
-    /*padding:2rem;*/
-    /*margin:20px;*/
-}
+
+
 
 .bg-right-hand {
     position: absolute;
     right: -600px;
     bottom: 250px;
-    pointer-events: none;
 }
 .bg-right-hand-move {
     animation: righthandmove 1s forwards;
@@ -69,7 +71,7 @@ main {
     position: absolute;
     bottom: -500px;
     right: 200px;
-    pointer-events: none;
+
 }
 .bg-left-hand-move {
     animation: lefthandmove 1s forwards 
@@ -213,13 +215,21 @@ a.ui-button:active,
 }
 
 .main-logo {
-    height: 40px;
+    width: 10rem;
     cursor: pointer;
-    margin-right: 20px
+    margin-right: 20px;
+    transition:all 0.3s;
 }
 
+#myRegister {
+/*    background-color: #87aeb4;
+    border-radius: 15px;
+    padding-left: 20px;
+    padding-right: 20px;*/
+}
+#myLogin {
 
-
+}
 /*搜尋欄設定*/
 #ui-id-1 {
     height: 250px !important;
@@ -281,4 +291,31 @@ a.ui-button:active,
     z-index: -1;
 }
 
+
+@media screen and (max-width:1250px) {
+    body {
+        padding: 20px
+    }
+
+    .area-left, .area-right {
+        width: 95%;
+    }
+
+    .hand-ani {
+        transform: translateY(70%);
+    }
+    .input {
+        min-width: 60vw;
+    }
+
+}
+
+@media screen and (max-width:700px) {
+    .main-logo {
+        width: 8rem;
+        cursor: pointer;
+        margin-right: 0px
+    }
+
+}
 
