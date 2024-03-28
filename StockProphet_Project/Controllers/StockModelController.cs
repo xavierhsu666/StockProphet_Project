@@ -1260,7 +1260,20 @@ namespace StockProphet_Project.Controllers {
 				_context.DbMembers.Update(user);
 				_context.SaveChanges();
 			}
-			return View();
+			var NewDataWithPid = from o in _context.DbModels
+								 where o.Pprefer == PPrefer &&
+								 o.Pstock == PStock &&
+								 o.Pvariable == PVariable &&
+								 o.Plabel == PLabel &&
+								 o.Pprefer == PPrefer &&
+								 o.PbulidTime == DateTime.Parse(PBuildTime) &&
+								 o.PfinishTime == DateTime.Parse(PfinishTime) &&
+								 o.Dummyblock == parametertodb &&
+								 o.Paccount == PAccount &&
+								 o.Pmodel == Pmodel
+								 select o;
+			return Json(NewDataWithPid.FirstOrDefault());
+			//return View();
 		}
 
 		[HttpGet]
