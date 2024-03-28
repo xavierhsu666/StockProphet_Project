@@ -1302,7 +1302,7 @@ namespace StockProphet_Project.Controllers {
 								 o.Pprefer == PPrefer &&
 								 o.PbulidTime == DateTime.Parse(PBuildTime) &&
 								 o.PfinishTime == DateTime.Parse(PfinishTime) &&
-								 o.Dummyblock == parametertodb &&
+								 o.Dummyblock == Pparameter &&
 								 o.Paccount == PAccount &&
 								 o.Pmodel == Pmodel
 								 select o;
