@@ -11,74 +11,107 @@
         right: 10px;
         transform: translateY(-50%);
     }
-</style>
-<h2>請填寫註冊資料</h2>
 
-<div id="RegisterData">
+    .form-container {
+        max-width: 500px;
+        background-color: #fff;
+        padding: 32px 24px;
+        font-size: 14px;
+        font-family: inherit;
+        color: #212121;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
+    }
+
+</style>
+
+
+<div id="RegisterData" class="form-container">
+    <div class="logo-container">註冊資料</div>
     <form autocomplete="on">
-        <div>
-            <label for="Account">帳號:</label>
+
+        <div class="form-floating mb-3">
             @* +正則 *@
-            <input type="text" pattern=@AccountPattern size="20" maxlength="20" name="MAccoMnt" id="Account" title="請輸入英數字，並設定8碼以上" value="" required="required">
-            <span id="lottie" style="display: none; width:30px; height:30px " ></span>  @* 打勾動畫 30*30*@           
+            <input class="form-control" type="text" pattern=@AccountPattern size="20" maxlength="20" name="MAccoMnt" id="Account" value="" required="required">
+            <label class="form-label" for="Account">帳號:</label>
+            <span id="lottie" style="display: none; width:30px; height:30px "></span>  @* 打勾動畫 30*30*@
             <span id="checkName"></span>@* 檢查帳戶名稱是否重複 *@
             <span id="accountError" style="color: red;"></span> @* 不符合格式跳提示 *@
-
         </div>
-        <div>
-            <label for="Password">密碼:</label>
+
+        <div class="form-floating mb-3">
             @* +正則 *@
-            <input type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼" autocomplete=“off”>
+            <input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword1" id="Password1" autocomplete=“off”>
+            <label class="form-label" for="Password">密碼:</label>
             <i id="checkEye" class="fas fa-eye-slash"></i>
             <span id="passwordError" style="color: red;"></span>
         </div>
-        <div>
-            <label for="Password">請再次輸入密碼:</label>
+        <div class="form-floating mb-3">
             @* +正則 *@
-            <input type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="" autocomplete=“off”>           
+            <input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword2" id="Password2" value="" autocomplete=“off”>
+            <label class="form-label" for="Password">請再次輸入密碼:</label>
             <span id="confirmPasswordError" style="color: red;"></span>
             @* 再次輸入密碼不同時，顯示提示字 *@
             <span id="pwdnoteword" style="color: red;">您輸入的密碼不相同</span>
 
         </div>
-        <label for="MEmail">信箱:</label>
-        @* +正則 *@
-        <input type="email" pattern=@MEmailPattern name="MEmail" id="Email" value="">
-        <span id="emailError" style="color: red;"></span>
-        <br>
 
-        <label for="MTrueName">姓名:</label>
-        <input type="text" name="MTrueName" id="UserName" value="">
-        <br>
+        <div class="logo-container">基本資料</div>
 
-        <label for="Birthday">生日:</label>
-        <input type="date" name="MBirthday" id="Birthday" value="">
-        <br>
+        <div class="form-floating mb-3">
+            @* +正則 *@
+            <input class="form-control" type="email" pattern=@MEmailPattern name="MEmail" id="Email" value="">
+            <label class="form-label" class="form-label" for="MEmail">信箱:</label>
+            <span id="emailError" style="color: red;"></span>
+            <br>
+        </div>
 
-        <label for="MGender" required="required">性別:</label>
-        <input type="radio" name="MGender" id="Male" value="男" required>
-        <label for="Male">男</label>
-        <input type="radio" name="MGender" id="Female" value="女" required>
-        <label for="Female">女</label>
-        <br>
+        <div class="form-floating mb-3">
+            <input class="form-control" type="text" name="MTrueName" id="UserName" value="">
+            <label class="form-label" for="MTrueName">姓名:</label>
+            <br>
+        </div>      
+      
+        <div class="form-floating mb-3">
+            <input class="form-control" type="date" name="MBirthday" id="Birthday" value="">
+            <label class="form-label" for="Birthday">生日:</label>
+            <br>
+        </div>
 
-        <label for="MInvestYear" required>您的投資年數:</label>
-        <select name="MInvestYear" id="InvestYear">
-            <option value="1">未滿1年</option>
-            <option value="2">1-3年</option>
-            <option value="3">3-5年</option>
-            <option value="4">5年以上</option>
-        </select>
-        <br>
+        <div >
+            <label for="MGender" required="required">性別:</label>
+            <input type="radio" name="MGender" id="Male" value="男" required>
+            <label for="Male">男</label>
+            <input type="radio" name="MGender" id="Female" value="女" required>
+            <label for="Female">女</label>
+            <br>
+        </div>
+        <div>
+            <label for="MInvestYear" required>您的投資年數:</label>
+            <select name="MInvestYear" id="InvestYear">
+                <option value="1">未滿1年</option>
+                <option value="2">1-3年</option>
+                <option value="3">3-5年</option>
+                <option value="4">5年以上</option>
+            </select>
+            <br>
+        </div>
+      
+        <div>
+            <label for="MLevel">會員等級:</label>
+            <select name="MLevel" id="MLevel" size="1">
+                <option value="一般會員">一般會員</option>
+                <option value="高級會員">高級會員</option>
+            </select>
+            <br>
+        </div>        
 
-        <label for="MLevel">會員等級:</label>
-        <select name="MLevel" id="MLevel" size="1">
-            <option value="一般會員">一般會員</option>
-            <option value="高級會員">高級會員</option>
-        </select>
-        <br>
-        <button type="submit" id="RegisterSubmit">立即註冊</button>
-        <button id="Reset">取消填寫</button>
+        <button class="w-100 btn btn-lg btn-primary" type="submit" id="RegisterSubmit">立即註冊</button>
+        <button class="w-100 btn btn-lg btn-secondary" id="Reset">取消填寫</button>
     </form>
 
 </div>
@@ -198,7 +231,7 @@
                             // $('#accountError').hide();
                             playAni();
                             // alert('帳號未使用')
-                           
+
                         }
                     }
                     // alert(e);
@@ -223,7 +256,7 @@
                     console.log("ok");
                 }
             }
-        })             
+        })
 
         //3.按下立即註冊=>將註冊的資料存至Server
         //若有欄位沒填不送出資料?
@@ -233,33 +266,33 @@
             // console.log(GetCurrentTime.getMonth()+1);
             // console.log(GetCurrentTime.getDate());
             if ($('#Account').val() == "" || $('#Password1').val() == "" || $('#Password2').val() == "" || $('#Email').val() == "" || $('#UserName').val() == "" || $('#Birthday').val() == "" || $('input[name="MGender"]').val() == "" || $('#InvestYear').val() == "" || $('#MLevel').val() == "") {
-            alert('必填欄位未填寫')
-            // console.log("擋下註冊")
-            } else { 
-            var dataToServer = {
-                MAccoMnt: $('#Account').val(),
-                MPassword: $('#Password1').val(),
-                MEmail: $('#Email').val(),
-                MTrueName: $('#UserName').val(),
-                MBirthday: $('#Birthday').val(),
-                MGender: $('input[name="MGender"]:checked').val(),
-                MInvestYear: $('#InvestYear').val(),
-                MLevel: $('#MLevel').val(),
-                registerTime: GetCurrentTime.toISOString()
-            }
-            // console.log(dataToServer);
-            // console.log(GetCurrentTime);
-
-            $.ajax({
-                url: "/Member/Register",
-                method: "post",
-                data: dataToServer,
-                success: function (e) {
-                    // console.log("註冊成功!");
-                    // alert("註冊成功!");
-                        window.location.href = "/Member/Login";
+                alert('必填欄位未填寫')
+                // console.log("擋下註冊")
+            } else {
+                var dataToServer = {
+                    MAccoMnt: $('#Account').val(),
+                    MPassword: $('#Password1').val(),
+                    MEmail: $('#Email').val(),
+                    MTrueName: $('#UserName').val(),
+                    MBirthday: $('#Birthday').val(),
+                    MGender: $('input[name="MGender"]:checked').val(),
+                    MInvestYear: $('#InvestYear').val(),
+                    MLevel: $('#MLevel').val(),
+                    registerTime: GetCurrentTime.toISOString()
                 }
-            })
+                // console.log(dataToServer);
+                // console.log(GetCurrentTime);
+
+                $.ajax({
+                    url: "/Member/Register",
+                    method: "post",
+                    data: dataToServer,
+                    success: function (e) {
+                        // console.log("註冊成功!");
+                        // alert("註冊成功!");
+                        window.location.href = "/Member/Login";
+                    }
+                })
             }
 
         })
@@ -283,7 +316,7 @@
             }
         })
 
-        
+
         // ---end of function
     })
 </script>
