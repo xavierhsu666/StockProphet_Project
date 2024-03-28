@@ -1,8 +1,11 @@
-﻿html {
+﻿p {
+    color: #2e3640;
+}
+html {
     /*overflow:hidden;*/
 }
 body {
-    padding:30px
+    padding:30px;
 }
 main {
     width: 100%;
@@ -15,12 +18,12 @@ main {
 .hand-ani {
     /*border:2px solid black;*/
     height:800px;
-    width:750px;
+    width:800px;
     position:absolute;
     bottom:0;
     right:0;
     overflow:hidden;
-    z-index:-1;
+    /*z-index:-1;*/
 }
 .container {
     max-width: 100% !important;
@@ -46,7 +49,6 @@ main {
     display: flex;
     justify-content: center;
 }
-
 
 
 .bg-right-hand {
@@ -89,12 +91,15 @@ main {
         opacity: 1;
     }
 }
-.bg-water-blue {
+.bg-water {
     position: absolute;
-    right: 200px;
-    bottom: 450px;
-    pointer-events: none;
+    right: 210px;
+    bottom: 440px;
+    /*pointer-events: none;*/
     opacity: 0;
+    transform-origin: bottom center;
+    transform: scale(1, 1);
+    transition:all 1.5s;
 }
 .bg-water-show {
     animation: bgwatershow 0.5s forwards;
@@ -327,5 +332,74 @@ a.ui-button:active,
     position:absolute;
     left:0;
     top:0;
-    z-index:15;*/
+    z-index:15;
+    display:flex;
+    align-items:center;
+    justify-content:center;*/
+}
+.loading-ani-here {
+    background-color: pink;
+    height: 400px;
+    width: 400px;
+}
+
+
+.water-check-area {
+    width:250px;
+    height:250px;
+    position:absolute;
+    right:210px;
+    bottom:500px;
+    z-index:25;
+    border-radius:50%;
+}
+
+#tableContainer {
+    width:0px;
+    height:0px;
+    overflow:hidden;
+}
+
+.ccard {
+    width: 200px;
+    height: 130px;
+    background-color: white;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    position: absolute;
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    opacity:0;
+}
+.ccard p {
+    margin: 0;
+}
+.FB-MT, .SS-MT, .FBM-MT {
+    font-size: 24px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-weight: bold;
+}
+.ccard div {
+
+    display: flex;
+    float: right;
+    width: 100%;
+    justify-content: end;
+    color: #bbbdbe;
+}
+
+.FB-card {
+    bottom: 670px;
+    right: 600px;
+}
+.SS-card {
+    bottom: 535px;
+    right: 570px;
+}
+.FBM-card {
+    bottom: 400px;
+    right: 540px;
 }

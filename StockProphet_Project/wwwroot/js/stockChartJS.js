@@ -465,30 +465,26 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             var preDate = xData[0]; //預測日 懶人傳值
             var preBuildDate = Ddata[i].BuildTime;
 
+            var preState = (Today >= preDate) ? "已結案" : "追蹤中";
+            var comDate = (Today >= preDate) ? preDate : preBuildDate;
+
             //console.log("預測日: "+ xData)
             //用BuildDate去找列表中最近的日子(closestDate)，closestDate可能等於BuildDate，也可能是前一天
-            var closestDate = dateList.reduce((prev, curr) => {
-                var prevDiff = Math.abs(new Date(preBuildDate) - new Date(prev));
-                var currDiff = Math.abs(new Date(preBuildDate) - new Date(curr));
+            var closestDate = dateList.reduce((prev, curr) => {     //動態追蹤（已
+                var prevDiff = Math.abs(new Date(comDate) - new Date(prev));
+                var currDiff = Math.abs(new Date(comDate) - new Date(curr));
 
                 return currDiff < prevDiff ? curr : prev;
             })
             /*            console.log("最近近的日子: " + closestDate);*/
 
             var Today = (new Date()).toISOString().split('T')[0];
-            var preState;   //判斷結案狀態
-            if (Today >= preDate) {
-                preState = "已結案"
-
-            } else {
-                preState = "追蹤中"
-            }
-
+            
             //找最接近的日子，並往回推5次紀錄
             for (var j = 0; j < Alldata.length; j++) {
                 if (Alldata[j].Date == closestDate) {
                     //最近的那天是建立那天嗎？（根據那張卡片對於使用者是當天or之前建立的）
-                    var endDate = j - (closestDate == preBuildDate ? 1 : 0);
+                    var endDate = j - (closestDate >= preBuildDate ? 1 : 0);
                     for (var x = 0; x < 5; x++) {
                         xData.unshift((Alldata[endDate - x]).Date);
                         yData.unshift((Alldata[endDate - x]).Close);
@@ -690,17 +686,17 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
         d3.select(`.circleGroup${index} :last-child`)
             .attr("stroke", strokeC)
             .style("stroke-width", 2)
-            //.style("stroke-opacity", 1)
+            .style("stroke-opacity", 1)
             .style("r", 5)
 
         d3.select(`.circleGroup${index} :last-child`)
             .attr("fill", fillC)
-            //.transition()
-            //.duration(1000)
-            //.style("stroke-width", 10)
-            //.style("stroke-opacity", 0)
-            //.style("r", 7)
-            //.on("end", function () { pointAni(index) });
+            .transition()
+            .duration(1000)
+            .style("stroke-width", 10)
+            .style("stroke-opacity", 0)
+            .style("r", 7)
+            .on("end", function () { pointAni(index) });
     }
 }
 

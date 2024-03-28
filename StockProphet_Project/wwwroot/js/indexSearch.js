@@ -1,7 +1,7 @@
 ﻿$(".bg-right-hand").addClass("bg-right-hand-move");
 $(".bg-left-hand").addClass("bg-left-hand-move");
 setTimeout(function () {
-    $(".bg-water-blue").addClass("bg-water-show");
+    $(".bg-water").addClass("bg-water-show");
 }, 1000);
 $("#search").on("keydown", function (e) {
     if (e.which == 13) changePage();
@@ -25,6 +25,7 @@ function changePage() {
         if (ans == "wrongCode") {
             $(".search-hint").css("display", "block");
         } else {
+            //loadingAni.play();
             jget("/StockModel/UpdateOneStock", ans).then(function (e) {
 
                 document.location.href = `/Home/StockCharts/${ans}`;
@@ -132,11 +133,24 @@ function fetchingData(url, stockId) {
 //};
 
 //叫loading動畫
-var animationPath = '@Url.Content("~/animations/animation.json")';
-var animation = lottie.loadAnimation({
-    container: document.getElementById("#loading-ani div"), //要動畫的地方
+// 获取当前页面的URL
+var baseUrl = window.location.origin;
+// 构建正确的路径
+var animationPath = baseUrl + '/icon/loadingChart.json';
+var loadingAni = lottie.loadAnimation({
+    container: $("#loading-ani div"),
     renderer: "svg",
-    loop: false,
-    autoplay: false,
-    path: "Animation.json", //載下來的動畫json黨
+    loop: true,
+    autoplay: true,
+    path: animationPath //載下來的動畫json黨
 });
+
+loadingAni.play();
+console.log($("#loading-ani"));
+
+console.log("HIWWWWI");
+
+
+
+
+
