@@ -188,7 +188,7 @@ namespace StockProphet_Project.Controllers {
 
 
 
-        public IActionResult Privacy() {
+		public IActionResult Privacy() {
             return View();
         }
 

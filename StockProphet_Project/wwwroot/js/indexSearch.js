@@ -61,4 +61,8 @@ $(".btn-t").on("click", function () {   //訪客體驗按鈕
     console.log("wwf");
 })
 
-
+$(".bg-right-hand").addClass("bg-right-hand-move");
+$(".bg-left-hand").addClass("bg-left-hand-move");
+setTimeout(function () {
+    $(".bg-water-blue").addClass("bg-water-show");
+}, 1000);
