@@ -1,31 +1,1336 @@
-﻿<style>
-    #lottie {
-        width: 50px;
-        height: 50px;
-    }
+﻿<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@{
+	var customerlevel = @Context.Session.GetString("Mlevel");
+}
+<style>
+	.appendTt {
+		padding: 5px 15px;
+		background: #ccc;
+		border: 0 none;
+		cursor: pointer;
+		-webkit-border-radius: 5px;
+		border-radius: 5px;
+		width: 100%;
+	}
+
 </style>
-<div id="lottie" style="display: none"></div>
-<button onclick="playAni()">click me</button>
+<div id="beforeLog">
+	<b>請先登入會員</b>
+</div>
+<div id="afterLog">
+	<div>
+		<h3 class="display-6">第一步、選定股票</h3>
+		<div class="input-group mb-3">
+			<span class="input-group-text" id="inputGroup-sizing-default">股票代號</span>
+			<input type="text" class="form-control SnCode" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="stockid" name="SnCode" onchange="stockinput()">
+		</div>
+		<div style="display: flex;">
+			<div class="input-group mb-3">
+				<span class="input-group-text" id="inputGroup-sizing-default">股票名稱</span>
+				<div id="stockname" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" readonly></div>
+			</div>
+		</div>
+	</div>
+	<div id="step2" hidden="true">
+		<h3 class="display-6">第二步、選定投資偏好及選擇模型</h3>
+		<h4><b>投資偏好</b></h4>
+		<center>
+			<div style="display: flex;">
+				<div class="btn-group" role="group" aria-label="Basic example">
+					<button id="longterm" type="button" class="btn btn-primary">長期</button>
+					<button id="shortterm" type="button" class="btn btn-primary">短期</button>
+				</div>
+			</div>
+		</center>
+		<br>
+		<label><h4><b>選擇模型</b></h4></label>
+		<select class="form-select" id="selectmodel" multiple aria-label="multiple select example">
+			<option value="1">LSTM</option>
+			<option value="2">FNN</option>
+			<option value="3">迴歸</option>
+			<option value="4">時間序列</option>
+		</select>
+
+		@* <button id="checkmodel" class="btn btn-primary btn-sm">確認模型</button> *@
+
+	</div>
+	<br>
+	<br>
+
+
+	<div id="borisform1" class="modelformforBoris">
+		<h3 class="display-6">第三步:設定參數並建置模型預測</h3>
+		<h4><b>變數選擇</b></h4>
+		<div class="accordion accordion-flush" id="accordionFlushExample">
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="flush-headingOne">
+					<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+						技術面
+					</button>
+				</h2>
+				<div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+					<div class="accordion-body ">
+
+						<h5 class="technicalparamlist ParaArea"></h5>
+					</div>
+				</div>
+			</div>
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="flush-headingTwo">
+					<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+						基本面
+					</button>
+				</h2>
+				<div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+					<div class="accordion-body ">
+						<h5 class="foundmentalparamlist ParaArea"></h5>
+					</div>
+				</div>
+			</div>
+		</div>
+		@* <h5 class="technicalparamlist">技術面:</h5> *@
+		@* JS-append *@
+		<br>
+		@* <h5 class="foundmentalparamlist">基本面:</h5> *@
+		@* JS-append *@
+
+		<table>
+			<tr>
+				<td>
+					<h5 class=""><b>數據區間</b></h5>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<h5 class="predicintervallist"></h5>
+				</td>
+			</tr>
+		</table>
+
+		@* JS-append *@
+
+		<br>
+		<h4><b>參數選擇</b></h4>
+		<table class="table " style="text-align:center;vertical-align: middle;">
+			<thead>
+				<tr>
+					<th>
+						迭代次數
+					</th>
+				</tr>
+			</thead>
+			<tr>
+				<td>
+					<input class="appendTt" style="width:25%" type="number" id="iterationtime1" name="iterationtime" value="100" min="50" max="200">
+				</td>
+			</tr>
+		</table>
+
+
+		<br>
+		@* <label>Step1:</label>
+		<button id="Okbutton1">確認變數及參數</button>
+		<br><br>
+		<label>Step2:</label> *@
+		<button id="predict1" class="btn btn-outline-primary">建立模型</button>
+		<br>
+		<div id="predictionResult1"></div>
+		<div class="progress">
+			<div class="progress-bar progress-bar-striped progress-bar-animated" id="progress1" role="progressbar"
+				 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+			</div>
+		</div>
+
+	</div>
+	<div id="borisform2" class="modelformforBoris">
+		<h3>第三步、設定參數並建置模型預測</h3>
+		<h4><b>變數選擇</b></h4>
+		<div class="accordion accordion-flush" id="accordionFlushExample">
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="flush-headingOne">
+					<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+						技術面
+					</button>
+				</h2>
+				<div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+					<div class="accordion-body ">
+
+						<h5 class="technicalparamlist ParaArea"></h5>
+					</div>
+				</div>
+			</div>
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="flush-headingTwo">
+					<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+						基本面
+					</button>
+				</h2>
+				<div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+					<div class="accordion-body ">
+						<h5 class="foundmentalparamlist ParaArea"></h5>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		@* <h5 class="technicalparamlist">技術面:</h5>*@
+		@* JS-append *@
+
+		<br>
+		@* <h5 class="foundmentalparamlist">基本面:</h5> *@
+		@* JS-append *@
+		<br>
+
+		<br>
+		<table>
+			<tr>
+				<td>
+					<h5 class=""><b>數據區間</b></h5>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<h5 class="predicintervallist"></h5>
+				</td>
+			</tr>
+		</table>
+		@* JS-append *@
+		<br>
+		<h4><b>參數選擇</b></h4>
+		<table class="table " style="text-align:center;vertical-align: middle;">
+			<thead>
+				<tr>
+					<th>
+						迭代次數
+					</th>
+				</tr>
+			</thead>
+			<tr>
+				<td>
+					<input type="number" style="width:25%" class="appendTt" id="iterationtime2" name="iterationtime" value="200" min="100" max="300">
+				</td>
+			</tr>
+		</table>
+
+		<br>
+		@* <label>Step1:</label>
+		<button id="Okbutton2">確認變數及參數</button>
+		<br><br>
+		<label>Step2:</label> *@
+		<button id="predict2" class="btn btn-outline-primary">建立模型</button>
+		<br>
+		<div id="predictionResult2"></div>
+		<div class="progress">
+			<div class="progress-bar progress-bar-striped progress-bar-animated" id="progress2" role="progressbar"
+				 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+		</div>
+	</div>
+
+	<div id="kazuoform3">
+		<h3>第三步:設定參數並建置模型預測(迴歸模型)</h3>
+		<h4>變數選擇:</h4>
+		<div id="ksParaArea">
+			<div class="accordion accordion-flush" id="accordionFlushExample">
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="flush-headingOne">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+							技術面
+						</button>
+					</h2>
+					<div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+						<div class="accordion-body ParaArea">
+
+							<input type="checkbox" id="kazuopara1" name="SteOpen" autocomplete="off" class="btn-check">
+							<label class="btn btn-outline-secondary" for="kazuopara1">開盤價</label>
+							<input type="checkbox" id="kazuopara2" name="SteClose" autocomplete="off" class="btn-check">
+							<label for="kazuopara2" class="btn btn-outline-secondary">收盤價</label>
+							<input type="checkbox" id="kazuopara3" name="SteMax" autocomplete="off" class="btn-check">
+							<label for="kazuopara3" class="btn btn-outline-secondary">最高價</label>
+							<input type="checkbox" id="kazuopara4" name="SteMin" autocomplete="off" class="btn-check">
+							<label for="kazuopara4" class="btn btn-outline-secondary">最低價</label>
+							<input type="checkbox" id="kazuopara5" name="SteSpreadRatio" autocomplete="off" class="btn-check">
+							<label for="kazuopara5" class="btn btn-outline-secondary">震幅</label>
+							<input type="checkbox" id="kazuopara6" name="SteTradeMoney" autocomplete="off" class="btn-check">
+							<label for="kazuopara6" class="btn btn-outline-secondary">當日交易額</label>
+							<input type="checkbox" id="kazuopara7" name="SteTradeQuantity" autocomplete="off" class="btn-check">
+							<label for="kazuopara7" class="btn btn-outline-secondary">當日交易量</label>
+							<input type="checkbox" id="kazuopara8" name="SteTransActions" autocomplete="off" class="btn-check">
+							<label for="kazuopara8" class="btn btn-outline-secondary">當日交易比數</label>
+							<input type="checkbox" id="kazuopara9" name="SiMovingAverage5" autocomplete="off" class="btn-check">
+							<label for="kazuopara9" class="btn btn-outline-secondary">移動平均_5天</label>
+							<input type="checkbox" id="kazuopara10" name="SiMovingAverage30" autocomplete="off" class="btn-check">
+							<label for="kazuopara10" class="btn btn-outline-secondary">移動平均_30天</label>
+							<input type="checkbox" id="kazuopara11" name="SiRsv5" autocomplete="off" class="btn-check">
+							<label for="kazuopara11" class="btn btn-outline-secondary">RSV_5天</label>
+							<input type="checkbox" id="kazuopara12" name="SiRsv30" autocomplete="off" class="btn-check">
+							<label for="kazuopara12" class="btn btn-outline-secondary">RSV_30天</label>
+							<input type="checkbox" id="kazuopara13" name="SiK5" autocomplete="off" class="btn-check">
+							<label for="kazuopara13" class="btn btn-outline-secondary">K_5天</label>
+							<input type="checkbox" id="kazuopara14" name="SiK30" autocomplete="off" class="btn-check">
+							<label for="kazuopara14" class="btn btn-outline-secondary">K_30天</label>
+							<input type="checkbox" id="kazuopara15" name="SiD5" autocomplete="off" class="btn-check">
+							<label for="kazuopara15" class="btn btn-outline-secondary">D_5天</label>
+							<input type="checkbox" id="kazuopara16" name="SiD30" autocomplete="off" class="btn-check">
+							<label for="kazuopara16" class="btn btn-outline-secondary">D_30天</label>
+							<input type="checkbox" id="kazuopara17" name="SiLongEma" autocomplete="off" class="btn-check">
+							<label for="kazuopara17" class="btn btn-outline-secondary">EMA長 (指數移動平均線 - 長期)</label>
+							<input type="checkbox" id="kazuopara18" name="SiShortEma" autocomplete="off" class="btn-check">
+							<label for="kazuopara18" class="btn btn-outline-secondary">EMA短 (指數移動平均線 - 短期)</label>
+							<input type="checkbox" id="kazuopara19" name="SiDif" autocomplete="off" class="btn-check">
+							<label for="kazuopara19" class="btn btn-outline-secondary">DIF (差離值)</label>
+							<input type="checkbox" id="kazuopara20" name="SiMacd" autocomplete="off" class="btn-check">
+							<label for="kazuopara20" class="btn btn-outline-secondary">MACD</label>
+							<input type="checkbox" id="kazuopara21" name="SiOsc" autocomplete="off" class="btn-check">
+							<label for="kazuopara21" class="btn btn-outline-secondary">OSC</label>
+							<input type="checkbox" id="kazuopara22" name="SiMa" autocomplete="off" class="btn-check">
+							<label for="kazuopara22" class="btn btn-outline-secondary">OSC_MA</label>
+						</div>
+					</div>
+				</div>
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="flush-headingTwo">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+							基本面
+						</button>
+					</h2>
+					<div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+						<div class="accordion-body ParaArea">
+							<input type="checkbox" id="kazuopara23" name="SbYield" autocomplete="off" class="btn-check">
+							<label for="kazuopara23" class="btn btn-outline-secondary">殖利率</label>
+							<input type="checkbox" id="kazuopara24" name="SbPbratio" autocomplete="off" class="btn-check">
+							<label for="kazuopara24" class="btn btn-outline-secondary">淨值比</label>
+							<input type="checkbox" id="kazuopara25" name="SbEps" autocomplete="off" class="btn-check">
+							<label for="kazuopara25" class="btn btn-outline-secondary">EPS</label>
+							<input type="checkbox" id="kazuopara26" name="SbBussinessIncome" autocomplete="off" class="btn-check">
+							<label for="kazuopara26" class="btn btn-outline-secondary">營業收入</label>
+							<input type="checkbox" id="kazuopara27" name="SiPe" autocomplete="off" class="btn-check">
+							<label for="kazuopara27" class="btn btn-outline-secondary">PE (市盈率)</label>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+
+			@* <input type="checkbox" id="kazuopara28" name="ST_Date" autocomplete="off" class="btn-check">
+			<label for="kazuopara28" class="btn btn-outline-secondary">日期</label>
+			<input type="checkbox" id="kazuopara29" name="ST_Year_Quarter" autocomplete="off" class="btn-check">
+			<label for="kazuopara29" class="btn btn-outline-secondary">年/季</label>
+			<input type="checkbox" id="kazuopara30" name="SteDividendYear" autocomplete="off" class="btn-check">
+			<label for="kazuopara30" class="btn btn-outline-secondary">最近一筆股利發放年</label> *@
+		</div>
+
+		<br>
+		<h5>參數選擇:</h5>
+		<div id="ModelParaInputArea">
+		</div>
+		<br>
+		<button id="ksOkbutton2" class="btn btn-outline-primary">Build</button>
+		<br>
+		<br>
+		<div id="predictionResult2"></div>
+		<div class="progress" id="ksprogressOuter">
+			<div class="progress-bar progress-bar-striped progress-bar-animated" id="ksprogress" role="progressbar"
+				 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+		</div>
+	</div>
+	<br>
+	<br>
+	@* <button id="updateAllStockBtn">update All Stock Btn</button> *@
+</div>
 
 <script>
-    // 看你是要做什麼事之後觸發動畫
-    function playAni() {
-        document.getElementById("lottie").style.display = "block";
-        animation.play();
-    }
-    var animationPath = '@Url.Content("~/Animation.json")';
-    // 載入 Lottie 動畫
-    var animation = lottie.loadAnimation({
-        container: document.getElementById("lottie"), //要動畫的地方
-        renderer: "svg",
-        loop: false,
-        autoplay: false,
-        path: animationPath
+	//判斷會員是否登入
+	var MID = sessionStorage.getItem("LogAccount");
+	if (MID == '') {
+		$('#beforeLog').show();
+		$('#afterLog').hide();
+	}
+	else {
+		$('#beforeLog').hide();
+		$('#afterLog').show();
 
-    });
+		//初始化:不需要的東西先隱藏
+		$("#borisform1,#borisform2,#chart").css("display", "none");
+		$("#kazuoform3, #kazuoform4").css("display", "none");
+		// $("#longterm,#shortterm,#predict1,#predict2,#checkmodel,#selectmodel").prop("disabled", true);
+		$("#longterm,#shortterm,#checkmodel,#selectmodel").prop("disabled", true);
+		$(".ParaArea>label").css("margin", "5px");
+		$(document).ready(function () {
 
-    // 動畫跑完後隱藏
-    animation.addEventListener("complete", function () {
-        document.getElementById("lottie").style.display = "none";
-    });
+			//測試客人已經預測幾次了
+			checkaccoutbuildmodelnumber();
+
+
+			// append表格
+			const technicalParam = {
+				"SteOpen": "開盤價",
+				"SteClose": "收盤價",
+				"SteMax": "最高價",
+				"SteMin": "最低價",
+				"SteSpreadRatio": "震幅",
+				"SteTradeMoney": "當日交易額",
+				"SteTradeQuantity": "當日交易量",
+				"SteTransActions": "當日交易比數",
+				"SiMovingAverage5": "移動平均_5天",
+				"SiMovingAverage30": "移動平均_30天",
+				"SiRsv5": "RSV_5天",
+				"SiRsv30": "RSV_30天",
+				"SiK5": "K_5天",
+				"SiK30": "K_30天",
+				"SiD5": "D_5天",
+				"SiD30": "D_30天",
+				"SiLongEma": "EMA長 (指數移動平均線 - 長期)",
+				"SiShortEma": "EMA短 (指數移動平均線 - 短期)",
+				"SiDif": "DIF (差離值)",
+				"SiMacd": "MACD",
+				"SiOsc": "OSC",
+				"SiMa": "OSC_MA"
+			};
+
+			const foundmentParam = {
+				"SbYield": "殖利率",
+				"SbPbratio": "淨值比",
+				"SbEps": "EPS",
+				"SbBussinessIncome": "營業收入",
+				"SiPe": "PE (市盈率)"
+			};
+			const predictinterval = { "5天(周)": 5, "30天(月)": 30, "365天(年)": 365 };
+
+
+
+
+			function appendCheckbox(formid) {
+
+				$(".appendTech").remove();
+				$(".appendFound").remove();
+				$.each(technicalParam, function (key, value) {
+					$(`#${formid} .technicalparamlist`).append(
+						`<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check appendTech" >
+																																																			<label for="${formid + key}" class="btn btn-outline-secondary appendTech">${value}</label>`
+					)
+				});
+				$.each(foundmentParam, function (key, value) {
+					$(`#${formid} .foundmentalparamlist`).append(`
+																																																		<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check appendFound">
+																																																	<label for="${formid + key}" class="btn btn-outline-secondary appendFound" >${value}</label>`)
+				});
+				$(".ParaArea>label").css("margin", "5px");
+
+				// $.each(otherParam, function (key, value) {
+				// 	$(`#${formid} .otherparamlist`).append(`
+				// 								<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
+				// 							 <label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`)
+				// });
+
+
+			};
+			function appendradio(formid) {
+
+				$(".appendRadio").remove();
+				$.each(predictinterval, function (key, value) {
+					// console.log(key);
+					// console.log(value);
+					$(`#${formid} .predicintervallist`).append(`
+																																<input type="radio" id="${formid + value}" name="interval" value="${value}" autocomplete = "off" class="btn-check appendRadio" >
+																																			<label class= "btn btn-outline-secondary appendRadio" name="interval" for="${formid + value}">${key}</label>`)
+
+
+
+				});
+				$(".ParaArea>label").css("margin", "5px");
+
+			}
+
+			var borisprediction;
+			var predicturl;
+			var sncode;
+			var predictday;
+			var userselectparams;
+			var functionurl = ["LSTMpredict", "FNNpredict"]
+			var prefertype;
+			var createmodelTime;
+			var iterationtimeforpredict;
+			var predictedloss;
+			var mymodelselect
+			// <ks area--------------------->
+
+			// ####<預設值待更新-------------------------------------->
+			var account = sessionStorage.getItem("LogAccount");
+			// ####<預設值待更新-------------------------------------->
+
+			// ####<main-------------------------------------->
+			$("#ksOkbutton2").on("click", function () {
+				window.location.href = "#ksprogress";
+				// 抓選擇模型參數
+				var paras = GetPageAllNeedValue();
+				// 根據不同模型做不同事情
+				switch (paras.usingModel) {
+					case "R":
+						RegModelBuilding(paras);
+						break;
+					case "T":
+						TimeModelBuilding(paras);
+						break;
+					default:
+						break;
+				}
+			})
+			// ####<main-------------------------------------->
+
+			$("#updateAllStockBtn").on("click", function () {
+				window.location.href = '/stockmodel/updateAllStock';
+			})
+
+			// ####<funcs-------------------------------------->
+			function TimeModelBuilding(paras) {
+
+				switch (ModelInputCheck()) {
+					case 1:
+						alert("請選擇至少 一項 變數！");
+						// window.location.href = "/stockmodel/predictindex";
+						return false;
+					case 2:
+						alert("視窗週期需 小於 系列週期！");
+						// window.location.href = "/stockmodel/predictindex";
+						return false;
+					case 3:
+						alert("系列週期需 大於 0！");
+						// window.location.href = "/stockmodel/predictindex";
+						return false;
+					case 4:
+						alert("信心水準需 介於 0到100間！");
+						// window.location.href = "/stockmodel/predictindex";
+						return false;
+					case 5:
+						alert("資料筆數需 大於 系列週期！");
+						// window.location.href = "/stockmodel/predictindex";
+						return false;
+				}
+				increaseProgress(10);
+				var data = {
+					InputColumnName: paras.InputColumnName,
+					R_maximumNumberOfIterations: paras.InputModelPara[0],
+					T_windowSize: paras.InputModelPara[1],
+					T_seriesLength: paras.InputModelPara[2],
+					T_trainSize: paras.InputModelPara[3],
+					T_confidenceLevel: paras.InputModelPara[4],
+					usingModel: paras.usingModel,
+					stockCode: paras.stockCode,
+					userPrefer: paras.prefertype
+				};
+				$.ajax({
+					method: "Post",
+					url: "/StockModel/ModelInputPack",
+					data: data,
+					beforeSend: function () {
+						var progress = 0; // 初始化進度
+						increaseProgress(20);
+						$("#ksprogressOuter>div,#ksprogressOuter").css("display", "flex");// 初始化進度
+						increaseProgress(30);
+
+					},
+					success: function (e) {
+						increaseProgress(50);
+						console.log(e);
+						var datatoserver = {
+							PStock: data.stockCode,
+							PVariable: JSON.stringify(data.InputColumnName),
+							PLabel: e.Output_F_estimate,
+							PPrefer: data.userPrefer,
+							PBuildTime: paras.currentDate,
+							PfinishTime: paras.finishDate,
+							dummyblock: '{"MSE":' + e.Output_M_MAE.toFixed(2) +
+								',"RMSE":' + e.Output_M_RMSE.toFixed(2) +
+								',"uEsti":' + e.Output_F_upperEstimate.toFixed(2) +
+								',"lEsti":' + e.Output_F_lowerEstimate.toFixed(2) +
+								',"wSize":' + paras.InputModelPara[1] +
+								',"sLen":' + paras.InputModelPara[2] +
+								',"tSize":' + paras.InputModelPara[3] +
+								',"cLev":' + paras.InputModelPara[4] +
+								'}',
+							Paccount: paras.account,
+							Pmodel: paras.usingModel
+						}
+
+						SaveModelResultToDB(datatoserver)
+						increaseProgress(70);
+						increaseProgress(100);
+						// window.location.href = "/stockmodel/predictphoto?predictedData=" + e.Output_F_estimate + "&snCode=" + data.stockCode;
+						window.location.href = "/StockModel/predictphoto?predictedData=" + e.Output_F_estimate + "&predictedloss=" + e.Output_M_MAE.toFixed(2) + "&snCode=" + data.stockCode + "&mymodelselect=時間序列";
+
+						// alert("OKOK" + e);
+					}
+				})
+
+			}
+			function RegModelBuilding(paras) {
+				switch (ModelInputCheck()) {
+					case 1:
+						alert("請選擇至少一項變數！");
+						// window.location.href = "/stockmodel/predictindex";
+						return false;
+					case 2:
+						alert("最大跌代數請介於0,, 500間！");
+						// window.location.href = "/stockmodel/predictindex";
+						return false;
+				}
+
+				increaseProgress(10);
+				var data = {
+					InputColumnName: paras.InputColumnName,
+					R_maximumNumberOfIterations: paras.InputModelPara[0],
+					T_windowSize: paras.InputModelPara[1],
+					T_seriesLength: paras.InputModelPara[2],
+					T_trainSize: paras.InputModelPara[3],
+					T_confidenceLevel: paras.InputModelPara[4],
+					usingModel: paras.usingModel,
+					stockCode: paras.stockCode,
+					userPrefer: paras.prefertype
+				};
+				$.ajax({
+					method: "Post",
+					url: "/StockModel/ModelInputPack",
+					data: data,
+					beforeSend: function () {
+						var progress = 0; // 初始化進度
+						increaseProgress(20);
+						$("#ksprogressOuter>div,#ksprogressOuter").css("display", "flex");// 初始化進度
+						increaseProgress(30);
+
+					},
+					success: function (e) {
+						increaseProgress(50);
+						var datatoserver = {
+							PStock: data.stockCode,
+							PVariable: JSON.stringify(data.InputColumnName),
+							PLabel: e.output_F_Forcast,
+							PPrefer: data.userPrefer,
+							PBuildTime: paras.currentDate,
+							PfinishTime: paras.finishDate,
+							dummyblock: '{"MSE":' + e.output_M_MSE.toFixed(2) +
+								',"RMSE":' + e.output_M_RMSE.toFixed(2) +
+								',"Iters":' + paras.InputModelPara[0] +
+								'}',
+							Paccount: paras.account,
+							Pmodel: paras.usingModel
+						}
+
+						SaveModelResultToDB(datatoserver)
+						console.log(e);
+						increaseProgress(70);
+						increaseProgress(100);
+						// window.location.href = "/stockmodel/predictphoto?predictedData=" + e.output_F_Forcast + "&snCode=" + data.stockCode;
+						window.location.href = "/StockModel/predictphoto?predictedData=" + e.output_F_Forcast + "&predictedloss=" + e.output_M_MSE.toFixed(2) + "&snCode=" + data.stockCode + "&mymodelselect=回歸模型";
+
+						// alert("OKOK" + e);
+					}
+				})
+			}
+			function GetPageAllNeedValue() {
+				var Paras = new Object();
+				Paras.InputModelPara = InputModelPara;
+				var InputModelPara = [];
+				InputModelPara[0] = $("#R_maximumNumberOfIterations").val();
+				InputModelPara[1] = $("#T_windowSize").val();
+				InputModelPara[2] = $("#T_seriesLength").val();
+				InputModelPara[3] = $("#T_trainSize").val();
+				InputModelPara[4] = $("#T_confidenceLevel").val();
+				Paras.InputModelPara = InputModelPara;
+
+				Paras.choosewhichmodel = $("#selectmodel option:selected").val();
+				// 抓表單上的資料
+				var InputColumnName = [];
+				// 抓選擇變數
+				var ksArea = $(`div#ksParaArea input[type=checkbox]:checked`);
+				$.each(ksArea, function (i, str) {
+					InputColumnName.push($(str).attr("name"));
+
+					// console.log($(str).attr("name"));
+				})
+				Paras.InputColumnName = InputColumnName;
+
+				var currentDate = new Date();
+				Paras.currentDate = currentDate.toISOString();
+				var finishDate = new Date(currentDate);
+
+				if (prefertype == 1) {
+					finishDate.setDate(finishDate.getDate() + 5);
+				} else {
+					finishDate.setDate(finishDate.getDate() + 30);
+				}
+				Paras.finishDate = finishDate.toISOString();
+
+				Paras.stockCode = $("#stockid").val();
+				Paras.prefertype = prefertype;
+				Paras.usingModel = (Paras.choosewhichmodel == 3) ? "R" : "T";
+
+				Paras.account = account;
+				// console.log(Paras);
+				return Paras;
+			}
+			function GetInputModelPara() {
+				var InputModelPara = [];
+				InputModelPara[0] = $("#R_maximumNumberOfIterations").val();
+				InputModelPara[1] = $("#T_windowSize").val();
+				InputModelPara[2] = $("#T_seriesLength").val();
+				InputModelPara[3] = $("#T_trainSize").val();
+				InputModelPara[4] = $("#T_confidenceLevel").val();
+				return InputModelPara;
+
+			}
+			function CallAjax(stockCode) {
+				var data = {
+					stockCode: stockCode
+				}
+				$.ajax({
+					type: "post",
+					url: "/stockmodel/getStock",
+					data: data,
+					success: function (e) {
+						console.group("CallAjax");
+						console.log(`stockCode = ${e.stockCode} `);
+						console.log(`InputLatestDate = ${e.inputLatestDate}`);
+						console.log(`ThisStockCount = ${e.thisStockCount} `);
+						console.log(`ThisStockLatestDataCount = ${e.thisStockLatestDataCount}`);
+						console.log(`log = ${e.log}`);
+						console.groupEnd();
+						if (e.thisStockLatestDataCount == 1) {
+							$("#checkLatest").text("Checked OK.");
+						} else if (e.thisStockLatestDataCount == 0 && e.thisStockCount > 0) {
+							$("#checkLatest").text("Data need update.");
+						} else if (e.thisStockLatestDataCount == 0 && e.thisStockCount == 0) {
+							$("#checkLatest").text("Data need Download.");
+
+						}
+					}
+				})
+			}
+
+			function increaseProgress(val) {
+				$(`#ksprogress`).css("width", val + "%");
+			}
+			function ModelInputCheck() {
+				var data = GetPageAllNeedValue();
+				switch (data.usingModel) {
+					case "R":
+						console.log("Regression check go");
+						if (data.InputColumnName.length == 0) {
+							return 1;
+						} else if (parseInt(data.InputModelPara[0]) > 500 || parseInt(data.InputModelPara[0]) <= 0) {
+							return 2;
+						} else {
+							return 0;
+						}
+						break;
+					case "T":
+						console.log("Timeserial check go");
+						if (data.InputColumnName.length == 0) {
+							return 1;
+						} else if (parseInt(data.InputModelPara[1]) > parseInt(data.InputModelPara[2])) {
+							return 2;
+						} else if (parseInt(data.InputModelPara[2]) <= 0) {
+							console.log(parseInt(data.InputModelPara[2]));
+							return 3;
+						} else if (parseInt(data.InputModelPara[4]) < 0 || parseInt(data.InputModelPara[4]) > 100) {
+							return 4;
+						} else if (parseInt(data.InputModelPara[3]) < parseInt(data.InputModelPara[2])) {
+							return 5;
+						} else {
+							return 0;
+						}
+						break;
+
+					default:
+						window.location.href = "/stockmodel/index";
+						break;
+				}
+
+			}
+
+
+
+			function SaveModelResultToDB(datatoserver) {
+				console.log(datatoserver);
+				$.ajax({
+					method: "post",
+					url: "/StockModel/SaveModelResult",
+					data: datatoserver,
+					success: function (e) {
+						console.log(e);
+					},
+					error: function (xhr, status, error) {
+						console.error(xhr.responseText); // 處理錯誤
+						var errorMessage = xhr.responseText;
+						alert(errorMessage);
+					}
+				})
+			}
+			$("#selectmodel").on("change", function () {
+				$("#borisform1,#borisform2,#chart").css("display", "none");
+				$("#kazuoform3, #kazuoform4").css("display", "none");
+				// $("#longterm,#shortterm,#predict1,#predict2,#checkmodel").prop("disabled", true);
+				$("#longterm,#shortterm,#checkmodel").prop("disabled", true);
+
+				if ($("#selectmodel option:selected").length > 1) {
+					alert("請選擇一個模型")
+				}
+				else {
+					var choosewhichmodel = $("#selectmodel option:selected").val();
+					$(`#borisform${choosewhichmodel}`).css("display", "block");
+					// $("#longterm,#shortterm,#checkmodel,#selectmodel").prop("disabled", true);
+					$("#longterm,#shortterm,#checkmodel").prop("disabled", true);
+					var borislist = [];
+					switch (choosewhichmodel) {
+						case "1":
+							window.location.href = `#borisform${choosewhichmodel}`;
+							appendCheckbox("borisform1");
+							appendradio("borisform1");
+							borislist = ["borisform1SteOpen", "borisform1SteClose", "borisform1SteMax", "borisform1SteMin", "borisform1SiMovingAverage30", "borisform1SiLongEma", "borisform1365"];
+							$("#borisform1ST_Year_Quarter,#borisform1ST_Date").prop("disabled", true)
+							$.each(borislist, function (index, element) {
+								$(`input[id=${element}]`).prop("checked", true)
+
+
+							})
+							mymodelselect = "LSTM"
+							break;
+						case "2":
+							window.location.href = `#borisform${choosewhichmodel}`;
+							appendCheckbox("borisform2");
+							appendradio("borisform2");
+							borislist = ["borisform2SteOpen", "borisform2SteClose", "borisform2SteMax", "borisform2SteMin", "borisform2SiMovingAverage5", "borisform2SiShortEma", "borisform25"];
+							$("#borisform2ST_Year_Quarter,#borisform2ST_Date").prop("disabled", true)
+							$.each(borislist, function (index, element) {
+								$(`input[id=${element}]`).prop("checked", true);
+							});
+							mymodelselect = "FNN"
+							break;
+						case "3":
+							window.location.href = `#kazuoform3`;
+							$(`#kazuoform3`).css("display", "block");
+							$(".appendT").remove();
+							$(".appendRmax").remove();
+							var R_maximumNumberOfIterations = $("<table class='table appendT' style='text-align:center;vertical-align: middle;' >" +
+								"<thead>" +
+								"<th style='width:25% '>" +
+								"<label for='R_maximumNumberOfIterations' class='appendRmax'>最大迭代數</label>" +
+								"</th>" +
+								"</thead>" +
+								"<tr><td>" +
+								"<input class='appendRmax appendTt' style='width:25%' id='R_maximumNumberOfIterations' name='R_maximumNumberOfIterations' type ='number' value=100  max='365' min='1'/> " +
+								"</td></tr ></table>");
+
+							$("#ModelParaInputArea").append(R_maximumNumberOfIterations);
+							mymodelselect = "迴歸"
+							break;
+
+						case "4":
+							window.location.href = `#kazuoform3`;
+							$(`#kazuoform3`).css("display", "block");
+							$(".appendT").remove();
+							$(".appendRmax").remove();
+
+							var windowSize = $("<table class='table appendT' style='text-align:center;vertical-align: middle;' >" +
+								"<thead>" +
+								"<th style='width:25% '>" +
+								"<label for='T_windowSize' class='appendT'>視窗週期(周)</label>" +
+								"</th>" +
+								"<th style='width:25% '>" +
+								"<label for='T_seriesLength' class='appendT'>系列週期(月)</label>" +
+								"</th>" +
+								"<th style='width:25% '>" +
+								"<label for='T_trainSize' class='appendT'>訓練資料筆數</label>" +
+								"</th>" +
+								"<th style='width:25% '>" +
+								"<label for='T_confidenceLevel' class='appendT'>信心水準%</label>" +
+								"</th>" +
+								"</thead>" +
+								"<tr>" +
+								"<td><input class='appendT appendTt form-label' id='T_windowSize' name='T_windowSize' type ='number' value=7  min='1' /></td>" +
+								"<td><input class='appendT appendTt form-label' id='T_seriesLength' name='T_seriesLength' type ='number' value=30  min='1' /></td>" +
+								"<td><input id='T_trainSize' class='appendT appendTt form-label' name='T_trainSize' type ='number' value=365   min='1' /></td>" +
+								"<td><input class='appendT appendTt form-label' id='T_confidenceLevel' name='T_confidenceLevel' type ='number' value=95 max='100' min='1' /></td>" +
+								"</tr></table>");
+							// var seriesLength = $("<label for='T_seriesLength' class='appendT'>系列週期(月)<input class='appendT' id='T_seriesLength' name='T_seriesLength' type ='number' value=30  min='1' /></label>");
+							// var trainSize = $("<label for='T_trainSize' class='appendT'>訓練資料筆數<input id='T_trainSize' class='appendT' name='T_trainSize' type ='number' value=365   min='1' /></label>");
+							// var confidenceLevel = $("<label for='T_confidenceLevel' class='appendT'>信心水準%<input class='appendT' id='T_confidenceLevel' name='T_confidenceLevel' type ='number' value=95 max='100' min='1' /></label>");
+							$("#ModelParaInputArea").append(windowSize);
+							// $("#ModelParaInputArea").append(seriesLength);
+							// $("#ModelParaInputArea").append(trainSize);
+							// $("#ModelParaInputArea").append(confidenceLevel);
+							mymodelselect = "時間序列"
+							break;
+						default:
+							break;
+
+
+					}
+
+
+				}
+			})
+			// ####<funcs-------------------------------------->
+			// <ks area--------------------->
+
+			if (sessionStorage.getItem("LogMemberLevel") == "高級會員") {
+				$("#longterm").on("click", function () {
+					$("#longterm").css("color", "black")
+					$("#shortterm").css("color", "white")
+					$("#selectmodel").prop("disabled", false);
+					$("#selectmodel option[value='1']").prop("selected", true);
+					$("#selectmodel option[value='2']").prop("selected", false);
+					$("#selectmodel option[value='3']").prop("selected", true);
+					$("#selectmodel option[value='4']").prop("selected", false);
+					$("#checkmodel").prop("disabled", false);
+					$(".progress").hide();
+					console.log("@customerlevel");
+					prefertype = 2;
+				})
+				$("#shortterm").on("click", function () {
+					$("#shortterm").css("color", "black")
+					$("#longterm").css("color", "white")
+					$("#selectmodel").prop("disabled", false);
+					$("#selectmodel option[value='1']").prop("selected", false);
+					$("#selectmodel option[value='2']").prop("selected", true);
+					$("#selectmodel option[value='3']").prop("selected", false);
+					$("#selectmodel option[value='4']").prop("selected", true);
+
+					$("#checkmodel").prop("disabled", false);
+					$(".progress").hide();
+					prefertype = 1;
+				})
+			} else {
+				$("#longterm").on("click", function () {
+					$("#longterm").css("color", "black")
+					$("#shortterm").css("color", "white")
+					$("#selectmodel").prop("disabled", false);
+					$("#selectmodel option[value='1']").prop("disabled", true);
+					$("#selectmodel option[value='2']").prop("disabled", true);
+					$("#selectmodel option[value='3']").prop("selected", true);
+					$("#selectmodel option[value='4']").prop("selected", false);
+					$("#checkmodel").prop("disabled", false);
+					$(".progress").hide();
+					console.log("@customerlevel");
+					prefertype = 2;
+				})
+				$("#shortterm").on("click", function () {
+					$("#shortterm").css("color", "black")
+					$("#longterm").css("color", "white")
+					$("#selectmodel").prop("disabled", false);
+					$("#selectmodel option[value='1']").prop("disabled", true);
+					$("#selectmodel option[value='2']").prop("disabled", true);
+					$("#selectmodel option[value='3']").prop("selected", false);
+					$("#selectmodel option[value='4']").prop("selected", true);
+					$("#checkmodel").prop("disabled", false);
+					$(".progress").hide();
+					prefertype = 1;
+				})
+
+
+
+			}
+
+
+
+
+
+
+			// $("#checkmodel").on("click", function () {
+
+			// 	if ($("#selectmodel option:selected").length > 1) {
+			// 		alert("請選擇一個模型")
+			// 	}
+			// 	else {
+			// 		var choosewhichmodel = $("#selectmodel option:selected").val();
+			// 		$(`#borisform${choosewhichmodel}`).css("display", "block");
+			// 		$("#longterm,#shortterm,#checkmodel,#selectmodel").prop("disabled", true);
+			// 		var borislist = [];
+			// 		switch (choosewhichmodel) {
+			// 			case "1":
+			// 				appendCheckbox("borisform1");
+			// 				appendradio("borisform1");
+			// 				borislist = ["borisform1SteOpen", "borisform1SteClose", "borisform1SteMax", "borisform1SteMin", "borisform1SiMovingAverage30", "borisform1SiLongEma", "borisform1365"];
+			// 				$("#borisform1ST_Year_Quarter,#borisform1ST_Date").prop("disabled", true)
+			// 				$.each(borislist, function (index, element) {
+			// 					$(`input[id=${element}]`).prop("checked", true)
+
+
+			// 				})
+			// 				break;
+			// 			case "2":
+			// 				appendCheckbox("borisform2");
+			// 				appendradio("borisform2");
+			// 				borislist = ["borisform2SteOpen", "borisform2SteClose", "borisform2SteMax", "borisform2SteMin", "borisform2SiMovingAverage5", "borisform2SiShortEma", "borisform25"];
+			// 				$("#borisform2ST_Year_Quarter,#borisform2ST_Date").prop("disabled", true)
+			// 				$.each(borislist, function (index, element) {
+			// 					$(`input[id=${element}]`).prop("checked", true);
+			// 				});
+			// 				break;
+			// 			case "3":
+			// 				$(`#kazuoform3`).css("display", "block");
+			// 				var R_maximumNumberOfIterations = $("<label for='R_maximumNumberOfIterations'>最大迭代數<input id='R_maximumNumberOfIterations' name='R_maximumNumberOfIterations' type ='number' value=100  max='365' min='1'/></label>");
+			// 				$("#ModelParaInputArea").append(R_maximumNumberOfIterations);
+			// 				break;
+			// 			case "4":
+			// 				$(`#kazuoform3`).css("display", "block");
+			// 				var windowSize = $("<label for='T_windowSize'>視窗週期(周)<input id='T_windowSize' name='T_windowSize' type ='number' value=7  min='1' /></label>");
+			// 				var seriesLength = $("<label for='T_seriesLength'>系列週期(月)<input id='T_seriesLength' name='T_seriesLength' type ='number' value=30  min='1' /></label>");
+			// 				var trainSize = $("<label for='T_trainSize'>訓練資料筆數<input id='T_trainSize' name='T_trainSize' type ='number' value=365   min='1' /></label>");
+			// 				var confidenceLevel = $("<label for='T_confidenceLevel'>信心水準%<input id='T_confidenceLevel' name='T_confidenceLevel' type ='number' value=95 max='100' min='1' /></label>");
+			// 				$("#ModelParaInputArea").append(windowSize);
+			// 				$("#ModelParaInputArea").append(seriesLength);
+			// 				$("#ModelParaInputArea").append(trainSize);
+			// 				$("#ModelParaInputArea").append(confidenceLevel);
+			// 				break;
+			// 			default:
+			// 				break;
+
+
+			// 		}
+
+
+			// 	}
+
+			// })
+
+			function Okbutton12() {
+				// var buttonId = $(this).prop("id"); // 獲取按鈕的 ID
+				// var number = parseInt(buttonId.match(/\d+/)[0]); // 從 ID 中提取數字部分
+				var number = parseInt($("#selectmodel").val());
+				sncode = $("#stockid").val();
+				userselectparams = {};
+
+				if (number === 1) {
+					// 檢查至少兩個參數是否被選中
+					const atLeastTwoChecked = $("input[type=checkbox]:checked").length > 1;
+					if (!atLeastTwoChecked) {
+						alert("請至少選擇2個參數");
+						return false;
+					}
+					if ($("#iterationtime1").val() < 50 || $("#iterationtime1").val() > 200) {//50~200
+						alert("迭代次數需介於50~200");
+						return false;
+					}
+				} else if (number === 2) {
+					// 檢查至少一個參數是否被選中
+					const atLeastOneChecked = $("input[type=checkbox]:checked").length > 0;
+					if (!atLeastOneChecked) {
+						alert("請至少選擇1個參數");
+						return false;
+					}
+					if ($("#iterationtime2").val() < 100 || $("#iterationtime2").val() > 300) {//100~300
+						alert("迭代次數需介於100~300");
+						return false;
+					}
+				}
+				// 檢查區間是否被選擇
+				var atLeastoneInterval = $("input[name=interval]:checked").length > 0;
+				if (!atLeastoneInterval) {
+					alert("請選擇一個區間");
+					return false;
+				}
+				//獲取用戶選擇的預測區間
+				var interval = $("input[name=interval]:checked").val();
+				if (interval > 0) {
+					predictday = parseInt(interval);
+
+				}
+				//獲取用戶選擇的參數
+				$("input[type=checkbox]:checked").each(function () {
+					var paramName = $(this).attr("name");
+					userselectparams[paramName] = true;
+				});
+				iterationtimeforpredict = $(`#iterationtime${number}`).val();
+				$(`#predict${number}`).prop("disabled", false);
+				return true;
+			}
+
+
+
+			//確定送出參數
+			// $("#Okbutton1,#Okbutton2").on("click", function (event) {
+			// 	var buttonId = $(this).prop("id"); // 獲取按鈕的 ID
+			// 	var number = parseInt(buttonId.match(/\d+/)[0]); // 從 ID 中提取數字部分
+			// 	sncode = $("#stockid").val();
+			// 	userselectparams = {};
+
+			// 	if (number === 1) {
+			// 		// 檢查至少兩個參數是否被選中
+			// 		const atLeastTwoChecked = $("input[type=checkbox]:checked").length > 1;
+			// 		if (!atLeastTwoChecked) {
+			// 			alert("請至少選擇2個參數");
+			// 			return false;
+			// 		}
+
+			// 		if ($("#iterationtime1").val() == 0) {
+			// 			alert("迭代次數至少不等於0");
+			// 			return false;
+			// 		}
+			// 	} else if (number === 2) {
+			// 		// 檢查至少一個參數是否被選中
+			// 		const atLeastOneChecked = $("input[type=checkbox]:checked").length > 0;
+			// 		if (!atLeastOneChecked) {
+			// 			alert("請至少選擇1個參數");
+			// 			return false;
+			// 		}
+			// 		if ($("#iterationtime2").val() == 0) {
+			// 			alert("迭代次數至少不等於0");
+			// 			return false;
+			// 		}
+
+			// 	}
+			// 	// 檢查區間是否被選擇
+			// 	var atLeastoneInterval = $("input[name=interval]:checked").length > 0;
+			// 	if (!atLeastoneInterval) {
+			// 		alert("請選擇一個區間");
+			// 		return false;
+			// 	}
+			// 	//獲取用戶選擇的預測區間
+			// 	var interval = $("input[name=interval]:checked").val();
+			// 	if (interval > 0) {
+			// 		predictday = parseInt(interval);
+
+			// 	}
+			// 	//獲取用戶選擇的參數
+			// 	$("input[type=checkbox]:checked").each(function () {
+			// 		var paramName = $(this).attr("name");
+			// 		userselectparams[paramName] = true;
+			// 	});
+			// 	iterationtimeforpredict = $(`#iterationtime${number}`).val();
+			// 	$(`#predict${number}`).prop("disabled", false);
+
+			// });
+
+
+			$("#predict1,#predict2").on("click", function (event) {
+				if (!Okbutton12()) {
+
+				} else {
+					var buttonId = $(this).prop("id"); // 獲取按鈕的 ID
+					var number = parseInt(buttonId.match(/\d+/)[0]); // 從 ID 中提取數字部分
+
+					window.location.href = "#progress" + number;
+					createmodelTime = new Date();
+
+					$.ajax({
+						url: `/StockModel/${functionurl[number - 1]}`,
+						type: "Post",
+						data: {
+							sncode: sncode,
+							predictday: predictday,
+							selectedParams: userselectparams,
+							iterationtime: iterationtimeforpredict
+						},
+						beforeSend: function () {
+							$(`#longterm,#shortterm,#predict${number},#Okbutton${number}`).prop("disabled", true);
+							// 在發送請求前顯示訓練中的訊息
+							$(`#predictionResult${number}`).text("模型訓練中...");
+							$(`.progress`).show();
+							setTimeout(function () {
+								$(`#progress${number}`).css("width", '30%');
+
+								setTimeout(function () {
+									$(`#progress${number}`).css("width", '50%');
+
+									setTimeout(function () {
+										$(`#progress${number}`).css("width", '70%');
+
+
+									}, 2000); // 第三个setTimeout在第二个setTimeout执行完后4秒再执行
+
+								}, 3000); // 第二个setTimeout在第一个setTimeout执行完后5秒再执行
+
+							}, 1000); // 第一个setTimeout在0秒后执行
+
+						},
+						success: function (response) {
+
+							var values = response.split(','); // 拆分字符串为数组
+							borisprediction = parseFloat(values[0]);
+							if (borisprediction < 0) {
+								borisprediction = -borisprediction;
+							}
+							borisprediction = borisprediction.toFixed(2);
+							predictedloss = values[1];
+
+
+							//存數據
+							var isoString = createmodelTime.toISOString();
+							var finishDate = new Date(isoString); // 將 ISO 字符串轉換為 Date 物件
+
+							if (prefertype == 1) {
+								finishDate.setDate(finishDate.getDate() + 5); // 添加 5 天
+							} else {
+								finishDate.setDate(finishDate.getDate() + 30); // 添加 30 天
+							}
+
+							var finishString = finishDate.toISOString(); // 將 Date 物件轉換回 ISO 字符串
+
+
+							var keysWithoutBrackets = Object.keys(userselectparams).map(function (key) {
+								return key;
+							});
+
+							var datatoserver = {
+								PStock: sncode,
+								PVariable: JSON.stringify(keysWithoutBrackets),
+								PLabel: borisprediction,
+								PPrefer: prefertype,
+								PBuildTime: isoString,
+								PfinishTime: finishString,
+								PAccount: sessionStorage.getItem("LogAccount"),
+								Pparameter: predictedloss,
+								Pmodel: (number == 1) ? "LSTM" : "FNN"
+							}
+
+							$.ajax({
+								method: "Post",
+								url: "/StockModel/Predictsavedata",
+								data: datatoserver,
+								success: function (e) {
+									// alert("save OK")
+								},
+								error: function (xhr, status, error) {
+									// 處理錯誤
+									// console.error(xhr.responseText); // 處理錯誤
+									// var errorMessage = xhr.responseText;
+									// alert(errorMessage);
+								}
+							})
+							console.log(borisprediction)
+							var predictedData = borisprediction;
+
+
+							setTimeout(function () {
+								$(`#progress${number}`).css("width", '90%');
+								setTimeout(function () {
+									$(`#progress${number}`).css("width", '99%');
+									setTimeout(function () {
+										var predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode + "&mymodelselect=" + mymodelselect;
+										window.location.href = predicturl;
+									}, 3000); // 第三个setTimeout在第二个setTimeout执行完后3秒再执行
+								}, 1000); // 第二个setTimeout在第一个setTimeout执行完后1秒再执行
+							}, 2000); // 第一个setTimeout在0秒后执行
+
+
+						},
+						error: function (xhr, status, error) {
+							// 處理錯誤
+							console.error('Error occurred: ' + error); // 處理錯誤
+							var errorMessage = xhr.responseText;
+							alert(errorMessage);
+							$(`#predictionResult${number}`).text("");
+						}
+					});
+				}
+			});
+
+
+
+
+
+
+		});
+
+		// function stockinput() {
+		// 	var stockId = $("#stockid").val();
+		// 	$("#stockname").text("");
+		// 	if (stockId.trim() !== "") {
+		// 		$.get("/StockModel/checkstock", { sncode: stockId },
+		// 			function (element) {
+		// 				if (element.stockexist) {
+		// 					$("#longterm,#shortterm").prop("disabled", false);
+		// 					$("#stockname").text(element.stockname);
+		// 				} else {
+		// 					alert("請選擇其他股票");
+		// 					$("#longterm,#shortterm").prop("disabled", true);
+		// 				}
+		// 			}
+		// 		);
+		// 	}
+		// }
+		function checkaccoutbuildmodelnumber() {
+
+			if (sessionStorage.getItem("LogAccount") == null) {
+				// console.log("login")
+				alert("尚未登入，請先登入或註冊")
+				window.location.href = "/Member/Login"
+			} else {
+				// console.log("判斷是否有超過會員比數資料")
+				if (sessionStorage.getItem("LogMemberLevel") != "高級會員") {
+					var datatoserver = { accountname: sessionStorage.getItem("LogAccount") };
+					$.ajax({
+						url: "/StockModel/countpredicttime",
+						method: "get",
+						data: datatoserver,
+						success: function (e) {
+							//超過五筆，跳轉到我的收藏
+							if (e.resulttoformer) {
+								alert("已超過預測上限，請到我的收藏增刪");
+								window.location.href = "/Member/MyPredictResult";
+							} else {
+								//console.log("一般會員您好")
+							}
+						}
+					});
+				}
+				else {
+					//console.log("高級會員您好")
+				}
+			}
+
+		}
+
+	}
+	// console.log("顯示MID:" + MID);
+	function fetchingData(url, stockId) {
+		return new Promise((resolve, reject) => {
+			$.get(url, { stockCode: stockId }, html => {
+				resolve(html);
+				console.log(html);
+			})
+		})
+	}
+	function stockinput() {
+		var stockId = $("#stockid").val();
+		// var Updating = async function () {
+		// 	if (stockId.trim() !== "") {
+		// 		$.get("/StockModel/UpdateOneStock",
+		// 			{ stockCode: stockId },
+		// 			function (e) {
+		// 				if (e = "OK")
+		// 					return true;
+		// 				else
+		// 					return false;
+		// 			})
+		// 	}
+
+		async function jget(url, stockId) {
+			// Note: Below variable will hold the value of the resolved promise
+			let response = await fetchingData(url, stockId);
+			return response;
+		}
+		var rr = jget("/StockModel/UpdateOneStock", stockId);
+
+		rr.then(function (e) {
+			if (e.stockname == "查無這支股票") {
+				alert("請選擇其他股票");
+				$("#longterm,#shortterm").prop("disabled", true);
+
+			} else {
+				$("div#step2").attr("hidden", false);
+				location.href = "#step2";
+				$("#longterm,#shortterm").prop("disabled", false);
+				$("#stockname").text(e.stockname);
+			}
+			console.log(rr);
+		})
+
+	}
+
+	// console.log("顯示MID:" + MID);
 </script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script src="~/js/indexSearch.js"></script>

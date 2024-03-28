@@ -41,13 +41,7 @@ path.candle {
 
 
 /* --- */
-.x.axis.pre path {
-    display: none;
-}
 
-.y.axis.pre path {
-    display: none;
-}
 
 .y.annotation.left path {
     fill: #00AA00;
@@ -399,8 +393,7 @@ path.difference {
         opacity: 0;
     }
 }
-
-@keyframes visitorAlert-DLeave {
+ visitorAlert-DLeave {
     0% {
         opacity: 1;
         transform: rotateZ(45deg);

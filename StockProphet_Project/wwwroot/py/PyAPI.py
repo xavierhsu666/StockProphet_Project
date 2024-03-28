@@ -25,8 +25,7 @@ import requests
 import pandas as pd
 import numpy as np
 from io import StringIO
-from sqlalchemy import create_engine, Numeric
-
+from sqlalchemy import create_engine, Numeric,text
         
  
 
@@ -191,11 +190,29 @@ SQL_data_df = pd.DataFrame(all_data)
 # 使用 rename 函數進行欄位名稱轉換
 SQL_data_df.rename(columns=SQL_data, inplace=True)
 
+# 避免數值類的出現其他奇怪的字串，先全部轉為Nah
+SQL_data_df['STe_Close']=pd.to_numeric(SQL_data_df['STe_Close'], errors='coerce')
+SQL_data_df['STe_Open']=pd.to_numeric(SQL_data_df['STe_Open'], errors='coerce')
+SQL_data_df['STe_Max']=pd.to_numeric(SQL_data_df['STe_Max'], errors='coerce')
+SQL_data_df['STe_Min']=pd.to_numeric(SQL_data_df['STe_Min'], errors='coerce')
+SQL_data_df['STe_TradeQuantity']=pd.to_numeric(SQL_data_df['STe_TradeQuantity'])
+SQL_data_df['STe_TradeMoney']=pd.to_numeric(SQL_data_df['STe_TradeMoney'], errors='coerce')
+SQL_data_df['SI_PE'] = pd.to_numeric(SQL_data_df['SI_PE'], errors='coerce')
+SQL_data_df['STe_TransActions']=pd.to_numeric(SQL_data_df['STe_TransActions'])
+SQL_data_df['STe_Close'] = SQL_data_df['STe_Close'].fillna(SQL_data_df['STe_Close'].mean())
+SQL_data_df['STe_Open'] = SQL_data_df['STe_Open'].fillna(SQL_data_df['STe_Open'].mean())
+SQL_data_df['STe_Max'] = SQL_data_df['STe_Max'].fillna(SQL_data_df['STe_Max'].mean())
+SQL_data_df['STe_Min'] = SQL_data_df['STe_Min'].fillna(SQL_data_df['STe_Min'].mean())
+SQL_data_df['STe_TradeQuantity'] = SQL_data_df['STe_TradeQuantity'].fillna(SQL_data_df['STe_TradeQuantity'].mean())
+SQL_data_df['STe_TradeMoney'] = SQL_data_df['STe_TradeMoney'].fillna(SQL_data_df['STe_TradeMoney'].mean())
+SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(SQL_data_df['SI_PE'].mean())
+SQL_data_df['STe_TransActions'] = SQL_data_df['STe_TransActions'].fillna(SQL_data_df['STe_TransActions'].mean())
+
 # 指數五日平均線
 # 假設 SQL_data_df 是包含收盤價的 DataFrame
 # 使用當日的值填充空值
 # SQL_data_df['SI_MovingAverage_5'] = pd.to_numeric(SQL_data_df['STe_Close'].fillna(method='ffill').rolling(window=5).mean())
-SQL_data_df['SI_MovingAverage_5'] = pd.to_numeric(SQL_data_df['STe_Close'].ffill().rolling(window=5).mean())
+SQL_data_df['SI_MovingAverage_5'] = pd.to_numeric(SQL_data_df['STe_Close'].ffill().rolling(window=5).mean(), errors='coerce')
 SQL_data_df['SI_MovingAverage_5'] = pd.to_numeric(SQL_data_df['SI_MovingAverage_5'], errors='coerce')
 
 # 指數三十日平均線
@@ -317,16 +334,20 @@ connection_string = f'mssql+pyodbc://{server_name}/{database_name}?trusted_conne
 engine = create_engine(connection_string)
 
 
+
 # 將所有數據儲存到 SQL Server
 table_name = "Stock"
 SQL_data_df=SQL_data_df.reset_index(drop=True)
 
 for i in range(len(SQL_data_df)):
-    SQL_data_df.at[i,'ST_Date']=str(int(SQL_data_df.iloc[i][0].replace('/',''))+19110000)
+    # SQL_data_df.at[i,'ST_Date']=str(int(SQL_data_df.iloc[i][0].replace('/',''))+19110000)
+    SQL_data_df.at[i,'ST_Date'] = str(int(SQL_data_df.iloc[i][0].replace('/',''))+19110000)
     if i==0:
-        SQL_data_df.at[i,'STe_SpreadRatio']=(SQL_data_df.iloc[i][7]-SQL_data_df.iloc[i][8])/(SQL_data_df.iloc[i][9]+float(SQL_data_df.iloc[i][8]))*100
+        # SQL_data_df.at[i,'STe_SpreadRatio']=(SQL_data_df.iloc[i][7]-SQL_data_df.iloc[i][8])/(SQL_data_df.iloc[i][9]+float(SQL_data_df.iloc[i][8]))*100
+        SQL_data_df.at[i,'STe_SpreadRatio'] = (SQL_data_df.iloc[i][7] - SQL_data_df.iloc[i][8]) / (SQL_data_df.iloc[i][9] + float(SQL_data_df.iloc[i][8])) * 100
     else:
-        SQL_data_df.at[i,'STe_SpreadRatio']=(SQL_data_df.iloc[i][7]-SQL_data_df.iloc[i][8])/SQL_data_df.iloc[i-1][9]*100
+        # SQL_data_df.at[i,'STe_SpreadRatio']=(SQL_data_df.iloc[i][7]-SQL_data_df.iloc[i][8])/SQL_data_df.iloc[i-1][9]*100
+        SQL_data_df.at[i,'STe_SpreadRatio'] = (SQL_data_df.iloc[i][7] - SQL_data_df.iloc[i][8]) / SQL_data_df.iloc[i-1][9] * 100
 
 SQL_data_df['STe_SpreadRatio'] = pd.to_numeric(SQL_data_df['STe_SpreadRatio'], errors='coerce')
 
@@ -358,12 +379,24 @@ mean_without_nan = SQL_data_df['SI_PE'].dropna().mean()
 # 使用fillna将NaN填充为平均值
 SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(mean_without_nan)
 SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(0)
+SQL_data_df['SB_EPS'] = SQL_data_df['SB_EPS'].fillna(0)
 
 
 
-# print(SQL_data_df)
+print(SQL_data_df.iloc[-1])
 # 從資料庫讀取目標表格的資料到 DataFrame 中
 existing_data_df = pd.read_sql('SELECT * FROM Stock where SN_Code = '+stockNo, engine)
+# engine.execute('DELETE FROM Stock WHERE SN_Code = ' + stockNo)
+
+# # 從 Engine 中獲取連接
+# connection = engine.connect()
+
+# # 使用連接執行 SQL 查詢
+# connection.execute(text("UPDATE Stock SET ST_UpdateDate = '" + datetime.now().strftime("%Y-%m-%d") + "' WHERE SN_Code = " + stockNo))
+
+# # 關閉連接
+# connection.close()
+
 
 # 找到目標表格中不存在的資料
 missing_data_df = SQL_data_df[~SQL_data_df.isin(existing_data_df)].dropna()

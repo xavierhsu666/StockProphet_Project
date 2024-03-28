@@ -1,29 +1,125 @@
-﻿body {
+﻿html {
+    overflow:hidden;
 }
-
-.upArea {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    /*    width: 100%;*/
-    height: calc(35vh - 40px - 1rem - 16px); /*扣掉header的高度*/
+body {
+    padding:30px
 }
-
-.bottomArea {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    /*ll*/
+main {
     width: 100%;
     display: flex;
-    flex-direction: row;
-    height: calc(65vh - 60px);
+    flex-grow: 1;
+    flex-wrap: wrap;
+    justify-content:center;
 }
+
+.container {
+    max-width: 100% !important;
+    display:flex;
+    padding:20px
+
+}
+
+.area-left {
+    width:50%;
+    min-width:575px;
+   height:500px;
+    position:relative;
+
+}
+.area-right {
+    width: 50%;
+    min-width: 575px;
+    height: 200px;
+    /*position:relative*/
+
+}
+.area-left {
+    display: flex;
+    justify-content: center;
+}
+/*bar的設定*/
+.container-fluid {
+}
+.navbar {
+    /*padding:2rem;*/
+    /*margin:20px;*/
+}
+
+.bg-right-hand {
+    position: absolute;
+    right: -600px;
+    bottom: 250px;
+    pointer-events: none;
+}
+.bg-right-hand-move {
+    animation: righthandmove 1s forwards;
+}
+@keyframes righthandmove {
+    0% {
+        right: -600px;
+        opacity: 0;
+    }
+
+    100% {
+        right: -50px;
+        opacity: 1;
+    }
+}
+.bg-left-hand {
+    position: absolute;
+    bottom: -500px;
+    right: 200px;
+    pointer-events: none;
+}
+.bg-left-hand-move {
+    animation: lefthandmove 1s forwards 
+}
+
+@keyframes lefthandmove {
+    0% {
+        bottom: -500px;
+        opacity: 0;
+    }
+
+    100% {
+        bottom: -100px;
+        opacity: 1;
+    }
+}
+.bg-water-blue {
+    position: absolute;
+    right: 200px;
+    bottom: 450px;
+    pointer-events: none;
+    opacity: 0;
+}
+.bg-water-show {
+    animation: bgwatershow 0.5s forwards;
+}
+@keyframes bgwatershow {
+    0% {
+        opacity:0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+/*.bottomArea {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;*/
+/*ll*/
+/*width: 100%;
+    display: flex;
+    flex-direction: row;*/
+/*height: calc(65vh - 60px);*/
+/*background-color:aqua;
+    flex-grow:1;
+}*/
 .search-hint {
-    position:absolute;
-    transform:translateY(50px);
+    position: absolute;
+    transform: translateY(50px);
 }
 
 .bottom-left {
@@ -52,14 +148,17 @@
     top: 25%;
 }*/
 
-#search {
+/*#search {
     border-radius: 100px;
     min-width: 20vw;
     text-indent: 10px;
     line-height: 50px;
     font-size: 20px;
-}
+    position:absolute;
 
+    
+}
+*/
 .m-btn {
     display: flex;
     position: relative;
@@ -94,6 +193,31 @@ a.ui-button:active,
     font-weight: normal;
     color: #ffffff;
 }
+/*預設cshtml不吃……*/
+/*首頁的部分*/
+.body {
+    /*padding:20px !important;*/
+}
+
+.nav-link {
+    color: #2e3640 !important;
+}
+
+.nav-item::before {
+    /*    display: block;
+    position: absolute;
+    content: "";
+    background-color: white;
+    width: 100%;
+    height: 40px;*/
+}
+
+.main-logo {
+    height: 40px;
+    cursor: pointer;
+    margin-right: 20px
+}
+
 
 
 /*搜尋欄設定*/
@@ -101,6 +225,60 @@ a.ui-button:active,
     height: 250px !important;
     overflow-y: scroll;
     overflow-x: hidden;
+}
+
+.group {
+    display: flex;
+    line-height: 28px;
+    transform:translateY(100px);
+    /*align-items: center;*/
+    justify-content:center;
+    position: relative;
+    max-width: 300px;
+}
+
+.input {
+    min-width: 35vw;
+    height: 50px;
+    line-height: 28px;
+    padding: 0 1rem;
+    width: 100%;
+    padding-left: 2.5rem;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    outline: none;
+    background-color: #D9E8D8;
+    color: #0d0c22;
+    box-shadow: 0 0 5px #C1D9BF, 0 0 0 10px #f5f5f5eb;
+    transition: .3s ease;
+}
+
+    .input::placeholder {
+        color: #777;
+    }
+
+.icon {
+    position: absolute;
+    left: 1rem;
+    fill: #777;
+    width: 1rem;
+    height: 1rem;
+}
+
+/**/
+
+.bg-line {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: -2;
+}
+
+.bg-chart {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
 }
 
 

@@ -8,6 +8,13 @@
     fill: none;
     stroke: #edeae6;
 }
+.x.axis.pre path {
+    display: none;
+}
+
+.y.axis.pre path {
+    display: none;
+}
 
 path {
     fill: none;
@@ -116,6 +123,7 @@ path {
 
 .pre-state {
     font-size: 32px;
+    text-align:right
 }
 
 .pre-td {
@@ -260,4 +268,26 @@ path {
     30%,60% {
         transform: translateX(0)
     }
+}
+
+.card-o {
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    left: 0;
+    /*cursor: none;*/
+    opacity: 1;
+    padding: 20px;
+    transition: all 0.3s;
+}
+
+.prediction-card:hover .card-o {
+    opacity: 0;
+}
+.table-inside {
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
 }
