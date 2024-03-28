@@ -1,7 +1,6 @@
 ﻿/*!!*/
 .note-area {
     position: fixed;
-
     width: 250px;
     top: 50%;
     right: 0;
@@ -10,9 +9,10 @@
 }
 
 .text-content {
+    border-radius: 10px;
     height: 400px;
     width: 250px;
-    background-color: white;
+    background-color: #87aeb4;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -20,13 +20,15 @@
 }
 
 .write-note {
-    background-color: #f3f2f1;
+    background-color: #f3f3ff;
     width: 100%;
     height: 70%;
-    padding: 5px
+    padding: 5px;
+        border-radius:10px;
 }
 
 .var-tag {
+    border-radius: 10px;
     background-color: #f3f2f1;
     width: 100%;
     height: 30%;
@@ -94,19 +96,5 @@ textarea {
 }
 /*!!*/
 
-/*預設cshtml不吃……*/
-/*首頁的部分*/
-.nav-link {
-    color: #2c373c !important;
-}
-
-.nav-item::before {
-/*    display: block;
-    position: absolute;
-    content: "";
-    background-color: white;
-    width: 100%;
-    height: 40px;*/
-}
 
 /*會員頁的部分*/

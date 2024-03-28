@@ -662,7 +662,7 @@
 				}
 				Paras.finishDate = finishDate.toISOString();
 
-				Paras.stockCode = $("#stockid").val();
+				Paras.stockCode = ($("#stockid").val().split(' ').length > 1) ? $("#stockid").val().split(' ')[1] : $("#stockid").val();
 				Paras.prefertype = prefertype;
 				Paras.usingModel = (Paras.choosewhichmodel == 3) ? "R" : "T";
 
@@ -999,7 +999,7 @@
 				// var buttonId = $(this).prop("id"); // 獲取按鈕的 ID
 				// var number = parseInt(buttonId.match(/\d+/)[0]); // 從 ID 中提取數字部分
 				var number = parseInt($("#selectmodel").val());
-				sncode = $("#stockid").val();
+				sncode = ($("#stockid").val().split(' ').length > 1) ? $("#stockid").val().split(' ')[1] : $("#stockid").val();
 				userselectparams = {};
 
 				if (number === 1) {
@@ -1210,9 +1210,9 @@
 									setTimeout(function () {
 										var predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode + "&mymodelselect=" + mymodelselect;
 										window.location.href = predicturl;
-									}, 3000); // 第三个setTimeout在第二个setTimeout执行完后3秒再执行
-								}, 1000); // 第二个setTimeout在第一个setTimeout执行完后1秒再执行
-							}, 2000); // 第一个setTimeout在0秒后执行
+									}, 3000);
+								}, 1000); 
+							}, 2000); 
 
 
 						},
@@ -1294,7 +1294,7 @@
 		})
 	}
 	function stockinput() {
-		var stockId = $("#stockid").val();
+		var stockId = ($("#stockid").val().split(' ').length > 1) ? $("#stockid").val().split(' ')[1] : $("#stockid").val();
 		// var Updating = async function () {
 		// 	if (stockId.trim() !== "") {
 		// 		$.get("/StockModel/UpdateOneStock",

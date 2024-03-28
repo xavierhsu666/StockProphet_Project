@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<StockProphet_Project.Models.DbModel>
-
+@using System.Text.Json;
 @{
 	ViewData["Title"] = "管理者頁面-Model資訊";
 }
@@ -63,7 +63,34 @@
 					@Html.DisplayFor(modelItem => item.Pstock)
 				</td>
 				<td>
-					@Html.DisplayFor(modelItem => item.Pvariable)
+					
+					@{
+						var a = item.Pvariable;
+						string b="";
+						a=a.Replace("[", "");
+						a=a.Replace("]", "");
+						a = "," + a;
+						for (int i = 1; i < a.Split(",").Count(); i++)
+						{
+							if (i % 4 == 0)
+							{
+								b += a.Split(",")[i] + "\r\n";
+
+							}
+
+							else
+							{
+
+								b += a.Split(",")[i] + ", ";
+							}
+
+						}
+
+
+					}
+					@b
+					
+					
 				</td>
 				<td>
 					@Html.DisplayFor(modelItem => item.Plabel)
@@ -84,7 +111,31 @@
 					@Html.DisplayFor(modelItem => item.Pstatus)
 				</td>
 				<td>
-					@Html.DisplayFor(modelItem => item.Dummyblock)
+					@{
+						var c = item.Dummyblock;
+						string d = "";
+						c = c.Replace("{", "");
+						c = c.Replace("}", "");
+						c = "," + c;
+						for (int i = 1; i < c.Split(",").Count(); i++)
+						{
+							if (i % 4 == 0)
+							{
+								d += c.Split(",")[i] + "\r\n";
+
+							}
+
+							else
+							{
+
+								d += c.Split(",")[i] + ", ";
+							}
+
+						}
+
+
+					}
+					@d
 				</td>
 				<td>
 					<a asp-action="Edit" asp-route-id="@item.Pid">Edit</a> |
@@ -98,7 +149,7 @@
 <script>
 
 	function loadModel(model) {
-		console.log(model)
+		// console.log(model)
 		window.location.href = `/${model}/Index`
 	}
 
@@ -145,7 +196,7 @@
 		url: "/DbModels/barchart",
 		method: "get",
 		success: function (e) {
-			console.log(e)
+			
 			$.each(e, function (index,element) { 
 				
 				stocknumber.push({ stockname: element["Pstock"] })

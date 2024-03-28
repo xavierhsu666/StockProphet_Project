@@ -5,7 +5,7 @@
 }
 /*mainArea是新增的*/
 .mainArea {
-    background-color: #f3f2f1;
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -393,8 +393,7 @@ path.difference {
         opacity: 0;
     }
 }
-
-@keyframes visitorAlert-DLeave {
+ visitorAlert-DLeave {
     0% {
         opacity: 1;
         transform: rotateZ(45deg);

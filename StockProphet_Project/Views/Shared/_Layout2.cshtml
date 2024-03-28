@@ -11,7 +11,8 @@
     @* 其他共用CSS *@
     <link rel="stylesheet" href="~/css/note.css" type="text/css" />
     <link rel="stylesheet" href="~/css/drawCard.css" type="text/css" />
-    <link rel="stylesheet" href="~/css/layerStyle.css" type="text/css" />
+    <link rel="stylesheet" href="~/css/indexStyle.css" type="text/css" />
+ 
     @* d3.js及圖表會用的到的 *@
     <script src="https://d3js.org/d3.v4.js"></script>
     <script src="https://techanjs.org/techan.min.js"></script>
@@ -26,17 +27,17 @@
 </head>
 <body>
     <header>
-        <nav class="logo-bar">
-            <img src="~/Logo.svg" id="main-logo" onclick="backHome()" style="height:50%; margin-left:25px;"/>
+        @* <nav class="logo-bar">
+            <img src="~/Logo.svg" class="main-logo" style="height:50%;margin-left:20px;cursor: pointer;" onclick="backHome()"/>
             <div class="media-icon">
                 <i class="fa-brands fa-square-facebook"></i>
                 <i class="fa-brands fa-square-instagram"></i>
                 <i class="fa-brands fa-youtube"></i>
             </div>
-        </nav>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style=" background-color:#87aeb4">
-            
-            <div class="container-fluid" style=" background-color:#87aeb4">
+        </nav> *@
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light mb-3" style="background-color:none;">
+            <div class="container-fluid" style="background-color: #f5f5f5; z-index:10">
+                <img src="~/Logo.svg" class="main-logo" onclick="backHome()" />
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -85,11 +86,11 @@
         </main>
     </div>
 
-	<footer class="border-top footer text-muted">
+@* 	<footer class="border-top footer text-muted">
 		<div class="container">
-			&copy; 2024 - StockProphet_Project - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+			 &copy; 2024 - StockProphet_Project - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> 
 		</div>
-	</footer>
+	</footer> *@
 	@*<script src="~/lib/jquery/dist/jquery.min.js"></script> *@
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
@@ -98,16 +99,12 @@
 		$(document).ready(function () {
 
 			if (sessionStorage.getItem("LogAccount") == null) {
-                $(".note-area").css("display", "none");
+                $(".note-area").css("display","none");
                 console.log(1)
-                
                 $('.dropdown-menu').css("display", "none")
-                $('#mynavgation-right').prepend(`<li b-1ez45loqxb class="nav-item" id="myLogin"><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login">登入</a></li>`);
+                $('#mynavgation-right').prepend(`<li b-vkyxnss9jg class="nav-item" id="myLogin"><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login">登入</a></li>`);
 				$('#loginlink').show();
 				$('#logoutlink').hide();
-                $('.dropdown-toggle').on("click", function () {
-                    alert('請先註冊或登入會員');
-                })
 			} else {
                 console.log(2)
                 $('.dropdown-menu').append(` <a class="dropdown-item" href="/Member/Index">會員主頁</a>
@@ -116,7 +113,7 @@
                                              <a class="dropdown-item" href="/Member/MyCollect"> 我的收藏頁面</a>
                                              <a class="dropdown-item" href="/Member/MyPredictResult">我的預測結果頁面</a>`)
 
-                $("#mynavgation-right").append(`<li b-1ez45loqxb class="nav-item" id="myLogout"><a class="nav-link text-dark text-right" id="logoutlink" href="/Home/Index">登出</a></li> `)
+                $("#mynavgation-right").append(`<li b-vkyxnss9jg class="nav-item" id="myLogout"><a class="nav-link text-dark text-right" id="logoutlink" href="/Home/Index">登出</a></li> `)
 				$('#loginlink').hide();
 				$('#logoutlink').show();
 			}

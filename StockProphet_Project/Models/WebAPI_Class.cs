@@ -503,18 +503,20 @@ namespace StockProphet_Project.Models {
 			public async Task<string> UpdateOneStock( string stockCode, string date ,int? port) {
 				// 設定 Python 腳本的路徑
 				string pythonScriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory.Replace(@"\bin\Debug\net8.0\", "").Replace(@"\bin\Release\net8.0\", ""), "wwwroot", "py", "PyAPI.py");
-				Console.WriteLine(pythonScriptPath); 
+				//Console.WriteLine(pythonScriptPath); 
 				// 檢查腳本檔案是否存在
 				if (!System.IO.File.Exists(pythonScriptPath)) {
 					return "Python script file does not exist." + pythonScriptPath;
 				}
-
+				string result = "";
 				// 創建 ProcessStartInfo 對象以啟動 Python 解釋器
 				ProcessStartInfo startInfo = new ProcessStartInfo();
 				
 				//startInfo.FileName = "python"; // 假設 Python 已經添加到系統的 PATH 中
 				startInfo.FileName = (port==80)?@"C:\Users\-I\AppData\Local\Programs\Python\Python311\python.exe": "python"; // 假設 Python 已經添加到系統的 PATH 中
+				result+="目前Port號："+port+"使用python 路徑:" + ((port == 80) ? @"C:\Users\-I\AppData\Local\Programs\Python\Python311\python.exe" : "python")+"\r\n";
 				startInfo.Arguments = pythonScriptPath;
+				result+="使用python Script:" + pythonScriptPath + "\r\n";
 				startInfo.RedirectStandardInput = true;
 				startInfo.RedirectStandardOutput = true;
 				startInfo.UseShellExecute = false;
@@ -529,8 +531,8 @@ namespace StockProphet_Project.Models {
 
 					// 讀取 Python 腳本的輸出
 					using (StreamReader reader = process.StandardOutput) {
-						string result = "";
-						 result += await reader.ReadToEndAsync();
+						
+						 result += await reader.ReadToEndAsync()+"\r\n";
 						return result;
 					}
 				}

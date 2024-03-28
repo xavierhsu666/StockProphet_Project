@@ -327,7 +327,7 @@ namespace StockProphet_Project.Controllers {
 
 		// <WEB API 區>
 		public IActionResult stocksListACA() {
-			var stocksList = (from obj in new ChoCSVReader<stocksCheck>("wwwroot\\stocksListCode.csv").WithFirstLineHeader()
+			var stocksList = (from obj in new ChoCSVReader<stocksCheck>("wwwroot\\stocksList.csv").WithFirstLineHeader()
 							  select new {
 								  label = obj.Name,
 								  category = obj.type
@@ -1174,6 +1174,8 @@ namespace StockProphet_Project.Controllers {
 			return View();
 		}
 		public IActionResult predictphoto( string predicteddata, string sncode, string predictedloss,string mymodelselect) {
+
+			UpdateModelResultsStatusAndRatio();
 			// 檢索資料庫中的資料筆數
 			int dataCount = _context.Stock.Where(x => x.SnCode == sncode).Count();
 

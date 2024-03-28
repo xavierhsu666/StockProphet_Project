@@ -1,7 +1,9 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+	Layout = "_Layout2";
 }
-<link rel="stylesheet" href="~/css/indexStyle.css" type="text/css" />
+
+@* <link rel="stylesheet" href="~/css/indexStyle.css" type="text/css" /> *@
 
 <div id="SessionTest"  style="display:none;" >
 <div class="text-center">
@@ -20,25 +22,34 @@
 </div>
 
 
+<div></div>
+<div class="get-stocks-info"></div>
+<div class="area-left">
+    <div class="group">
+        <svg class="icon" aria-hidden="true" viewBox="0 0 24 24">
+            <g>
+                <path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"></path>
+            </g>
+        </svg>
+        <label for="search"></label>
+        <input placeholder="Search" type="search" class="input" id="search">
+    </div>
+	    <p class="search-hint" style="display:none">是不是輸錯了呢？再確認一下股票代碼或名稱吧！</p> 
+    </div>
+<div class="area-right">
 
+</div>
+<img class="bg-chart" src="~/homePage/chart.png" />
+<img class="bg-line" src="~/homePage/chart2.png" />
+@* <div class="media-icon">
+    <i class="fa-brands fa-square-facebook"></i>
+    <i class="fa-brands fa-square-instagram"></i>
+    <i class="fa-brands fa-youtube"></i>
+</div> *@
+<div class="hand-ani">
+    <img class="bg-water-blue" src="~/homePage/water.gif" />
+    <img class="bg-right-hand" src="~/homePage/right_H.gif" />
+    <img class="bg-left-hand" src="~/homePage/left_H.gif" />
+</div>
 
-<div class="upArea">
-	<div id="search-box">
-		<label for="search"></label>
-		<input type="text" id="search" />
-		<button onclick="changePage()">O</button>
-	</div>
-	<p class="search-hint"  style="display:none" >是不是輸錯了呢？再確認一下股票代碼或名稱吧！</p> 
-</div>
-<div class="bottomArea">
-	<div class="bottom-left">
-		<div class="MB-icon"><img src="~/FB.gif" class="SP-ani"/></div>
-	</div>
-	<div class="bottom-right">
-		<div class="m-btn">
-			<button class="btn-m">會員專區</button>
-			<button class="btn-t">遊客體驗</button>
-		</div>
-	</div>
-</div>
 <script src="~/js/indexSearch.js"></script>
