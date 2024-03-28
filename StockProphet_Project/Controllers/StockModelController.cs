@@ -557,7 +557,19 @@ namespace StockProphet_Project.Controllers {
 				_context.DbMembers.Update(user);
 				_context.SaveChanges();
 			}
-			return Json(newdata);
+			var NewDataWithPid = from o in _context.DbModels
+								 where o.Pprefer == mr.PPrefer &&
+								 o.Pstock == mr.PStock &&
+								 o.Pvariable == mr.PVariable &&
+								 o.Plabel == mr.PLabel &&
+								 o.Pprefer == mr.PPrefer &&
+								 o.PbulidTime == DateTime.Parse( mr.PBuildTime) &&
+								 o.PfinishTime == DateTime.Parse(mr.PfinishTime) &&
+								 o.Dummyblock == mr.dummyblock &&
+								 o.Paccount == mr.Paccount &&
+								 o.Pmodel == mr.Pmodel 
+								 select o;
+			return Json(NewDataWithPid.FirstOrDefault());
 		}
 
 		// <WEB API 區>
