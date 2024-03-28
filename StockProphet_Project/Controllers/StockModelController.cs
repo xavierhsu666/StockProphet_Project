@@ -337,6 +337,20 @@ namespace StockProphet_Project.Controllers {
 			return Json(stocksList);
 		}
 		[HttpGet]
+		public IActionResult stocksnamewithcsv(string data)
+		{
+
+			var stocksList = (from obj in new ChoCSVReader<stocksCheck1>("wwwroot\\stocksList1.csv").WithFirstLineHeader()
+							  where obj.Code == data
+							  select new
+							  {
+								  label = obj.Name
+							  })
+				  .ToList();
+
+			return Json(stocksList);
+		}
+		[HttpGet]
 		public async Task<IActionResult> UpdateOneStock( string stockCode ) {
 			bool issame = false;
 			string stockName = "";
@@ -599,7 +613,7 @@ namespace StockProphet_Project.Controllers {
 			return View(await _context.Stock.ToListAsync());
 		}
 		[HttpPost]
-		public IActionResult LSTMpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams, int iterationtime ) {
+		public IActionResult LSTMpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams, int iterationtime, int layer ) {
 			//測試區
 			// 在控制台輸出收到的資料以進行檢查
 			//Console.WriteLine("Received data:");
@@ -818,7 +832,10 @@ namespace StockProphet_Project.Controllers {
 			x = np.reshape(x, theShape);
 			var model = keras.Sequential();
 			model.add(keras.layers.LSTM(64, keras.activations.Relu));
-			model.add(keras.layers.Dense(64));
+			
+			for (int i = 0; i < layer; i++) {
+				model.add(keras.layers.Dense(64, activation: "relu"));
+			}
 			model.add(keras.layers.Dense(1));
 			model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
 			////測試Xnumpy的樣子
@@ -842,17 +859,23 @@ namespace StockProphet_Project.Controllers {
 			var history = model.fit(x, y, epochs: iterationtime, verbose: 0);
 			// 獲取訓練過程中的 loss 值列表
 			var lossList = history.history["loss"];
+			//確認現在有幾層
+			int layerCount = model.Layers.Count;
+			Console.WriteLine($"The model has {layerCount} layers.");
 
-			// 獲取最後一個 epoch 的 loss 值
+
+
+			// 最後一個 epoch 的 loss 值
 			var lastLoss = lossList.LastOrDefault();
 			string lastLosstostring = lastLoss.ToString();
 			// 打印最後一個 epoch 的 loss 值
 
 
 
+
 			int stockDatafromtime = predictdatacount(sncode, predictday);
 
-			Console.WriteLine(stockDatafromtime);
+			
 
 			//提取最後 predictday 天的特徵 X 的數據進行預測
 
@@ -910,7 +933,7 @@ namespace StockProphet_Project.Controllers {
 		}
 
 		[HttpPost]
-		public IActionResult FNNpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams, int iterationtime ) {
+		public IActionResult FNNpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams, int iterationtime, int layer) {
 			//測試區
 			// 在控制台輸出收到的資料以進行檢查
 			//Console.WriteLine("Received data:");
@@ -1133,7 +1156,9 @@ namespace StockProphet_Project.Controllers {
 			//Feedforward Neural Network
 			var model = keras.Sequential();
 			model.add(keras.layers.Dense(64, activation: "relu", input_shape: new Shape(colcount)));
-			model.add(keras.layers.Dense(64, activation: "relu", input_shape: new Shape(colcount)));
+			for (int i = 0; i < layer; i++) {
+				model.add(keras.layers.Dense(64, activation: "relu", input_shape: new Shape(colcount)));
+			}
 			model.add(keras.layers.Dense(1));
 			//編譯模型
 			model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
@@ -1146,7 +1171,10 @@ namespace StockProphet_Project.Controllers {
 			var lastLoss = lossList.LastOrDefault();
 			string lastLosstostring = lastLoss.ToString();
 			// 打印最後一個 epoch 的 loss 值
-
+			
+			//確認現在有幾層
+			int layerCount = model.Layers.Count;
+			Console.WriteLine($"The model has {layerCount} layers.");
 
 			int stockDatafromtime = predictdatacount(sncode, predictday);
 
@@ -1194,18 +1222,21 @@ namespace StockProphet_Project.Controllers {
 			// 接收 predictedData 的值
 			//System.Diagnostics.Debug.WriteLine("lookhere"+predicteddata);
 			double predictedData = Convert.ToDouble(predicteddata);
-			//Console.WriteLine(predictedData);
+            //Console.WriteLine(predictedData);
+            // 檢索資料庫中的股票資料
+            var stockData = _context.Stock.Where(x => x.SnCode == sncode).ToList();
+			
+            ViewBag.result = new
+			{
+				SnCode = sncode,
+                DataCount= dataCount,
+                PredictedData = predictedData,
+                PredictedLoss = predictedloss,
+                ChartData= stockData,
+                usingModel = mymodelselect
 
+            };
 			// 將資料傳遞到視圖
-			ViewBag.DataCount = dataCount;
-			ViewBag.PredictedData = predictedData;
-			ViewBag.PredictedLoss = predictedloss;
-			// 檢索資料庫中的股票資料
-			var stockData = _context.Stock.Where(x => x.SnCode == sncode).ToList();
-			// 將股票資料傳遞到視圖
-			ViewBag.ChartData = stockData;
-			ViewBag.usingModel = mymodelselect;
-
 
 			return View();
 		}
@@ -1236,7 +1267,10 @@ namespace StockProphet_Project.Controllers {
 			DateTime finishTime = DateTime.Parse(PfinishTime);
 			//System.Diagnostics.Debug.WriteLine($"PLabel: {PLabel}");
 			System.Diagnostics.Debug.WriteLine($"Pparameter111111111111: {Pparameter}");
-			var parametertodb = $"{{\"MSE\":{Pparameter}}}";
+			dynamic parameterObj = JsonConvert.DeserializeObject(Pparameter);
+			decimal MSE = parameterObj.MSE;
+			int Layerchoose = parameterObj.Layerchoose;
+			int Iters = parameterObj.Iters;
 			var newdata = new DbModel {
 				Pstock = PStock,
 				Pvariable = PVariable,
@@ -1245,7 +1279,7 @@ namespace StockProphet_Project.Controllers {
 				PbulidTime = buildTime,
 				PfinishTime = finishTime,
 				Paccount = PAccount,
-				Dummyblock = parametertodb,
+				Dummyblock = Pparameter,
 				Pmodel = Pmodel,
 				Pstatus = "Tracing"
 			};

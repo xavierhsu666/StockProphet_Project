@@ -117,11 +117,18 @@
 					<th>
 						迭代次數
 					</th>
+					<th>
+						模型層數選擇(預設輸入層+輸出層共兩層)
+						可自行添加層數
+					</th>
 				</tr>
 			</thead>
 			<tr>
 				<td>
-					<input class="appendTt" style="width:25%" type="number" id="iterationtime1" name="iterationtime" value="100" min="50" max="200">
+					<input type="number" style="width:50%" class="appendTt" id="iterationtime1" name="iterationtime" value="200" min="100" max="300">
+				</td>
+				<td>
+					<input type="number" style="width:25%" class="appendTt" id="layer1" name="" value="0" min="0" max="10">
 				</td>
 			</tr>
 		</table>
@@ -203,11 +210,18 @@
 					<th>
 						迭代次數
 					</th>
+					<th>
+						模型層數選擇(預設輸入層+輸出層共兩層)
+						可自行添加層數
+					</th>
 				</tr>
 			</thead>
 			<tr>
 				<td>
-					<input type="number" style="width:25%" class="appendTt" id="iterationtime2" name="iterationtime" value="200" min="100" max="300">
+					<input type="number" style="width:50%" class="appendTt" id="iterationtime2" name="iterationtime" value="200" min="100" max="300">
+				</td>
+				<td>
+					<input type="number" style="width:25%" class="appendTt" id="layer2" name="" value="0" min="0" max="10">
 				</td>
 			</tr>
 		</table>
@@ -453,7 +467,8 @@
 			var createmodelTime;
 			var iterationtimeforpredict;
 			var predictedloss;
-			var mymodelselect
+			var mymodelselect;
+			var layerforpredict;
 			// <ks area--------------------->
 
 			// ####<預設值待更新-------------------------------------->
@@ -1053,6 +1068,7 @@
 					userselectparams[paramName] = true;
 				});
 				iterationtimeforpredict = $(`#iterationtime${number}`).val();
+				layerforpredict = $(`#layer${number}`).val();
 				$(`#predict${number}`).prop("disabled", false);
 				return true;
 			}
@@ -1131,7 +1147,8 @@
 							sncode: sncode,
 							predictday: predictday,
 							selectedParams: userselectparams,
-							iterationtime: iterationtimeforpredict
+							iterationtime: iterationtimeforpredict,
+							layer:layerforpredict
 						},
 						beforeSend: function () {
 							$(`#longterm,#shortterm,#predict${number},#Okbutton${number}`).prop("disabled", true);
@@ -1191,9 +1208,14 @@
 								PBuildTime: isoString,
 								PfinishTime: finishString,
 								PAccount: sessionStorage.getItem("LogAccount"),
-								Pparameter: predictedloss,
-								Pmodel: (number == 1) ? "LSTM" : "FNN"
+								Pparameter: JSON.stringify({
+									"MSE": predictedloss,
+									"Layerchoose": layerforpredict,
+									"Iters": iterationtimeforpredict
+								}),
+								Pmodel:(number==1)?"LSTM":"FNN" 
 							}
+							
 
 							$.ajax({
 								method: "Post",
