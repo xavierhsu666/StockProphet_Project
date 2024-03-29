@@ -774,7 +774,10 @@ namespace StockProphet_Project.Controllers
             return true;
         }
 
-       
+        public IActionResult Test()
+        {
+            return View();
+        }
 
 
 
