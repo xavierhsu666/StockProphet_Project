@@ -12,27 +12,40 @@
 <div id="loading-ani"></div>
 <div class="area-left">
     <div class="group">
-        <svg class="icon" aria-hidden="true" viewBox="0 0 24 24">
+@*         <svg class="icon" aria-hidden="true" viewBox="0 0 24 24">
             <g>
                 <path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"></path>
             </g>
-        </svg>
+        </svg> *@
         <label for="search"></label>
         <input placeholder="Search" type="search" class="input" id="search">
     </div>
 	<p class="search-hint" style="display:none">是不是輸錯了呢？再確認一下股票代碼或名稱吧！</p>
+    
     <div class="marquee-area">
-        <div class="STcard-m">
+        <div class="marque-content">
+        @* <div class="STcard-m">
             <p class="STcard-name">name</p>
+            <p style="font-size:12px;color: #bbbdbe;margin:0px; transform:translate(-25px,-15px)">收盤指數</p>
             <p class="STcard-close">0000</p>
             <div class="STcard-otherInfo">
-                <div><p class="STcard-LT">漲跌點數</p><p>0000</p></div>
-                <div><p class="STcard-LT">漲跌百分比</p><p>0000</p></div>
+                <table>
+                    <tr>
+                        <td class="STcard-LT" style="width:25px;">漲跌點數</td>
+                        <td class="STcard-LT-N">0000</td>
+                        <td class="STcard-LT" style="width:43px; padding-left:5px;"> 漲跌<br>百分比</td>
+                        <td class="STcard-LT-P">0000</td>
+                    </tr>
+                </table>
+@*                 <div><p class="STcard-LT" style="width:25px;">漲跌點數</p><p class="STcard-LT-N">0000</p></div>
+                <div><p class="STcard-LT" style="width:38px;">漲跌<br>百分比</p><p class="STcard-LT-P">0000</p></div> 
             </div>
         </div>
         <div class="STcard-m"></div>
         <div class="STcard-m"></div>
-        <div class="STcard-m"></div>
+        <div class="STcard-m"></div> *@
+        </div>
+        <div class="shadow-area"></div>
     </div>
 </div>
 
@@ -300,7 +313,7 @@
          }
          // tableHtml += '</table>';
 
-        console.log(STList);
+        // console.log(STList);
         // var t = 0;
         // for (var i = 0; i < ((STList.length) / 5); i++) {
         //     console.log(STLists[i]);
@@ -311,7 +324,77 @@
         //     }
         // }
          // return tableHtml;
+
+        var i = 0;
+        var cardData = [];
+        while (i < STList.length) {
+            for (var j = 0; j < 5; j++) {
+                cardData.push(STList[i]);
+                i++;
+            }
+            drawCard(cardData);
+            cardData.length = 0;
+        }
+
+        //為了循環、再畫前四張
+        var x = 0;
+        while (x < 20) {
+            for (var j = 0; j < 5; j++) {
+                cardData.push(STList[x]);
+                x++;
+            }
+            drawCard(cardData);
+            cardData.length = 0;
+        }
+
      }
 
+    function drawCard(e) {
+        // console.log(e);
+        $(".marque-content").append(`<div class="STcard-m">
+                <p class="STcard-name">${e[0]}</p>
+                <p style="font-size:12px;color: #bbbdbe;margin:0px; transform:translate(-45px,-15px)">收盤指數</p>
+                <p class="STcard-close">${e[1]}</p>
+                <div class="STcard-otherInfo">
+                    <table>
+                        <tr>
+                            <td class="STcard-LT" style="width:25px;">漲跌點數</td>
+                                    <td class="STcard-LT-N" style="color: ${(e[2] == "+") ? "#bd4221" : "#73b5c5"}">${e[2] + e[3]}</td>
+                            <td class="STcard-LT" style="width:43px; padding-left:5px;"> 漲跌<br>百分比</td>
+                            <td class="STcard-LT-P">${e[4]}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>`);
+        // var color = (e[2] == "+") ? "#bd4221" : "#cedba0";
+        // console.log(color, e[2])
 
+        // $(".STcard-LT-N").css("color", color);
+    }
+
+    $(".marque-content").on({
+        mouseenter: function () { 
+            $(".marque-content").css("animationPlayState", "paused");
+        },
+        mouseleave: function () { 
+            $(".marque-content").css("animationPlayState", "running", "paused");
+
+        },
+    })
+
+     // setTimeout(function () {
+
+     //    $(".marque-content").addEventListener('mousedown', (e) => {
+     //        isDown = true;
+     //        startX = e.pageX - $(".marque-content").offsetLeft;
+     //        scrollLeft = $(".marque-content").scrollLeft;
+     //    });
+     //    $(".marque-content").draggable({
+     //        axis: "x"
+     //    });
+
+
+     // }, 500);
+
+    
 </script>
