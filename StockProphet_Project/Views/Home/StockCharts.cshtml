@@ -85,26 +85,23 @@
 </div>
 
 <div class="predictionArea">
-	 @* <label class='prediction-card ${index}'>
+	@*   <label class='prediction-card ${index}'>
 		<input type='checkbox' class='card-btn' />
 		<div class='card-content'>
 			
 			<div class='card-front'>
-				<div class="card-o">
-					<p class="pre-state">追蹤中</p>
-					<table>
-						<tr><th class="pre-th">準確率</th><td class="pre-td pre-date myAR">-</td></tr>
-						<tr><th class="pre-th">建立帳號</th><td class="pre-td pre-date">-</td></tr>
-						<tr><th class="pre-th">預測模型</th><td class="pre-td pre-date">-</td></tr>
-					</table>
-				</div>
-				
+
+				<p class="pre-state">追蹤中</p>
 				<table class="table-inside">
+					<tr><th class="pre-th">建立者</th><td class="pre-td pre-date">-</td></tr>
+					<tr><th class="pre-th">使用模型</th><td class="pre-td pre-date">-</td></tr>
 					<tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">2024/03/22</td></tr>
 					<tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">2024/04/22</td></tr>
 					<tr><th class="pre-th">預測價格</th><td class="pre-td">555</td></tr>
-					<tr><th class="pre-th">模型資料</th><td class="pre-td"></td></tr>
+					<tr><th class="pre-th">模型評估值</th><td class="pre-td"></td></tr>
+					<tr><th class="pre-th">準確率</th><td class="pre-td pre-date myAR">-</td></tr>
 				</table>
+				<p class="collectNum">22<p>
 				<button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
 			</div>
 			<div class='card-back'>
@@ -122,7 +119,7 @@
 			<button class="pre-list-btn" onclick="copyList(this)">V3</button>
 		
 		</div>
-	</label>  *@
+	</label> *@
 
 	@* <label class="prediction-card">
 	<input type="checkbox" class="card-btn" />

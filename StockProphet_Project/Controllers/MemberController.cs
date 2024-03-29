@@ -772,10 +772,7 @@ namespace StockProphet_Project.Controllers
                 _context.SaveChanges();
             }
             return true;
-        }
-
-       
-
+        }         
 
 
     }

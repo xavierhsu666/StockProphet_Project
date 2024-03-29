@@ -9,7 +9,7 @@
 
 <div></div>
 <div class="get-stocks-info"></div>
-
+<div id="loading-ani"></div>
 <div class="area-left">
     <div class="group">
         <svg class="icon" aria-hidden="true" viewBox="0 0 24 24">
@@ -20,8 +20,22 @@
         <label for="search"></label>
         <input placeholder="Search" type="search" class="input" id="search">
     </div>
-	    <p class="search-hint" style="display:none">是不是輸錯了呢？再確認一下股票代碼或名稱吧！</p> 
+	<p class="search-hint" style="display:none">是不是輸錯了呢？再確認一下股票代碼或名稱吧！</p>
+    <div class="marquee-area">
+        <div class="STcard-m">
+            <p class="STcard-name">name</p>
+            <p class="STcard-close">0000</p>
+            <div class="STcard-otherInfo">
+                <div><p class="STcard-LT">漲跌點數</p><p>0000</p></div>
+                <div><p class="STcard-LT">漲跌百分比</p><p>0000</p></div>
+            </div>
+        </div>
+        <div class="STcard-m"></div>
+        <div class="STcard-m"></div>
+        <div class="STcard-m"></div>
     </div>
+</div>
+
 <div class="area-right">
 
 </div>
@@ -33,9 +47,271 @@
     <i class="fa-brands fa-youtube"></i>
 </div> *@
 <div class="hand-ani">
-    <img class="bg-water-blue" src="~/homePage/water.gif" />
+    <div class="showFBcard">
+        <div class="FB-card top1 ccard animate__animated">
+            <p class="FB-tittle">融資交易餘額</p>
+            <p class="FB-MT">0000</p>
+            <div><p style="color: #bbbdbe;">昨日餘額</p><p style="color: #bbbdbe;margin-left:10px;" class="FB-MT-L">0000</p></div>
+        </div>
+        <div class="SS-card top2 ccard animate__animated">
+            <p class="SS-tittle">融券交易餘額</p>
+            <p class="SS-MT">0000</p>
+            <div><p style="color: #bbbdbe;">昨日餘額</p><p style="color: #bbbdbe;margin-left:10px;" class="SS-MT-L">0000</p></div>
+        </div>
+        <div class="FBM-card top3 ccard animate__animated">
+            <p class="FBM-tittle">融資金額餘額</p>
+            <p class="FBM-MT">0000</p>
+            <div><p style="color: #bbbdbe;">昨日餘額</p><p style="color: #bbbdbe;margin-left:10px;" class="FBM-MT-L">0000</p></div>
+        </div>
+    </div> 
+    <div class="water-check-area"></div>
     <img class="bg-right-hand" src="~/homePage/right_H.gif" />
     <img class="bg-left-hand" src="~/homePage/left_H.gif" />
 </div>
+<div id="tableContainer"></div>
+<div id="tableContainer2"></div>
 
 <script src="~/js/indexSearch.js"></script>
+
+<script>
+    //撈融資餘額
+    document.addEventListener("DOMContentLoaded", function () {
+        //--融資--//
+        var csvUrl = "https://www.twse.com.tw/rwd/zh/marginTrading/MI_MARGN?response=csv";
+
+        fetch(csvUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.arrayBuffer();
+            })
+            .then(buffer => {
+                var decoder = new TextDecoder('big5'); // Specify the correct encoding here
+                var csvData = decoder.decode(buffer);
+
+                var tableHtml = parseCsvToHtmlTable(csvData);
+                // document.getElementById("tableContainer").innerHTML = tableHtml;
+
+
+                // Create a Blob with UTF-8 encoding
+                var blob = new Blob([csvData], { type: 'text/plain;charset=utf-8' });
+
+
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+
+
+            //--類股--//
+        var csvUrl = "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date=20240327&type=IND&response=csv";
+
+        fetch(csvUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.arrayBuffer();
+            })
+            .then(buffer => {
+                var decoder = new TextDecoder('big5'); // Specify the correct encoding here
+                var csvData = decoder.decode(buffer);
+
+                var tableHtml = parseCsvToHtmlTable2(csvData);
+                document.getElementById("tableContainer").innerHTML = tableHtml;
+
+
+                // Create a Blob with UTF-8 encoding
+                var blob = new Blob([csvData], { type: 'text/plain;charset=utf-8' });
+
+                // Create a download link
+                // var downloadLink = document.getElementById('downloadLink');
+                // downloadLink.href = URL.createObjectURL(blob);
+                // downloadLink.download = 'data.txt'; // Change file extension to .txt
+                // downloadLink.style.display = 'block'; // Show the download link
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    });
+    var FBList = [];
+    function parseCsvToHtmlTable(csvData) {
+        // Split CSV into rows
+        var rows = csvData.trim().split('\n');
+
+        // Remove unwanted lines
+        rows = rows.filter(row => {
+            return !row.includes("日 信用交易統計") &&
+                !row.includes("備註:") &&
+                !row.includes("本公司市場融資融券餘額的資料來源係為各授信機構(含證金公司及自辦信用交易證券商)，待各授信機構整體作業結束且傳輸完成，復經本公司彙整後於當日晚間即時公布於本公司網站。前述作業程序或因當日市場成交量值多寡，或因各授信機構傳輸過程順遂與否、更帳次數及作業時間長短等因素，均將影響本公司完成本表時間。") &&
+                !row.includes("由於各授信機構於該信用交易成交的次日，仍繼續處理相關調帳作業，本公司待各授信機構整體作業結束且傳輸最終正確餘額數字完成後，始完整揭露於『前日餘額』欄位中，故請以『前日餘額』為準，而以『今日餘額』為輔助參考資料。") &&
+                !row.includes("遇上櫃證券轉上市，且得為融資融券交易時，本報表於該證券上市交易日即列入信用交易資訊，並將該證券之融資融券餘額列計後，調整當日報表『前日餘額』之統計數字；該證券融資融券餘額，請參閱本公司MIS即時公告。") &&
+                !row.includes("當日如有臨時新增之變更交易有價證券標的，網頁右上角會呈現點選框，屆時請點選明細查詢，另外，歷史資料也可點選此 連結 查詢。當日臨時新增之變更交易有價證券，若該證券原得為融資融券交易，將被暫停融資融券。");
+        });
+
+        // var tableHtml = '<table id="FBtable">';
+        rows.forEach(function (row) {
+            // tableHtml += '<tr>';
+            var columns = row.split('"'); // Change the delimiter to ';'
+            columns.forEach(function (column, index) {
+                // Skip even-numbered columns
+                if (index % 2 !== 0 && index !== 3 && index !== 5 && index !== 7) {
+                    // Handle Chinese characters properly and remove double quotes
+                    column = column.replace(/"/g, ''); // Remove double quotes
+                    column = column.replace(/\([^)]*\)/g, ''); // Remove text within parentheses
+                    // tableHtml += '<td>' + column.trim() + '</td>';
+                    FBList.push(column);
+                }
+                // test.push(column);
+            });
+            // tableHtml += '</tr>';
+            // var test = []
+            // console.log(columns)
+        });
+
+        fillFBCard(FBList);
+        
+        var Ymoney = FBList[11].replace(/,/g, '');
+        var Tmoney = FBList[10].replace(/,/g, '');
+        var color = Ymoney - Tmoney;
+        var Wposition = "";
+        waterChange(Wposition)
+        changeFBCard(color);
+        // console.log(FBList[7]);
+        // console.log(csvData)
+        // console.log(tableHtml)
+        // tableHtml += '</table>';
+        // return tableHtml;
+    }
+
+    setTimeout(function () {
+        $(".water-check-area").on({
+            mouseenter: function () {
+                $(".ccard").removeClass("animate__fadeInRight");
+                $(".ccard").removeClass("animate__fadeOutRight");
+                $(".ccard").addClass("animate__fadeInRight");
+            },
+            mouseleave: function () {
+                $(".ccard").addClass("animate__fadeOutRight");
+            
+            }
+        })
+    }, 1000);
+
+    function fillFBCard(e) {
+        //融資
+        $(".FB-MT-L").text(e[4]);
+        $(".FB-MT").text(e[5]);
+        //融券
+        $(".SS-MT-L").text(e[7]);
+        $(".SS-MT").text(e[8]);
+        //金額
+        $(".FBM-MT-L").text(e[10]);
+        $(".FBM-MT").text(e[11]);
+    }
+
+    function changeFBCard(n) {
+        var blue = '<img class="bg-water" src="/homePage/water.gif" />'
+        var red = '<img class="bg-water" src="/homePage/water02.gif" />'
+        n >= 0 ? ($(".water-check-area").before(red)) : ($(".water-check-area").before(blue))
+       
+    }
+
+
+    function waterChange(p) {
+        setTimeout(function () {
+            p = 1;
+            switch (p) {
+                case 1:
+                    $(".bg-water").css("bottom", "460px").css("transform", "scale(1, 0.6)");
+                    break;
+                case 2:
+                    $(".bg-water").css("bottom", "440px").css("transform", "scale(1, 1)");
+                    break;
+                case 3:
+                    $(".bg-water").css("bottom", "460px").css("transform", "scale(1, 1)");
+                    break;
+                case 4:
+                    $(".bg-water").css("bottom", "460px").css("transform", "scale(1, 1.2)");
+                    break;
+            }
+        }, 1800);
+    }
+
+    //撈類股資料
+    function parseCsvToHtmlTable2(csvData) {
+         // Split CSV into rows
+         // console.log(csvData);
+         var rows = csvData.trim().split('\n');
+
+         // Remove unwanted lines
+         rows = rows.filter(row => {
+             return !row.includes("日 價格指數(臺灣證券交易所)") &&
+                 !row.includes("說明:") &&
+                 !row.includes("以上統計資料包括：一般交易、鉅額交易、零股交易及盤後定價交易之量值。");
+         });
+
+        var STList = [];
+
+         var headerRow = rows[0];
+         var headerColumns = headerRow.split('"');
+         // var tableHtml = '<table><tr>';
+         headerColumns.forEach(function (column, index) {
+             // Skip odd-numbered columns
+             if (index % 2 !== 0 && index !== 11) {
+                 // tableHtml += '<th>' + column.replace(/"/g, '') + '</th>';
+             }
+         });
+         // tableHtml += '</tr>';
+         // Extract first row data
+         rows = rows.map(row => {
+             return row.replace(/發行量加權股價指數/g, '加權指數');
+         });
+         var firstDataRow = rows[2];
+         var dataColumns = firstDataRow.split('"');
+         // tableHtml += '<tr>';
+         dataColumns.forEach(function (column, index) {
+             // Skip odd-numbered columns
+             if (index % 2 !== 0 && index !== 11) {
+                 // tableHtml += '<td>' + column.replace(/"/g, '') + '</td>';
+                STList.push(column);
+             }
+             // console.log(column);
+         });
+         // tableHtml += '</tr>';
+
+
+        
+         // Extract rows 17 to 53 data
+         for (var i = 16; i < 53; i++) {
+             var dataRow = rows[i];
+             var dataColumns = dataRow.split('"');
+             // tableHtml += '<tr>';
+
+             dataColumns.forEach(function (column, index) {
+                 // Skip odd-numbered columns
+                 if (index % 2 !== 0 && index !== 11) {
+                     // tableHtml += '<td>' + column.replace(/"/g, '') + '</td>';
+                    STList.push(column);
+                 }
+             });
+             // tableHtml += '</tr>';
+         }
+         // tableHtml += '</table>';
+
+        console.log(STList);
+        // var t = 0;
+        // for (var i = 0; i < ((STList.length) / 5); i++) {
+        //     console.log(STLists[i]);
+        //     for(var j=0; j<4; j++){
+        //         STList[i].push(STLists[t]);
+        //         console.log(STLists[t]);
+        //         t++;
+        //     }
+        // }
+         // return tableHtml;
+     }
+
+
+</script>
