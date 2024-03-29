@@ -464,9 +464,13 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             var yData = [Ddata[i].Label];
             var preDate = xData[0]; //預測日 懶人傳值
             var preBuildDate = Ddata[i].BuildTime;
+            var collectNum = Ddata[i].NumCount;  //按愛心數
+            var status = Ddata[i].Status;   //是否結案
+            var model = Ddata[i].Pmodel;
+            var PAR = Ddata[i].PAR;
 
-            var preState = (Today >= preDate) ? "已結案" : "追蹤中";
-            var comDate = (Today >= preDate) ? preDate : preBuildDate;
+            var preState = (status == "Close") ? "已結案" : "追蹤中";
+            var comDate = (status == "Close") ? preDate : preBuildDate;
 
             //console.log("預測日: "+ xData)
             //用BuildDate去找列表中最近的日子(closestDate)，closestDate可能等於BuildDate，也可能是前一天
@@ -504,15 +508,17 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             var preDummy = JSON.parse(Ddata[i].Dummyblock);     //結果參數
             var pAccount = Ddata[i].Account;
 
-            drawPre(preData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy, pAccount);
+            drawPre(preData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy, pAccount, collectNum, model, PAR);
+            //console.log(preState);
         }
     })
 })
 
-function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy, pAccount) {
+//畫圖資料,第n張卡片,卡片追蹤狀態,預測日,卡片ID,建立日,所選變數,結果評估,建立帳號,收藏數,使用模型,PAR
+function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy, pAccount, collect, model, PAR) {   
 
     
-    //console.log(preDummy);
+    //console.log(preState);
 
     var prelist = "";
     if (preVariable[0] != null) {
@@ -525,21 +531,16 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
     $(".predictionArea").prepend(`<label class='prediction-card ${index}'>
     <input type='checkbox' class='card-btn' />
     <div class='card-content'><div class='card-front'>
-    <div class="card-o">
-        <p class="pre-state">${preState}</p>
-        <table >
-            <tr><th class="pre-th">準確率</th><td class="pre-td pre-date">-</td></tr>
-            <tr><th class="pre-th">建立帳號</th><td class="pre-td pre-date">${pAccount}</td></tr>
-            <tr><th class="pre-th">預測模型</th><td class="pre-td pre-date">-</td></tr>
-        </table>
-    </div>
     <p class="pre-state">${preState}</p>
     <table class="table-inside">
+    <tr><th class="pre-th">建立者</th><td class="pre-td pre-date">${pAccount}</td></tr>
+    <tr><th class="pre-th">使用模型</th><td class="pre-td pre-date">${model}</td></tr>
     <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preBuildDate}</td></tr>
     <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${preDate}</td></tr>
     <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5].Close}</td></tr>
-    <tr><th class="pre-th">結果參數</th><td class="pre-td">MSE:${preDummy.MSE}</td></tr>
+    <tr><th class="pre-th">準確率</th><td class="pre-td pre-date">${d3.format(".2f")(PAR)}</td></tr>
     </table>
+    <p class="collectNum">${ collect > 0 ? collect : "" }<p>
     <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
     </div>
     <div class='card-back'>
@@ -678,7 +679,7 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
     //動畫?
     pointAni(index);
     function pointAni(index) {
-        var strokeC = (myData[5].Close > myData[4].Close) ? "#b84121" : "#69b3a2";
+        var strokeC = (myData[5].Close >= myData[4].Close) ? "#b84121" : "#69b3a2";
         var fillC = preState == "已結案" ? strokeC : "white"
         //var fillC = (myData[5].Close > myData[4].Close) ? "#f77465" : "#cedba0";
     /*        console.log("strokeC:" + strokeC + "  fillC:" + fillC);*/

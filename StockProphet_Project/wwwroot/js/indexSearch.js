@@ -133,9 +133,7 @@ function fetchingData(url, stockId) {
 //};
 
 //叫loading動畫
-// 获取当前页面的URL
 var baseUrl = window.location.origin;
-// 构建正确的路径
 var animationPath = baseUrl + '/icon/loadingChart.json';
 var loadingAni = lottie.loadAnimation({
     container: $("#loading-ani div"),
