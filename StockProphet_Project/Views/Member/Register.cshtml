@@ -7,16 +7,17 @@
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
 <style>
     /* 帳號檢查小動畫 */
-   /*  #lottie {
-        position: absolute;
-        top: 50%;
+    #ckeckOk {
+        font-size: 24px;
+        position: absolute;       
+        top: 60%;
         right: 10px;
         transform: translateY(-50%); */
-        /* visibility: hidden; */
-       /*  visibility: visible;
+        /* visibility: hidden;  */
+        /* visibility: visible; */
         width: 30px;
         height: 30px;
-    } */
+    }
     /* 小眼睛 */
     #checkEye {
         position: absolute;
@@ -25,8 +26,8 @@
         transform: translateY(-50%);
     }
     /* 外層 */
-   /*  .form-container {
-        z-index: -1;
+    .form-container {
+        
         max-width: 500px;
         background-color: #fff;
         padding: 32px 24px;
@@ -39,7 +40,7 @@
         box-sizing: border-box;
         border-radius: 10px;
         box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
-    } */
+    }
     /* 下拉選單 */
     .news-filter select {
         background: #fff;
@@ -78,8 +79,9 @@
             @* +正則 *@
             <input class="form-control" type="text" pattern=@AccountPattern size="20" maxlength="20" name="MAccoMnt" id="Account" value="" required="required">
             <label class="form-label" for="Account">帳號:</label>
-            @* 打勾動畫 30*30   style="display: none; width:30px; height:30px ;z-index: 2 "*@
-            <i id="lottie"></i>
+            @* 打勾動畫 "*@
+            <i id="ckeckOk" class="fa-solid fa-circle-check" style="color: #63E6BE; display:none"></i>
+            @* <div id="lottie333" style="display: none"></div> *@
             <span id="checkName"></span>@* 檢查帳戶名稱是否重複 *@
             <span id="accountError" style="color: red;"></span> @* 不符合格式跳提示 *@
         </div>
@@ -178,7 +180,8 @@
     //再次輸入密碼不同時，顯示提示字
     $('#pwdnoteword').hide();
 
-    $(function () {
+    $(function () {      
+
         //密碼欄位小眼睛
         $("#checkEye").click(function () {
             if ($(this).hasClass('fa-eye-slash')) {
@@ -239,19 +242,19 @@
         });
 
         //畫打勾
-        function playAni() {
-            document.getElementById("lottie").style.display = "block";
-            animation.play();
-        }
+        // function playAni() {
+        //     document.getElementById("lottie333").style.display = "block";
+        //     animation.play();
+        // }
 
         // 載入 Lottie 動畫-引用json檔?
-        var animation = lottie.loadAnimation({
-            container: document.getElementById("lottie"), //要動畫的地方
-            renderer: "svg",
-            loop: false,
-            autoplay: false,
-            path: "https://lottie.host/b2f40ebf-57f2-4648-ba0e-24120c2bf4b7/f6JH49VrAH.json", //載下來的動畫json檔
-        });
+        // var animation = lottie.loadAnimation({
+        //     container: document.getElementById("lottie333"), //要動畫的地方
+        //     renderer: "svg",
+        //     loop: false,
+        //     autoplay: false,
+        //     path: "https://lottie.host/b2f40ebf-57f2-4648-ba0e-24120c2bf4b7/f6JH49VrAH.json" //載下來的動畫json檔
+        // });
         // 動畫跑完後隱藏
         // animation.addEventListener("complete", function () {
         //     document.getElementById("lottie").style.display = "none";
@@ -270,17 +273,19 @@
                 success: function (e) {
                     // console.log(e)
                     if (checkAccount == "") {
+                        $('#ckeckOk').css("display", "none");
                         $('#checkName').show();
                         $('#checkName').text("必填");
                     } else {
                         if (e) {
+                            $('#ckeckOk').css("display", "none");
                             $('#checkName').show();
                             $('#checkName').text("帳號名稱已被註冊");
                         } else {
                             $('#checkName').hide();
                             // $('#accountError').hide();
-                            $('#lottie').css("visibility", "visible");
-                            playAni();
+                            $('#ckeckOk').css("display", "block");
+                            // playAni();
                             // alert('帳號未使用')
                         }
                     }

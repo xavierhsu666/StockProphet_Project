@@ -772,13 +772,7 @@ namespace StockProphet_Project.Controllers
                 _context.SaveChanges();
             }
             return true;
-        }
-
-        public IActionResult Test()
-        {
-            return View();
-        }
-
+        }         
 
 
     }
