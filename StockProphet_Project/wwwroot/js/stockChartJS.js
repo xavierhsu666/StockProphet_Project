@@ -743,7 +743,7 @@ function redraw() {
 function btnTest(btn) {
     if (logging) {      //如果有登入
         //到時候user要改成抓目前登入者的帳號ㄛ
-        var dataToServer = { user: user, cardID: $(btn).attr("id").substring(3) };
+        var dataToServer = { user: user, cardID: $(btn).attr("id").substring(3), AorD: e.substring(0, 1) };
         $.ajax({
             url: "/Home/CheckCard",
             method: "POST",
