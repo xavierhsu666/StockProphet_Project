@@ -1,110 +1,350 @@
 ﻿@{
-    ViewData["Title"] = "股票預測";
-    int finsihdate;
-    switch (@ViewBag.usingModel)
-    {
-        case "LSTM":
-            finsihdate = 30;
-            break;
-        case "FNN":
-            finsihdate = 5;
-            break;
-        case "迴歸":
-            finsihdate = 30;
-            break;
-        case "時間序列":
-            finsihdate = 5;
-            break;
-        default:
-            finsihdate = 0;
-            break;
-    }
+	//http://localhost:5271/stockmodel/predictphoto?pid=11
+	ViewData["Title"] = "股票預測";
+	TimeSpan difference = DateTime.Now.Subtract(ViewBag.result.finishdate);
+	TimeSpan differenceOpp = ViewBag.result.finishdate.Subtract(DateTime.Now);
+
+
+
+
+	int finishdate = (ViewBag.result.Pprefer == 1) ? 5 : 30;
+	bool isTracing = ((int)difference.TotalDays <= 0) ? true : false;
+	string finishdateCountDownStr = "";
+
+	var ChartData = new List<Stock>();
+	ChartData = ViewBag.result.ChartData;
+	var LatestNdays = ChartData.OrderByDescending(x => x.StDate).Take(finishdate);
+	var LatestNdaysAverage = LatestNdays.Average(x => x.SteClose);
+	var LatestNdays_ori = ChartData.OrderByDescending(x => x.StDate).Take(finishdate * 2).OrderBy(x => x.StDate).Take(finishdate).OrderByDescending(x => x.StDate);
+	var LatestNdaysAverage_ori = LatestNdays_ori.Average(x => x.SteClose);
+	string ori_timeArea = "";
+	foreach (var item in LatestNdays_ori) {
+		// original的時間區間
+		ori_timeArea += item.StDate + ",";
+	}
+	string timeArea = "";
+	foreach (var item in LatestNdays) {
+		// original的時間區間
+		timeArea += item.StDate + ",";
+	}
+	string UorD = "";
+	int PredictedData = (int)ViewBag.result.PredictedData;
+
+	if (LatestNdaysAverage > PredictedData) {
+		//看漲
+		UorD = "看空";
+	} else if (LatestNdaysAverage < PredictedData) {
+		UorD = "看多";
+	} else {
+		UorD = "看平";
+	}
+
+	string UorD2 = "";
+	if (LatestNdaysAverage > LatestNdaysAverage_ori) {
+		// 五日_now平均大於五日_ori
+		UorD2 = "看多";
+	} else if (LatestNdaysAverage < LatestNdaysAverage_ori) {
+		// 五日_now平均小於五日_ori
+		UorD2 = "看空";
+	} else {
+		// 五日_now平均等於五日_ori //* 100 * ((UorD == UorD2) ? 1 : -1)
+		UorD2 = "看平";
+	}
+
+	if (isTracing) {
+		// 追蹤中
+		finishdateCountDownStr += "預測「追蹤中」，成交"+finishdate+"日均價將於「" +
+		(int)differenceOpp.TotalDays + "」天間達「" + ViewBag.result.PredictedData + "」元。以「" +
+		finishdate + "」日平均而言，預測前均價為「" + LatestNdaysAverage_ori + "」，目前均價為「" +
+		LatestNdaysAverage + "」，整體走勢「" +
+		UorD + "」，預估準確率為「" +
+		Math.Round(((decimal)ViewBag.result.PredictedData) / ((decimal)LatestNdaysAverage) * 100 * ((UorD == UorD2) ? 1 : -1), 1) + "%」";
+	} else {
+		
+
+		var finishdates = DateOnly.Parse(ViewBag.result.finishdate.ToString("yyyy-MM-dd"));
+		var ActualPrice = ChartData.Where(x => x.StDate.CompareTo(finishdates) <= 0).OrderByDescending(x=>x.StDate).FirstOrDefault().SteClose;
+		
+		finishdateCountDownStr += "預測「已結案" + (int)difference.TotalDays + "天」，以"+finishdate+
+		"日均線而言，預測前均價為「" + LatestNdaysAverage_ori + "」元，預估" + finishdate + "日後均價為「" +
+		ViewBag.result.PredictedData + "」元。實際為「" + LatestNdaysAverage + "」，差異「" + ((int)ViewBag.result.PredictedData - LatestNdaysAverage) + "元」。準確率約「" +
+		Math.Round(((decimal)ViewBag.result.PredictedData) / ((decimal)LatestNdaysAverage) * 100 * ((UorD == UorD2) ? 1 : -1), 1) + "%」，預測「" +
+		UorD + "」，實際「走" + UorD2 .Substring(1,1)+ "」。預測結果「" + ((UorD == UorD2) ? "成功」" : "失敗」");
+
+	}
+
+			//(isTracing) ? (int)differenceOpp.TotalDays + "天後預測結束" : (int)difference.TotalDays * 1 + "日前已結案";
+
+			// switch (@ViewBag.result.usingModel)
+	// {
+	// 	case "LSTM":
+	// 		finishdate = 30;
+	// 		break;
+	// 	case "FNN":
+	// 		finishdate = 5;
+	// 		break;
+	// 	case "迴歸":
+	// 		finishdate = 30;
+	// 		break;
+	// 	case "時間序列":
+	// 		finishdate = 5;
+	// 		break;
+	// 	default:
+	// 		finishdate = 0;
+	// 		break;
+	// }
 }
 <!-- 引入 Chart.js 库 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-<h1>股票預測</h1>
-<h1>使用模型: @ViewBag.usingModel</h1>
-<h1>預測值: @ViewBag.PredictedData</h1>
-<h1>MSE-Loss: @ViewBag.PredictedLoss</h1>
 
-<!-- 创建一个 canvas 元素用于绘制图表 -->
-<canvas id="stockChart" width="800" height="400"></canvas>
+
+<div>
+
+	<h1 style="background-color:rgba(0, 98, 234, 0.1);padding:5px;">@finishdateCountDownStr </h1>
+	<h1 style="margin-top:30px">預測結果</h1>
+	<table class="table table-light">
+		<thead>
+			<tr>
+				<th>股票名稱</th>
+				<th>預測價格</th>
+				<th>建立時間</th>
+				<th>結案時間</th>
+			</tr>
+		</thead>
+		<tr>
+			<td id="stockname">@ViewBag.result.SnCode </td>
+			<td>@ViewBag.result.PredictedData</td>
+			<td>@ViewBag.result.PbulidTime</td>
+			<td>@ViewBag.result.finishdate</td>
+		</tr>
+	</table>
+
+	<h1>模型參數</h1>
+	<table class="table table-light">
+		<thead>
+			<tr id="HereParas_th">
+				<th>使用模型</th>
+				<th>投資偏好</th>
+				<th>使用變數</th>
+			</tr>
+		</thead>
+		<tr id="HereParas_td">
+			<td>@ViewBag.result.usingModel</td>
+			<td>@((ViewBag.result.Pprefer == 1) ? "短期投資" : "長期投資") </td>
+			<td>@ViewBag.result.Pvariable</td>
+
+		</tr>
+	</table>
+	<h1>模型表現</h1>
+	<table class="table table-light">
+		<thead>
+			<tr id="modelEva_th">
+			</tr>
+		</thead>
+		<tr id="modelEva_tb">
+		</tr>
+	</table>
+</div>
+
+
+<div style="max-width:1200px;max-height:700px;display:block">
+
+	<!-- 创建一个 canvas 元素用于绘制图表 -->
+	@* <canvas id="stockChart" width="800" height="400"></canvas> *@
+	<canvas id="stockChart" width="1200" height="600"></canvas>
+</div>
+@* <h1>預測股票代號: @ViewBag.result.SnCode </h1>
+<br>
+<h1 id="stockname"></h1>
+<br />
+
+<h1>使用模型: @ViewBag.result.usingModel</h1>
+<br />
+<h1>@finishdateCountDownStr，收盤價: @ViewBag.result.PredictedData</h1>
+<br />
+<h1>MSE-Loss: @ViewBag.result.PredictedLoss</h1>
+<br />
+<button id="mypredictresult">跳轉我的預測</button>
+<br />
+<button id="mystockid">跳轉個股</button>
+<br /> *@
 
 <script>
-    var actualData = @Html.Raw(Json.Serialize(ViewBag.ChartData));
-    var predictedData = @Html.Raw(Json.Serialize(ViewBag.PredictedData));
+	var actualData = @Html.Raw(Json.Serialize(ViewBag.result.ChartData));
+	var predictedData = @Html.Raw(Json.Serialize(ViewBag.result.PredictedData));
 
-    var formattedData = actualData.map(function (item) {
-        var date = moment(item.StDate).format('YYYY-MM-DD');
-        return {
-            x: date,
-            y: item.SteClose,
-            label: '日期: ' + date + ', 收盤價: ' + item.SteClose
-        };
-    });
+	var formattedData = actualData.map(function (item) {
+		var date = moment(item.StDate).format('YYYY-MM-DD');
+		return {
+			x: date,
+			y: item.SteClose,
+			label: '日期: ' + date + ', 收盤價: ' + item.SteClose
+		};
+	});
 
-    var lastActualDate = moment(formattedData[formattedData.length - 1].x);
-    var predictedDate = moment(lastActualDate).add(@finsihdate, 'day');
-    var formattedPredictedDate = predictedDate.format('YYYY-MM-DD');
-    var predictedClosePrice = predictedData;
+	var lastActualDate = moment(formattedData[formattedData.length - 1].x);
+	var predictedDate = moment(lastActualDate).add(@finishdate, 'day');
+	var formattedPredictedDate = predictedDate.format('YYYY-MM-DD');
+	var predictedClosePrice = predictedData;
+	var predictedDate1 = predictedDate.format('YYYY-MM-DD')
+	// console.log(typeof predictedDate1);
+	// console.log(typeof formattedPredictedDate);
+	var ctx = document.getElementById('stockChart').getContext('2d');
 
-    var ctx = document.getElementById('stockChart').getContext('2d');
+	var stockChart = new Chart(ctx, {
+		type: 'line',
+		data: {
+			labels: [],
+			datasets: [{
+				label: '實際收盤價',
+				data: formattedData,
+				borderColor: 'blue',
+				fill: false
+			}, {
+				label: '預測收盤價',
+				data: [{
+					x: formattedPredictedDate,
+					y: predictedClosePrice
+				}],
+				borderColor: 'red',
+				fill: false,
+				pointRadius: 10
+			}, {
+				label: '趨勢線',
+				data: [{
+					x: formattedData[formattedData.length - 1].x,
+					y: formattedData[formattedData.length - 1].y
+				}, {
+					x: formattedPredictedDate,
+					y: predictedClosePrice
+				}],
+				borderColor: 'red',
+				fill: false,
+				pointRadius: 0,
+				borderWidth: 0.5,
+				borderDash: [5, 5]
+			}, {
+				label: '預測前'+@Html.Raw(Json.Serialize(finishdate))+'日移動平均',
+				data: [{
+					x: formattedData[0].x,
+					y: @Html.Raw(Json.Serialize(LatestNdaysAverage_ori)) // 设置水平线的 y 坐标值
+				}, {
+					x: formattedData[formattedData.length - 1].x,
+					y: @Html.Raw(Json.Serialize(LatestNdaysAverage_ori))
+				}],
+				borderColor: 'black',
+				fill: false,
+				borderWidth: 0.5,
+				borderDash: [5, 5],
+				hidden: @Html.Raw(Json.Serialize(isTracing)) // 結案的話秀
+			}, {
+				label: '近'+@Html.Raw(Json.Serialize(finishdate))+'日移動平均*',
+				data: [{
+					x: formattedData[0].x,
+					y: @Html.Raw(Json.Serialize(LatestNdaysAverage)) // 设置水平线的 y 坐标值
+				}, {
+					x: formattedData[formattedData.length - 1].x,
+					y: @Html.Raw(Json.Serialize(LatestNdaysAverage))
+				}],
+				borderColor: 'black',
+				fill: false,
+				borderWidth: 0.5,
+				//borderDash: [5, 5],
+				hidden: false // 设置水平线1隐藏
+			}]
+		},
+		options: {
+			scales: {
+				x: {
+					ticks: {
+						maxTicksLimit: 15 // 限制最大刻度數為 15
+					}
+				},
+				y: {
+					ticks: {
+						beginAtZero: true
+					}
+				}
+			}
 
-    var stockChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [], // 將刻度值放在這裡
-            datasets: [{
-                label: '實際收盤價',
-                data: formattedData,
-                borderColor: 'blue',
-                fill: false
-            }, {
-                label: '預測收盤價',
-                data: [{
-                    x: formattedPredictedDate,
-                    y: predictedClosePrice
-                }],
-                borderColor: 'red',
-                fill: false,
-                pointRadius: 10
-            }, {
-                label: '趨勢線',
-                data: [{
-                    x: formattedData[formattedData.length - 1].x,
-                    y: formattedData[formattedData.length - 1].y
-                }, {
-                    x: formattedPredictedDate,
-                    y: predictedClosePrice
-                }],
-                borderColor: 'red',
-                fill: false,
-                pointRadius: 0,
-                borderWidth: 0.5,
-                borderDash: [5, 5]
-            }]
-        },
-        options: {
-            scales: {
-                xAxes: [{
-                    type: 'time',
-                    time: {
-                        unit: 'month', // 指定刻度的時間單位
-                        displayFormats: {
-                            month: 'YYYY-MM' // 指定月份的顯示格式
-                        }
-                    },
-                    ticks: {
-                        maxTicksLimit: 7 // 限制最大刻度數
-                    }
-                }],
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            }
-        }
-    });
+		}
+	});
+
+	$("#mypredictresult").on("click", function () {
+		window.location.href = "/Member/MyPredictResult"
+	})
+	$("#mystockid").on("click", function () {
+		window.location.href = "/Home/StockCharts/" + @ViewBag.result.SnCode
+									})
+	$.ajax({
+		url: "/StockModel/stocksnamewithcsv",
+		method: "get",
+		data: { data: @ViewBag.result.SnCode },
+		success: function (e) {
+			$("#stockname").text(`股票名稱: ${e[0]["label"]}`);
+		}
+	})
+	function TransJtoO(DummyBlock) {
+
+		var ToJ = JSON.parse(DummyBlock);
+		// console.log(ToJ);
+		var eva = new Object();
+		var pars = new Object();
+		// var keys = Object.keys(ToJ);
+		// console.log(keys[0]);
+		$.each(ToJ, function (i, val) {
+			if (i == "MSE") {
+				eva.均方誤差 = val;
+			} else if (i == "RMSE") {
+				eva.均方根誤差 = val;
+			} else if (i == "Iters") {
+				pars.迭代數 = val;
+			} else if (i == "uEsti") {
+				pars.誤差上界 = val;
+			} else if (i == "lEsti") {
+				pars.誤差下界 = val;
+			} else if (i == "wSize") {
+				pars.視窗尺寸 = val;
+			} else if (i == "sLen") {
+				pars.系列尺寸 = val;
+			} else if (i == "tSize") {
+				pars.資料筆數 = val;
+			} else if (i == "cLev") {
+				pars.信心水準 = val;
+			} else if (i == "Layerchoose") {
+				pars.神經層數 = val;
+			}
+			// console.log(i+" = "+val);
+		})
+		// console.log(eva);
+		// console.log(pars);
+		var EvaOrPar = new Object();
+		EvaOrPar.eva = eva;
+		EvaOrPar.pars = pars;
+		// console.log(EvaOrPar);
+
+		var isTracing = @Html.Raw(Json.Serialize(isTracing));
+		var acc = @Html.Raw(Json.Serialize(ViewBag.result.PAccuracyRatio));
+		if (isTracing) {
+			eva.預計準確率 = (acc * 100).toFixed(1) + "%";
+		} else {
+			eva.準確率 = (acc * 100).toFixed(1) + "%";
+		}
+
+		$("#HereParas").text(JSON.stringify(pars));
+
+
+		$.each(eva, function (i, val) {
+			$("#modelEva_th").append("<th>" + i + "</th>");
+			$("#modelEva_tb").append("<td>" + val + "</td>");
+		})
+		$.each(pars, function (i, val) {
+			$("#HereParas_th").append("<th>" + i + "</th>");
+			$("#HereParas_td").append("<td>" + val + "</td>");
+		})
+		return EvaOrPar;
+	}
+	TransJtoO(@Html.Raw(Json.Serialize(ViewBag.result.PredictedLoss)));
+
 </script>
