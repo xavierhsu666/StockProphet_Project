@@ -564,12 +564,15 @@ namespace StockProphet_Project.Controllers {
 								 o.Pvariable == mr.PVariable &&
 								 o.Plabel == mr.PLabel &&
 								 o.Pprefer == mr.PPrefer &&
-								 o.PbulidTime == DateTime.Parse(mr.PBuildTime) &&
-								 o.PfinishTime == DateTime.Parse(mr.PfinishTime) &&
+								 o.PbulidTime == buildTime &&
+								 o.PfinishTime == finishTime &&
 								 o.Dummyblock == mr.dummyblock &&
 								 o.Paccount == mr.Paccount &&
 								 o.Pmodel == mr.Pmodel
 								 select o;
+			//Console.WriteLine("-----------------------------------");
+			//Console.WriteLine(NewDataWithPid.Count());
+			//Console.WriteLine("-----------------------------------");
 			return Json(NewDataWithPid.FirstOrDefault());
 		}
 

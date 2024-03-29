@@ -98,10 +98,24 @@ namespace StockProphet_Project.Controllers {
 
             return Json(query);
         }
-
+        // 請搜尋嘉澤做的Save to Collect DB
+        public void SaveDataToCollect( string user, string cardID ) {
+            //Console.WriteLine($"{user} {cardID}");
+            var newData = new DbCollect() {
+                CID = user + "_" + cardID,
+                PID = Convert.ToInt32(cardID),
+                CDate = DateTime.Now,
+                CAccount = user
+            };
+            //http://localhost:5271/home/savedatatocollect?user=t1&cardID=1
+            _context.Add(newData);
+			_context.SaveChanges();
+        }
         //加入或刪除最愛清單
         [HttpPost]
         public string CheckCard(string user, string cardID) {
+
+
             var member = _context.DbMembers.SingleOrDefault(e => e.MaccoMnt == user);
             Console.WriteLine("--------------"+user+"/" + cardID);
             char[] delimiterChars = ['{', '}', ','];
