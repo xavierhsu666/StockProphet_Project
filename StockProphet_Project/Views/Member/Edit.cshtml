@@ -37,13 +37,13 @@
 @* <h1 class="text-">會員功能-修改個人資料</h1> *@
 
 <div class="row">
-    <div class="col-md-4">
+@*     <div class="col-md-4">
         <button id="showMemberIndex">回到會員頁</button><br>
         <button id="showRevise">修改個人資料</button><br>
         <button id="showFavoritesPage">我的收藏</button><br>
         <button id="showPredictFunc">我要預測</button><br>
         <button id="showHistoryPage">我的預測結果</button><br>
-    </div>
+    </div> *@
     <div class="col-md-8">
 
         <div id="beforeLog">
@@ -55,9 +55,9 @@
             <div id="Revise" class="form-container">
                 <form>
                     <div class="logo-container">修改個人資料</div>
-                    <div>
+                @*     <div>
                         <label for="Account" id="Account">帳號:</label>
-                    </div>
+                    </div> *@
 
                     <div class="form-floating mb-3">
                         <input class="form-control" type="password" pattern="@PasswordPattern" size="20" minlength="20" name="MPassword" id="Password" title="請輸入原始密碼" value="">
@@ -93,24 +93,31 @@
                         <br>
                     </div>
                     
-
-                    <label for="Birthday" id="Birthday">生日:</label>
+                    <div >
+                        <label for="Birthday" id="Birthday">生日:</label>
                     <br>
+                    </div>
 
-                    <label for="MGender" id="MGender">性別:</label>
+                    <div >
+                        <label for="MGender" id="MGender">性別:</label>
                     <br>
-
-                    <label for="MInvestYear">您的投資年數:</label>
-                    <select name="MInvestYear" id="InvestYear" required>
-                        <option value="1">未滿1年</option>
-                        <option value="2">1-3年</option>
-                        <option value="3">3-5年</option>
-                        <option value="4">5年以上</option>
-                    </select>
-                    <br>
-
-                    <label for="MLevel" id="MLevel">會員等級:</label>
-                    <br>
+                    </div>
+                    <div>
+                        <label for="MInvestYear">您的投資年數:</label>
+                        <select name="MInvestYear" id="InvestYear" required>
+                            <option value="1">未滿1年</option>
+                            <option value="2">1-3年</option>
+                            <option value="3">3-5年</option>
+                            <option value="4">5年以上</option>
+                        </select>
+                        <br>
+                    </div>
+                    
+                    <div>
+                        <label for="MLevel" id="MLevel">會員等級:</label>
+                        <br>
+                    </div>
+                    
 
                     <button id="ReviseData">修改資料</button>
                     <button id="Reset">取消</button>
@@ -184,7 +191,7 @@
         })
         //將登入的會員資料帶到前台-不可修改的(帳號、生日、性別、會員等級)
         var LogAccount = sessionStorage.getItem("LogAccount");
-        $('#Account').append(`<label>${LogAccount}</label>`);
+        // $('#Account').append(`<label>${LogAccount}</label>`);
         var LogMemberBirthday = sessionStorage.getItem("LogMemberBirthday");
         $('#Birthday').append(`<label>${LogMemberBirthday}</label>`);
         var LogMemberGender = sessionStorage.getItem("LogMemberGender");

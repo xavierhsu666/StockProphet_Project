@@ -704,7 +704,7 @@ namespace StockProphet_Project.Controllers
 
         [HttpGet]
         //系統自動發驗證碼信件
-        public void sendGmail(string MEmail, int verifyCode)
+        public void sendGmail(string MEmail, string verifyCode)
         {
             var member = _context.DbMembers.FirstOrDefault(x => x.Memail == MEmail);
             var result = member.Memail;
