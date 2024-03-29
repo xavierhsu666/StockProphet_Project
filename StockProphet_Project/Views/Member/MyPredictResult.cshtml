@@ -58,28 +58,30 @@
 
 
 	$(function () {
-		// 1.點擊回到會員頁
-		$('#showMemberIndex').on("click", function () {
-			window.location.href = "/Member/Index";
-		})
-		// 2.點擊修改個人資料
-		$('#showRevise').on("click", function () {
-			window.location.href = "/Member/Edit";
-		})
-		// 3.點擊我的收藏
-		$('#showFavoritesPage').on("click", function () {
-			window.location.href = "/Member/MyCollect";
-		})
-		// 4.點擊我要預測
-		$('#showPredictFunc').on("click", function () {
-			window.location.href = "/StockModel/Predictindex";
-		})
-		// 5.點擊我的預測結果
-		$('#showHistoryPage').on("click", function () {
-			window.location.href = "/Member/MyPredictResult";
-		})
+		// // 1.點擊回到會員頁
+		// $('#showMemberIndex').on("click", function () {
+		// 	window.location.href = "/Member/Index";
+		// })
+		// // 2.點擊修改個人資料
+		// $('#showRevise').on("click", function () {
+		// 	window.location.href = "/Member/Edit";
+		// })
+		// // 3.點擊我的收藏
+		// $('#showFavoritesPage').on("click", function () {
+		// 	window.location.href = "/Member/MyCollect";
+		// })
+		// // 4.點擊我要預測
+		// $('#showPredictFunc').on("click", function () {
+		// 	window.location.href = "/StockModel/Predictindex";
+		// })
+		// // 5.點擊我的預測結果
+		// $('#showHistoryPage').on("click", function () {
+		// 	window.location.href = "/Member/MyPredictResult";
+		// })
+	
 
-		//預測資料
+		//我的預測結果-資料整理
+		
 		var parseDate = d3.timeParse("%Y-%m-%d");
 		var data = { customername: sessionStorage.getItem("LogAccount") }
 		var jsonforplot;
@@ -114,9 +116,7 @@
 
 						return dateA - dateB; // 降序排列
 					});
-				}
-
-				
+				}				
 
 				console.log(plotarray); // 输出降序排列后的数组
 				
