@@ -163,6 +163,7 @@ namespace StockProphet_Project.Controllers {
 
 
         //檢查股票是否存在
+        
         public string checkStocks(string id) {
             var ans = "Nah";
             var stocksList = (from obj in new ChoCSVReader<stocksCheck>("wwwroot\\stocksList.csv").WithFirstLineHeader()
