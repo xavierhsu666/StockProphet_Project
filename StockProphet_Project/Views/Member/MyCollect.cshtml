@@ -150,6 +150,15 @@
             margin-left: auto;
         }
 
+   
+
+    #totalCountDisplay{
+        color: #73b5c5;
+        font-size:15px ;
+        text-align: right;
+    }
+
+    
     
 
     
@@ -157,7 +166,7 @@
 
 </style>
 
-<div class="row">
+<div class="row" >
     @* <div class="col-md-4">
 
 
@@ -220,7 +229,7 @@
             <h1>我的收藏</h1>
             
             
-                <h5 id="totalCountDisplay" class="align-left"></h5>
+                <b id="totalCountDisplay" class="align-right"></b>
             
 
             <div class="MyFavorite"></div>
@@ -420,6 +429,8 @@
                                   console.log(preVariable)
                                   drawPre(jsonforplot, number, result, otherprarmeter[0]["Buildtime"], otherprarmeter[0]["PID"], preVariable, parameter, otherprarmeter[0]["PAcount"], otherprarmeter[0]["SName"], otherprarmeter[0]["SCode"], otherprarmeter[0]["PFinsihTime"], '.MyFavorite');
 
+                                  
+                                          
 
 
 
@@ -956,7 +967,7 @@
                       });
                   })
               });
-          }, 0);
+          }, 500);
 
     </script>
 
