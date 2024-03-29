@@ -408,13 +408,13 @@
 				$.each(technicalParam, function (key, value) {
 					$(`#${formid} .technicalparamlist`).append(
 						`<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check appendTech" >
-																																																			<label for="${formid + key}" class="btn btn-outline-secondary appendTech">${value}</label>`
+																																																				<label for="${formid + key}" class="btn btn-outline-secondary appendTech">${value}</label>`
 					)
 				});
 				$.each(foundmentParam, function (key, value) {
 					$(`#${formid} .foundmentalparamlist`).append(`
-																																																		<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check appendFound">
-																																																	<label for="${formid + key}" class="btn btn-outline-secondary appendFound" >${value}</label>`)
+																																																			<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check appendFound">
+																																																		<label for="${formid + key}" class="btn btn-outline-secondary appendFound" >${value}</label>`)
 				});
 				$(".ParaArea>label").css("margin", "5px");
 
@@ -433,8 +433,8 @@
 					// console.log(key);
 					// console.log(value);
 					$(`#${formid} .predicintervallist`).append(`
-																																<input type="radio" id="${formid + value}" name="interval" value="${value}" autocomplete = "off" class="btn-check appendRadio" >
-																																			<label class= "btn btn-outline-secondary appendRadio" name="interval" for="${formid + value}">${key}</label>`)
+																																	<input type="radio" id="${formid + value}" name="interval" value="${value}" autocomplete = "off" class="btn-check appendRadio" >
+																																				<label class= "btn btn-outline-secondary appendRadio" name="interval" for="${formid + value}">${key}</label>`)
 
 
 
@@ -454,6 +454,7 @@
 			var iterationtimeforpredict;
 			var predictedloss;
 			var mymodelselect
+			var layerforprdict
 			// <ks area--------------------->
 
 			// ####<預設值待更新-------------------------------------->
@@ -1043,6 +1044,7 @@
 					userselectparams[paramName] = true;
 				});
 				iterationtimeforpredict = $(`#iterationtime${number}`).val();
+				layerforprdict = $(`#iterationtime${number}`).val();
 				$(`#predict${number}`).prop("disabled", false);
 				return true;
 			}
@@ -1121,7 +1123,8 @@
 							sncode: sncode,
 							predictday: predictday,
 							selectedParams: userselectparams,
-							iterationtime: iterationtimeforpredict
+							iterationtime: iterationtimeforpredict,
+							layer: layerforprdict
 						},
 						beforeSend: function () {
 							$(`#longterm,#shortterm,#predict${number},#Okbutton${number}`).prop("disabled", true);

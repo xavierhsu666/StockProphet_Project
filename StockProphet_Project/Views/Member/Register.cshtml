@@ -6,14 +6,28 @@
 }
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
 <style>
+    /* 帳號檢查小動畫 */
+    #ckeckOk {
+        font-size: 24px;
+        position: absolute;       
+        top: 60%;
+        right: 10px;
+        transform: translateY(-50%); */
+        /* visibility: hidden;  */
+        /* visibility: visible; */
+        width: 30px;
+        height: 30px;
+    }
+    /* 小眼睛 */
     #checkEye {
         position: absolute;
         top: 50%;
         right: 10px;
         transform: translateY(-50%);
     }
-
+    /* 外層 */
     .form-container {
+        
         max-width: 500px;
         background-color: #fff;
         padding: 32px 24px;
@@ -27,7 +41,33 @@
         border-radius: 10px;
         box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
     }
+    /* 下拉選單 */
+    .news-filter select {
+        background: #fff;
+        color: black;
+        margin: 5px;
+        width: 300px;
+        height: 3em;
+        /* padding: 8px; */
+        position: relative;
+        border-radius: 5px;
+        appearance: none;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        /*  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), linear-gradient(#003d79, #003d79);
+            background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -webkit-linear-gradient(#003d79, #003d79);
+            background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -moz-linear-gradient(#003d79, #003d79);
+            */
+        background-position: right 0.5em top 50%, 0 0;
+        background-size: contain, cover;
+        background-repeat: no-repeat, repeat;
+    }
 
+    option {
+        appearance: none;
+        background: #fff;
+        position: absolute;
+    }
 </style>
 
 
@@ -39,7 +79,9 @@
             @* +正則 *@
             <input class="form-control" type="text" pattern=@AccountPattern size="20" maxlength="20" name="MAccoMnt" id="Account" value="" required="required">
             <label class="form-label" for="Account">帳號:</label>
-            <span id="lottie" style="display: none; width:30px; height:30px "></span>  @* 打勾動畫 30*30*@
+            @* 打勾動畫 "*@
+            <i id="ckeckOk" class="fa-solid fa-circle-check" style="color: #63E6BE; display:none"></i>
+            @* <div id="lottie333" style="display: none"></div> *@
             <span id="checkName"></span>@* 檢查帳戶名稱是否重複 *@
             <span id="accountError" style="color: red;"></span> @* 不符合格式跳提示 *@
         </div>
@@ -75,15 +117,15 @@
             <input class="form-control" type="text" name="MTrueName" id="UserName" value="">
             <label class="form-label" for="MTrueName">姓名:</label>
             <br>
-        </div>      
-      
+        </div>
+
         <div class="form-floating mb-3">
             <input class="form-control" type="date" name="MBirthday" id="Birthday" value="">
             <label class="form-label" for="Birthday">生日:</label>
             <br>
         </div>
 
-        <div >
+        <div>
             <label for="MGender" required="required">性別:</label>
             <input type="radio" name="MGender" id="Male" value="男" required>
             <label for="Male">男</label>
@@ -91,7 +133,8 @@
             <label for="Female">女</label>
             <br>
         </div>
-        <div>
+
+        <div class="news-filter">
             <label for="MInvestYear" required>您的投資年數:</label>
             <select name="MInvestYear" id="InvestYear">
                 <option value="1">未滿1年</option>
@@ -101,15 +144,27 @@
             </select>
             <br>
         </div>
-      
-        <div>
+
+        <div class="news-filter">
             <label for="MLevel">會員等級:</label>
             <select name="MLevel" id="MLevel" size="1">
                 <option value="一般會員">一般會員</option>
                 <option value="高級會員">高級會員</option>
             </select>
             <br>
-        </div>        
+        </div>
+
+        @*   下拉選單測試
+        <div class="news-filter">
+        <label class="form-label" for="MTrueName">測試:</label>
+        <select name="name" id="">
+        <option value="First value">First</option>
+        <option value="Second value">Second</option>
+        <option value="Third value">Third</option>
+        <option value="Forth value">Forth</option>
+        <option value="Fifth value">Fifth</option>
+        </select>
+        </div> *@
 
         <button class="w-100 btn btn-lg btn-primary" type="submit" id="RegisterSubmit">立即註冊</button>
         <button class="w-100 btn btn-lg btn-secondary" id="Reset">取消填寫</button>
@@ -125,13 +180,13 @@
     //再次輸入密碼不同時，顯示提示字
     $('#pwdnoteword').hide();
 
-    $(function () {
-        //密碼欄位
+    $(function () {      
+
+        //密碼欄位小眼睛
         $("#checkEye").click(function () {
             if ($(this).hasClass('fa-eye-slash')) {
                 $("#Password1").attr('type', 'text');
                 $("#Password2").attr('type', 'text');
-
             } else {
                 $("#Password1").attr('type', 'password');
                 $("#Password2").attr('type', 'password');
@@ -154,7 +209,6 @@
         $('#Password1').on('change', function () {
             var passwordValue = $(this).val();
             var passwordPattern = new RegExp(@Html.Raw(Json.Serialize(PasswordPattern)));
-
             // 检查输入值是否匹配正则表达式
             if (!passwordPattern.test(passwordValue)) {
                 $('#passwordError').text('"需至少包含一個特殊符號，且長度須超過8碼"');
@@ -167,7 +221,6 @@
         $('#Password2').on('change', function () {
             var confirmPasswordValue = $(this).val();
             var passwordValue = $('#Password').val();
-
             // 检查两次输入的密码是否一致
             if (confirmPasswordValue !== passwordValue) {
                 // $('#confirmPasswordError').text('两次输入的密码不相同');
@@ -180,7 +233,6 @@
         $('#Email').on('change', function () {
             var emailValue = $(this).val();
             var emailPattern = new RegExp(@Html.Raw(Json.Serialize(MEmailPattern)));
-
             // 检查输入值是否匹配正则表达式
             if (!emailPattern.test(emailValue)) {
                 $('#emailError').text('信箱格式錯誤');
@@ -190,26 +242,26 @@
         });
 
         //畫打勾
-        function playAni() {
-            document.getElementById("lottie").style.display = "block";
-            animation.play();
-        }
+        // function playAni() {
+        //     document.getElementById("lottie333").style.display = "block";
+        //     animation.play();
+        // }
 
         // 載入 Lottie 動畫-引用json檔?
-        var animation = lottie.loadAnimation({
-            container: document.getElementById("lottie"), //要動畫的地方
-            renderer: "svg",
-            loop: false,
-            autoplay: false,
-            path: "https://lottie.host/b2f40ebf-57f2-4648-ba0e-24120c2bf4b7/f6JH49VrAH.json", //載下來的動畫json檔
-        });
+        // var animation = lottie.loadAnimation({
+        //     container: document.getElementById("lottie333"), //要動畫的地方
+        //     renderer: "svg",
+        //     loop: false,
+        //     autoplay: false,
+        //     path: "https://lottie.host/b2f40ebf-57f2-4648-ba0e-24120c2bf4b7/f6JH49VrAH.json" //載下來的動畫json檔
+        // });
         // 動畫跑完後隱藏
         // animation.addEventListener("complete", function () {
         //     document.getElementById("lottie").style.display = "none";
         // });
 
 
-        // 1.判斷帳戶名是否有重複
+        // 1.判斷帳戶名是否有重複+小動畫
         $('#Account').on("change", function () {
             var checkAccount = $('#Account').val()
             // console.log(checkAccount);
@@ -221,18 +273,20 @@
                 success: function (e) {
                     // console.log(e)
                     if (checkAccount == "") {
+                        $('#ckeckOk').css("display", "none");
                         $('#checkName').show();
                         $('#checkName').text("必填");
                     } else {
                         if (e) {
+                            $('#ckeckOk').css("display", "none");
                             $('#checkName').show();
                             $('#checkName').text("帳號名稱已被註冊");
                         } else {
                             $('#checkName').hide();
                             // $('#accountError').hide();
-                            playAni();
+                            $('#ckeckOk').css("display", "block");
+                            // playAni();
                             // alert('帳號未使用')
-
                         }
                     }
                     // alert(e);

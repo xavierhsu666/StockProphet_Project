@@ -117,11 +117,18 @@
 					<th>
 						迭代次數
 					</th>
+					<th>
+						模型層數選擇(預設輸入層+輸出層共兩層)
+						可自行添加層數
+					</th>
 				</tr>
 			</thead>
 			<tr>
 				<td>
-					<input class="appendTt" style="width:25%" type="number" id="iterationtime1" name="iterationtime" value="100" min="50" max="200">
+					<input type="number" style="width:75%" class="appendTt" id="iterationtime1" name="iterationtime" value="200" min="100" max="300">
+				</td>
+				<td>
+					<input type="number" style="width:25%" class="appendTt" id="layer1" name="" value="0" min="0" max="10">
 				</td>
 			</tr>
 		</table>
@@ -203,11 +210,18 @@
 					<th>
 						迭代次數
 					</th>
+					<th>
+						模型層數選擇(預設輸入層+輸出層共兩層)
+						可自行添加層數
+					</th>
 				</tr>
 			</thead>
 			<tr>
 				<td>
-					<input type="number" style="width:25%" class="appendTt" id="iterationtime2" name="iterationtime" value="200" min="100" max="300">
+					<input type="number" style="width:75%" class="appendTt" id="iterationtime2" name="iterationtime" value="200" min="100" max="300">
+				</td>
+				<td>
+					<input type="number" style="width:25%" class="appendTt" id="layer2" name="" value="0" min="0" max="10">
 				</td>
 			</tr>
 		</table>
@@ -408,13 +422,13 @@
 				$.each(technicalParam, function (key, value) {
 					$(`#${formid} .technicalparamlist`).append(
 						`<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check appendTech" >
-																																																		<label for="${formid + key}" class="btn btn-outline-secondary appendTech">${value}</label>`
+																																																			<label for="${formid + key}" class="btn btn-outline-secondary appendTech">${value}</label>`
 					)
 				});
 				$.each(foundmentParam, function (key, value) {
 					$(`#${formid} .foundmentalparamlist`).append(`
-																																																	<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check appendFound">
-																																																<label for="${formid + key}" class="btn btn-outline-secondary appendFound" >${value}</label>`)
+																																																		<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check appendFound">
+																																																	<label for="${formid + key}" class="btn btn-outline-secondary appendFound" >${value}</label>`)
 				});
 				$(".ParaArea>label").css("margin", "5px");
 
@@ -433,8 +447,8 @@
 					// console.log(key);
 					// console.log(value);
 					$(`#${formid} .predicintervallist`).append(`
-																															<input type="radio" id="${formid + value}" name="interval" value="${value}" autocomplete = "off" class="btn-check appendRadio" >
-																																		<label class= "btn btn-outline-secondary appendRadio" name="interval" for="${formid + value}">${key}</label>`)
+																																<input type="radio" id="${formid + value}" name="interval" value="${value}" autocomplete = "off" class="btn-check appendRadio" >
+																																			<label class= "btn btn-outline-secondary appendRadio" name="interval" for="${formid + value}">${key}</label>`)
 
 
 
@@ -453,7 +467,8 @@
 			var createmodelTime;
 			var iterationtimeforpredict;
 			var predictedloss;
-			var mymodelselect
+			var mymodelselect;
+			var layerforpredict;
 			// <ks area--------------------->
 
 			// ####<預設值待更新-------------------------------------->
@@ -551,14 +566,18 @@
 								',"cLev":' + paras.InputModelPara[4] +
 								'}',
 							Paccount: paras.account,
-							Pmodel:paras.usingModel
+							Pmodel: paras.usingModel
 						}
 
-						SaveModelResultToDB(datatoserver)
 						increaseProgress(70);
+						// 新增PID
+						var SaveModelResultToDB_fb = SaveModelResultToDB(datatoserver);
+						SaveModelResultToDB_fb.then(function (e) {
+							console.log(e.Pid);
+						})
 						increaseProgress(100);
 						// window.location.href = "/stockmodel/predictphoto?predictedData=" + e.Output_F_estimate + "&snCode=" + data.stockCode;
-						window.location.href = "/StockModel/predictphoto?predictedData=" + e.Output_F_estimate + "&predictedloss=" + e.Output_M_MAE.toFixed(2) + "&snCode=" + data.stockCode + "&mymodelselect=時間序列";
+						window.location.href = "/StockModel/predictphoto?Pid=" + e.Pid;
 
 						// alert("OKOK" + e);
 					}
@@ -617,12 +636,16 @@
 							Pmodel: paras.usingModel
 						}
 
-						SaveModelResultToDB(datatoserver)
-						console.log(e);
+						// 新增PID
 						increaseProgress(70);
+						var SaveModelResultToDB_fb = SaveModelResultToDB(datatoserver);
+						SaveModelResultToDB_fb.then(function (e) {
+							console.log(e.Pid);
+						})
 						increaseProgress(100);
 						// window.location.href = "/stockmodel/predictphoto?predictedData=" + e.output_F_Forcast + "&snCode=" + data.stockCode;
-						window.location.href = "/StockModel/predictphoto?predictedData=" + e.output_F_Forcast + "&predictedloss=" + e.output_M_MSE.toFixed(2) + "&snCode=" + data.stockCode + "&mymodelselect=回歸模型";
+						// window.location.href = "/StockModel/predictphoto?predictedData=" + e.output_F_Forcast + "&predictedloss=" + e.output_M_MSE.toFixed(2) + "&snCode=" + data.stockCode + "&mymodelselect=回歸模型";
+						window.location.href = "/StockModel/predictphoto?Pid=" + e.Pid;
 
 						// alert("OKOK" + e);
 					}
@@ -751,7 +774,7 @@
 
 
 
-			function SaveModelResultToDB(datatoserver) {
+			async function  SaveModelResultToDB(datatoserver) {
 				console.log(datatoserver);
 				$.ajax({
 					method: "post",
@@ -759,12 +782,15 @@
 					data: datatoserver,
 					success: function (e) {
 						console.log(e);
+						
 					},
 					error: function (xhr, status, error) {
 						console.error(xhr.responseText); // 處理錯誤
 						var errorMessage = xhr.responseText;
 						alert(errorMessage);
 					}
+				}).then(function () {
+					return e;
 				})
 			}
 			$("#selectmodel").on("change", function () {
@@ -794,7 +820,7 @@
 
 
 							})
-							mymodelselect="LSTM"
+							mymodelselect = "LSTM"
 							break;
 						case "2":
 							window.location.href = `#borisform${choosewhichmodel}`;
@@ -813,11 +839,11 @@
 							$(".appendT").remove();
 							$(".appendRmax").remove();
 							var R_maximumNumberOfIterations = $("<table class='table appendT' style='text-align:center;vertical-align: middle;' >" +
-								"<thead>"+
+								"<thead>" +
 								"<th style='width:25% '>" +
 								"<label for='R_maximumNumberOfIterations' class='appendRmax'>最大迭代數</label>" +
 								"</th>" +
-								"</thead>"+
+								"</thead>" +
 								"<tr><td>" +
 								"<input class='appendRmax appendTt' style='width:25%' id='R_maximumNumberOfIterations' name='R_maximumNumberOfIterations' type ='number' value=100  max='365' min='1'/> " +
 								"</td></tr ></table>");
@@ -1043,6 +1069,7 @@
 					userselectparams[paramName] = true;
 				});
 				iterationtimeforpredict = $(`#iterationtime${number}`).val();
+				layerforpredict = $(`#layer${number}`).val();
 				$(`#predict${number}`).prop("disabled", false);
 				return true;
 			}
@@ -1121,7 +1148,8 @@
 							sncode: sncode,
 							predictday: predictday,
 							selectedParams: userselectparams,
-							iterationtime: iterationtimeforpredict
+							iterationtime: iterationtimeforpredict,
+							layer:layerforpredict
 						},
 						beforeSend: function () {
 							$(`#longterm,#shortterm,#predict${number},#Okbutton${number}`).prop("disabled", true);
@@ -1146,7 +1174,7 @@
 
 						},
 						success: function (response) {
-							
+
 							var values = response.split(','); // 拆分字符串为数组
 							borisprediction = parseFloat(values[0]);
 							if (borisprediction < 0) {
@@ -1172,7 +1200,7 @@
 							var keysWithoutBrackets = Object.keys(userselectparams).map(function (key) {
 								return key;
 							});
-
+							
 							var datatoserver = {
 								PStock: sncode,
 								PVariable: JSON.stringify(keysWithoutBrackets),
@@ -1181,9 +1209,12 @@
 								PBuildTime: isoString,
 								PfinishTime: finishString,
 								PAccount: sessionStorage.getItem("LogAccount"),
-								Pparameter: predictedloss,
+								Pparameter: '{"MSE":' + parseFloat(predictedloss) +
+									',"Layerchoose":' + parseInt(layerforpredict) +
+									',"Iters":' + parseInt(iterationtimeforpredict)+'}',
 								Pmodel:(number==1)?"LSTM":"FNN" 
 							}
+							
 
 							$.ajax({
 								method: "Post",
@@ -1198,21 +1229,28 @@
 									// var errorMessage = xhr.responseText;
 									// alert(errorMessage);
 								}
-							})
-							console.log(borisprediction)
-							var predictedData = borisprediction;
+							}).then(function (e) {
+								console.log(borisprediction);
+								// 加入PID
+								console.log(e.Pid);
+								var predictedData = borisprediction;
 
 
-							setTimeout(function () {
-								$(`#progress${number}`).css("width", '90%');
 								setTimeout(function () {
-									$(`#progress${number}`).css("width", '99%');
+									$(`#progress${number}`).css("width", '90%');
 									setTimeout(function () {
-										var predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode + "&mymodelselect=" + mymodelselect;
-										window.location.href = predicturl;
-									}, 3000);
-								}, 1000); 
-							}, 2000); 
+										$(`#progress${number}`).css("width", '99%');
+										setTimeout(function () {
+											// var predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode + "&mymodelselect=" + mymodelselect;
+											var predicturl = "/StockModel/predictphoto?Pid=" + e.Pid;
+
+											window.location.href = predicturl;
+										}, 3000);
+									}, 1000);
+								}, 2000);
+							
+							})
+							
 
 
 						},
