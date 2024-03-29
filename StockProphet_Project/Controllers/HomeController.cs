@@ -68,7 +68,10 @@ namespace StockProphet_Project.Controllers {
         //網址傳資料|回傳預測內容
           public IActionResult showPredictions(string id) {
               var viewModel = _context.DbModels.ToList();
+            var viewModel2 = _context.DbCollect.ToList();
+
             var query = from p in viewModel
+                        join c in viewModel2 on p.Pid equals c.PID into numCount
                         where p.Pstock == id
                         select new {
                             Account = p.Paccount,
@@ -77,8 +80,12 @@ namespace StockProphet_Project.Controllers {
                             FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd"),
                             PID = p.Pid,
                             BuildTime = Convert.ToDateTime(p.PbulidTime).ToString("yyyy-MM-dd"),
-                            Variable = p.Pvariable  //選擇的變數
-						};
+                            Variable = p.Pvariable,  //選擇的變數
+                            Status = p.Pstatus, //狀態
+                            NumCount = numCount.Count(), //按讚數
+                            Pmodel = p.Pmodel,   //使用模型
+                            PAR = p.PAccuracyRatio  //準確率
+                        };
               return Json(query);
           }
 
