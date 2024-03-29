@@ -111,7 +111,7 @@ namespace StockProphet_Project.Controllers {
 			// test save http://localhost:5271/home/savedatatocollect?user=t1&cardID=2&AorD=A
 			// test save http://localhost:5271/home/savedatatocollect?user=t1&cardID=3&AorD=A
 			// test delete http://localhost:5271/home/savedatatocollect?user=t1&cardID=2&AorD=D
-
+			Console.WriteLine(user + " " + cardID+" "+AorD);
 			switch (AorD) {
 				case "A":
 					var newData = new DbCollect() {
@@ -136,10 +136,9 @@ namespace StockProphet_Project.Controllers {
 		}
 		//加入或刪除最愛清單
 		[HttpPost]
-		public string CheckCard( string user, string cardID, string AorD ) {
+		public string CheckCard( string user, string cardID ) {
 
 
-			SaveDataToCollect(user, cardID, AorD);
 			var member = _context.DbMembers.SingleOrDefault(e => e.MaccoMnt == user);
 			Console.WriteLine("--------------" + user + "/" + cardID);
 			char[] delimiterChars = ['{', '}', ','];
@@ -150,18 +149,21 @@ namespace StockProphet_Project.Controllers {
 			myCard = myCard.Where(( source, index ) => index != myCard.Length - 1).ToArray();
 			string change = "change?";   //回傳是刪除(false)、新增(true)或限制(reject)
 			var saveChange = "";
-
+			
 
 			if (member.MfavoriteModel == "{}" || member.MfavoriteModel == null) {   //如果表資料為空
 				member.MfavoriteModel = "{" + cardID + "}";
 				_context.SaveChanges();
 				change = "A";
+
+				SaveDataToCollect(user, cardID, change);
 			} else {    //資料不為空
 				int i = Array.IndexOf(myCard, cardID);
 				if (i > -1) {   //列表有這個值
 					myCard = myCard.Where(( source, index ) => index != i).ToArray();
 					saveChange = string.Join(",", myCard);  //array整理成字串
 					change = "D";
+					SaveDataToCollect(user, cardID, change);
 				} else if (i == -1) {   //列表沒這個值
 					if (myCard.Length > 4) { //已超過五筆，拒絕新增
 						saveChange = string.Join(",", myCard);
@@ -170,6 +172,7 @@ namespace StockProphet_Project.Controllers {
 						myCard = myCard.Concat(new string[] { cardID }).ToArray();
 						saveChange = string.Join(",", myCard);  //array整理成字串
 						change = "A";
+						SaveDataToCollect(user, cardID, change);
 					}
 				}
 				member.MfavoriteModel = "{" + saveChange + "}";
