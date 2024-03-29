@@ -49,7 +49,7 @@ app.UseSession();
 app.MapControllerRoute(
 	name: "default",
 //pattern: "{controller=StockModel}/{action=predictindex}");
-pattern: "{controller=Member}/{action=Index}/{id?}");
+pattern: "{controller=Home}/{action=Index}/{id?}");
 //pattern: "{controller=Member}/{action=MyPredictResult}/{id?}");
 //pattern: "{controller=StockModel}/{action=testBuild}");
 

@@ -252,20 +252,19 @@ namespace StockProphet_Project.Controllers
                             // 將數字陣列傳遞到 View
                             ViewBag.FavoriteNumbers = pidList;
                             ViewBag.PidStringsCount = pidStrings.Length;
+                            //ViewData["PidStringsCount"] = ViewBag.PidStringsCount;
+                            // 将数字数组的长度存入 ViewData 中
+                            ViewData["PidStringsCount"] = pidList.Count;
 
+                            Console.WriteLine("這裡");
 
-                            // 使用 LINQ 查詢 DbModels 資料表，找出符合條件的資料列
-                            //var favoriteItems = _context.DbModels.Where(model => pidList.Contains(model.Pid)).ToList();
-
-                            // 將查詢結果傳遞到 View
-                            //ViewBag.FavoriteItems = favoriteItems;
-
-
+                            Console.WriteLine(pidList);
 
                         }
                     }
                     else
                     {
+                        ViewBag.PidStringsCount = 0;
                         ViewBag.FormattedMfavoriteModel = "尚無收藏項目"; // 若找不到對應的資料，則設為空字串
                         ViewBag.FavoriteNumbers = new int[0]; // 若找不到對應的資料，則設為空陣列
                     }
@@ -279,7 +278,7 @@ namespace StockProphet_Project.Controllers
             }
 
             return Json(pidList);
-            // return View();
+            
 
         }
 
