@@ -763,13 +763,19 @@ def oneTimeApi_call(stockNo,dates_input):
     SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(0)
 
 
-
-    # print(SQL_data_df)
     # 從資料庫讀取目標表格的資料到 DataFrame 中
     existing_data_df = pd.read_sql('SELECT * FROM Stock where SN_Code = '+stockNo, engine)
-    # print(existing_data_df)
+    
+    # 改順序
+    SQL_data_df = SQL_data_df[existing_data_df.columns]
+    
     # 找到目標表格中不存在的資料
-    missing_data_df = SQL_data_df[~SQL_data_df.isin(existing_data_df)].dropna()
+    # missing_data_df = SQL_data_df[~SQL_data_df.isin(existing_data_df)].dropna()
+    missing_data_df = pd.merge(SQL_data_df, existing_data_df[['S_PK']], on='S_PK', how='outer', indicator=True)
+    missing_data_df = missing_data_df[missing_data_df['_merge'] == 'left_only'].drop(columns=['_merge'])
+    missing_data_df.dropna(subset=['S_PK'], inplace=True)
+    # print(SQL_data_df)
+    # print(existing_data_df)
     # print(missing_data_df)
 
     # 如果有缺失的資料，將其插入到目標表格中
