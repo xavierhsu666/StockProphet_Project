@@ -1,0 +1,82 @@
+﻿@import url("https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500;700;900&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Noto Sans TC", sans-serif;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+
+
+.wrap {
+    display: flex;
+    width: 90%;
+    margin: 100px auto;
+    padding-top: 75px;
+}
+
+.item {
+    width: 30%;
+    margin: 0 auto;
+    text-align: center;
+    border: 10px solid #f9cec2;
+    background-color: #fcfcfc;
+    border-radius: 20px;
+    box-shadow: 10px 20px 50px #f7b6a7;
+}
+
+.icon {
+    width: 130px;
+    height: 130px;
+    background-color: #fcfcfc;
+    margin: -75px auto 0;
+    font-size: 4rem;
+    /* 用來幫icon設定垂直居中 */
+    line-height: 150px;
+    border-radius: 50%;
+    color: #f9cec2;
+    position: relative;
+}
+
+    .icon::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-top: 10px solid #f9cec2;
+        border-right: 10px solid #f9cec2;
+        border-bottom: 10px solid transparent;
+        border-left: 10px solid transparent;
+        left: -10px;
+        top: -10px;
+        border-radius: 50%;
+        transform: rotate(-45deg);
+    }
+
+.txt {
+    padding: 20px 20px 2rem;
+}
+
+.item h3 {
+    color: #403f3d;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+
+.item p {
+    color: dimgrey;
+    text-align: justify;
+    line-height: 1.8;
+}
+
+.item:hover {
+    animation: shake 0.5s linear infinite alternate;
+}
+

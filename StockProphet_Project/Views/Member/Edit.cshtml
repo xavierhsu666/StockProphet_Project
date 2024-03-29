@@ -33,6 +33,34 @@
         border-radius: 10px;
         box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
     }
+
+    /* 下拉選單 */
+    .news-filter select {
+        background: #fff;
+        color: black;
+        margin: 5px;
+        width: 300px;
+        height: 3em;
+        /* padding: 8px; */
+        position: relative;
+        border-radius: 5px;
+        appearance: none;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        /*  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), linear-gradient(#003d79, #003d79);
+                background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -webkit-linear-gradient(#003d79, #003d79);
+                background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -moz-linear-gradient(#003d79, #003d79);
+                */
+        background-position: right 0.5em top 50%, 0 0;
+        background-size: contain, cover;
+        background-repeat: no-repeat, repeat;
+    }
+
+    option {
+        appearance: none;
+        background: #fff;
+        position: absolute;
+    }
 </style>
 @* <h1 class="text-">會員功能-修改個人資料</h1> *@
 
@@ -113,7 +141,7 @@
                         <br>
                     </div>
                     
-                    <div>
+                    <div class="news-filter">
                         <label for="MLevel" id="MLevel">會員等級:</label>
                         <br>
                     </div>
@@ -169,26 +197,26 @@
         });
 
 
-        // 1.點擊回到會員頁
-        $('#showMemberIndex').on("click", function () {
-            window.location.href = "/Member/Index";
-        })
-        // 2.點擊修改個人資料
-        $('#showRevise').on("click", function () {
-            window.location.href = "/Member/Edit";
-        })
-        // 3.點擊我的收藏
-        $('#showFavoritesPage').on("click", function () {
-            window.location.href = "/Member/MyCollect";
-        })
-        // 4.點擊我要預測
-        $('#showPredictFunc').on("click", function () {
-            window.location.href = "/StockModel/Predictindex";
-        })
-        // 5.點擊我的預測結果
-        $('#showHistoryPage').on("click", function () {
-            window.location.href = "/Member/MyPredictResult";
-        })
+        // // 1.點擊回到會員頁
+        // $('#showMemberIndex').on("click", function () {
+        //     window.location.href = "/Member/Index";
+        // })
+        // // 2.點擊修改個人資料
+        // $('#showRevise').on("click", function () {
+        //     window.location.href = "/Member/Edit";
+        // })
+        // // 3.點擊我的收藏
+        // $('#showFavoritesPage').on("click", function () {
+        //     window.location.href = "/Member/MyCollect";
+        // })
+        // // 4.點擊我要預測
+        // $('#showPredictFunc').on("click", function () {
+        //     window.location.href = "/StockModel/Predictindex";
+        // })
+        // // 5.點擊我的預測結果
+        // $('#showHistoryPage').on("click", function () {
+        //     window.location.href = "/Member/MyPredictResult";
+        // })
         //將登入的會員資料帶到前台-不可修改的(帳號、生日、性別、會員等級)
         var LogAccount = sessionStorage.getItem("LogAccount");
         // $('#Account').append(`<label>${LogAccount}</label>`);
