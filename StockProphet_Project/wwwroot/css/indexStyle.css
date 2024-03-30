@@ -16,13 +16,12 @@ main {
 }
 
 .hand-ani {
-    /*border:2px solid black;*/
-    height:800px;
-    width:800px;
-    position:absolute;
-    bottom:0;
-    right:0;
-    overflow:hidden;
+    height: 800px;
+    width: 800px;
+    bottom: 0;
+    position: absolute;
+    right: 0;
+    overflow: hidden;
     /*z-index:-1;*/
 }
 .container {
@@ -53,6 +52,7 @@ main {
 
 
 .bg-right-hand {
+    width:80%;
     position: absolute;
     right: -600px;
     bottom: 250px;
@@ -72,6 +72,7 @@ main {
     }
 }
 .bg-left-hand {
+    
     position: absolute;
     bottom: -500px;
     right: 200px;
@@ -93,6 +94,7 @@ main {
     }
 }
 .bg-water {
+    /*width: 13vw;*/
     position: absolute;
     right: 210px;
     bottom: 440px;
@@ -100,7 +102,7 @@ main {
     opacity: 0;
     transform-origin: bottom center;
     transform: scale(1, 1);
-    transition:all 1.5s;
+    transition: all 1.5s;
 }
 .bg-water-show {
     animation: bgwatershow 0.5s forwards;
@@ -287,14 +289,14 @@ a.ui-button:active,
 .bg-line {
     position: absolute;
     right: 0;
-    bottom: 0;
+    top: 120px;
     z-index: -2;
 }
 
 .bg-chart {
     position: absolute;
     right: 0;
-    bottom: 0;
+    top: 140px;
     z-index: -1;
 }
 
@@ -355,10 +357,10 @@ a.ui-button:active,
     border-radius:50%;
 }
 
-#tableContainer {
-    width:0px;
-    height:0px;
-    overflow:hidden;
+#tableContainer, #tableContainer2 {
+    width: 0px;
+    height: 0px;
+    overflow: hidden;
 }
 
 .ccard {
@@ -411,7 +413,8 @@ a.ui-button:active,
     width: 90%;
     /*border:3px solid pink;*/
     position: absolute;
-    top: 80%;
+    bottom:-15%;
+    /*top: 80%;*/
     overflow: hidden;
 }
 
