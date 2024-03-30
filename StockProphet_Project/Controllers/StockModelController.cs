@@ -435,9 +435,10 @@ namespace StockProphet_Project.Controllers {
 
 
 				CallPyApi cpa = new CallPyApi();
-				Console.WriteLine("call UpdateOneStock(stockCode=" + stockCode + ")");
 				var port = Request.Host.Port; // will get the port
 											  //Console.WriteLine("当前服务器端口号: " + port);
+
+				Console.WriteLine("call UpdateOneStock(stockCode=" + stockCode + ", time = " + InputLatestDate.Replace("-", "") + ", port = " + port + ")");
 				string fedback = await cpa.UpdateOneStock(stockCode, InputLatestDate.Replace("-", ""), port);
 				var stockData = _context.Stock
 						.Where(x => x.SnCode == stockCode)
