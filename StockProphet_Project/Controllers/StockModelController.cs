@@ -1276,23 +1276,26 @@ namespace StockProphet_Project.Controllers {
 		}
 		//public IActionResult predictphoto( string predicteddata, string sncode, string predictedloss,string mymodelselect) {
 		public IActionResult predictphoto( int Pid ) {
-			GetStockVarsMapTable();
 			var q = from o in _context.DbModels.ToList()
 					where o.Pid == Pid
 					select o;
 			var mr = q.FirstOrDefault();
 			if (q.Count() != 1) {
-				ViewBag.result = new {
-					SnCode = "PID(" + Pid + ")大於一筆 or 不存在",
-					DataCount = 1,
-					PredictedData = 1,
-					PredictedLoss = 1,
-					ChartData = 1,
-					usingModel = 1
+				//ViewBag.result = new {
+				//	SnCode = "PID(" + Pid + ")大於一筆 or 不存在",
+				//	DataCount = 1,
+				//	PredictedData = 1,
+				//	PredictedLoss = 1,
+				//	ChartData = 1,
+				//	usingModel = 1
 
-				};
+				//};
+
+				return View("~/Views/home/index.cshtml");
 			} else {
+
 				UpdateModelResultsStatusAndRatio();
+				GetStockVarsMapTable();
 				// 檢索資料庫中的資料筆數
 				int dataCount = _context.Stock.Where(x => x.SnCode == mr.Pstock).Count();
 
@@ -1320,28 +1323,20 @@ namespace StockProphet_Project.Controllers {
 						usedModel = "特殊模型";
 						break;
 				}
+
 				ViewBag.result = new {
-					SnCode = mr.Pstock,
 					DataCount = dataCount,
-					PredictedData = predictedData,
-					PredictedLoss = mr.Dummyblock,
 					ChartData = stockData,
 					usingModel = usedModel,
-					finishdate = mr.PfinishTime,
-					Pvariable = mr.Pvariable,
-					PbulidTime = mr.PbulidTime,
-					Pprefer = mr.Pprefer,
-					Pstatus = mr.Pstatus,
-					PAccuracyRatio = mr.PAccuracyRatio
 
 
 				};
+				return View(mr);
 			}
 
 
 			// 將資料傳遞到視圖
 
-			return View();
 		}
 
 		//public IActionResult checkstock( string sncode ) {

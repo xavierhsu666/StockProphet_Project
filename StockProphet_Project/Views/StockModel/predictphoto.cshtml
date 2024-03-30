@@ -1,26 +1,28 @@
-﻿
+﻿@model DbModel
 @{
 	//http://localhost:5271/stockmodel/predictphoto?pid=11
 	ViewData["Title"] = "股票預測";
-	TimeSpan difference = DateTime.Now.Subtract(ViewBag.result.finishdate);
-	TimeSpan differenceOpp = ViewBag.result.finishdate.Subtract(DateTime.Now);
-	var VarsTable = ViewBag.VarsTable;
+	DateTime PfinishTime = (DateTime)Model.PfinishTime;
+	DateTime PbulidTime = (DateTime)Model.PbulidTime;
+
+	TimeSpan difference = DateTime.Now.Subtract(PfinishTime);
+	TimeSpan differenceOpp = (PfinishTime).Subtract(DateTime.Now);
+	var VarsTable = Model.Pvariable;
 
 
-	int finishdate = (ViewBag.result.Pprefer == 1) ? 5 : 30;
+	int finishdate = (Model.Pprefer == 1) ? 5 : 30;
 	bool isTracing = ((int)difference.TotalDays <= 0) ? true : false;
 	string finishdateCountDownStr = "";
 
 	// 製作預測前時間區間 -------------
 	// var ActualPrice = ChartData.Where(x => x.StDate.CompareTo(finishdates) <= 0).OrderByDescending(x => x.StDate).FirstOrDefault().SteClose;
-	var finishdates = DateOnly.Parse(ViewBag.result.finishdate.ToString("yyyy-MM-dd"));
-	var BuildDates = DateOnly.Parse(ViewBag.result.PbulidTime.ToString("yyyy-MM-dd"));
+	var finishdates = DateOnly.Parse(PfinishTime.ToString("yyyy-MM-dd"));
+	var BuildDates = DateOnly.Parse(PbulidTime.ToString("yyyy-MM-dd"));
 
 	var ChartData = new List<Stock>();
 	ChartData = ViewBag.result.ChartData;
 	ChartData = ChartData.Where(x => x.StDate.CompareTo(finishdates) <= 0).ToList();
 	var LatestNdays_ori = ChartData.Where(x => x.StDate.CompareTo(BuildDates) <= 0).OrderByDescending(x => x.StDate).Take(finishdate).OrderBy(x => x.StDate);
-	var LatestNdaysAverage_ori = Math.Round((decimal)LatestNdays_ori.Average(x => x.SteClose), 2);
 	string ori_timeArea = "";
 	string ori_timeArea_Jtype = "";
 	int i = 0;
@@ -42,7 +44,6 @@
 
 	// 製作目前(預測)時間區間 -------------
 	var LatestNdays = ChartData.Where(x => x.StDate.CompareTo(finishdates) <= 0).OrderByDescending(x => x.StDate).Take(finishdate).OrderBy(x => x.StDate);
-	var LatestNdaysAverage = Math.Round((decimal)LatestNdays.Average(x => x.SteClose), 2);
 	string timeArea = "";
 	string timeArea_Jtype = "";
 	i = 0;
@@ -64,32 +65,7 @@
 	}
 	timeArea = timeArea.Split(",")[0] + "~" + timeArea.Split(",")[1];
 
-	// 製作預期走勢 -------------
-	string UorD = "";
-	var PredictedData = (decimal)ViewBag.result.PredictedData;
-	// var PredictedData = (decimal)33.11;
 
-	if (LatestNdaysAverage > PredictedData) {
-		//看漲
-		UorD = "看空";
-	} else if (LatestNdaysAverage < PredictedData) {
-		UorD = "看多";
-	} else {
-		UorD = "看平";
-	}
-
-	// 製作實際走勢 -------------
-	string UorD2 = "";
-	if (LatestNdaysAverage > LatestNdaysAverage_ori) {
-		// 五日_now平均大於五日_ori
-		UorD2 = "看多";
-	} else if (LatestNdaysAverage < LatestNdaysAverage_ori) {
-		// 五日_now平均小於五日_ori
-		UorD2 = "看空";
-	} else {
-		// 五日_now平均等於五日_ori //* 100 * ((UorD == UorD2) ? 1 : -1)
-		UorD2 = "看平";
-	}
 
 	// 取得數據最大最小值 -------------
 	var MaxPrice = Math.Round((decimal)ChartData.Max(x => x.SteClose), 1);
@@ -105,36 +81,24 @@
 	string rltComment = "";
 	bool NeedShowAcc = (int)differenceOpp.TotalDays <= Math.Round(((decimal)finishdate) / 2, 0);
 	int NeedShowDays = (int)differenceOpp.TotalDays - (int)Math.Round(((decimal)finishdate) / 2, 0);
-	var acc = Math.Round(((decimal)PredictedData) / ((decimal)LatestNdaysAverage) * 100, 1);
 	// var normalized_acc = Math.Round(((acc - MinAcc) / (MaxAcc - MinAcc)) * 100, 2);
-	var normalized_acc = (acc > 100) ? 100 - (acc - 100) : acc;
 	if (NeedShowAcc) {
-		accComment = "預估準確率為「" + normalized_acc + " %」。";
-		rltComment = ((UorD == UorD2) ? "成功" : "失敗");
+		accComment = "預估準確率為「" + Model.PAccuracyRatio + " %」。";
+		rltComment = ((Model.PreTrend == Model.PActTrend) ? "成功" : "失敗");
 	} else {
 		accComment = "待" + NeedShowDays + "日，模型穩定後，計算預估準確率。";
 		rltComment = "待" + NeedShowDays + "日，模型穩定後，計算預估準確率。";
 	}
 	// 製作誤差計算  -------------
-	var SpreadRatio = Math.Round((((decimal)PredictedData) - ((decimal)LatestNdaysAverage)) / ((decimal)LatestNdaysAverage) * 100, 1);
 
 
 	// if LSTM 可能要全改寫
 	bool IsNNModel = (ViewBag.result.usingModel == "LSTM" || ViewBag.result.usingModel == "FNN") ? true : false;
-	decimal LatestPrice=0;
-	decimal PrePredictPrice=0;
 	if (IsNNModel) {
 		// <finishdate 的最近close價格
-		LatestPrice = (decimal)ChartData.Where(x => x.StDate.CompareTo(finishdates) <= 0).OrderByDescending(x => x.StDate).FirstOrDefault().SteClose;
-		PrePredictPrice = (decimal)ChartData.Where(x => x.StDate.CompareTo(BuildDates) <= 0).OrderByDescending(x => x.StDate).FirstOrDefault().SteClose;
-		UorD = (PrePredictPrice > PredictedData) ? "看空" : "看多";
-		UorD2 = (LatestPrice > PrePredictPrice) ? "看多" : "看空";
-		acc = Math.Round(((decimal)PredictedData) / ((decimal)LatestPrice) * 100, 1);
-		normalized_acc = (acc > 100) ? 100 - (acc - 100) : acc;
-		SpreadRatio = Math.Round((((decimal)PredictedData) - ((decimal)LatestPrice)) / ((decimal)LatestPrice) * 100, 1);
 		if (NeedShowAcc) {
-			accComment = "預估準確率為「" + normalized_acc + " %」。";
-			rltComment = ((UorD == UorD2) ? "成功" : "失敗");
+			accComment = "預估準確率為「" + Model.PAccuracyRatio + " %」。";
+			rltComment = Model.PResult;
 		} else {
 			accComment = "待" + NeedShowDays + "日，模型穩定後，計算預估準確率。";
 			rltComment = "待" + NeedShowDays + "日，模型穩定後，計算預估準確率。";
@@ -144,17 +108,12 @@
 	if (isTracing) {
 		// 追蹤中
 		finishdateCountDownStr += "預測「追蹤中」，整體走勢「" +
-		UorD + "」，參考價「" + PredictedData + "」元，" + accComment + "此預測將於「" +
+		Model.PreTrend + "」，參考價「" + Model.Plabel + "」元，" + accComment + "此預測將於「" +
 		(int)differenceOpp.TotalDays + "」天後結案。";
-
 	} else {
-
-
-		var ActualPrice = ChartData.Where(x => x.StDate.CompareTo(finishdates) <= 0).OrderByDescending(x => x.StDate).FirstOrDefault().SteClose;
-		finishdateCountDownStr += "預測「已結案" + (int)difference.TotalDays + "天」，預測趨勢「" + UorD +
-		"」，實際「走" + UorD2.Substring(1, 1) + "」，趨勢預測「" + ((UorD == UorD2) ? "成功」" : "失敗」") + "，模型準確率為「" +
-		normalized_acc + "%」";
-
+		finishdateCountDownStr += "預測「已結案" + (int)difference.TotalDays + "天」，預測趨勢「" +  Model.PreTrend +
+		"」，實際「走" + Model.PActTrend.Substring(1, 1) + "」，趨勢預測「" + Model.PResult + "，模型準確率為「" +
+		Model.PAccuracyRatio + "%」";
 	}
 
 }
@@ -190,14 +149,14 @@
 		<tr>
 			<td>@ori_timeArea</td>
 			<td>@timeArea</td>
-			<td>@((IsNNModel)?PrePredictPrice:LatestNdaysAverage_ori)</td>
-			<td>@PredictedData</td>
-			<td>@((IsNNModel)?LatestPrice:LatestNdaysAverage)</td>
-			<td>@(UorD)</td>
-			<td>@("走" + UorD2.Substring(1, 1))</td>
+			<td>@(Model.PreDictLabel)</td>
+			<td>@(Model.Plabel)</td>
+			<td>@(Model.PCurLabel)</td>
+			<td>@(Model.PreTrend)</td>
+			<td>@("走" + Model.PActTrend.Substring(1, 1))</td>
 			<td>@(rltComment)</td>
-			<td>@(isTracing ? accComment : normalized_acc + "%") </div td >
-			<td>@(SpreadRatio + "%") </style td >
+			<td>@(isTracing ? accComment : Model.PAccuracyRatio + "%") </div td >
+			<td>@(Model.PSpreadRatio + "%") </style td >
 
 		</tr>
 	</table>
@@ -213,9 +172,9 @@
 		</thead>
 		<tr>
 			<td id="stockname"> </td>
-			<td>@PredictedData</td>
-			<td>@ViewBag.result.PbulidTime</td>
-			<td>@ViewBag.result.finishdate</td>
+			<td>@(Model.Plabel)</td>
+			<td>@PbulidTime</td>
+			<td>@PfinishTime</td>
 		</tr>
 	</table>
 
@@ -230,7 +189,7 @@
 		</thead>
 		<tr id="HereParas_td">
 			<td>@ViewBag.result.usingModel</td>
-			<td>@((ViewBag.result.Pprefer == 1) ? "短期投資" : "長期投資") </td>
+			<td>@((Model.Pprefer == 1) ? "短期投資" : "長期投資") </td>
 			<td id="Pvariable"></td>
 
 		</tr>
@@ -250,32 +209,15 @@
 
 
 <div style="max-width:1200px;max-height:700px;display:block">
-
-	<!-- 创建一个 canvas 元素用于绘制图表 -->
-	@* <canvas id="stockChart" width="800" height="400"></canvas> *@
 	<canvas id="stockChart" width="1200" height="600"></canvas>
 </div>
-@* <h1>預測股票代號: @ViewBag.result.SnCode </h1>
-<br>
-<h1 id="stockname"></h1>
-<br />
 
-<h1>使用模型: @ViewBag.result.usingModel</h1>
-<br />
-<h1>@finishdateCountDownStr，收盤價: @ViewBag.result.PredictedData</h1>
-<br />
-<h1>MSE-Loss: @ViewBag.result.PredictedLoss</h1>
-<br />
-<button id="mypredictresult">跳轉我的預測</button>
-<br />
-<button id="mystockid">跳轉個股</button>
-<br /> *@
 <script>
 	
 	
 
 	var actualData = @Html.Raw(Json.Serialize(ChartData));
-	var predictedData = @Html.Raw(Json.Serialize(PredictedData));
+	var predictedData = @Html.Raw(Json.Serialize(Model.Plabel));
 
 	var formattedData = actualData.map(function (item) {
 		var date = moment(item.StDate).format('YYYY-MM-DD');
@@ -363,10 +305,10 @@
 				label: '預測前' + @Html.Raw(Json.Serialize(finishdate))+'日移動平均',
 				data: [{
 					x: dateObjects_Ori[0],
-					y: @Html.Raw(Json.Serialize(LatestNdaysAverage_ori)) // 设置水平线的 y 坐标值
+					y: @Html.Raw(Json.Serialize(Model.PreDictLabel)) // 设置水平线的 y 坐标值
 													}, {
 					x: dateObjects_Ori[dateObjects_Ori.length - 1],
-					y: @Html.Raw(Json.Serialize(LatestNdaysAverage_ori))
+					y: @Html.Raw(Json.Serialize(Model.PreDictLabel))
 													}],
 				borderColor: 'black',
 				fill: false,
@@ -377,10 +319,10 @@
 				label: '近' + @Html.Raw(Json.Serialize(finishdate))+'日移動平均*',
 				data: [{
 					x: dateObjects_Lat[0],
-					y: @Html.Raw(Json.Serialize(LatestNdaysAverage)) // 设置水平线的 y 坐标值
+					y: @Html.Raw(Json.Serialize(Model.PCurLabel)) // 设置水平线的 y 坐标值
 													}, {
 					x: dateObjects_Lat[dateObjects_Lat.length - 1],
-					y: @Html.Raw(Json.Serialize(LatestNdaysAverage))
+					y: @Html.Raw(Json.Serialize(Model.PCurLabel))
 														}],
 				borderColor: 'red',
 				fill: false,
@@ -413,14 +355,14 @@
 		window.location.href = "/Member/MyPredictResult"
 	})
 	$("#mystockid").on("click", function () {
-		window.location.href = "/Home/StockCharts/" + @ViewBag.result.SnCode
+		window.location.href = "/Home/StockCharts/" + @Model.Pstock
 																									})
 	$.ajax({
 		url: "/StockModel/stocksnamewithcsv",
 		method: "get",
-		data: { data: @ViewBag.result.SnCode },
+		data: { data: @Model.Pstock },
 		success: function (e) {
-			$("#stockname").text(`${@Html.Raw(Json.Serialize(ViewBag.result.SnCode))} - ${e[0]["label"]}`);
+			$("#stockname").text(`${@Html.Raw(Json.Serialize(Model.Pstock))} - ${e[0]["label"]}`);
 
 		}
 	})
@@ -464,7 +406,7 @@
 		// console.log(EvaOrPar);
 
 		var isTracing = @Html.Raw(Json.Serialize(isTracing));
-		var acc = @Html.Raw(Json.Serialize(normalized_acc));
+		var acc = @Html.Raw(Json.Serialize(Model.PAccuracyRatio));
 		if (isTracing) {
 			eva.預計準確率 = (acc) + "%";
 		} else {
@@ -474,7 +416,7 @@
 
 		// 把變數轉成中文顯示
 		var varsMapTableJ = @Html.Raw(Json.Serialize(VarsTable));
-		var PvariableJ = @Html.Raw(Json.Serialize(ViewBag.result.Pvariable));
+		var PvariableJ = @Html.Raw(Json.Serialize(Model.Pvariable));
 		var varsMapTable = JSON.parse(varsMapTableJ);
 		var Pvariable = JSON.parse(PvariableJ);
 
@@ -514,6 +456,6 @@
 		})
 		return EvaOrPar;
 	}
-	TransJtoO(@Html.Raw(Json.Serialize(ViewBag.result.PredictedLoss)));
+	TransJtoO(@Html.Raw(Json.Serialize(Model.Dummyblock)));
 
 </script>
