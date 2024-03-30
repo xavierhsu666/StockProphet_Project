@@ -310,7 +310,8 @@ namespace StockProphet_Project.Controllers {
 		public void UpdateModelResultsStatusAndRatio() {
 			string tmp = "";
 			var q = from o in _context.DbModels.ToList()
-					where o.Pstatus == "Tracing"
+					where o.Pstatus == "Tracing" &&
+					((DateTime)o.PUpdateTime).ToString("yyyy-MM-dd") != DateTime.Now.ToString("yyyy-MM-dd")
 					select o;
 
 			if (q.Count() > 0) {
@@ -318,9 +319,42 @@ namespace StockProphet_Project.Controllers {
 					var q2 = from o in _context.Stock.ToList()
 							 where o.SnCode == item.Pstock
 							 orderby o.StDate descending
-							 select o.SteClose;
+							 select o;
+					// 1. 更新預測狀態
 					item.Pstatus = (item.PfinishTime > DateTime.Now) ? "Tracing" : "Close";
-					item.PAccuracyRatio = Convert.ToDouble(item.Plabel / q2.First().Value);
+					// 2. 更新最近參考價、預測前參考價、預測走勢、實際走勢
+					bool IsNNModel = (item.Pmodel == "LSTM" || item.Pmodel == "FNN") ? true : false;
+					var finishdate = DateOnly.Parse(((DateTime)item.PfinishTime).ToString("yyyy-MM-dd"));
+					var BuildDate = DateOnly.Parse(((DateTime)item.PbulidTime).ToString("yyyy-MM-dd"));
+					decimal LatestPrice = 0;
+					decimal PrePredictPrice = 0;
+					string UorD, UorD2 = "";
+					decimal acc, normalized_acc, SpreadRatio = 0;
+					int finishdates = (item.Pprefer == 1) ? 5 : 30;
+					if (IsNNModel) {
+						// <finishdate 的最近close價格
+						LatestPrice = (decimal)q2.Where(x => x.StDate.CompareTo(finishdate) <= 0).OrderByDescending(x => x.StDate).FirstOrDefault().SteClose;
+						PrePredictPrice = (decimal)q2.Where(x => x.StDate.CompareTo(BuildDate) <= 0).OrderByDescending(x => x.StDate).FirstOrDefault().SteClose;
+					} else {
+						LatestPrice = Math.Round((decimal)q2.Where(x => x.StDate.CompareTo(finishdate) <= 0).OrderByDescending(x => x.StDate).Take(finishdates).OrderBy(x => x.StDate).Average(x => x.SteClose), 2);
+						PrePredictPrice = Math.Round((decimal)q2.Where(x => x.StDate.CompareTo(BuildDate) <= 0).OrderByDescending(x => x.StDate).Take(finishdates).OrderBy(x => x.StDate).Average(x => x.SteClose), 2);
+					}
+					item.PCurLabel = LatestPrice;
+					item.PreDictLabel = PrePredictPrice;
+
+					// 3. 更新預測走勢、實際走勢
+					item.PreTrend = (PrePredictPrice > item.Plabel) ? "看空" : "看多";
+					item.PActTrend = (LatestPrice > PrePredictPrice) ? "看多" : "看空";
+					item.PResult = (item.PreTrend == item.PActTrend) ? "成功" : "失敗";
+
+					// 4.更新指標(誤差、準確率)
+					acc = Math.Round(((decimal)item.Plabel) / ((decimal)LatestPrice) * 100, 1);
+					normalized_acc = (acc > 100) ? 100 - (acc - 100) : acc;
+					SpreadRatio = Math.Round((((decimal)item.Plabel) - ((decimal)LatestPrice)) / ((decimal)LatestPrice) * 100, 1);
+
+					item.PAccuracyRatio = Convert.ToDouble(normalized_acc);
+					item.PSpreadRatio = Convert.ToDouble(SpreadRatio);
+					item.PUpdateTime = DateTime.Now;
 					_context.DbModels.Update(item);
 					_context.SaveChanges();
 				}
