@@ -540,7 +540,7 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
     <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5].Close}</td></tr>
     <tr><th class="pre-th">準確率</th><td class="pre-td pre-date">${d3.format(".2f")(PAR)}</td></tr>
     </table>
-    <p class="collectNum">${ collect > 0 ? collect : "" }<p>
+    <p class="collectNum card${PID}">${ collect > 0 ? collect : 0 }<p>
     <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
     </div>
     <div class='card-back'>
