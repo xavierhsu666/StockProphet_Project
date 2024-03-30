@@ -7,13 +7,6 @@ html {
 body {
     padding:30px;
 }
-main {
-    width: 100%;
-    display: flex;
-    flex-grow: 1;
-    flex-wrap: wrap;
-    justify-content:center;
-}
 
 .hand-ani {
     height: 800px;
@@ -291,14 +284,14 @@ a.ui-button:active,
 .bg-line {
     position: absolute;
     right: 0;
-    top: 120px;
+    bottom: 0px;
     z-index: -2;
 }
 
 .bg-chart {
     position: absolute;
     right: 0;
-    top: 140px;
+    bottom: 0px;
     z-index: -1;
 }
 
@@ -349,14 +342,14 @@ a.ui-button:active,
 
 
 .water-check-area {
-    width:220px;
-    height:220px;
+    width:200px;
+    height:110px;
     position:absolute;
     right:180px;
     bottom:310px;
     z-index:25;
-    border-radius:50%;
-/*    background-color:black;*/
+    /*border-radius:50%;*/
+    /*background-color:black;*/
 }
 
 #tableContainer, #tableContainer2 {
