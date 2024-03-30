@@ -1066,10 +1066,12 @@
 				}
 				//獲取用戶選擇的預測區間
 				var interval = $("input[name=interval]:checked").val();
+				
 				if (interval > 0) {
 					predictday = parseInt(interval);
 
 				}
+				
 				//獲取用戶選擇的參數
 				$("input[type=checkbox]:checked").each(function () {
 					var paramName = $(this).attr("name");
@@ -1137,7 +1139,7 @@
 
 			// });
 
-
+			console.log(predictday)
 			$("#predict1,#predict2").on("click", function (event) {
 				if (!Okbutton12()) {
 
@@ -1181,7 +1183,7 @@
 
 						},
 						success: function (response) {
-
+							
 							var values = response.split(','); // 拆分字符串为数组
 							borisprediction = parseFloat(values[0]);
 							if (borisprediction < 0) {
@@ -1195,11 +1197,11 @@
 							var isoString = createmodelTime.toISOString();
 							var finishDate = new Date(isoString); // 將 ISO 字符串轉換為 Date 物件
 
-							if (prefertype == 1) {
-								finishDate.setDate(finishDate.getDate() + 5); // 添加 5 天
-							} else {
-								finishDate.setDate(finishDate.getDate() + 30); // 添加 30 天
-							}
+
+							finishDate.setDate(finishDate.getDate() + predictday); //計算最終結案天數
+						
+							
+						
 
 							var finishString = finishDate.toISOString(); // 將 Date 物件轉換回 ISO 字符串
 
