@@ -16,23 +16,26 @@ main {
 }
 
 .hand-ani {
-    height: 800px;
-    width: 800px;
+    height: 100%;
+    width: 50%;
     bottom: 0;
     position: absolute;
     right: 0;
     overflow: hidden;
     /*z-index:-1;*/
+    border:2px solid black;
 }
 .container {
     max-width: 100% !important;
     display: flex;
-    padding: 20px
+    padding: 20px;
+    padding-bottom: 0px
+
 }
 
 .area-left {
     width:50%;
-   height:40rem;
+   height:80vh;
     position:relative;
     /*border: 2px solid black;*/
 
@@ -52,10 +55,10 @@ main {
 
 
 .bg-right-hand {
-    width:80%;
+    width:60%;
     position: absolute;
     right: -600px;
-    bottom: 250px;
+    bottom: 20%;
 }
 .bg-right-hand-move {
     animation: righthandmove 1s forwards;
@@ -72,10 +75,10 @@ main {
     }
 }
 .bg-left-hand {
-    
+    width:60%;
     position: absolute;
     bottom: -500px;
-    right: 200px;
+    right: 25%;
 
 }
 .bg-left-hand-move {
@@ -94,10 +97,10 @@ main {
     }
 }
 .bg-water {
-    /*width: 13vw;*/
+    width: 20%;
     position: absolute;
-    right: 210px;
-    bottom: 440px;
+    right: 139px;
+    bottom: 39%;
     /*pointer-events: none;*/
     opacity: 0;
     transform-origin: bottom center;
@@ -246,14 +249,15 @@ a.ui-button:active,
     overflow-x: hidden;
 }
 
-.group {
+.search-group {
     display: flex;
     line-height: 28px;
-    transform:translateY(100px);
+    transform:translateY(90px);
     /*align-items: center;*/
     justify-content:center;
     position: relative;
     max-width: 300px;
+    height:20px;
 }
 
 .input {
@@ -311,7 +315,8 @@ a.ui-button:active,
     }
 
     .hand-ani {
-        transform: translateY(70%);
+        transform: translateY(110%);
+        width: 90%;
     }
     .input {
         min-width: 60vw;
@@ -413,7 +418,7 @@ a.ui-button:active,
     width: 90%;
     /*border:3px solid pink;*/
     position: absolute;
-    bottom:-15%;
+    bottom:0;
     /*top: 80%;*/
     overflow: hidden;
 }
