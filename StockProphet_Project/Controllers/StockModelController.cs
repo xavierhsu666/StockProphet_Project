@@ -40,6 +40,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Web;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using System.Reflection;
 
 namespace StockProphet_Project.Controllers {
 	public class StockModelController : Controller {
@@ -144,6 +145,7 @@ namespace StockProphet_Project.Controllers {
 			}
 		}
 		public IActionResult TestBuild() {// 获取表单中的所有输入值
+			GetStockVarsMapTable();
 			return View();
 		}
 		public IActionResult Build( [FromForm] IFormCollection form ) {// 获取表单中的所有输入值
@@ -325,6 +327,27 @@ namespace StockProphet_Project.Controllers {
 			}
 
 		}
+
+		public void GetStockVarsMapTable() {
+			//http://localhost:5271/stockmodel/testbuild
+			// 用法: 在呼叫頁面action時呼叫此function，就會往ViewBag.VarsTable存入map表(JSON字串，直接前台JS呼叫即可)
+			Type stockType = typeof(Stock);
+			PropertyInfo[] properties = stockType.GetProperties();
+			var keyValuePairs = new Dictionary<string, string>();
+			
+			foreach (var property in properties) {
+				DisplayAttribute displayAttribute = property.GetCustomAttribute<DisplayAttribute>();
+
+				if (displayAttribute != null) {
+					string displayName = displayAttribute.Name;
+					//Console.WriteLine($"Property: {property.Name}, DisplayName: {displayName}");
+					keyValuePairs.Add(property.Name, displayName);
+				}
+			}
+			string VarsTable = JsonConvert.SerializeObject(keyValuePairs);
+			Console.WriteLine(VarsTable);
+			ViewBag.VarsTable = VarsTable;
+		}
 		// <功能開發測試區>
 
 		// <WEB API 區>
@@ -460,7 +483,7 @@ namespace StockProphet_Project.Controllers {
 				T_confidenceLevel = wi.T_confidenceLevel ?? -1,
 				usingModel = wi.usingModel,
 				userPrefer = wi.userPrefer,
-				
+
 			};
 			// 摳算存
 
@@ -1219,6 +1242,7 @@ namespace StockProphet_Project.Controllers {
 		}
 		//public IActionResult predictphoto( string predicteddata, string sncode, string predictedloss,string mymodelselect) {
 		public IActionResult predictphoto( int Pid ) {
+			GetStockVarsMapTable();
 			var q = from o in _context.DbModels.ToList()
 					where o.Pid == Pid
 					select o;
