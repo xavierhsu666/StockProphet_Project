@@ -438,8 +438,8 @@ namespace StockProphet_Project.Controllers {
 				var port = Request.Host.Port; // will get the port
 											  //Console.WriteLine("当前服务器端口号: " + port);
 
-				Console.WriteLine("call UpdateOneStock(stockCode=" + stockCode + ", time = " + InputLatestDate.Replace("-", "") + ", port = " + port + ")");
-				string fedback = await cpa.UpdateOneStock(stockCode, InputLatestDate.Replace("-", ""), port);
+				Console.WriteLine("call UpdateOneStock(stockCode=" + stockCode + ", time = " + InputLatestDate.Replace("-", "").Substring(0, 6) + "01" + ", port = " + port + ")");
+				string fedback = await cpa.UpdateOneStock(stockCode, InputLatestDate.Replace("-", "").Substring(0, 6) + "01", port);
 				var stockData = _context.Stock
 						.Where(x => x.SnCode == stockCode)
 						.OrderBy(x => x.StDate)
