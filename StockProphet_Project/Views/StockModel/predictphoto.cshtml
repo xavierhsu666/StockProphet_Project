@@ -7,7 +7,7 @@
 
 	TimeSpan difference = DateTime.Now.Subtract(PfinishTime);
 	TimeSpan differenceOpp = (PfinishTime).Subtract(DateTime.Now);
-	var VarsTable = Model.Pvariable;
+	var VarsTable = ViewBag.VarsTable;
 
 
 	int finishdate = (Model.Pprefer == 1) ? 5 : 30;

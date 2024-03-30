@@ -275,6 +275,10 @@ namespace StockProphet_Project.Controllers {
 
 		}
 		public double[] ModelOutputCheck( string stockCode, int userPrefer, float esti, float u = 0, float l = 0 ) {
+
+			esti = Math.Abs(esti);
+			u = Math.Abs(u);
+			l = Math.Abs(l);
 			if (userPrefer == 1) {
 				var q = from o in _context.Stock
 						where o.SnCode == stockCode
@@ -288,6 +292,8 @@ namespace StockProphet_Project.Controllers {
 				Console.WriteLine("esti/e = " + esti / e);
 				Console.WriteLine("u = " + u);
 				Console.WriteLine("l = " + l);
+				e = Math.Abs(e);
+
 				if (esti / e > 1.1 || esti / e < 0.9) {
 					var spread = esti / e;
 					if (spread > 1) {
@@ -368,7 +374,7 @@ namespace StockProphet_Project.Controllers {
 			Type stockType = typeof(Stock);
 			PropertyInfo[] properties = stockType.GetProperties();
 			var keyValuePairs = new Dictionary<string, string>();
-			
+
 			foreach (var property in properties) {
 				DisplayAttribute displayAttribute = property.GetCustomAttribute<DisplayAttribute>();
 
@@ -604,7 +610,8 @@ namespace StockProphet_Project.Controllers {
 				Dummyblock = mr.dummyblock,
 				Paccount = mr.Paccount,
 				Pmodel = mr.Pmodel,
-				Pstatus = "Tracing"
+				Pstatus = "Tracing",
+				PUpdateTime = DateTime.Parse("2000-01-01")
 			};
 			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
 			query.DbModels.Add(newdata);
