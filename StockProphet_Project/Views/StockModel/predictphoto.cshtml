@@ -173,6 +173,34 @@
 <div>
 
 	<h1 style="background-color:rgba(0, 98, 234, 0.1);padding:5px;">@finishdateCountDownStr </h1>
+	<h1>模型績效</h1>
+	<table class="table table-light">
+		<thead>
+			<tr>
+				<th>預測前 時間</th>
+				<th>目前 時間</th>
+				<th>預測前 參考價(A)</th>
+				<th>預測 參考價(B)</th>
+				<th>目前 參考價(C)</th>
+				<th>預測走勢(D, A vs B)</th>
+				<th>實際走勢(E, A vs C)</th>
+				<th>@(isTracing ? "預估結果(F, D vs E)" : "結案結果(G, D vs E)")</th>
+				<th>@(isTracing ? "預估準確率(G)" : "準確率(G)")</th>
+			</tr>
+		</thead>
+		<tr>
+			<td>@ori_timeArea</td>
+			<td>@timeArea</td>
+			<td>@LatestNdaysAverage_ori</td>
+			<td>@PredictedData</td>
+			<td>@LatestNdaysAverage</td>
+			<td>@(UorD)</td>
+			<td>@(UorD2)</td>
+			<td>@("走" + UorD2.Substring(1, 1))</td>
+			<td>@(isTracing ? accComment : normalized_acc + "%") </ td >
+
+		</tr>
+	</table>
 	<h1 style="margin-top:30px">預測結果</h1>
 	<table class="table table-light">
 		<thead>
@@ -207,7 +235,7 @@
 
 		</tr>
 	</table>
-	<h1>模型表現</h1>
+	<h1>模型評估</h1>
 	<table class="table table-light">
 		<thead>
 			<tr id="modelEva_th">
@@ -217,34 +245,7 @@
 		</tr>
 	</table>
 
-	<h1>指標相關數據</h1>
-	<table class="table table-light">
-		<thead>
-			<tr>
-				<th>預測前 時間</th>
-				<th>目前 時間</th>
-				<th>預測前 參考價(A)</th>
-				<th>預測 參考價(B)</th>
-				<th>目前 參考價(C)</th>
-				<th>預測走勢(D, A vs B)</th>
-				<th>實際走勢(E, A vs C)</th>
-				<th>@(isTracing ? "預估準確率(F)" : "準確率(F)")</th>
-				<th>@(isTracing ? "預估結果(G, D vs E)" : "結案結果(G, D vs E)")</th>
-			</tr>
-		</thead>
-		<tr>
-			<td>@ori_timeArea</td>
-			<td>@timeArea</td>
-			<td>@LatestNdaysAverage_ori</td>
-			<td>@PredictedData</td>
-			<td>@LatestNdaysAverage</td>
-			<td>@(UorD)</td>
-			<td>@(UorD2)</td>
-			<td>@(isTracing ? accComment : normalized_acc + "%") </ td >
-			<td>@(rltComment)</td>
-
-		</tr>
-	</table>
+	
 </div>
 
 
@@ -351,24 +352,24 @@
 				data: [{
 					x: dateObjects_Ori[0],
 					y: @Html.Raw(Json.Serialize(LatestNdaysAverage_ori)) // 设置水平线的 y 坐标值
-				}, {
+					}, {
 					x: dateObjects_Ori[dateObjects_Ori.length - 1],
 					y: @Html.Raw(Json.Serialize(LatestNdaysAverage_ori))
-				}],
+					}],
 				borderColor: 'black',
 				fill: false,
 				borderWidth: 0.7,
 				borderDash: [5, 5],
 				hidden: @Html.Raw(Json.Serialize(true)) // 結案的話秀
-				}, {
+					}, {
 				label: '近' + @Html.Raw(Json.Serialize(finishdate))+'日移動平均*',
 				data: [{
 					x: dateObjects_Lat[0],
 					y: @Html.Raw(Json.Serialize(LatestNdaysAverage)) // 设置水平线的 y 坐标值
-				}, {
+					}, {
 					x: dateObjects_Lat[dateObjects_Lat.length - 1],
 					y: @Html.Raw(Json.Serialize(LatestNdaysAverage))
-					}],
+						}],
 				borderColor: 'red',
 				fill: false,
 				borderWidth: 0.7,
@@ -384,7 +385,7 @@
 					ticks: {
 						maxTicksLimit: 15 // 限制最大刻度數為 15
 					}
-					
+
 				},
 				y: {
 					ticks: {
@@ -401,7 +402,7 @@
 	})
 	$("#mystockid").on("click", function () {
 		window.location.href = "/Home/StockCharts/" + @ViewBag.result.SnCode
-																})
+																	})
 	$.ajax({
 		url: "/StockModel/stocksnamewithcsv",
 		method: "get",
@@ -462,8 +463,10 @@
 
 
 		$.each(eva, function (i, val) {
-			$("#modelEva_th").append("<th>" + i + "</th>");
-			$("#modelEva_tb").append("<td>" + val + "</td>");
+			if (i == "預計準確率" || i == "準確率") { } else {
+				$("#modelEva_th").append("<th>" + i + "</th>");
+				$("#modelEva_tb").append("<td>" + val + "</td>");
+			}
 		})
 		$.each(pars, function (i, val) {
 			$("#HereParas_th").append("<th>" + i + "</th>");
