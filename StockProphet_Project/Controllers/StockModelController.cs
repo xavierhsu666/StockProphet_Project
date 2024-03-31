@@ -1382,7 +1382,7 @@ namespace StockProphet_Project.Controllers {
 			DateTime buildTime = DateTime.Parse(PBuildTime);
 			DateTime finishTime = DateTime.Parse(PfinishTime);
 			//System.Diagnostics.Debug.WriteLine($"PLabel: {PLabel}");
-			System.Diagnostics.Debug.WriteLine($"Pparameter111111111111: {Pparameter}");
+			//System.Diagnostics.Debug.WriteLine($"Pparameter111111111111: {Pparameter}");
 
 
 			var newdata = new DbModel {
@@ -1395,7 +1395,8 @@ namespace StockProphet_Project.Controllers {
 				Paccount = PAccount,
 				Dummyblock = Pparameter,
 				Pmodel = Pmodel,
-				Pstatus = "Tracing"
+				Pstatus = "Tracing",
+				PUpdateTime=DateTime.Parse("2000-01-01")
 			};
 			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
 			query.DbModels.Add(newdata);
