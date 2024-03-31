@@ -316,8 +316,8 @@ namespace StockProphet_Project.Controllers {
 		public void UpdateModelResultsStatusAndRatio() {
 			string tmp = "";
 			var q = from o in _context.DbModels.ToList()
-					where o.Pstatus == "Tracing" &&
-					((DateTime)o.PUpdateTime).ToString("yyyy-MM-dd") != DateTime.Now.ToString("yyyy-MM-dd")
+					where o.Pstatus == "Tracing"
+					&& ((DateTime)o.PUpdateTime).ToString("yyyy-MM-dd-hh-mm") != DateTime.Now.ToString("yyyy-MM-dd-hh-mm")
 					select o;
 
 			if (q.Count() > 0) {
@@ -336,14 +336,16 @@ namespace StockProphet_Project.Controllers {
 					decimal PrePredictPrice = 0;
 					string UorD, UorD2 = "";
 					decimal acc, normalized_acc, SpreadRatio = 0;
-					int finishdates = (item.Pprefer == 1) ? 5 : 30;
+					int finishdates = (int)((DateTime)item.PfinishTime).Subtract((DateTime)item.PbulidTime).TotalDays;
 					if (IsNNModel) {
 						// <finishdate 的最近close價格
 						LatestPrice = (decimal)q2.Where(x => x.StDate.CompareTo(finishdate) <= 0).OrderByDescending(x => x.StDate).FirstOrDefault().SteClose;
 						PrePredictPrice = (decimal)q2.Where(x => x.StDate.CompareTo(BuildDate) <= 0).OrderByDescending(x => x.StDate).FirstOrDefault().SteClose;
+						Console.WriteLine($"IsNNModel = {IsNNModel}, PID = {item.Pid}, LatestPrice = {LatestPrice},  PrePredictPrice = {PrePredictPrice}");
 					} else {
 						LatestPrice = Math.Round((decimal)q2.Where(x => x.StDate.CompareTo(finishdate) <= 0).OrderByDescending(x => x.StDate).Take(finishdates).OrderBy(x => x.StDate).Average(x => x.SteClose), 2);
 						PrePredictPrice = Math.Round((decimal)q2.Where(x => x.StDate.CompareTo(BuildDate) <= 0).OrderByDescending(x => x.StDate).Take(finishdates).OrderBy(x => x.StDate).Average(x => x.SteClose), 2);
+						Console.WriteLine($"IsNNModel = {IsNNModel}, PID = {item.Pid}, LatestPrice = {LatestPrice},  PrePredictPrice = {PrePredictPrice}");
 					}
 					item.PCurLabel = LatestPrice;
 					item.PreDictLabel = PrePredictPrice;
@@ -1386,7 +1388,7 @@ namespace StockProphet_Project.Controllers {
 			DateTime buildTime = DateTime.Parse(PBuildTime);
 			DateTime finishTime = DateTime.Parse(PfinishTime);
 			//System.Diagnostics.Debug.WriteLine($"PLabel: {PLabel}");
-			System.Diagnostics.Debug.WriteLine($"Pparameter111111111111: {Pparameter}");
+			//System.Diagnostics.Debug.WriteLine($"Pparameter111111111111: {Pparameter}");
 
 
 			var newdata = new DbModel {
@@ -1399,7 +1401,8 @@ namespace StockProphet_Project.Controllers {
 				Paccount = PAccount,
 				Dummyblock = Pparameter,
 				Pmodel = Pmodel,
-				Pstatus = "Tracing"
+				Pstatus = "Tracing",
+				PUpdateTime=DateTime.Parse("2000-01-01")
 			};
 			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
 			query.DbModels.Add(newdata);
