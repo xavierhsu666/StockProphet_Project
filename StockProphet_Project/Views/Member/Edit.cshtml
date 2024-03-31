@@ -32,6 +32,42 @@
         box-sizing: border-box;
         border-radius: 10px;
         box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
+    }   
+
+    .f1 {
+        border: 1px solid #ced4da;
+        border-radius:3px;
+        background-color: lightgrey;
+    }
+    .k1 {
+        padding-left: 10px;
+    }
+    /* 下拉選單 */
+    .news-filter select {
+        background: #fff;
+        color: black;
+        margin: 5px;
+        width: 300px;
+        height: 3em;
+        /* padding: 8px; */
+        position: relative;
+        border-radius: 5px;
+        appearance: none;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        /*  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), linear-gradient(#003d79, #003d79);
+                background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -webkit-linear-gradient(#003d79, #003d79);
+                background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -moz-linear-gradient(#003d79, #003d79);
+                */
+        background-position: right 0.5em top 50%, 0 0;
+        background-size: contain, cover;
+        background-repeat: no-repeat, repeat;
+    }
+
+    option {
+        appearance: none;
+        background: #fff;
+        position: absolute;
     }
 </style>
 @* <h1 class="text-">會員功能-修改個人資料</h1> *@
@@ -93,16 +129,16 @@
                         <br>
                     </div>
                     
-                    <div >
-                        <label for="Birthday" id="Birthday">生日:</label>
+                    <div class="f1 mb-3">
+                        <label for="Birthday" id="Birthday" class="k1">生日: <br /></label>
                     <br>
                     </div>
 
-                    <div >
-                        <label for="MGender" id="MGender">性別:</label>
+                    <div class="f1 mb-3 ">
+                        <label for="MGender" id="MGender" class="k1">性別:</label>
                     <br>
                     </div>
-                    <div>
+                    <div class="mb-3 news-filter">
                         <label for="MInvestYear">您的投資年數:</label>
                         <select name="MInvestYear" id="InvestYear" required>
                             <option value="1">未滿1年</option>
@@ -113,14 +149,14 @@
                         <br>
                     </div>
                     
-                    <div>
-                        <label for="MLevel" id="MLevel">會員等級:</label>
+                    <div class="f1 mb-3 ">
+                        <label for="MLevel" id="MLevel" class="k1">會員等級:</label>
                         <br>
                     </div>
                     
 
-                    <button id="ReviseData">修改資料</button>
-                    <button id="Reset">取消</button>
+                    <button id="ReviseData" class="w-50 btn btn-lg btn-primary">修改資料</button>
+                    <button id="Reset" class="w-50 btn btn-lg btn-secondary">取消</button>
                 </form>
             </div>
         </div>
