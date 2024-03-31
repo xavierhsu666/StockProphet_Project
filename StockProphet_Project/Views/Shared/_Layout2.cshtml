@@ -100,7 +100,7 @@
                 <div class="modal-body">
                     <div class="wrap">
                         <div class="item">
-                            <div class="icon"><i class="fi fi-sr-megaphone"></i></div>
+                            <div class="icon"><i class="fa-solid fa-chess-pawn" style="color: #73bbbf;"></i></div>
                             <div class="txt" style="font-size: 1.2em;">
                                 <h3>訪客</h3>
                                 <ul>
@@ -112,7 +112,7 @@
                             </div>
                         </div>
                         <div class="item">
-                            <div class="icon"><i class="fi fi-sr-megaphone"></i></div>
+                            <div class="icon"><i class="fa-solid fa-chess-knight" style="color: #73b5c5;"></i></i></div>
                             <div class="txt" style="font-size: 1.2em;">
                                 <h3>一般會員</h3>
                                 <ul>
@@ -129,7 +129,7 @@
                         </div>
 
                         <div class="item">
-                            <div class="icon"><i class="fi fi-sr-megaphone"></i></div>
+                            <div class="icon"><i class="fa-solid fa-chess-king fa-bounce" style="color: #73b5c5;"></i></div>
                             <div class="txt" style="font-size: 1.2em;">
                                 <h3>高級會員</h3>
                                 <ul>
@@ -151,8 +151,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">升級</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="upgradeclose">Close</button>
+                    <button type="button" class="btn btn-primary" id="upgrade">升級</button>
                 </div>
             </div>
         </div>
@@ -175,8 +175,9 @@
     
 	@await RenderSectionAsync("Scripts", required: false)
 	<script>
+        $("#highlevel").css("display", "none");
 		$(document).ready(function () {
-
+            
 			if (sessionStorage.getItem("LogAccount") == null) {
                 $(".note-area").css("display","none");
                 console.log(1)
@@ -195,6 +196,10 @@
                 $("#mynavgation-right").append(`<li b-vkyxnss9jg class="nav-item" id="myLogout"><a class="nav-link text-dark text-right" id="logoutlink" href="/Home/Index">登出</a></li> `)
 				$('#loginlink').hide();
 				$('#logoutlink').show();
+                if (sessionStorage.getItem("LogMemberLevel") === "一般會員") {
+                    $("#highlevel").css("display", "block");
+                }
+                
 			}
 			$("#logoutlink").on("click", function () { 
 			
@@ -274,6 +279,26 @@
 
             $('#exampleModal').modal('show');
         })
+        $("#upgrade").on("click", function () {
+        
+            $.ajax({
+                url: "/Member/Memberupgrade",
+                data: { data: sessionStorage.getItem("LogAccount") },
+                method:"put",
+                success: function (e) { 
+                    if (e == true) {
+                        alert("升級成功");
+                        $("#upgradeclose").click();
+                        sessionStorage.setItem("LogMemberLevel", "高級會員");
+                        $("#highlevel").css("display", "none");
+                    } 
+                    
+                
+                }
+            })
+        
+        })
+
        
 	</script>
 </body>

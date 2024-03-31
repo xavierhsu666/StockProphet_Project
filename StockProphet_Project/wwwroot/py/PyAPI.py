@@ -50,6 +50,7 @@ def  mutiTimesApi_call(stockNo,dates_input):
     all_data = pd.DataFrame()
 
     for date in dates:
+        print(date)
         # 取得第一個 API 的數據
         url1 = url_template1.format(date, stockNo)
         
@@ -381,22 +382,33 @@ def  mutiTimesApi_call(stockNo,dates_input):
 
 
 
-    # print(SQL_data_df)
     # 從資料庫讀取目標表格的資料到 DataFrame 中
     existing_data_df = pd.read_sql('SELECT * FROM Stock where SN_Code = '+stockNo, engine)
-    # print(existing_data_df)
+    
+    # 改順序
+    SQL_data_df = SQL_data_df[existing_data_df.columns]
+    
     # 找到目標表格中不存在的資料
-    missing_data_df = SQL_data_df[~SQL_data_df.isin(existing_data_df)].dropna()
+    # missing_data_df = SQL_data_df[~SQL_data_df.isin(existing_data_df)].dropna()
+    missing_data_df = pd.merge(SQL_data_df, existing_data_df[['S_PK']], on='S_PK', how='outer', indicator=True)
+    missing_data_df = missing_data_df[missing_data_df['_merge'] == 'left_only'].drop(columns=['_merge'])
+    missing_data_df.dropna(subset=['S_PK'], inplace=True)
+    missing_data_df.drop_duplicates(subset=['S_PK'], inplace=True)
+    # print(SQL_data_df)
+    # print(existing_data_df)
     # print(missing_data_df)
 
     # 如果有缺失的資料，將其插入到目標表格中
     if existing_data_df.empty:
-        SQL_data_df.to_sql(table_name, engine, if_exists='append', index=False)
         print("資料庫沒值，全部灌進DB")
+        missing_data_df.to_sql(table_name, engine, if_exists='append', index=False)
+        print("成功")
     else:
         if not missing_data_df.empty:
-            missing_data_df.to_sql(table_name, engine, if_exists='append', index=False)
             print("資料庫有值，並且有差異，將差異灌進DB")
+            missing_data_df.to_sql(table_name, engine, if_exists='append', index=False)
+            print("成功")
+            
         else:
             print("資料庫有值，但無差異，不動作")
 
@@ -721,9 +733,9 @@ def oneTimeApi_call(stockNo,dates_input):
     table_name = "Stock"
     SQL_data_df=SQL_data_df.reset_index(drop=True)
     
-    for i in range(len(SQL_data_df)-1):
-        # SQL_data_df.at[i,'ST_Date']=str(int(SQL_data_df.iloc[i][0].replace('/',''))+19110000)        
-        SQL_data_df.at[i,'ST_Date'] = str(int(str(SQL_data_df.iloc[i][0]).replace('/',''))+19110000)
+    for i in range(len(SQL_data_df)):
+        SQL_data_df.at[i,'ST_Date']=str(int(SQL_data_df.iloc[i][0].replace('/',''))+19110000)        
+        # SQL_data_df.at[i,'ST_Date'] = str(int(str(SQL_data_df.iloc[i][0]).replace('/',''))+19110000)
         if i==0:
             # SQL_data_df.at[i,'STe_SpreadRatio']=(SQL_data_df.iloc[i][7]-SQL_data_df.iloc[i][8])/(SQL_data_df.iloc[i][9]+float(SQL_data_df.iloc[i][8]))*100
             SQL_data_df.at[i,'STe_SpreadRatio'] = (SQL_data_df.iloc[i][7] - SQL_data_df.iloc[i][8]) / (SQL_data_df.iloc[i][9] + float(SQL_data_df.iloc[i][8])) * 100
@@ -763,23 +775,33 @@ def oneTimeApi_call(stockNo,dates_input):
     SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(0)
 
 
-
-    # print(SQL_data_df)
     # 從資料庫讀取目標表格的資料到 DataFrame 中
     existing_data_df = pd.read_sql('SELECT * FROM Stock where SN_Code = '+stockNo, engine)
-    # print(existing_data_df)
+    
+    # 改順序
+    SQL_data_df = SQL_data_df[existing_data_df.columns]
+    
     # 找到目標表格中不存在的資料
-    missing_data_df = SQL_data_df[~SQL_data_df.isin(existing_data_df)].dropna()
+    # missing_data_df = SQL_data_df[~SQL_data_df.isin(existing_data_df)].dropna()
+    missing_data_df = pd.merge(SQL_data_df, existing_data_df[['S_PK']], on='S_PK', how='outer', indicator=True)
+    missing_data_df = missing_data_df[missing_data_df['_merge'] == 'left_only'].drop(columns=['_merge'])
+    missing_data_df.dropna(subset=['S_PK'], inplace=True)
+    missing_data_df.drop_duplicates(subset=['S_PK'], inplace=True)
+    
+    print(SQL_data_df)
+    # print(existing_data_df)
     # print(missing_data_df)
 
     # 如果有缺失的資料，將其插入到目標表格中
     if existing_data_df.empty:
-        SQL_data_df.to_sql(table_name, engine, if_exists='append', index=False)
         print("資料庫沒值，全部灌進DB")
+        SQL_data_df.to_sql(table_name, engine, if_exists='append', index=False)
+        print("成功")
     else:
         if not missing_data_df.empty:
-            missing_data_df.to_sql(table_name, engine, if_exists='append', index=False)
             print("資料庫有值，並且有差異，將差異灌進DB")
+            missing_data_df.to_sql(table_name, engine, if_exists='append', index=False)
+            print("成功")
         else:
             print("資料庫有值，但無差異，不動作")
 

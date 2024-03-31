@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
 using static HDF.PInvoke.H5T;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace StockProphet_Project.Controllers
 {
@@ -750,7 +751,24 @@ namespace StockProphet_Project.Controllers
                 System.Diagnostics.Debug.WriteLine("顯示" + "郵件未寄送");
             }
         }
-
+        [HttpPut]
+        public bool Memberupgrade(string data)
+        {
+            Console.WriteLine(data);
+            var query = _context.DbMembers.FirstOrDefault(x => x.MaccoMnt==data);
+            Console.WriteLine(query);
+            query.Mlevel = "高級會員";
+            _context.SaveChanges();
+            bool result;
+            if (query.Mlevel == "高級會員")
+            {
+                result = true;
+            }
+            else {
+                result= false;  
+            }
+            return result;
+        }
 
         //未登入時的修改密碼頁面-5      
         public IActionResult RevisePassword()
