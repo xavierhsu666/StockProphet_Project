@@ -40,6 +40,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Web;
 using Newtonsoft.Json;
 using NuGet.Protocol;
+using System.Reflection;
 
 namespace StockProphet_Project.Controllers {
 	public class StockModelController : Controller {
@@ -144,6 +145,7 @@ namespace StockProphet_Project.Controllers {
 			}
 		}
 		public IActionResult TestBuild() {// 获取表单中的所有输入值
+			GetStockVarsMapTable();
 			return View();
 		}
 		public IActionResult Build( [FromForm] IFormCollection form ) {// 获取表单中的所有输入值
@@ -273,6 +275,10 @@ namespace StockProphet_Project.Controllers {
 
 		}
 		public double[] ModelOutputCheck( string stockCode, int userPrefer, float esti, float u = 0, float l = 0 ) {
+
+			esti = Math.Abs(esti);
+			u = Math.Abs(u);
+			l = Math.Abs(l);
 			if (userPrefer == 1) {
 				var q = from o in _context.Stock
 						where o.SnCode == stockCode
@@ -286,6 +292,8 @@ namespace StockProphet_Project.Controllers {
 				Console.WriteLine("esti/e = " + esti / e);
 				Console.WriteLine("u = " + u);
 				Console.WriteLine("l = " + l);
+				e = Math.Abs(e);
+
 				if (esti / e > 1.1 || esti / e < 0.9) {
 					var spread = esti / e;
 					if (spread > 1) {
@@ -309,6 +317,7 @@ namespace StockProphet_Project.Controllers {
 			string tmp = "";
 			var q = from o in _context.DbModels.ToList()
 					where o.Pstatus == "Tracing"
+					&& ((DateTime)o.PUpdateTime).ToString("yyyy-MM-dd-hh-mm") != DateTime.Now.ToString("yyyy-MM-dd-hh-mm")
 					select o;
 
 			if (q.Count() > 0) {
@@ -316,14 +325,70 @@ namespace StockProphet_Project.Controllers {
 					var q2 = from o in _context.Stock.ToList()
 							 where o.SnCode == item.Pstock
 							 orderby o.StDate descending
-							 select o.SteClose;
+							 select o;
+					// 1. 更新預測狀態
 					item.Pstatus = (item.PfinishTime > DateTime.Now) ? "Tracing" : "Close";
-					item.PAccuracyRatio = Convert.ToDouble(item.Plabel / q2.First().Value);
+					// 2. 更新最近參考價、預測前參考價、預測走勢、實際走勢
+					bool IsNNModel = (item.Pmodel == "LSTM" || item.Pmodel == "FNN") ? true : false;
+					var finishdate = DateOnly.Parse(((DateTime)item.PfinishTime).ToString("yyyy-MM-dd"));
+					var BuildDate = DateOnly.Parse(((DateTime)item.PbulidTime).ToString("yyyy-MM-dd"));
+					decimal LatestPrice = 0;
+					decimal PrePredictPrice = 0;
+					string UorD, UorD2 = "";
+					decimal acc, normalized_acc, SpreadRatio = 0;
+					int finishdates = (int)((DateTime)item.PfinishTime).Subtract((DateTime)item.PbulidTime).TotalDays;
+					if (IsNNModel) {
+						// <finishdate 的最近close價格
+						LatestPrice = (decimal)q2.Where(x => x.StDate.CompareTo(finishdate) <= 0).OrderByDescending(x => x.StDate).FirstOrDefault().SteClose;
+						PrePredictPrice = (decimal)q2.Where(x => x.StDate.CompareTo(BuildDate) <= 0).OrderByDescending(x => x.StDate).FirstOrDefault().SteClose;
+						Console.WriteLine($"IsNNModel = {IsNNModel}, PID = {item.Pid}, LatestPrice = {LatestPrice},  PrePredictPrice = {PrePredictPrice}");
+					} else {
+						LatestPrice = Math.Round((decimal)q2.Where(x => x.StDate.CompareTo(finishdate) <= 0).OrderByDescending(x => x.StDate).Take(finishdates).OrderBy(x => x.StDate).Average(x => x.SteClose), 2);
+						PrePredictPrice = Math.Round((decimal)q2.Where(x => x.StDate.CompareTo(BuildDate) <= 0).OrderByDescending(x => x.StDate).Take(finishdates).OrderBy(x => x.StDate).Average(x => x.SteClose), 2);
+						Console.WriteLine($"IsNNModel = {IsNNModel}, PID = {item.Pid}, LatestPrice = {LatestPrice},  PrePredictPrice = {PrePredictPrice}");
+					}
+					item.PCurLabel = LatestPrice;
+					item.PreDictLabel = PrePredictPrice;
+
+					// 3. 更新預測走勢、實際走勢
+					item.PreTrend = (PrePredictPrice > item.Plabel) ? "看空" : "看多";
+					item.PActTrend = (LatestPrice > PrePredictPrice) ? "看多" : "看空";
+					item.PResult = (item.PreTrend == item.PActTrend) ? "成功" : "失敗";
+
+					// 4.更新指標(誤差、準確率)
+					acc = Math.Round(((decimal)item.Plabel) / ((decimal)LatestPrice) * 100, 1);
+					normalized_acc = (acc > 100) ? 100 - (acc - 100) : acc;
+					SpreadRatio = Math.Round((((decimal)item.Plabel) - ((decimal)LatestPrice)) / ((decimal)LatestPrice) * 100, 1);
+
+					item.PAccuracyRatio = Convert.ToDouble(normalized_acc);
+					item.PSpreadRatio = Convert.ToDouble(SpreadRatio);
+					item.PUpdateTime = DateTime.Now;
 					_context.DbModels.Update(item);
 					_context.SaveChanges();
 				}
 			}
 
+		}
+
+		public void GetStockVarsMapTable() {
+			//http://localhost:5271/stockmodel/testbuild
+			// 用法: 在呼叫頁面action時呼叫此function，就會往ViewBag.VarsTable存入map表(JSON字串，直接前台JS呼叫即可)
+			Type stockType = typeof(Stock);
+			PropertyInfo[] properties = stockType.GetProperties();
+			var keyValuePairs = new Dictionary<string, string>();
+
+			foreach (var property in properties) {
+				DisplayAttribute displayAttribute = property.GetCustomAttribute<DisplayAttribute>();
+
+				if (displayAttribute != null) {
+					string displayName = displayAttribute.Name;
+					//Console.WriteLine($"Property: {property.Name}, DisplayName: {displayName}");
+					keyValuePairs.Add(property.Name, displayName);
+				}
+			}
+			string VarsTable = JsonConvert.SerializeObject(keyValuePairs);
+			Console.WriteLine(VarsTable);
+			ViewBag.VarsTable = VarsTable;
 		}
 		// <功能開發測試區>
 
@@ -338,18 +403,7 @@ namespace StockProphet_Project.Controllers {
 
 			return Json(stocksList);
 		}
-		[HttpGet]
-		public IActionResult stocksnamewithcsv( string data ) {
 
-			var stocksList = (from obj in new ChoCSVReader<stocksCheck1>("wwwroot\\stocksList1.csv").WithFirstLineHeader()
-							  where obj.Code == data
-							  select new {
-								  label = obj.Name
-							  })
-				  .ToList();
-
-			return Json(stocksList);
-		}
 		[HttpGet]
 		public async Task<IActionResult> UpdateOneStock( string stockCode ) {
 			// 20240328_ CSV 確認輸入正確代碼 -> 判斷DB 有無今天更新的資料 ->
@@ -378,10 +432,11 @@ namespace StockProphet_Project.Controllers {
 
 
 				CallPyApi cpa = new CallPyApi();
-				Console.WriteLine("call UpdateOneStock(stockCode=" + stockCode + ")");
 				var port = Request.Host.Port; // will get the port
 											  //Console.WriteLine("当前服务器端口号: " + port);
-				string fedback = await cpa.UpdateOneStock(stockCode, InputLatestDate.Replace("-", ""), port);
+
+				Console.WriteLine("call UpdateOneStock(stockCode=" + stockCode + ", time = " + InputLatestDate.Replace("-", "").Substring(0, 6) + "01" + ", port = " + port + ")");
+				string fedback = await cpa.UpdateOneStock(stockCode, InputLatestDate.Replace("-", "").Substring(0, 6) + "01", port);
 				var stockData = _context.Stock
 						.Where(x => x.SnCode == stockCode)
 						.OrderBy(x => x.StDate)
@@ -460,7 +515,7 @@ namespace StockProphet_Project.Controllers {
 				T_confidenceLevel = wi.T_confidenceLevel ?? -1,
 				usingModel = wi.usingModel,
 				userPrefer = wi.userPrefer,
-				
+
 			};
 			// 摳算存
 
@@ -546,7 +601,8 @@ namespace StockProphet_Project.Controllers {
 				Dummyblock = mr.dummyblock,
 				Paccount = mr.Paccount,
 				Pmodel = mr.Pmodel,
-				Pstatus = "Tracing"
+				Pstatus = "Tracing",
+				PUpdateTime = DateTime.Parse("2000-01-01")
 			};
 			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
 			query.DbModels.Add(newdata);
@@ -564,12 +620,15 @@ namespace StockProphet_Project.Controllers {
 								 o.Pvariable == mr.PVariable &&
 								 o.Plabel == mr.PLabel &&
 								 o.Pprefer == mr.PPrefer &&
-								 o.PbulidTime == DateTime.Parse(mr.PBuildTime) &&
-								 o.PfinishTime == DateTime.Parse(mr.PfinishTime) &&
+								 o.PbulidTime == buildTime &&
+								 o.PfinishTime == finishTime &&
 								 o.Dummyblock == mr.dummyblock &&
 								 o.Paccount == mr.Paccount &&
 								 o.Pmodel == mr.Pmodel
 								 select o;
+			//Console.WriteLine("-----------------------------------");
+			//Console.WriteLine(NewDataWithPid.Count());
+			//Console.WriteLine("-----------------------------------");
 			return Json(NewDataWithPid.FirstOrDefault());
 		}
 
@@ -601,7 +660,10 @@ namespace StockProphet_Project.Controllers {
 			public string Paccount { get; set; }
 			public string Pmodel { get; set; }
 		}
-
+		public IActionResult HomeStockData()
+		{
+			return View();
+		}
 		// <類別區>
 		// ------------------------------------------------------------------------------<KAZUO>------------------------------------------------------------------------------
 
@@ -609,9 +671,56 @@ namespace StockProphet_Project.Controllers {
 
 
 
-		// GET: Stockinfoes
-		public async Task<IActionResult> Index() {
+		//BorisPart
+		public async Task<IActionResult> Index()
+		{
 			return View(await _context.Stock.ToListAsync());
+		}
+		[HttpGet]
+		//依據股票代號尋找股票名稱
+		public IActionResult stocksnamewithcsv(string data)
+		{
+
+			var stocksList = (from obj in new ChoCSVReader<stocksCheck1>("wwwroot\\stocksList1.csv").WithFirstLineHeader()
+							  where obj.Code == data
+							  select new
+							  {
+								  label = obj.Name
+							  })
+				  .ToList();
+
+			return Json(stocksList);
+		}
+		//計算區間
+		private int predictdatacount(string sncode, int predictday)
+		{
+			//DateTime now=DateTime.Now;
+			//string formattedNow = now.ToString("yyyy-MM-dd"); 
+			//DateTime currentday = DateTime.Parse(formattedNow);
+			DateTime currentday = DateTime.Parse("2024-03-08");
+			DateTime previousdateTime = currentday.AddDays(-predictday);
+			DateOnly previousdateOnly = DateOnly.Parse(previousdateTime.ToString("yyyy-MM-dd"));
+
+			//測試
+			Console.WriteLine("currentday:" + currentday);
+			Console.WriteLine("previousdateOnly:" + previousdateOnly);
+			Console.WriteLine("previousdateOnly:" + previousdateOnly);
+
+			var stockDatafromtime = _context.Stock.
+				Where(x => x.StDate > previousdateOnly)
+				.Where(x => x.SnCode == sncode)
+				.OrderBy(x => x.StDate)
+				.ToList();
+			//foreach (var w in stockDatafromtime)
+			//{
+
+
+			//	Console.WriteLine(w.StDate.ToString());
+			//	Console.WriteLine(w.SnName.ToString());
+			//}
+			//Console.WriteLine(stockDatafromtime.Count);
+			predictday = stockDatafromtime.Count;
+			return predictday;
 		}
 		[HttpPost]
 		public IActionResult LSTMpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams, int iterationtime, int layer ) {
@@ -784,7 +893,7 @@ namespace StockProphet_Project.Controllers {
 
 
 			// 將數據轉換為 NumPy格式
-			int rowcount = stockData.Count;//資料庫幾筆資料 28
+			int rowcount = stockData.Count;//資料庫總共有幾筆
 			int colcount = features.Count;//客人選中幾個參數
 
 			//測試區
@@ -905,32 +1014,6 @@ namespace StockProphet_Project.Controllers {
 
 			return Content($"{predictionResulttoString},{lastLosstostring}");
 
-		}
-
-		private int predictdatacount( string sncode, int predictday ) {
-			DateTime currentday = DateTime.Parse("2024-03-08");
-			DateTime previousdateTime = currentday.AddDays(-predictday);
-			DateOnly previousdateOnly = DateOnly.Parse(previousdateTime.ToString("yyyy-MM-dd"));
-
-			//測試
-			Console.WriteLine("previousdateTime:" + previousdateTime);
-			Console.WriteLine("previousdateOnly:" + previousdateOnly);
-
-			var stockDatafromtime = _context.Stock.
-				Where(x => x.StDate > previousdateOnly)
-				.Where(x => x.SnCode == sncode)
-				.OrderBy(x => x.StDate)
-				.ToList();
-			//foreach (var w in stockDatafromtime)
-			//{
-
-
-			//	Console.WriteLine(w.StDate.ToString());
-			//	Console.WriteLine(w.SnName.ToString());
-			//}
-			//Console.WriteLine(stockDatafromtime.Count);
-			predictday = stockDatafromtime.Count;
-			return predictday;
 		}
 
 		[HttpPost]
@@ -1214,24 +1297,28 @@ namespace StockProphet_Project.Controllers {
 		public IActionResult predictindex() {
 			return View();
 		}
-		//public IActionResult predictphoto( string predicteddata, string sncode, string predictedloss,string mymodelselect) {
+	
 		public IActionResult predictphoto( int Pid ) {
 			var q = from o in _context.DbModels.ToList()
 					where o.Pid == Pid
 					select o;
 			var mr = q.FirstOrDefault();
 			if (q.Count() != 1) {
-				ViewBag.result = new {
-					SnCode = "PID(" + Pid + ")大於一筆 or 不存在",
-					DataCount = 1,
-					PredictedData = 1,
-					PredictedLoss = 1,
-					ChartData = 1,
-					usingModel = 1
+				//ViewBag.result = new {
+				//	SnCode = "PID(" + Pid + ")大於一筆 or 不存在",
+				//	DataCount = 1,
+				//	PredictedData = 1,
+				//	PredictedLoss = 1,
+				//	ChartData = 1,
+				//	usingModel = 1
 
-				};
+				//};
+
+				return View("~/Views/home/index.cshtml");
 			} else {
+
 				UpdateModelResultsStatusAndRatio();
+				GetStockVarsMapTable();
 				// 檢索資料庫中的資料筆數
 				int dataCount = _context.Stock.Where(x => x.SnCode == mr.Pstock).Count();
 
@@ -1259,28 +1346,20 @@ namespace StockProphet_Project.Controllers {
 						usedModel = "特殊模型";
 						break;
 				}
+
 				ViewBag.result = new {
-					SnCode = mr.Pstock,
 					DataCount = dataCount,
-					PredictedData = predictedData,
-					PredictedLoss = mr.Dummyblock,
 					ChartData = stockData,
 					usingModel = usedModel,
-					finishdate = mr.PfinishTime,
-					Pvariable = mr.Pvariable,
-					PbulidTime = mr.PbulidTime,
-					Pprefer = mr.Pprefer,
-					Pstatus = mr.Pstatus,
-					PAccuracyRatio = mr.PAccuracyRatio
 
 
 				};
+				return View(mr);
 			}
 
 
 			// 將資料傳遞到視圖
 
-			return View();
 		}
 
 		//public IActionResult checkstock( string sncode ) {
@@ -1302,13 +1381,14 @@ namespace StockProphet_Project.Controllers {
 		//	return Json(result);
 		//}
 
+		//將預測存入資料庫並根據pid傳遞資訊給predictphoto
 		[HttpPost]
-		public IActionResult Predictsavedata( string Pmodel, string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime, string PAccount, string Pparameter ) {
+		public IActionResult PredictSavedata( string Pmodel, string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime, string PAccount, string Pparameter ) {
 			var query = new StocksContext();
 			DateTime buildTime = DateTime.Parse(PBuildTime);
 			DateTime finishTime = DateTime.Parse(PfinishTime);
 			//System.Diagnostics.Debug.WriteLine($"PLabel: {PLabel}");
-			System.Diagnostics.Debug.WriteLine($"Pparameter111111111111: {Pparameter}");
+			//System.Diagnostics.Debug.WriteLine($"Pparameter111111111111: {Pparameter}");
 
 
 			var newdata = new DbModel {
@@ -1321,7 +1401,8 @@ namespace StockProphet_Project.Controllers {
 				Paccount = PAccount,
 				Dummyblock = Pparameter,
 				Pmodel = Pmodel,
-				Pstatus = "Tracing"
+				Pstatus = "Tracing",
+				PUpdateTime=DateTime.Parse("2000-01-01")
 			};
 			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
 			query.DbModels.Add(newdata);
@@ -1350,8 +1431,9 @@ namespace StockProphet_Project.Controllers {
 			//return View();
 		}
 
+		//確認使用者的等級來回饋預測次數
 		[HttpGet]
-		public IActionResult countpredicttime( string accountname ) {
+		public IActionResult CountPredictTime( string accountname ) {
 			var query = _context.DbModels.Count(o => o.Paccount == accountname);
 			bool result;
 			if (query == 5) {
@@ -1363,8 +1445,6 @@ namespace StockProphet_Project.Controllers {
 			return Json(Finalresult);
 		}
 
-		public IActionResult HomeStockData() {
-			return View();
-		}
+
 	}
 }
