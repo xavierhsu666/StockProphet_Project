@@ -32,8 +32,16 @@
         box-sizing: border-box;
         border-radius: 10px;
         box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
-    }
+    }   
 
+    .f1 {
+        border: 1px solid #ced4da;
+        border-radius:3px;
+        background-color: lightgrey;
+    }
+    .k1 {
+        padding-left: 10px;
+    }
     /* 下拉選單 */
     .news-filter select {
         background: #fff;
@@ -121,16 +129,16 @@
                         <br>
                     </div>
                     
-                    <div >
-                        <label for="Birthday" id="Birthday">生日:</label>
+                    <div class="f1 mb-3">
+                        <label for="Birthday" id="Birthday" class="k1">生日: <br /></label>
                     <br>
                     </div>
 
-                    <div >
-                        <label for="MGender" id="MGender">性別:</label>
+                    <div class="f1 mb-3 ">
+                        <label for="MGender" id="MGender" class="k1">性別:</label>
                     <br>
                     </div>
-                    <div>
+                    <div class="mb-3 news-filter">
                         <label for="MInvestYear">您的投資年數:</label>
                         <select name="MInvestYear" id="InvestYear" required>
                             <option value="1">未滿1年</option>
@@ -141,14 +149,14 @@
                         <br>
                     </div>
                     
-                    <div class="news-filter">
-                        <label for="MLevel" id="MLevel">會員等級:</label>
+                    <div class="f1 mb-3 ">
+                        <label for="MLevel" id="MLevel" class="k1">會員等級:</label>
                         <br>
                     </div>
                     
 
-                    <button id="ReviseData">修改資料</button>
-                    <button id="Reset">取消</button>
+                    <button id="ReviseData" class="w-50 btn btn-lg btn-primary">修改資料</button>
+                    <button id="Reset" class="w-50 btn btn-lg btn-secondary">取消</button>
                 </form>
             </div>
         </div>
