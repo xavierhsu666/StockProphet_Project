@@ -151,7 +151,7 @@ namespace StockProphet_Project.Controllers
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
             string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-                 B.PBulidTime,B.Pvariable, B.Pfinishtime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code
+                 B.PBulidTime,B.Pvariable, B.PFinishTime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code
     FROM DB_model AS B 
     OUTER APPLY (
         SELECT TOP 5 *
@@ -179,7 +179,7 @@ namespace StockProphet_Project.Controllers
                     PLabel = reader["Plabel"],
                     Parameter = reader["dummyblock"],
                     PBuildTime = reader["PBulidTime"],
-                    PFinsihTime = reader["Pfinishtime"],
+                    PFinsihTime = reader["PfinishTime"],
                     SteClose = reader["Ste_Close"],
                     PID = reader["Pid"],
                     preVariable = reader["PVariable"],
@@ -348,7 +348,7 @@ namespace StockProphet_Project.Controllers
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
             string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-                 B.PBulidTime,B.Pvariable, B.Pfinishtime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code
+                 B.PBulidTime,B.Pvariable, B.PFinishTime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code
     FROM DB_model AS B 
     OUTER APPLY (
         SELECT TOP 5 *
@@ -376,7 +376,7 @@ namespace StockProphet_Project.Controllers
                     PLabel = reader["Plabel"],
                     Parameter = reader["dummyblock"],
                     PBuildTime = reader["PBulidTime"],
-                    PFinsihTime = reader["Pfinishtime"],
+                    PFinsihTime = reader["PfinishTime"],
                     SteClose = reader["Ste_Close"],
                     PID = reader["Pid"],
                     preVariable = reader["PVariable"],
