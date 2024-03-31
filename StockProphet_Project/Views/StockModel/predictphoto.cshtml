@@ -1,34 +1,35 @@
-﻿@{
-	//http://localhost:5271/stockmodel/predictphoto?pid=11
+﻿@model DbModel
+@{
+	//http://localhost:5271/stockmodel/predictphoto?pid=49
 	ViewData["Title"] = "股票預測";
-	TimeSpan difference = DateTime.Now.Subtract(ViewBag.result.finishdate);
-	TimeSpan differenceOpp = ViewBag.result.finishdate.Subtract(DateTime.Now);
+	DateTime PfinishTime = (DateTime)Model.PfinishTime;
+	DateTime PbulidTime = (DateTime)Model.PbulidTime;
+
+	TimeSpan difference = DateTime.Now.Subtract(PfinishTime);
+	TimeSpan differenceOpp = (PfinishTime).Subtract(DateTime.Now);
+	var VarsTable = ViewBag.VarsTable;
 
 
-
-
-	int finishdate = (ViewBag.result.Pprefer == 1) ? 5 : 30;
+	int finishdate = (Model.Pprefer == 1) ? 5 : 30;
 	bool isTracing = ((int)difference.TotalDays <= 0) ? true : false;
 	string finishdateCountDownStr = "";
 
-	var ChartData = new List<Stock>();
-	ChartData = ViewBag.result.ChartData;
-
 	// 製作預測前時間區間 -------------
 	// var ActualPrice = ChartData.Where(x => x.StDate.CompareTo(finishdates) <= 0).OrderByDescending(x => x.StDate).FirstOrDefault().SteClose;
-	var finishdates = DateOnly.Parse(ViewBag.result.finishdate.ToString("yyyy-MM-dd"));
-	// var ActualPrice = ChartData.Where(x => x.StDate.CompareTo(finishdates) <= 0).OrderByDescending(x => x.StDate).FirstOrDefault().SteClose;
-	var BuildDates = DateOnly.Parse(ViewBag.result.PbulidTime.ToString("yyyy-MM-dd"));
+	var finishdates = DateOnly.Parse(PfinishTime.ToString("yyyy-MM-dd"));
+	var BuildDates = DateOnly.Parse(PbulidTime.ToString("yyyy-MM-dd"));
 
+	var ChartData = new List<Stock>();
+	ChartData = ViewBag.result.ChartData;
+	ChartData = ChartData.Where(x => x.StDate.CompareTo(finishdates) <= 0).ToList();
 	var LatestNdays_ori = ChartData.Where(x => x.StDate.CompareTo(BuildDates) <= 0).OrderByDescending(x => x.StDate).Take(finishdate).OrderBy(x => x.StDate);
-	var LatestNdaysAverage_ori = Math.Round((decimal)LatestNdays_ori.Average(x => x.SteClose), 2);
 	string ori_timeArea = "";
 	string ori_timeArea_Jtype = "";
 	int i = 0;
 	foreach (var item in LatestNdays_ori) {
 		// original的時間區間
 		if (i == 0 || i == LatestNdays_ori.Count() - 1) {
-			ori_timeArea += item.StDate + ",";
+			ori_timeArea += item.StDate.ToString("MM/dd") + ",";
 			if (i == 0) {
 				ori_timeArea_Jtype += item.StDate + ",";
 			} else if (i == LatestNdays_ori.Count() - 1) {
@@ -43,14 +44,13 @@
 
 	// 製作目前(預測)時間區間 -------------
 	var LatestNdays = ChartData.Where(x => x.StDate.CompareTo(finishdates) <= 0).OrderByDescending(x => x.StDate).Take(finishdate).OrderBy(x => x.StDate);
-	var LatestNdaysAverage = Math.Round((decimal)LatestNdays.Average(x => x.SteClose), 2);
 	string timeArea = "";
 	string timeArea_Jtype = "";
 	i = 0;
 	foreach (var item in LatestNdays) {
 		// LatestN的時間區間
 		if (i == 0 || i == LatestNdays.Count() - 1) {
-			timeArea += item.StDate + ",";
+			timeArea += item.StDate.ToString("MM/dd") + ",";
 
 			if (i == 0) {
 				timeArea_Jtype += item.StDate + ",";
@@ -65,32 +65,7 @@
 	}
 	timeArea = timeArea.Split(",")[0] + "~" + timeArea.Split(",")[1];
 
-	// 製作預期走勢 -------------
-	string UorD = "";
-	var PredictedData = (decimal)ViewBag.result.PredictedData;
-	// var PredictedData = (decimal)33.11;
 
-	if (LatestNdaysAverage > PredictedData) {
-		//看漲
-		UorD = "看空";
-	} else if (LatestNdaysAverage < PredictedData) {
-		UorD = "看多";
-	} else {
-		UorD = "看平";
-	}
-
-	// 製作實際走勢 -------------
-	string UorD2 = "";
-	if (LatestNdaysAverage > LatestNdaysAverage_ori) {
-		// 五日_now平均大於五日_ori
-		UorD2 = "看多";
-	} else if (LatestNdaysAverage < LatestNdaysAverage_ori) {
-		// 五日_now平均小於五日_ori
-		UorD2 = "看空";
-	} else {
-		// 五日_now平均等於五日_ori //* 100 * ((UorD == UorD2) ? 1 : -1)
-		UorD2 = "看平";
-	}
 
 	// 取得數據最大最小值 -------------
 	var MaxPrice = Math.Round((decimal)ChartData.Max(x => x.SteClose), 1);
@@ -106,173 +81,270 @@
 	string rltComment = "";
 	bool NeedShowAcc = (int)differenceOpp.TotalDays <= Math.Round(((decimal)finishdate) / 2, 0);
 	int NeedShowDays = (int)differenceOpp.TotalDays - (int)Math.Round(((decimal)finishdate) / 2, 0);
-	var acc = Math.Round(((decimal)PredictedData) / ((decimal)LatestNdaysAverage) * 100, 1);
 	// var normalized_acc = Math.Round(((acc - MinAcc) / (MaxAcc - MinAcc)) * 100, 2);
-	var normalized_acc = (acc > 100) ? 100 - (acc - 100) : acc;
 	if (NeedShowAcc) {
-		accComment = "預估準確率為「" + normalized_acc + " %」。";
-		rltComment = ((UorD == UorD2) ? "成功" : "失敗");
+		accComment = "預估準確率為「" + Model.PAccuracyRatio + " %」。";
+		rltComment = ((Model.PreTrend == Model.PActTrend) ? "成功" : "失敗");
 	} else {
-		accComment = "待" + NeedShowDays + "日，模型穩定後，計算預估準確率。";
-		rltComment = "待" + NeedShowDays + "日，模型穩定後，計算預估準確率。";
+		accComment = "待" + NeedShowDays + "日，模型穩定後，追蹤預估準確率。";
+		rltComment = "待" + NeedShowDays + "日，模型穩定後，追蹤預估準確率。";
 	}
+	// 製作誤差計算  -------------
 
+
+	// if LSTM 可能要全改寫
+	bool IsNNModel = (ViewBag.result.usingModel == "LSTM" || ViewBag.result.usingModel == "FNN") ? true : false;
+	if (IsNNModel) {
+		// <finishdate 的最近close價格
+		if (NeedShowAcc) {
+			accComment = "預估準確率為「" + Model.PAccuracyRatio + " %」。";
+			rltComment = Model.PResult;
+		} else {
+			accComment = "待" + NeedShowDays + "日，模型穩定後，追蹤預估準確率。";
+			rltComment = "待" + NeedShowDays + "日，模型穩定後，追蹤預估準確率。";
+		}
+	}
 
 	if (isTracing) {
 		// 追蹤中
 		finishdateCountDownStr += "預測「追蹤中」，整體走勢「" +
-		UorD + "」，參考價「" + PredictedData + "」元，" + accComment + "此預測將於「" +
+		Model.PreTrend + "」，參考價「" + Model.Plabel + "」元；" + accComment + "此預測將於「" +
 		(int)differenceOpp.TotalDays + "」天後結案。";
-
-		// 以「" +
-		// finishdate + "」日平均而言，預測前均價為「" + LatestNdaysAverage_ori + "」，目前均價為「" +
-		// LatestNdaysAverage + "」，整體走勢「" +
-		// UorD + "」，預估準確率為「" +
-		// Math.Round(((decimal)ViewBag.result.PredictedData) / ((decimal)LatestNdaysAverage) * 100 * ((UorD == UorD2) ? 1 : -1), 1) + "%」";
 	} else {
-
-
-		var ActualPrice = ChartData.Where(x => x.StDate.CompareTo(finishdates) <= 0).OrderByDescending(x => x.StDate).FirstOrDefault().SteClose;
-		finishdateCountDownStr += "預測「已結案" + (int)difference.TotalDays + "天」，預測趨勢「" + UorD +
-		"」，實際「走" + UorD2.Substring(1, 1) + "」，趨勢預測「" + ((UorD == UorD2) ? "成功」" : "失敗」") + "，模型準確率為「" +
-		normalized_acc + "%」";
-		// finishdateCountDownStr += "預測「已結案" + (int)difference.TotalDays + "天」，以"+finishdate+
-		// "日均線而言，預測前均價為「" + LatestNdaysAverage_ori + "」元，預估" + finishdate + "日後均價為「" +
-		// PredictedData + "」元。實際為「" + LatestNdaysAverage + "」，差異「" + ((int)PredictedData - LatestNdaysAverage) + "元」。準確率約「" +
-		// Math.Round(((decimal)PredictedData) / ((decimal)LatestNdaysAverage) * 100 * ((UorD == UorD2) ? 1 : -1), 1) + "%」，預測「" +
-		// UorD + "」，實際「走" + UorD2 .Substring(1,1)+ "」。預測結果「" + ((UorD == UorD2) ? "成功」" : "失敗」");
-
+		finishdateCountDownStr += "預測「已結案" + (int)difference.TotalDays + "天」，預測趨勢「" + Model.PreTrend +
+		"」，實際「走" + Model.PActTrend.Substring(1, 1) + "」，趨勢預測「" + Model.PResult + "；模型準確率為「" +
+		Model.PAccuracyRatio + "%」";
 	}
 
-			//(isTracing) ? (int)differenceOpp.TotalDays + "天後預測結束" : (int)difference.TotalDays * 1 + "日前已結案";
-
-			// switch (@ViewBag.result.usingModel)
-	// {
-	// 	case "LSTM":
-	// 		finishdate = 30;
-	// 		break;
-	// 	case "FNN":
-	// 		finishdate = 5;
-	// 		break;
-	// 	case "迴歸":
-	// 		finishdate = 30;
-	// 		break;
-	// 	case "時間序列":
-	// 		finishdate = 5;
-	// 		break;
-	// 	default:
-	// 		finishdate = 0;
-	// 		break;
-	// }
 }
 <!-- 引入 Chart.js 库 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
+<style>
+	button[name='btn']{
+		background-color: #73b5c5;
+		border-color: #73b5c5;
+	}
 
+	div[name='th'] {
+		align-content:center;
+		background-color: #cedba0;
+		font-weight:700;
+		border-radius:10px;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		padding-top :10px;
+		padding-bottom: 10px;
+	}
+
+</style>
 <div>
 
-	<h1 style="background-color:rgba(0, 98, 234, 0.1);padding:5px;">@finishdateCountDownStr </h1>
-	<h1 style="margin-top:30px">預測結果</h1>
-	<table class="table table-light">
-		<thead>
-			<tr>
-				<th>股票名稱</th>
-				<th>參考價格</th>
-				<th>建立時間</th>
-				<th>結案時間</th>
-			</tr>
-		</thead>
-		<tr>
-			<td id="stockname"> </td>
-			<td>@PredictedData</td>
-			<td>@ViewBag.result.PbulidTime</td>
-			<td>@ViewBag.result.finishdate</td>
-		</tr>
-	</table>
+	@* <h1 id="cmt" style="background-color:rgba(0, 98, 234, 0.1);padding:5px;">@finishdateCountDownStr </h1> *@
+	<div class="p-5 mb-4 bg-light rounded-3">
+		<div class="container-fluid py-5 w-100" 　>
+			<h1 id="cmt" class="display-5 fw-bold">Stock Propher</h1>
+			<p class="col-md-10 fs-4">@finishdateCountDownStr</p>
+			<button name="btn" class="btn btn-primary btn-lg" style="margin-right:12px" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c1" aria-expanded="true" aria-controls="flush-collapseOne">
+				績效
+			</button>
+			<button name="btn" class="btn btn-primary btn-lg ma-5" style="margin-right:12px" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c2" aria-expanded="true" aria-controls="flush-collapseOne">
+				結果
+			</button>
+			<button name ="btn" class="btn btn-primary btn-lg ma-5" style="margin-right:12px" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c3" aria-expanded="true" aria-controls="flush-collapseOne">
+				參數
+			</button>
+			<button name="btn" class="btn btn-primary btn-lg ma-5" style="margin-right:12px" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c4" aria-expanded="true" aria-controls="flush-collapseOne">
+				評估
+			</button>
+		</div>
 
-	<h1>模型參數</h1>
-	<table class="table table-light">
-		<thead>
-			<tr id="HereParas_th">
-				<th>使用模型</th>
-				<th>投資偏好</th>
-				<th>使用變數</th>
-			</tr>
-		</thead>
-		<tr id="HereParas_td">
-			<td>@ViewBag.result.usingModel</td>
-			<td>@((ViewBag.result.Pprefer == 1) ? "短期投資" : "長期投資") </td>
-			<td>@ViewBag.result.Pvariable</td>
+		<div class="accordion accordion-flush" id="accordionFlushExample">
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="flush-headingOne1">
+					@* <button  class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c1" aria-expanded="false" aria-controls="flush-collapseOne">
+					模型績效
+					</button> *@
+				</h2>
+				<div id="flush-c1" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+					<div class="accordion-body ">
+						<div class="container-fluid">
+							<div class="row" name="th">
+								<div class="col">
+									預測前 時間
+								</div>
+								<div class="col">
+									@(isTracing ? "目前 時間" : "結案 時間")
+								</div>
+								<div class="col">
+									預測前 參考價<br>(A)
+								</div>
+								<div class="col">
+									預測 參考價<br>(B)
+								</div>
+								<div class="col">
+									目前 參考價<br>(C)
+								</div>
+								<div class="col">
+									預測走勢<br>(D, A vs B)
+								</div>
+								<div class="col">
+									實際走勢<br>(E, A vs C)
+								</div>
+								<div class="col">
+									@(isTracing ? "預估結果" : "結案結果")<br>(F, D vs E)
+								</div>
+								<div class="col">
+									@(isTracing ? "預估準確率" : "準確率")<br>(G, B vs C)
+								</div>
+								<div class="col">
+									@(isTracing ? "預測誤差" : "實際誤差")<br>(H, B vs C)
+								</div>
+							</div>
 
-		</tr>
-	</table>
-	<h1>模型表現</h1>
-	<table class="table table-light">
-		<thead>
-			<tr id="modelEva_th">
-			</tr>
-		</thead>
-		<tr id="modelEva_tb">
-		</tr>
-	</table>
+							<div class="row">
+								<div class="col">
+									@(ori_timeArea)
+								</div>
+								<div class="col">
+									@timeArea
+								</div>
+								<div class="col">
+									@(Model.PreDictLabel)
+								</div>
+								<div class="col">
+									@(Model.Plabel)
+								</div>
+								<div class="col">
+									@(Model.PCurLabel)
+								</div>
+								<div class="col">
+									@(Model.PreTrend)
+								</div>
+								<div class="col">
+									@("走" + Model.PActTrend.Substring(1, 1))
+								</div>
+								<div class="col">
+									@(isTracing ? "-" : Model.PAccuracyRatio + "%")
+								</div>
+								<div class="col">
+									@(isTracing ? "-" : Model.PAccuracyRatio + "%")
+								</div>
+								<div class="col">
+									@(Model.PSpreadRatio + "%")
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="flush-headingOne2">
+					@* <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c2" aria-expanded="false" aria-controls="flush-collapseOne">
+					預測結果
+					</button> *@
+				</h2>
+				<div id="flush-c2" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+					<div class="accordion-body ">
+						<div class="container-fluid">
+							<div class="row" name="th">
+								<div class="col">
+									股票名稱
+								</div>
+								<div class="col">
+									參考價格
+								</div>
+								<div class="col">
+									建立時間
+								</div>
+								<div class="col">
+									結案時間
+								</div>
+							</div>
 
-	<h1>指標相關數據</h1>
-	<table class="table table-light">
-		<thead>
-			<tr>
-				<th>預測前 時間</th>
-				<th>目前 時間</th>
-				<th>預測前 參考價(A)</th>
-				<th>預測 參考價(B)</th>
-				<th>目前 參考價(C)</th>
-				<th>預測走勢(D, A vs B)</th>
-				<th>實際走勢(E, A vs C)</th>
-				<th>@(isTracing ? "預估準確率(F)" : "準確率(F)")</th>
-				<th>@(isTracing ? "預估結果(G, D vs E)" : "結案結果(G, D vs E)")</th>
-			</tr>
-		</thead>
-		<tr>
-			<td>@ori_timeArea</td>
-			<td>@timeArea</td>
-			<td>@LatestNdaysAverage_ori</td>
-			<td>@PredictedData</td>
-			<td>@LatestNdaysAverage</td>
-			<td>@(UorD)</td>
-			<td>@(UorD2)</td>
-			<td>@(isTracing ? accComment : normalized_acc + "%") </ td >
-			<td>@(rltComment)</td>
+							<div class="row">
+								<div class="col" id="stockname">
+								</div>
+								<div class="col">
+									@(Model.Plabel)
+								</div>
+								<div class="col">
+									@PbulidTime
+								</div>
+								<div class="col">
+									@PfinishTime
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="flush-headingOne3">
+						@* <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c3" aria-expanded="false" aria-controls="flush-collapseOne">
+						模型參數
+						</button> *@
+					</h2>
+					<div id="flush-c3" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
+						<div class="accordion-body ">
+							<div class="container-fluid">
+								<div class="row" id="HereParas_th" name="th">
+									<div class="col">
+										使用模型
+									</div>
+									<div class="col">
+										投資偏好
+									</div>
+									<div class="col">
+										使用變數
+									</div>
+								</div>
+								<div class="row" id="HereParas_td">
+									<div class="col">
+										@ViewBag.result.usingModel
+									</div>
+									<div class="col">
+										@((Model.Pprefer == 1) ? "短期投資" : "長期投資")
+									</div>
+									<div class="col" id="Pvariable">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="flush-headingOne4">
+						@* <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c4" aria-expanded="false" aria-controls="flush-collapseOne">
+						模型評估
+						</button> *@
+					</h2>
+					<div id="flush-c4" class="accordion-collapse collapse" aria-labelledby="flush-headingFour" data-bs-parent="#accordionFlushExample">
+						<div class="accordion-body">
+							<div class="container-fluid">
+								<div class="row" id="modelEva_th" name="th">
+								</div>
+								<div class="row" id="modelEva_tb">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
-		</tr>
-	</table>
+	</div>
 </div>
-
-
-<div style="max-width:1200px;max-height:700px;display:block">
-
-	<!-- 创建一个 canvas 元素用于绘制图表 -->
-	@* <canvas id="stockChart" width="800" height="400"></canvas> *@
-	<canvas id="stockChart" width="1200" height="600"></canvas>
+@* style="max-width:1200px;max-height:700px;display:block" *@
+<div class="p-5 mb-4 bg-light rounded-3" style="margin-top:30px">
+	<canvas id="stockChart" style="width:70vw;height:50vw"></canvas>
 </div>
-@* <h1>預測股票代號: @ViewBag.result.SnCode </h1>
-<br>
-<h1 id="stockname"></h1>
-<br />
-
-<h1>使用模型: @ViewBag.result.usingModel</h1>
-<br />
-<h1>@finishdateCountDownStr，收盤價: @ViewBag.result.PredictedData</h1>
-<br />
-<h1>MSE-Loss: @ViewBag.result.PredictedLoss</h1>
-<br />
-<button id="mypredictresult">跳轉我的預測</button>
-<br />
-<button id="mystockid">跳轉個股</button>
-<br /> *@
-
 <script>
-	var actualData = @Html.Raw(Json.Serialize(ViewBag.result.ChartData));
-	var predictedData = @Html.Raw(Json.Serialize(PredictedData));
+
+
+
+	var actualData = @Html.Raw(Json.Serialize(ChartData));
+	var predictedData = @Html.Raw(Json.Serialize(Model.Plabel));
 
 	var formattedData = actualData.map(function (item) {
 		var date = moment(item.StDate).format('YYYY-MM-DD');
@@ -282,6 +354,9 @@
 			label: '日期: ' + date + ', 收盤價: ' + item.SteClose
 		};
 	});
+	var formattedDataRemoveLast = formattedData.slice();
+
+	formattedDataRemoveLast.pop();
 	var formatDate_Ori = (@Html.Raw(Json.Serialize(ori_timeArea_Jtype)));
 	// var dateObjects = formatDate_Ori.map(function (dateString) {
 	// 	return new Date(dateString);
@@ -294,7 +369,7 @@
 		dateObjects_Ori.push(moment(date).format('YYYY-MM-DD'));
 	})
 
-	var formatDate_Lat = (@Html.Raw(Json.Serialize(ori_timeArea_Jtype)));
+	var formatDate_Lat = (@Html.Raw(Json.Serialize(timeArea_Jtype)));
 	// 去除字符串中的方括号并以逗号分割为数组
 	dateStrings = formatDate_Lat.split(",");
 	var dateObjects_Lat = [];
@@ -303,10 +378,8 @@
 		dateObjects_Lat.push(moment(date).format('YYYY-MM-DD'));
 	})
 
-	console.log(dateObjects_Ori);
-	console.log(dateObjects_Lat);
 	var lastActualDate = moment(formattedData[formattedData.length - 1].x);
-	var predictedDate = moment(lastActualDate).add(@finishdate, 'day');
+	var predictedDate = moment(lastActualDate);
 	var formattedPredictedDate = predictedDate.format('YYYY-MM-DD');
 	var predictedClosePrice = predictedData;
 	var predictedDate1 = predictedDate.format('YYYY-MM-DD')
@@ -323,6 +396,15 @@
 				data: formattedData,
 				borderColor: 'blue',
 				fill: false
+			}, {
+				label: '實際收盤價',
+				data: [{
+					x: formattedData[formattedData.length - 1].x,
+					y: formattedData[formattedData.length - 1].y
+				}],
+				borderColor: 'blue',
+				fill: false,
+				pointRadius: 10
 			}, {
 				label: '預測參考價',
 				data: [{
@@ -350,25 +432,25 @@
 				label: '預測前' + @Html.Raw(Json.Serialize(finishdate))+'日移動平均',
 				data: [{
 					x: dateObjects_Ori[0],
-					y: @Html.Raw(Json.Serialize(LatestNdaysAverage_ori)) // 设置水平线的 y 坐标值
-				}, {
+					y: @Html.Raw(Json.Serialize(Model.PreDictLabel)) // 设置水平线的 y 坐标值
+																		}, {
 					x: dateObjects_Ori[dateObjects_Ori.length - 1],
-					y: @Html.Raw(Json.Serialize(LatestNdaysAverage_ori))
-				}],
+					y: @Html.Raw(Json.Serialize(Model.PreDictLabel))
+																		}],
 				borderColor: 'black',
 				fill: false,
 				borderWidth: 0.7,
 				borderDash: [5, 5],
-				hidden: @Html.Raw(Json.Serialize(true)) // 結案的話秀
-				}, {
+				hidden: @Html.Raw(Json.Serialize(isTracing)) // 結案的話秀
+																		}, {
 				label: '近' + @Html.Raw(Json.Serialize(finishdate))+'日移動平均*',
 				data: [{
 					x: dateObjects_Lat[0],
-					y: @Html.Raw(Json.Serialize(LatestNdaysAverage)) // 设置水平线的 y 坐标值
-				}, {
+					y: @Html.Raw(Json.Serialize(Model.PCurLabel)) // 设置水平线的 y 坐标值
+																		}, {
 					x: dateObjects_Lat[dateObjects_Lat.length - 1],
-					y: @Html.Raw(Json.Serialize(LatestNdaysAverage))
-					}],
+					y: @Html.Raw(Json.Serialize(Model.PCurLabel))
+																			}],
 				borderColor: 'red',
 				fill: false,
 				borderWidth: 0.7,
@@ -377,14 +459,14 @@
 			}]
 		},
 		options: {
-			responsive: false, // 禁用響應式
+			responsive: true, // 禁用響應式
 			maintainAspectRatio: false, // 禁用維持長寬比
 			scales: {
 				x: {
 					ticks: {
 						maxTicksLimit: 15 // 限制最大刻度數為 15
 					}
-					
+
 				},
 				y: {
 					ticks: {
@@ -400,14 +482,14 @@
 		window.location.href = "/Member/MyPredictResult"
 	})
 	$("#mystockid").on("click", function () {
-		window.location.href = "/Home/StockCharts/" + @ViewBag.result.SnCode
-																})
+		window.location.href = "/Home/StockCharts/" + @Model.Pstock
+																														})
 	$.ajax({
 		url: "/StockModel/stocksnamewithcsv",
 		method: "get",
-		data: { data: @ViewBag.result.SnCode },
+		data: { data: @Model.Pstock },
 		success: function (e) {
-			$("#stockname").text(`${@Html.Raw(Json.Serialize(ViewBag.result.SnCode))} - ${e[0]["label"]}`);
+			$("#stockname").text(`${@Html.Raw(Json.Serialize(Model.Pstock))} - ${e[0]["label"]}`);
 
 		}
 	})
@@ -451,26 +533,56 @@
 		// console.log(EvaOrPar);
 
 		var isTracing = @Html.Raw(Json.Serialize(isTracing));
-		var acc = @Html.Raw(Json.Serialize(normalized_acc));
+		var acc = @Html.Raw(Json.Serialize(Model.PAccuracyRatio));
 		if (isTracing) {
 			eva.預計準確率 = (acc) + "%";
 		} else {
 			eva.準確率 = (acc) + "%";
 		}
-
 		$("#HereParas").text(JSON.stringify(pars));
+
+		// 把變數轉成中文顯示
+		var varsMapTableJ = @Html.Raw(Json.Serialize(VarsTable));
+		var PvariableJ = @Html.Raw(Json.Serialize(Model.Pvariable));
+		var varsMapTable = JSON.parse(varsMapTableJ);
+		var Pvariable = JSON.parse(PvariableJ);
+
+		var TradVars = "";
+		var k = 0;
+		$.each(varsMapTable, function (i, ival) {
+			for (var j = 0; j < Pvariable.length; j++) {
+				if (i == Pvariable[j]) {
+					if (k == 0) {
+						TradVars = ival + ', ';
+					}
+					else if (k == Pvariable.length - 1) {
+						TradVars += ival;
+
+					} else {
+						TradVars += ival + ', ';
+
+					}
+					k++;
+				}
+
+			}
+		})
+		// console.log(`${TradVars}`);
+		$("#Pvariable").text(TradVars);
 
 
 		$.each(eva, function (i, val) {
-			$("#modelEva_th").append("<th>" + i + "</th>");
-			$("#modelEva_tb").append("<td>" + val + "</td>");
+			if (i == "預計準確率" || i == "準確率") { } else {
+				$("#modelEva_th").append("<div class='col'>" + i + "</div>");
+				$("#modelEva_tb").append("<div class='col'>" + val + "</div>");
+			}
 		})
 		$.each(pars, function (i, val) {
-			$("#HereParas_th").append("<th>" + i + "</th>");
-			$("#HereParas_td").append("<td>" + val + "</td>");
+			$("#HereParas_th").append("<div class='col'>" + i + "</div>");
+			$("#HereParas_td").append("<div class='col'>" + val + "</div>");
 		})
 		return EvaOrPar;
 	}
-	TransJtoO(@Html.Raw(Json.Serialize(ViewBag.result.PredictedLoss)));
+	TransJtoO(@Html.Raw(Json.Serialize(Model.Dummyblock)));
 
 </script>
