@@ -1,377 +1,467 @@
 ﻿@{
-    string AccountPattern = @"^[a-zA-Z0-9]{8,15}$";
-    string PasswordPattern = @"^(?=.*[!@#$%^&*])(?=.{8,})[a-zA-Z0-9!@#$%^&*]+$";
-    string MEmailPattern = @"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$";
-    Layout = "_Layout2";
+	string AccountPattern = @"^[a-zA-Z0-9]{8,15}$";
+	string PasswordPattern = @"^(?=.*[!@#$%^&*])(?=.{8,})[a-zA-Z0-9!@#$%^&*]+$";
+	string MEmailPattern = @"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$";
+	Layout = "_Layout2";
 }
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
 <style>
-    /* 帳號檢查小動畫 */
-    #ckeckOk {
-        font-size: 24px;
-        position: absolute;       
-        top: 60%;
-        right: 10px;
-        transform: translateY(-50%); */
-        /* visibility: hidden;  */
-        /* visibility: visible; */
-        width: 30px;
-        height: 30px;
-    }
-    /* 小眼睛 */
-    #checkEye {
-        position: absolute;
-        top: 50%;
-        right: 10px;
-        transform: translateY(-50%);
-    }
-    /* 外層 */
-    .form-container {
-        
-        max-width: 500px;
-        background-color: #fff;
-        padding: 32px 24px;
-        font-size: 14px;
-        font-family: inherit;
-        color: #212121;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        box-sizing: border-box;
-        border-radius: 10px;
-        box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
-    }
-    /* 下拉選單 */
-    .news-filter select {
-        background: #fff;
-        color: black;
-        margin: 5px;
-        width: 300px;
-        height: 3em;
-        /* padding: 8px; */
-        position: relative;
-        border-radius: 5px;
-        appearance: none;
-        -moz-appearance: none;
-        -webkit-appearance: none;
-        /*  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), linear-gradient(#003d79, #003d79);
-            background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -webkit-linear-gradient(#003d79, #003d79);
-            background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -moz-linear-gradient(#003d79, #003d79);
-            */
-        background-position: right 0.5em top 50%, 0 0;
-        background-size: contain, cover;
-        background-repeat: no-repeat, repeat;
-    }
+	/* 帳號檢查小動畫 */
+	#ckeckOk {
+		font-size: 24px;
+		position: absolute;
+		top: 60%;
+		right: 10px;
+		transform: translateY(-50%);
+		*/
+		/* visibility: hidden;  */
+		/* visibility: visible; */
+		width: 30px;
+		height: 30px;
+	}
+	/* 小眼睛 */
+	#checkEye {
+		position: absolute;
+		top: 50%;
+		right: 10px;
+		transform: translateY(-50%);
+	}
+	/* 外層 */
+	.form-container {
+		max-width: 500px;
+		background-color: #fff;
+		padding: 32px 24px;
+		font-size: 14px;
+		font-family: inherit;
+		color: #212121;
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		box-sizing: border-box;
+		border-radius: 10px;
+		box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
+	}
+	/* 下拉選單 */
+	.news-filter select {
+		background: #fff;
+		color: black;
+		margin: 5px;
+		width: 300px;
+		height: 3em;
+		/* padding: 8px; */
+		position: relative;
+		border-radius: 5px;
+		appearance: none;
+		-moz-appearance: none;
+		-webkit-appearance: none;
+		/*  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), linear-gradient(#003d79, #003d79);
+								background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -webkit-linear-gradient(#003d79, #003d79);
+								background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -moz-linear-gradient(#003d79, #003d79);
+								*/
+		background-position: right 0.5em top 50%, 0 0;
+		background-size: contain, cover;
+		background-repeat: no-repeat, repeat;
+	}
 
-    option {
-        appearance: none;
-        background: #fff;
-        position: absolute;
-    }
+	option {
+		appearance: none;
+		background: #fff;
+		position: absolute;
+	}
 </style>
 
 
 <div id="RegisterData" class="form-container">
-    <div class="logo-container">註冊資料</div>
-    <form autocomplete="on">
+	<div class="logo-container">註冊資料</div>
+	<form autocomplete="on">
 
-        <div class="form-floating mb-3">
-            @* +正則 *@
-            <input class="form-control" type="text" pattern=@AccountPattern size="20" maxlength="20" name="MAccoMnt" id="Account" value="" required="required">
-            <label class="form-label" for="Account">帳號:</label>
-            @* 打勾動畫 "*@
-            <i id="ckeckOk" class="fa-solid fa-circle-check" style="color: #63E6BE; display:none"></i>
-            @* <div id="lottie333" style="display: none"></div> *@
-            <span id="checkName"></span>@* 檢查帳戶名稱是否重複 *@
-            <span id="accountError" style="color: red;"></span> @* 不符合格式跳提示 *@
-        </div>
+		<div class="form-floating mb-3">
+			@* +正則 *@
+			<input class="form-control" type="text" pattern=@AccountPattern size="20" maxlength="20" name="MAccoMnt" id="Account" value="" required="required">
+			<label class="form-label" for="Account">帳號:</label>
+			@* 打勾動畫 "*@
+			<i id="ckeckOk" class="fa-solid fa-circle-check" style="color: #63E6BE; display:none"></i>
+			@* <div id="lottie333" style="display: none"></div> *@
+			<span id="checkName"></span>@* 檢查帳戶名稱是否重複 *@
+			<span id="accountError" style="color: red;"></span> @* 不符合格式跳提示 *@
+		</div>
 
-        <div class="form-floating mb-3">
-            @* +正則 *@
-            <input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword1" id="Password1" autocomplete=“off”>
-            <label class="form-label" for="Password">密碼:</label>
-            <i id="checkEye" class="fas fa-eye-slash"></i>
-            <span id="passwordError" style="color: red;"></span>
-        </div>
-        <div class="form-floating mb-3">
-            @* +正則 *@
-            <input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword2" id="Password2" value="" autocomplete=“off”>
-            <label class="form-label" for="Password">請再次輸入密碼:</label>
-            <span id="confirmPasswordError" style="color: red;"></span>
-            @* 再次輸入密碼不同時，顯示提示字 *@
-            <span id="pwdnoteword" style="color: red;">您輸入的密碼不相同</span>
+		<div class="form-floating mb-3">
+			@* +正則 *@
+			<input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword1" id="Password1" autocomplete=“off”>
+			<label class="form-label" for="Password">密碼:</label>
+			<i id="checkEye" class="fas fa-eye-slash"></i>
+			<span id="passwordError" style="color: red;"></span>
+		</div>
+		<div class="form-floating mb-3">
+			@* +正則 *@
+			<input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword2" id="Password2" value="" autocomplete=“off”>
+			<label class="form-label" for="Password">請再次輸入密碼:</label>
+			<span id="confirmPasswordError" style="color: red;"></span>
+			@* 再次輸入密碼不同時，顯示提示字 *@
+			<span id="pwdnoteword" style="color: red;">您輸入的密碼不相同</span>
 
-        </div>
+		</div>
 
-        <div class="logo-container">基本資料</div>
+		<div class="logo-container">基本資料</div>
 
-        <div class="form-floating mb-3">
-            @* +正則 *@
-            <input class="form-control" type="email" pattern=@MEmailPattern name="MEmail" id="Email" value="">
-            <label class="form-label" class="form-label" for="MEmail">信箱:</label>
-            <span id="emailError" style="color: red;"></span>
-            <br>
-        </div>
+		<div class="form-floating mb-3">
+			@* +正則 *@
+			<input class="form-control" type="email" pattern=@MEmailPattern name="MEmail" id="Email" value="">
+			<label class="form-label" class="form-label" for="MEmail">信箱:</label>
+			<span id="emailError" style="color: red;"></span>
+			<br>
+		</div>
 
-        <div class="form-floating mb-3">
-            <input class="form-control" type="text" name="MTrueName" id="UserName" value="">
-            <label class="form-label" for="MTrueName">姓名:</label>
-            <br>
-        </div>
+		<div class="form-floating mb-3">
+			<input class="form-control" type="text" name="MTrueName" id="UserName" value="">
+			<label class="form-label" for="MTrueName">姓名:</label>
+			<br>
+		</div>
 
-        <div class="form-floating mb-3">
-            <input class="form-control" type="date" name="MBirthday" id="Birthday" value="">
-            <label class="form-label" for="Birthday">生日:</label>
-            <br>
-        </div>
+		<div class="form-floating mb-3">
+			<input class="form-control" type="date" name="MBirthday" id="Birthday" value="">
+			<label class="form-label" for="Birthday">生日:</label>
+			<br>
+		</div>
 
-        <div>
-            <label for="MGender" required="required">性別:</label>
-            <input type="radio" name="MGender" id="Male" value="男" required>
-            <label for="Male">男</label>
-            <input type="radio" name="MGender" id="Female" value="女" required>
-            <label for="Female">女</label>
-            <br>
-        </div>
+		<div>
+			<label for="MGender" required="required">性別:</label>
+			<input type="radio" name="MGender" id="Male" value="男" required>
+			<label for="Male">男</label>
+			<input type="radio" name="MGender" id="Female" value="女" required>
+			<label for="Female">女</label>
+			<br>
+		</div>
 
-        <div class="news-filter">
-            <label for="MInvestYear" required>您的投資年數:</label>
-            <select name="MInvestYear" id="InvestYear">
-                <option value="1">未滿1年</option>
-                <option value="2">1-3年</option>
-                <option value="3">3-5年</option>
-                <option value="4">5年以上</option>
-            </select>
-            <br>
-        </div>
+		<div class="news-filter">
+			<label for="MInvestYear" required>您的投資年數:</label>
+			<select name="MInvestYear" id="InvestYear">
+				<option value="1">未滿1年</option>
+				<option value="2">1-3年</option>
+				<option value="3">3-5年</option>
+				<option value="4">5年以上</option>
+			</select>
+			<br>
+		</div>
 
-        <div class="news-filter">
-            <label for="MLevel">會員等級:</label>
-            <select name="MLevel" id="MLevel" size="1">
-                <option value="一般會員">一般會員</option>
-                <option value="高級會員">高級會員</option>
-            </select>
-            <br>
-        </div>
+		<div class="news-filter">
+			<label for="MLevel">會員等級:</label>
+			<select name="MLevel" id="MLevel" size="1">
+				<option value="一般會員">一般會員</option>
+				<option value="高級會員">高級會員</option>
+			</select>
+			<br>
+		</div>
 
-        @*   下拉選單測試
-        <div class="news-filter">
-        <label class="form-label" for="MTrueName">測試:</label>
-        <select name="name" id="">
-        <option value="First value">First</option>
-        <option value="Second value">Second</option>
-        <option value="Third value">Third</option>
-        <option value="Forth value">Forth</option>
-        <option value="Fifth value">Fifth</option>
-        </select>
-        </div> *@
+		@*   下拉選單測試
+		<div class="news-filter">
+		<label class="form-label" for="MTrueName">測試:</label>
+		<select name="name" id="">
+		<option value="First value">First</option>
+		<option value="Second value">Second</option>
+		<option value="Third value">Third</option>
+		<option value="Forth value">Forth</option>
+		<option value="Fifth value">Fifth</option>
+		</select>
+		</div> *@
 
-        <button class="w-100 btn btn-lg btn-primary" type="submit" id="RegisterSubmit">立即註冊</button>
-        <button class="w-100 btn btn-lg btn-secondary" id="Reset">取消填寫</button>
-    </form>
+		<button class="w-100 btn btn-lg btn-primary" type="submit" id="RegisterSubmit">立即註冊</button>
+		<button class="w-100 btn btn-lg btn-secondary" id="Reset">取消填寫</button>
+	</form>
+
+	@* 儲值窗 *@
+	<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">會員等級權益說明</h5>
+					<button type="button" id="closebtn" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="wrap">
+						<div class="item">
+							<div class="icon"><i class="fa-solid fa-chess-pawn" style="color: #73bbbf;"></i></div>
+							<div class="txt" style="font-size: 1.2em;">
+								<h3>訪客</h3>
+								<ul>
+									<li class="text-lg-right">可收藏預測筆數:無</li>
+									<li class="text-lg-right">預測模型選擇:無</li>
+									<li class="text-lg-right">預測模型數量:無</li>
+									<li class="text-lg-right">Free</li>
+								</ul>
+							</div>
+						</div>
+						<div class="item">
+							<div class="icon"><i class="fa-solid fa-chess-knight" style="color: #73b5c5;"></i></i></div>
+							<div class="txt" style="font-size: 1.2em;">
+								<h3>一般會員</h3>
+								<ul>
+									<li class="text-lg-right">可收藏預測筆數:5筆</li>
+									<li class="text-lg-right">預測模型選擇:</li>
+									<ul>
+										<li>迴歸</li>
+										<li>時間序列</li>
+									</ul>
+									<li class="text-lg-right">預測模型數量:5筆</li>
+									<li class="text-lg-right">Free</li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="item">
+							<div class="icon"><i class="fa-solid fa-chess-king fa-bounce" style="color: #73b5c5;"></i></div>
+							<div class="txt" style="font-size: 1.2em;">
+								<h3>高級會員</h3>
+								<ul>
+									<li class="text-lg-right">可收藏預測筆數:不限</li>
+									<li class="text-lg-right">
+										預測模型選擇:
+										<ul>
+											<li>迴歸</li>
+											<li>時間序列</li>
+											<li>LSTM</li>
+											<li>FNN</li>
+										</ul>
+									</li>
+									<li class="text-lg-right">預測模型數量:不限</li>
+									<li class="text-lg-right">NTD$ 365/月</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="upgradeclose1">Close</button>
+					<button type="button" class="btn btn-primary" id="upgrade1">升級</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 </div>
 
 
 
 <script>
-    //檢查帳號是否重複
-    $('#checkName').hide();
-    //再次輸入密碼不同時，顯示提示字
-    $('#pwdnoteword').hide();
+	//檢查帳號是否重複
+	$('#checkName').hide();
+	//再次輸入密碼不同時，顯示提示字
+	$('#pwdnoteword').hide();
 
-    $(function () {      
+	$(function () {
 
-        //密碼欄位小眼睛
-        $("#checkEye").click(function () {
-            if ($(this).hasClass('fa-eye-slash')) {
-                $("#Password1").attr('type', 'text');
-                $("#Password2").attr('type', 'text');
-            } else {
-                $("#Password1").attr('type', 'password');
-                $("#Password2").attr('type', 'password');
-            }
-            $(this).toggleClass('fa-eye-slash').toggleClass('fa-eye');
-        });
+		//密碼欄位小眼睛
+		$("#checkEye").click(function () {
+			if ($(this).hasClass('fa-eye-slash')) {
+				$("#Password1").attr('type', 'text');
+				$("#Password2").attr('type', 'text');
+			} else {
+				$("#Password1").attr('type', 'password');
+				$("#Password2").attr('type', 'password');
+			}
+			$(this).toggleClass('fa-eye-slash').toggleClass('fa-eye');
+		});
 
-        $('#Account').on('change', function () {
-            var accountValue = $(this).val();
-            var accountPattern = new RegExp(@Html.Raw(Json.Serialize(AccountPattern)));
-            // 检查输入值是否匹配正则表达式
-            if (!accountPattern.test(accountValue)) {
-                $('#accountError').text('"限輸入英數字，請設定8碼以上"');
-            } else {
-                $('#accountError').text('');
-                // console.log("沒事")
-            }
-        });
-        // 监听密码输入框的输入事件
-        $('#Password1').on('change', function () {
-            var passwordValue = $(this).val();
-            var passwordPattern = new RegExp(@Html.Raw(Json.Serialize(PasswordPattern)));
-            // 检查输入值是否匹配正则表达式
-            if (!passwordPattern.test(passwordValue)) {
-                $('#passwordError').text('"需至少包含一個特殊符號，且長度須超過8碼"');
-            } else {
-                $('#passwordError').text('');
-            }
-        });
+		$('#Account').on('change', function () {
+			var accountValue = $(this).val();
+			var accountPattern = new RegExp(@Html.Raw(Json.Serialize(AccountPattern)));
+			// 检查输入值是否匹配正则表达式
+			if (!accountPattern.test(accountValue)) {
+				$('#accountError').text('"限輸入英數字，請設定8碼以上"');
+			} else {
+				$('#accountError').text('');
+				// console.log("沒事")
+			}
+		});
+		// 监听密码输入框的输入事件
+		$('#Password1').on('change', function () {
+			var passwordValue = $(this).val();
+			var passwordPattern = new RegExp(@Html.Raw(Json.Serialize(PasswordPattern)));
+			// 检查输入值是否匹配正则表达式
+			if (!passwordPattern.test(passwordValue)) {
+				$('#passwordError').text('"需至少包含一個特殊符號，且長度須超過8碼"');
+			} else {
+				$('#passwordError').text('');
+			}
+		});
 
-        // 监听重复密码输入框的输入事件
-        $('#Password2').on('change', function () {
-            var confirmPasswordValue = $(this).val();
-            var passwordValue = $('#Password').val();
-            // 检查两次输入的密码是否一致
-            if (confirmPasswordValue !== passwordValue) {
-                // $('#confirmPasswordError').text('两次输入的密码不相同');
-            } else {
-                $('#confirmPasswordError').text('');
-            }
-        });
+		// 监听重复密码输入框的输入事件
+		$('#Password2').on('change', function () {
+			var confirmPasswordValue = $(this).val();
+			var passwordValue = $('#Password').val();
+			// 检查两次输入的密码是否一致
+			if (confirmPasswordValue !== passwordValue) {
+				// $('#confirmPasswordError').text('两次输入的密码不相同');
+			} else {
+				$('#confirmPasswordError').text('');
+			}
+		});
 
-        // 监听电子邮件输入框的输入事件
-        $('#Email').on('change', function () {
-            var emailValue = $(this).val();
-            var emailPattern = new RegExp(@Html.Raw(Json.Serialize(MEmailPattern)));
-            // 检查输入值是否匹配正则表达式
-            if (!emailPattern.test(emailValue)) {
-                $('#emailError').text('信箱格式錯誤');
-            } else {
-                $('#emailError').text('');
-            }
-        });
+		// 监听电子邮件输入框的输入事件
+		$('#Email').on('change', function () {
+			var emailValue = $(this).val();
+			var emailPattern = new RegExp(@Html.Raw(Json.Serialize(MEmailPattern)));
+			// 检查输入值是否匹配正则表达式
+			if (!emailPattern.test(emailValue)) {
+				$('#emailError').text('信箱格式錯誤');
+			} else {
+				$('#emailError').text('');
+			}
+		});
 
-        //畫打勾
-        // function playAni() {
-        //     document.getElementById("lottie333").style.display = "block";
-        //     animation.play();
-        // }
+		//畫打勾
+		// function playAni() {
+		//     document.getElementById("lottie333").style.display = "block";
+		//     animation.play();
+		// }
 
-        // 載入 Lottie 動畫-引用json檔?
-        // var animation = lottie.loadAnimation({
-        //     container: document.getElementById("lottie333"), //要動畫的地方
-        //     renderer: "svg",
-        //     loop: false,
-        //     autoplay: false,
-        //     path: "https://lottie.host/b2f40ebf-57f2-4648-ba0e-24120c2bf4b7/f6JH49VrAH.json" //載下來的動畫json檔
-        // });
-        // 動畫跑完後隱藏
-        // animation.addEventListener("complete", function () {
-        //     document.getElementById("lottie").style.display = "none";
-        // });
-
-
-        // 1.判斷帳戶名是否有重複+小動畫
-        $('#Account').on("change", function () {
-            var checkAccount = $('#Account').val()
-            // console.log(checkAccount);
-
-            $.ajax({
-                url: "/Member/RegisterA",
-                method: "get",
-                data: { MAccoMnt: checkAccount },
-                success: function (e) {
-                    // console.log(e)
-                    if (checkAccount == "") {
-                        $('#ckeckOk').css("display", "none");
-                        $('#checkName').show();
-                        $('#checkName').text("必填");
-                    } else {
-                        if (e) {
-                            $('#ckeckOk').css("display", "none");
-                            $('#checkName').show();
-                            $('#checkName').text("帳號名稱已被註冊");
-                        } else {
-                            $('#checkName').hide();
-                            // $('#accountError').hide();
-                            $('#ckeckOk').css("display", "block");
-                            // playAni();
-                            // alert('帳號未使用')
-                        }
-                    }
-                    // alert(e);
-                }
-            })
-        })
-
-        //2.檢查兩次輸入的密碼是否一致
-        $('#Password2').on("change", function () {
-            var MPassword1 = $('#Password1').val();
-            var MPassword2 = $('#Password2').val();
-            if (MPassword2 == "") {
-                $('#confirmPasswordError').show();
-                $('#pwdnoteword').hide();
-                $('#confirmPasswordError').text("必填")
-            } else {
-                if (MPassword1 != MPassword2) {
-                    $('#pwdnoteword').show();
-                }
-                else {
-                    $('#pwdnoteword').hide();
-                    console.log("ok");
-                }
-            }
-        })
-
-        //3.按下立即註冊=>將註冊的資料存至Server
-        //若有欄位沒填不送出資料?
-        $('#RegisterSubmit').on("click", function () {
-            var GetCurrentTime = new Date();
-            // console.log(GetCurrentTime.getFullYear())
-            // console.log(GetCurrentTime.getMonth()+1);
-            // console.log(GetCurrentTime.getDate());
-            if ($('#Account').val() == "" || $('#Password1').val() == "" || $('#Password2').val() == "" || $('#Email').val() == "" || $('#UserName').val() == "" || $('#Birthday').val() == "" || $('input[name="MGender"]').val() == "" || $('#InvestYear').val() == "" || $('#MLevel').val() == "") {
-                alert('必填欄位未填寫')
-                // console.log("擋下註冊")
-            } else {
-                var dataToServer = {
-                    MAccoMnt: $('#Account').val(),
-                    MPassword: $('#Password1').val(),
-                    MEmail: $('#Email').val(),
-                    MTrueName: $('#UserName').val(),
-                    MBirthday: $('#Birthday').val(),
-                    MGender: $('input[name="MGender"]:checked').val(),
-                    MInvestYear: $('#InvestYear').val(),
-                    MLevel: $('#MLevel').val(),
-                    registerTime: GetCurrentTime.toISOString()
-                }
-                // console.log(dataToServer);
-                // console.log(GetCurrentTime);
-
-                $.ajax({
-                    url: "/Member/Register",
-                    method: "post",
-                    data: dataToServer,
-                    success: function (e) {
-                        // console.log("註冊成功!");
-                        // alert("註冊成功!");
-                        window.location.href = "/Member/Login";
-                    }
-                })
-            }
-
-        })
-
-        //4.按下取消註冊=>清空input的值
-        $('#Reset').on("click", function () {
-            $('#Account').val("");
-            $('#Password1').val("");
-            $('#Password2').val("");
-            $('#Email').val("");
-            $('#UserName').val("");
-            $('#Birthday').val("");
-            $('input[name="MGender"]').prop('checked', false);
-            var checkAccount = $('#Account').val()
-            var MPassword2 = $('#Password2').val();
-            if (checkAccount == "") {
-                $('#checkName').hide();
-            }
-            if (MPassword2 == "") {
-                $('#pwdnoteword').hide();
-            }
-        })
+		// 載入 Lottie 動畫-引用json檔?
+		// var animation = lottie.loadAnimation({
+		//     container: document.getElementById("lottie333"), //要動畫的地方
+		//     renderer: "svg",
+		//     loop: false,
+		//     autoplay: false,
+		//     path: "https://lottie.host/b2f40ebf-57f2-4648-ba0e-24120c2bf4b7/f6JH49VrAH.json" //載下來的動畫json檔
+		// });
+		// 動畫跑完後隱藏
+		// animation.addEventListener("complete", function () {
+		//     document.getElementById("lottie").style.display = "none";
+		// });
 
 
-        // ---end of function
-    })
+		// 1.判斷帳戶名是否有重複+小動畫
+		$('#Account').on("change", function () {
+			var checkAccount = $('#Account').val()
+			// console.log(checkAccount);
+
+			$.ajax({
+				url: "/Member/RegisterA",
+				method: "get",
+				data: { MAccoMnt: checkAccount },
+				success: function (e) {
+					// console.log(e)
+					if (checkAccount == "") {
+						$('#ckeckOk').css("display", "none");
+						$('#checkName').show();
+						$('#checkName').text("必填");
+					} else {
+						if (e) {
+							$('#ckeckOk').css("display", "none");
+							$('#checkName').show();
+							$('#checkName').text("帳號名稱已被註冊");
+						} else {
+							$('#checkName').hide();
+							// $('#accountError').hide();
+							$('#ckeckOk').css("display", "block");
+							// playAni();
+							// alert('帳號未使用')
+						}
+					}
+					// alert(e);
+				}
+			})
+		})
+
+		//2.檢查兩次輸入的密碼是否一致
+		$('#Password2').on("change", function () {
+			var MPassword1 = $('#Password1').val();
+			var MPassword2 = $('#Password2').val();
+			if (MPassword2 == "") {
+				$('#confirmPasswordError').show();
+				$('#pwdnoteword').hide();
+				$('#confirmPasswordError').text("必填")
+			} else {
+				if (MPassword1 != MPassword2) {
+					$('#pwdnoteword').show();
+				}
+				else {
+					$('#pwdnoteword').hide();
+					console.log("ok");
+				}
+			}
+		})
+
+		//3.按下立即註冊=>將註冊的資料存至Server
+		//若有欄位沒填不送出資料?
+		$('#RegisterSubmit').on("click", function () {
+			var GetCurrentTime = new Date();
+			// console.log(GetCurrentTime.getFullYear())
+			// console.log(GetCurrentTime.getMonth()+1);
+			// console.log(GetCurrentTime.getDate());
+			if ($('#Account').val() == "" || $('#Password1').val() == "" || $('#Password2').val() == "" || $('#Email').val() == "" || $('#UserName').val() == "" || $('#Birthday').val() == "" || $('input[name="MGender"]').val() == "" || $('#InvestYear').val() == "" || $('#MLevel').val() == "") {
+				alert('必填欄位未填寫')
+				// console.log("擋下註冊")
+			} else {
+				var dataToServer = {
+					MAccoMnt: $('#Account').val(),
+					MPassword: $('#Password1').val(),
+					MEmail: $('#Email').val(),
+					MTrueName: $('#UserName').val(),
+					MBirthday: $('#Birthday').val(),
+					MGender: $('input[name="MGender"]:checked').val(),
+					MInvestYear: $('#InvestYear').val(),
+					MLevel: $('#MLevel').val(),
+					registerTime: GetCurrentTime.toISOString()
+				}
+				// console.log(dataToServer);
+				// console.log(GetCurrentTime);
+
+				$.ajax({
+					url: "/Member/Register",
+					method: "post",
+					data: dataToServer,
+					success: function (e) {
+						// console.log("註冊成功!");
+						// alert("註冊成功!");
+						window.location.href = "/Member/Login";
+					}
+				})
+			}
+
+		})
+
+		//4.按下取消註冊=>清空input的值
+		$('#Reset').on("click", function () {
+			$('#Account').val("");
+			$('#Password1').val("");
+			$('#Password2').val("");
+			$('#Email').val("");
+			$('#UserName').val("");
+			$('#Birthday').val("");
+			$('input[name="MGender"]').prop('checked', false);
+			var checkAccount = $('#Account').val()
+			var MPassword2 = $('#Password2').val();
+			if (checkAccount == "") {
+				$('#checkName').hide();
+			}
+			if (MPassword2 == "") {
+				$('#pwdnoteword').hide();
+			}
+		})
+		$("#MLevel").on("change", function () {
+			// 檢查選擇框中是否選擇了高級會員
+			if ($(this).val() === "高級會員") {
+				// 如果是高級會員，顯示模態框
+				$('#exampleModal1').modal('show');
+			}
+		});
+		$("#upgrade1").on("click", function () {
+						// 如果升級成功，顯示提示訊息
+						alert("已成為高級會員");
+						// 關閉模態框
+						$("#upgradeclose1").click();
+						$("#MLevel option[value='高級會員']").prop("selected",true);
+						
+						
+
+		})
+		$("#upgradeclose1, #closebtn").on("click", function () {
+		
+			$("#MLevel").val("一般會員");
+		})
+
+		// ---end of function
+	})
 </script>

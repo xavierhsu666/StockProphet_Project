@@ -694,10 +694,10 @@ namespace StockProphet_Project.Controllers {
 		//計算區間
 		private int predictdatacount(string sncode, int predictday)
 		{
-			//DateTime now=DateTime.Now;
-			//string formattedNow = now.ToString("yyyy-MM-dd"); 
-			//DateTime currentday = DateTime.Parse(formattedNow);
-			DateTime currentday = DateTime.Parse("2024-03-08");
+			DateTime now = DateTime.Now;
+			string formattedNow = now.ToString("yyyy-MM-dd");
+			DateTime currentday = DateTime.Parse(formattedNow);
+			//DateTime currentday = DateTime.Parse("2024-03-08");
 			DateTime previousdateTime = currentday.AddDays(-predictday);
 			DateOnly previousdateOnly = DateOnly.Parse(previousdateTime.ToString("yyyy-MM-dd"));
 
