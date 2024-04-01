@@ -1,7 +1,10 @@
-﻿<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-@{
+﻿@{
 	var customerlevel = @Context.Session.GetString("Mlevel");
 }
+@* 引用+CSS *@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script src="~/js/indexSearch.js"></script>
 <style>
 	.appendTt {
 		padding: 5px 15px;
@@ -14,12 +17,14 @@
 	}
 
 </style>
+
+@* 驗證登入與否 *@
 <div id="beforeLog">
 	<b>請先登入會員</b>
 </div>
 <div id="afterLog">
 	<div>
-		<h3 class="display-6">第一步、選定股票</h3>
+		<h3 class="display-6">第一步:選定股票</h3>
 		<div class="input-group mb-3">
 			<span class="input-group-text" id="inputGroup-sizing-default">股票代號</span>
 			<input type="text" class="form-control SnCode" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="stockid" name="SnCode" onchange="stockinput()">
@@ -32,7 +37,7 @@
 		</div>
 	</div>
 	<div id="step2" hidden="true">
-		<h3 class="display-6">第二步、選定投資偏好及選擇模型</h3>
+		<h3 class="display-6">第二步:選定投資偏好及選擇模型</h3>
 		<h4><b>投資偏好</b></h4>
 		<center>
 			<div style="display: flex;">
@@ -50,14 +55,11 @@
 			<option value="3">迴歸</option>
 			<option value="4">時間序列</option>
 		</select>
-
-		@* <button id="checkmodel" class="btn btn-primary btn-sm">確認模型</button> *@
-
 	</div>
 	<br>
 	<br>
 
-
+	@* LSTM model 參數變數選擇 *@
 	<div id="borisform1" class="modelformforBoris">
 		<h3 class="display-6">第三步:設定參數並建置模型預測</h3>
 		<h4><b>變數選擇</b></h4>
@@ -72,6 +74,7 @@
 					<div class="accordion-body ">
 
 						<h5 class="technicalparamlist ParaArea"></h5>
+						@* JS-append *@
 					</div>
 				</div>
 			</div>
@@ -84,30 +87,32 @@
 				<div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
 					<div class="accordion-body ">
 						<h5 class="foundmentalparamlist ParaArea"></h5>
+						@* JS-append *@
 					</div>
 				</div>
 			</div>
 		</div>
-		@* <h5 class="technicalparamlist">技術面:</h5> *@
-		@* JS-append *@
+		
+		
 		<br>
-		@* <h5 class="foundmentalparamlist">基本面:</h5> *@
-		@* JS-append *@
-
+	
+	
+		@* 投入天數 *@
 		<table>
 			<tr>
 				<td>
-					<h5 class=""><b>數據區間</b></h5>
+					<h5 class=""><b>數據區間(選擇幾天前的數據當作預測投入)</b></h5>
 				</td>
 			</tr>
 			<tr>
 				<td>
 					<h5 class="predicintervallist"></h5>
+					@* JS-append *@
 				</td>
 			</tr>
 		</table>
 
-		@* JS-append *@
+	
 
 		<br>
 		<h4><b>參數選擇</b></h4>
@@ -119,7 +124,6 @@
 					</th>
 					<th>
 						模型層數選擇(預設輸入層+輸出層共兩層)
-						可自行添加層數
 					</th>
 				</tr>
 			</thead>
@@ -132,13 +136,7 @@
 				</td>
 			</tr>
 		</table>
-
-
 		<br>
-		@* <label>Step1:</label>
-		<button id="Okbutton1">確認變數及參數</button>
-		<br><br>
-		<label>Step2:</label> *@
 		<button id="predict1" class="btn btn-outline-primary">建立模型</button>
 		<br>
 		<div id="predictionResult1"></div>
@@ -149,8 +147,10 @@
 		</div>
 
 	</div>
+
+	@* FNN model 參數變數選擇  *@
 	<div id="borisform2" class="modelformforBoris">
-		<h3>第三步、設定參數並建置模型預測</h3>
+		<h3 class="display-6">第三步:設定參數並建置模型預測</h3>
 		<h4><b>變數選擇</b></h4>
 		<div class="accordion accordion-flush" id="accordionFlushExample">
 			<div class="accordion-item">
@@ -161,8 +161,8 @@
 				</h2>
 				<div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
 					<div class="accordion-body ">
-
 						<h5 class="technicalparamlist ParaArea"></h5>
+						@* JS-append *@
 					</div>
 				</div>
 			</div>
@@ -175,24 +175,20 @@
 				<div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
 					<div class="accordion-body ">
 						<h5 class="foundmentalparamlist ParaArea"></h5>
+						@* JS-append *@
 					</div>
 				</div>
 			</div>
 		</div>
 
-		@* <h5 class="technicalparamlist">技術面:</h5>*@
-		@* JS-append *@
-
-		<br>
-		@* <h5 class="foundmentalparamlist">基本面:</h5> *@
-		@* JS-append *@
 		<br>
 
-		<br>
+
+		@* 投入天數 *@
 		<table>
 			<tr>
 				<td>
-					<h5 class=""><b>數據區間</b></h5>
+					<h5 class=""><b>數據區間(選擇幾天前的數據當作預測投入)</b></h5>
 				</td>
 			</tr>
 			<tr>
@@ -212,7 +208,6 @@
 					</th>
 					<th>
 						模型層數選擇(預設輸入層+輸出層共兩層)
-						可自行添加層數
 					</th>
 				</tr>
 			</thead>
@@ -227,10 +222,6 @@
 		</table>
 
 		<br>
-		@* <label>Step1:</label>
-		<button id="Okbutton2">確認變數及參數</button>
-		<br><br>
-		<label>Step2:</label> *@
 		<button id="predict2" class="btn btn-outline-primary">建立模型</button>
 		<br>
 		<div id="predictionResult2"></div>
@@ -240,8 +231,9 @@
 		</div>
 	</div>
 
+	@* xaiver model *@
 	<div id="kazuoform3">
-		<h3>第三步:設定參數並建置模型預測(迴歸模型)</h3>
+		<h3 class="display-6">第三步:設定參數並建置模型預測</h3>
 		<h4>變數選擇:</h4>
 		<div id="ksParaArea">
 			<div class="accordion accordion-flush" id="accordionFlushExample">
@@ -362,22 +354,24 @@
 		$('#afterLog').hide();
 	}
 	else {
+		//初始化:不需要的東西先隱藏
 		$('#beforeLog').hide();
 		$('#afterLog').show();
-
-		//初始化:不需要的東西先隱藏
 		$("#borisform1,#borisform2,#chart").css("display", "none");
 		$("#kazuoform3, #kazuoform4").css("display", "none");
-		// $("#longterm,#shortterm,#predict1,#predict2,#checkmodel,#selectmodel").prop("disabled", true);
 		$("#longterm,#shortterm,#checkmodel,#selectmodel").prop("disabled", true);
 		$(".ParaArea>label").css("margin", "5px");
-		$(document).ready(function () {
+		
+		
+		
+		$(document).ready(function () 
+		{
 
-			//測試客人已經預測幾次了
-			checkaccoutbuildmodelnumber();
+			//根據客人的等級判斷是否超過預測上限
+			CheckaAcoutBuildModelNumber();
 
 
-			// append表格
+			// append變數及參數
 			const technicalParam = {
 				"SteOpen": "開盤價",
 				"SteClose": "收盤價",
@@ -402,7 +396,6 @@
 				"SiOsc": "OSC",
 				"SiMa": "OSC_MA"
 			};
-
 			const foundmentParam = {
 				"SbYield": "殖利率",
 				"SbPbratio": "淨值比",
@@ -411,10 +404,6 @@
 				"SiPe": "PE (市盈率)"
 			};
 			const predictinterval = { "5天(周)": 5, "30天(月)": 30, "365天(年)": 365 };
-
-
-
-
 			function appendCheckbox(formid) {
 
 				$(".appendTech").remove();
@@ -422,41 +411,28 @@
 				$.each(technicalParam, function (key, value) {
 					$(`#${formid} .technicalparamlist`).append(
 						`<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check appendTech" >
-																																																			<label for="${formid + key}" class="btn btn-outline-secondary appendTech">${value}</label>`
+																																																				<label for="${formid + key}" class="btn btn-outline-secondary appendTech">${value}</label>`
 					)
 				});
 				$.each(foundmentParam, function (key, value) {
 					$(`#${formid} .foundmentalparamlist`).append(`
-																																																		<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check appendFound">
-																																																	<label for="${formid + key}" class="btn btn-outline-secondary appendFound" >${value}</label>`)
+																																																			<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check appendFound">
+																																																		<label for="${formid + key}" class="btn btn-outline-secondary appendFound" >${value}</label>`)
 				});
 				$(".ParaArea>label").css("margin", "5px");
-
-				// $.each(otherParam, function (key, value) {
-				// 	$(`#${formid} .otherparamlist`).append(`
-				// 								<input type="checkbox" id="${formid + key}" name="${key}" class="btn-check">
-				// 							 <label for="${formid + key}" class="btn btn-outline-secondary">${value}</label>`)
-				// });
-
 
 			};
 			function appendradio(formid) {
-
 				$(".appendRadio").remove();
 				$.each(predictinterval, function (key, value) {
-					// console.log(key);
-					// console.log(value);
 					$(`#${formid} .predicintervallist`).append(`
-																																<input type="radio" id="${formid + value}" name="interval" value="${value}" autocomplete = "off" class="btn-check appendRadio" >
-																																			<label class= "btn btn-outline-secondary appendRadio" name="interval" for="${formid + value}">${key}</label>`)
-
-
-
+						<input type="radio" id="${formid + value}" name="interval" value="${value}" autocomplete = "off" class="btn-check appendRadio" >
+							<label class= "btn btn-outline-secondary appendRadio" name="interval" for="${formid + value}">${key}</label>`)
 				});
 				$(".ParaArea>label").css("margin", "5px");
-
 			}
-
+			
+			// 令全域變數
 			var borisprediction;
 			var predicturl;
 			var sncode;
@@ -469,6 +445,10 @@
 			var predictedloss;
 			var mymodelselect;
 			var layerforpredict;
+
+
+
+
 			// <ks area--------------------->
 
 			// ####<預設值待更新-------------------------------------->
@@ -736,7 +716,6 @@
 					}
 				})
 			}
-
 			function increaseProgress(val) {
 				$(`#ksprogress`).css("width", val + "%");
 			}
@@ -777,9 +756,6 @@
 				}
 
 			}
-
-
-
 			async function  SaveModelResultToDB(datatoserver) {
 				console.log(datatoserver);
 				return new Promise(function (resolve, reject) {
@@ -800,12 +776,74 @@
 					})
 				})
 			}
+
+
+
+			// 共用區
+			// 根據會員等級開放不同Model使用權限
+			if (sessionStorage.getItem("LogMemberLevel") == "高級會員") {
+				$("#longterm").on("click", function () {
+					$("#longterm").css("color", "black")
+					$("#shortterm").css("color", "white")
+					$("#selectmodel").prop("disabled", false);
+					$("#selectmodel option[value='1']").prop("selected", true);
+					$("#selectmodel option[value='2']").prop("selected", false);
+					$("#selectmodel option[value='3']").prop("selected", true);
+					$("#selectmodel option[value='4']").prop("selected", false);
+					$("#checkmodel").prop("disabled", false);
+					$(".progress").hide();
+					prefertype = 2;
+				})
+				$("#shortterm").on("click", function () {
+					$("#shortterm").css("color", "black")
+					$("#longterm").css("color", "white")
+					$("#selectmodel").prop("disabled", false);
+					$("#selectmodel option[value='1']").prop("selected", false);
+					$("#selectmodel option[value='2']").prop("selected", true);
+					$("#selectmodel option[value='3']").prop("selected", false);
+					$("#selectmodel option[value='4']").prop("selected", true);
+
+					$("#checkmodel").prop("disabled", false);
+					$(".progress").hide();
+					prefertype = 1;
+				})
+			} 
+			else 
+			{
+				$("#longterm").on("click", function () {
+					$("#longterm").css("color", "black")
+					$("#shortterm").css("color", "white")
+					$("#selectmodel").prop("disabled", false);
+					$("#selectmodel option[value='1']").prop("disabled", true);
+					$("#selectmodel option[value='2']").prop("disabled", true);
+					$("#selectmodel option[value='3']").prop("selected", true);
+					$("#selectmodel option[value='4']").prop("selected", false);
+					$("#checkmodel").prop("disabled", false);
+					$(".progress").hide();
+					console.log("@customerlevel");
+					prefertype = 2;
+				})
+				$("#shortterm").on("click", function () {
+					$("#shortterm").css("color", "black")
+					$("#longterm").css("color", "white")
+					$("#selectmodel").prop("disabled", false);
+					$("#selectmodel option[value='1']").prop("disabled", true);
+					$("#selectmodel option[value='2']").prop("disabled", true);
+					$("#selectmodel option[value='3']").prop("selected", false);
+					$("#selectmodel option[value='4']").prop("selected", true);
+					$("#checkmodel").prop("disabled", false);
+					$(".progress").hide();
+					prefertype = 1;
+				})
+			}
+
+			//根據所選的model給予預設值
 			$("#selectmodel").on("change", function () {
 				$("#borisform1,#borisform2,#chart").css("display", "none");
 				$("#kazuoform3, #kazuoform4").css("display", "none");
-				// $("#longterm,#shortterm,#predict1,#predict2,#checkmodel").prop("disabled", true);
 				$("#longterm,#shortterm,#checkmodel").prop("disabled", true);
-
+				
+				//判斷是否者是否有選擇
 				if ($("#selectmodel option:selected").length > 1) {
 					alert("請選擇一個模型")
 				}
@@ -815,7 +853,9 @@
 					// $("#longterm,#shortterm,#checkmodel,#selectmodel").prop("disabled", true);
 					$("#longterm,#shortterm,#checkmodel").prop("disabled", true);
 					var borislist = [];
+					//根據所選的Model設定預設值
 					switch (choosewhichmodel) {
+						// LSTM
 						case "1":
 							window.location.href = `#borisform${choosewhichmodel}`;
 							appendCheckbox("borisform1");
@@ -825,10 +865,10 @@
 							$.each(borislist, function (index, element) {
 								$(`input[id=${element}]`).prop("checked", true)
 
-
 							})
 							mymodelselect = "LSTM"
 							break;
+						// FNN
 						case "2":
 							window.location.href = `#borisform${choosewhichmodel}`;
 							appendCheckbox("borisform2");
@@ -840,6 +880,7 @@
 							});
 							mymodelselect = "FNN"
 							break;
+						// 迴歸
 						case "3":
 							window.location.href = `#kazuoform3`;
 							$(`#kazuoform3`).css("display", "block");
@@ -854,11 +895,10 @@
 								"<tr><td>" +
 								"<input class='appendRmax appendTt' style='width:25%' id='R_maximumNumberOfIterations' name='R_maximumNumberOfIterations' type ='number' value=100  max='365' min='1'/> " +
 								"</td></tr ></table>");
-
 							$("#ModelParaInputArea").append(R_maximumNumberOfIterations);
 							mymodelselect = "迴歸"
 							break;
-
+						// 時間序列
 						case "4":
 							window.location.href = `#kazuoform3`;
 							$(`#kazuoform3`).css("display", "block");
@@ -897,140 +937,14 @@
 							break;
 						default:
 							break;
-
-
 					}
-
-
 				}
 			})
-			// ####<funcs-------------------------------------->
-			// <ks area--------------------->
-
-			if (sessionStorage.getItem("LogMemberLevel") == "高級會員") {
-				$("#longterm").on("click", function () {
-					$("#longterm").css("color", "black")
-					$("#shortterm").css("color", "white")
-					$("#selectmodel").prop("disabled", false);
-					$("#selectmodel option[value='1']").prop("selected", true);
-					$("#selectmodel option[value='2']").prop("selected", false);
-					$("#selectmodel option[value='3']").prop("selected", true);
-					$("#selectmodel option[value='4']").prop("selected", false);
-					$("#checkmodel").prop("disabled", false);
-					$(".progress").hide();
-					console.log("@customerlevel");
-					prefertype = 2;
-				})
-				$("#shortterm").on("click", function () {
-					$("#shortterm").css("color", "black")
-					$("#longterm").css("color", "white")
-					$("#selectmodel").prop("disabled", false);
-					$("#selectmodel option[value='1']").prop("selected", false);
-					$("#selectmodel option[value='2']").prop("selected", true);
-					$("#selectmodel option[value='3']").prop("selected", false);
-					$("#selectmodel option[value='4']").prop("selected", true);
-
-					$("#checkmodel").prop("disabled", false);
-					$(".progress").hide();
-					prefertype = 1;
-				})
-			} else {
-				$("#longterm").on("click", function () {
-					$("#longterm").css("color", "black")
-					$("#shortterm").css("color", "white")
-					$("#selectmodel").prop("disabled", false);
-					$("#selectmodel option[value='1']").prop("disabled", true);
-					$("#selectmodel option[value='2']").prop("disabled", true);
-					$("#selectmodel option[value='3']").prop("selected", true);
-					$("#selectmodel option[value='4']").prop("selected", false);
-					$("#checkmodel").prop("disabled", false);
-					$(".progress").hide();
-					console.log("@customerlevel");
-					prefertype = 2;
-				})
-				$("#shortterm").on("click", function () {
-					$("#shortterm").css("color", "black")
-					$("#longterm").css("color", "white")
-					$("#selectmodel").prop("disabled", false);
-					$("#selectmodel option[value='1']").prop("disabled", true);
-					$("#selectmodel option[value='2']").prop("disabled", true);
-					$("#selectmodel option[value='3']").prop("selected", false);
-					$("#selectmodel option[value='4']").prop("selected", true);
-					$("#checkmodel").prop("disabled", false);
-					$(".progress").hide();
-					prefertype = 1;
-				})
 
 
-
-			}
-
-
-
-
-
-
-			// $("#checkmodel").on("click", function () {
-
-			// 	if ($("#selectmodel option:selected").length > 1) {
-			// 		alert("請選擇一個模型")
-			// 	}
-			// 	else {
-			// 		var choosewhichmodel = $("#selectmodel option:selected").val();
-			// 		$(`#borisform${choosewhichmodel}`).css("display", "block");
-			// 		$("#longterm,#shortterm,#checkmodel,#selectmodel").prop("disabled", true);
-			// 		var borislist = [];
-			// 		switch (choosewhichmodel) {
-			// 			case "1":
-			// 				appendCheckbox("borisform1");
-			// 				appendradio("borisform1");
-			// 				borislist = ["borisform1SteOpen", "borisform1SteClose", "borisform1SteMax", "borisform1SteMin", "borisform1SiMovingAverage30", "borisform1SiLongEma", "borisform1365"];
-			// 				$("#borisform1ST_Year_Quarter,#borisform1ST_Date").prop("disabled", true)
-			// 				$.each(borislist, function (index, element) {
-			// 					$(`input[id=${element}]`).prop("checked", true)
-
-
-			// 				})
-			// 				break;
-			// 			case "2":
-			// 				appendCheckbox("borisform2");
-			// 				appendradio("borisform2");
-			// 				borislist = ["borisform2SteOpen", "borisform2SteClose", "borisform2SteMax", "borisform2SteMin", "borisform2SiMovingAverage5", "borisform2SiShortEma", "borisform25"];
-			// 				$("#borisform2ST_Year_Quarter,#borisform2ST_Date").prop("disabled", true)
-			// 				$.each(borislist, function (index, element) {
-			// 					$(`input[id=${element}]`).prop("checked", true);
-			// 				});
-			// 				break;
-			// 			case "3":
-			// 				$(`#kazuoform3`).css("display", "block");
-			// 				var R_maximumNumberOfIterations = $("<label for='R_maximumNumberOfIterations'>最大迭代數<input id='R_maximumNumberOfIterations' name='R_maximumNumberOfIterations' type ='number' value=100  max='365' min='1'/></label>");
-			// 				$("#ModelParaInputArea").append(R_maximumNumberOfIterations);
-			// 				break;
-			// 			case "4":
-			// 				$(`#kazuoform3`).css("display", "block");
-			// 				var windowSize = $("<label for='T_windowSize'>視窗週期(周)<input id='T_windowSize' name='T_windowSize' type ='number' value=7  min='1' /></label>");
-			// 				var seriesLength = $("<label for='T_seriesLength'>系列週期(月)<input id='T_seriesLength' name='T_seriesLength' type ='number' value=30  min='1' /></label>");
-			// 				var trainSize = $("<label for='T_trainSize'>訓練資料筆數<input id='T_trainSize' name='T_trainSize' type ='number' value=365   min='1' /></label>");
-			// 				var confidenceLevel = $("<label for='T_confidenceLevel'>信心水準%<input id='T_confidenceLevel' name='T_confidenceLevel' type ='number' value=95 max='100' min='1' /></label>");
-			// 				$("#ModelParaInputArea").append(windowSize);
-			// 				$("#ModelParaInputArea").append(seriesLength);
-			// 				$("#ModelParaInputArea").append(trainSize);
-			// 				$("#ModelParaInputArea").append(confidenceLevel);
-			// 				break;
-			// 			default:
-			// 				break;
-
-
-			// 		}
-
-
-			// 	}
-
-			// })
-
+			// ####<BorisCode-------------------------------------->
+			//確認各項參數是否正確
 			function Okbutton12() {
-				// var buttonId = $(this).prop("id"); // 獲取按鈕的 ID
-				// var number = parseInt(buttonId.match(/\d+/)[0]); // 從 ID 中提取數字部分
 				var number = parseInt($("#selectmodel").val());
 				sncode = ($("#stockid").val().split(' ').length > 1) ? $("#stockid").val().split(' ')[1] : $("#stockid").val();
 				userselectparams = {};
@@ -1082,64 +996,7 @@
 				$(`#predict${number}`).prop("disabled", false);
 				return true;
 			}
-
-
-
-			//確定送出參數
-			// $("#Okbutton1,#Okbutton2").on("click", function (event) {
-			// 	var buttonId = $(this).prop("id"); // 獲取按鈕的 ID
-			// 	var number = parseInt(buttonId.match(/\d+/)[0]); // 從 ID 中提取數字部分
-			// 	sncode = $("#stockid").val();
-			// 	userselectparams = {};
-
-			// 	if (number === 1) {
-			// 		// 檢查至少兩個參數是否被選中
-			// 		const atLeastTwoChecked = $("input[type=checkbox]:checked").length > 1;
-			// 		if (!atLeastTwoChecked) {
-			// 			alert("請至少選擇2個參數");
-			// 			return false;
-			// 		}
-
-			// 		if ($("#iterationtime1").val() == 0) {
-			// 			alert("迭代次數至少不等於0");
-			// 			return false;
-			// 		}
-			// 	} else if (number === 2) {
-			// 		// 檢查至少一個參數是否被選中
-			// 		const atLeastOneChecked = $("input[type=checkbox]:checked").length > 0;
-			// 		if (!atLeastOneChecked) {
-			// 			alert("請至少選擇1個參數");
-			// 			return false;
-			// 		}
-			// 		if ($("#iterationtime2").val() == 0) {
-			// 			alert("迭代次數至少不等於0");
-			// 			return false;
-			// 		}
-
-			// 	}
-			// 	// 檢查區間是否被選擇
-			// 	var atLeastoneInterval = $("input[name=interval]:checked").length > 0;
-			// 	if (!atLeastoneInterval) {
-			// 		alert("請選擇一個區間");
-			// 		return false;
-			// 	}
-			// 	//獲取用戶選擇的預測區間
-			// 	var interval = $("input[name=interval]:checked").val();
-			// 	if (interval > 0) {
-			// 		predictday = parseInt(interval);
-
-			// 	}
-			// 	//獲取用戶選擇的參數
-			// 	$("input[type=checkbox]:checked").each(function () {
-			// 		var paramName = $(this).attr("name");
-			// 		userselectparams[paramName] = true;
-			// 	});
-			// 	iterationtimeforpredict = $(`#iterationtime${number}`).val();
-			// 	$(`#predict${number}`).prop("disabled", false);
-
-			// });
-
-			console.log(predictday)
+	
 			$("#predict1,#predict2").on("click", function (event) {
 				if (!Okbutton12()) {
 
@@ -1175,11 +1032,11 @@
 										$(`#progress${number}`).css("width", '70%');
 
 
-									}, 2000); // 第三个setTimeout在第二个setTimeout执行完后4秒再执行
+									}, 2000); 
 
-								}, 3000); // 第二个setTimeout在第一个setTimeout执行完后5秒再执行
+								}, 3000); 
 
-							}, 1000); // 第一个setTimeout在0秒后执行
+							}, 1000); 
 
 						},
 						success: function (response) {
@@ -1196,16 +1053,8 @@
 							//存數據
 							var isoString = createmodelTime.toISOString();
 							var finishDate = new Date(isoString); // 將 ISO 字符串轉換為 Date 物件
-
-
 							finishDate.setDate(finishDate.getDate() + predictday); //計算最終結案天數
-						
-							
-						
-
 							var finishString = finishDate.toISOString(); // 將 Date 物件轉換回 ISO 字符串
-
-
 							var keysWithoutBrackets = Object.keys(userselectparams).map(function (key) {
 								return key;
 							});
@@ -1234,17 +1083,15 @@
 								},
 								error: function (xhr, status, error) {
 									// 處理錯誤
-									// console.error(xhr.responseText); // 處理錯誤
-									// var errorMessage = xhr.responseText;
-									// alert(errorMessage);
+									console.error(xhr.responseText); // 處理錯誤
+									var errorMessage = xhr.responseText;
+									alert(errorMessage);
 								}
 							}).then(function (e) {
-								console.log(borisprediction);
+								// console.log(borisprediction);
 								// 加入PID
-								console.log(e.Pid);
+								// console.log(e.Pid);
 								var predictedData = borisprediction;
-
-
 								setTimeout(function () {
 									$(`#progress${number}`).css("width", '90%');
 									setTimeout(function () {
@@ -1252,16 +1099,11 @@
 										setTimeout(function () {
 											// var predicturl = "/StockModel/predictphoto?predictedData=" + predictedData + "&predictedloss=" + predictedloss + "&snCode=" + sncode + "&mymodelselect=" + mymodelselect;
 											var predicturl = "/StockModel/predictphoto?Pid=" + e.Pid;
-
 											window.location.href = predicturl;
 										}, 3000);
 									}, 1000);
 								}, 2000);
-							
 							})
-							
-
-
 						},
 						error: function (xhr, status, error) {
 							// 處理錯誤
@@ -1273,32 +1115,11 @@
 					});
 				}
 			});
-
-
-
-
-
-
 		});
 
-		// function stockinput() {
-		// 	var stockId = $("#stockid").val();
-		// 	$("#stockname").text("");
-		// 	if (stockId.trim() !== "") {
-		// 		$.get("/StockModel/checkstock", { sncode: stockId },
-		// 			function (element) {
-		// 				if (element.stockexist) {
-		// 					$("#longterm,#shortterm").prop("disabled", false);
-		// 					$("#stockname").text(element.stockname);
-		// 				} else {
-		// 					alert("請選擇其他股票");
-		// 					$("#longterm,#shortterm").prop("disabled", true);
-		// 				}
-		// 			}
-		// 		);
-		// 	}
-		// }
-		function checkaccoutbuildmodelnumber() {
+
+		//依據客戶等級確認是否有超過預測上限
+		function CheckaAcoutBuildModelNumber() {
 
 			if (sessionStorage.getItem("LogAccount") == null) {
 				// console.log("login")
@@ -1331,7 +1152,7 @@
 		}
 
 	}
-	// console.log("顯示MID:" + MID);
+
 	function fetchingData(url, stockId) {
 		return new Promise((resolve, reject) => {
 			$.get(url, { stockCode: stockId }, html => {
@@ -1340,20 +1161,9 @@
 			})
 		})
 	}
+	//檢查股票並呼叫API
 	function stockinput() {
 		var stockId = ($("#stockid").val().split(' ').length > 1) ? $("#stockid").val().split(' ')[1] : $("#stockid").val();
-		// var Updating = async function () {
-		// 	if (stockId.trim() !== "") {
-		// 		$.get("/StockModel/UpdateOneStock",
-		// 			{ stockCode: stockId },
-		// 			function (e) {
-		// 				if (e = "OK")
-		// 					return true;
-		// 				else
-		// 					return false;
-		// 			})
-		// 	}
-
 		async function jget(url, stockId) {
 			// Note: Below variable will hold the value of the resolved promise
 			let response = await fetchingData(url, stockId);
@@ -1377,7 +1187,5 @@
 
 	}
 
-	// console.log("顯示MID:" + MID);
+
 </script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-<script src="~/js/indexSearch.js"></script>
