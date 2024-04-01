@@ -7,39 +7,112 @@
 		transform: translateY(-50%);
 	}
 
+	/* 登入面板的容器 */
+	.login-container{
+		/* height:80%; */
+		width:70%;
+		background-color:white;
+		box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
+		border-radius: 10px;
+		display:flex;
+		min-width:400px;
+	}
+
+	.login-left, .login-right{
+		padding: 40px;
+		padding-top:100px;
+		padding-bottom:100px;
+		width:50%;
+		/* border:2px solid black; */
+	}
+
+	.login-left{
+		background-color: #87aeb4;
+		border-start-start-radius: 10px;
+		border-bottom-left-radius:10px;
+	}
+
+	.login-right{
+		position:relative;
+		display:flex;
+		flex-direction:column;
+	}
+	h2{
+		text-align:center;
+		margin-bottom:50px;
+	}
+
+	.login-btn{
+		width:100%;
+	}
+
+	.FR-div{
+		margin-top: 20px;
+	}
+	.a-style {
+		color: #2e3640;
+		transition:all 0.3s;
+	}
+
+	.a-style:hover{
+		color: #73b5c5;
+	}
+
+	@@media screen and (max-width: 1200px) {
+		.login-left {
+			display:none;
+		}
+
+		.login-right {
+			width:100%;
+		}
+    }
+
+
 </style>
 @* <script src="wwwroot/icon"></script> *@
 
-@* 占版面1/3 *@
-<div class="row">
-	 <div class="col-md-4"> 
+<img class="bg-chart" src="~/homePage/chart.png" />
+<img class="bg-line" src="~/homePage/chart2.png" />
+<div class="area-container">
+	<div class="login-container">
+		<div class="login-left"></div>
+		<div class ="login-right">
+			<div id="LoginForm">
+				<h2>歡迎登入</h2>
+				<p id="WrongMsg" style="color:red">帳號/密碼 輸入錯誤</p>
+				<div class="form-floating mb-3">
+					<input id="Account" class="form-control" aria-required="true" name="MAccoMnt" value="" />
+					<label class="form-label">帳號名稱/Email</label>
+				</div>
+				<div class="form-floating mb-3">
+					<input type="password" id="Password" class="form-control" aria-required="true" name="MPassword" value="" />
+					<label class="form-label">密碼</label>
+					<i id="checkEye" class="fas fa-eye-slash"></i>
 
-		<div id="LoginForm">
-			<h2>歡迎登入</h2>
-			<p id="WrongMsg" style="color:red">帳號/密碼 輸入錯誤</p>
-			<div class="form-floating mb-3">				
-				<input id="Account" class="form-control" aria-required="true" name="MAccoMnt" value="" />
-				<label class="form-label">帳號名稱/Email</label>
-			</div>
-			<div class="form-floating mb-3">
-				<input type="password" id="Password" class="form-control" aria-required="true" name="MPassword" value="" />
-				<label class="form-label">密碼</label>					
-				<i id="checkEye" class="fas fa-eye-slash"></i>
-
-			</div>
-			<div>
-				<div id="LoginSubmit" class="w-100 btn btn-lg btn-primary" >登入</div>
-			</div>
-			<div>
-				<a href="~/Member/ForgotPassword">忘記密碼?</a>&nbsp&nbsp&nbsp
-				<a href="~/Member/Register">我要註冊</a>
+				</div>
+				<div>
+					<button id="LoginSubmit" class="btn-w-hover login-btn">登入</button>
+				</div>
+				<div class="text-center FR-div">
+					<a href="~/Member/ForgotPassword" class="a-style">忘記密碼?</a>
+					<span class="divider-vertical"></span>
+					<a href="~/Member/Register" class="a-style">我要註冊</a>
+				</div>
 			</div>
 		</div>
-
+		
 	</div>
 
-
 </div>
+
+
+
+
+
+
+
+
 
 <script>
 	$('#WrongMsg').hide();

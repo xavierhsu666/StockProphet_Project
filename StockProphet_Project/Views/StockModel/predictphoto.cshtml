@@ -10,7 +10,7 @@
 	var VarsTable = ViewBag.VarsTable;
 
 
-	int finishdate = (Model.Pprefer == 1) ? 5 : 30;
+	int finishdate = (int)PfinishTime.Subtract(PbulidTime).TotalDays;
 	bool isTracing = ((int)difference.TotalDays <= 0) ? true : false;
 	string finishdateCountDownStr = "";
 
@@ -80,7 +80,7 @@
 	string accComment = "";
 	string rltComment = "";
 	bool NeedShowAcc = (int)differenceOpp.TotalDays <= Math.Round(((decimal)finishdate) / 2, 0);
-	int NeedShowDays = (int)differenceOpp.TotalDays - (int)Math.Round(((decimal)finishdate) / 2, 0);
+	int NeedShowDays = Math.Abs((int)differenceOpp.TotalDays - (int)Math.Round(((decimal)finishdate) / 2, 0));
 	// var normalized_acc = Math.Round(((acc - MinAcc) / (MaxAcc - MinAcc)) * 100, 2);
 	if (NeedShowAcc) {
 		accComment = "預估準確率為「" + Model.PAccuracyRatio + " %」。";
@@ -91,9 +91,9 @@
 	}
 	// 製作誤差計算  -------------
 
-
 	// if LSTM 可能要全改寫
 	bool IsNNModel = (ViewBag.result.usingModel == "LSTM" || ViewBag.result.usingModel == "FNN") ? true : false;
+	Console.WriteLine($"IsNNModel = {IsNNModel},NeedShowAcc = {NeedShowAcc}, NeedShowDays = {NeedShowDays},(int)differenceOpp.TotalDay= {(int)differenceOpp.TotalDays}, Math.Round(((decimal)finishdate) / 2 = {Math.Round(((decimal)finishdate) / 2)}");
 	if (IsNNModel) {
 		// <finishdate 的最近close價格
 		if (NeedShowAcc) {
@@ -382,7 +382,8 @@
 	var predictedDate = moment(lastActualDate);
 	var formattedPredictedDate = predictedDate.format('YYYY-MM-DD');
 	var predictedClosePrice = predictedData;
-	var predictedDate1 = predictedDate.format('YYYY-MM-DD')
+	var predictedDate1 = predictedDate.format('YYYY-MM-DD');
+	var isnn = @Html.Raw(Json.Serialize(IsNNModel));
 	// console.log(typeof predictedDate1);
 	// console.log(typeof formattedPredictedDate);
 	var ctx = document.getElementById('stockChart').getContext('2d');
@@ -418,7 +419,7 @@
 				label: '趨勢線',
 				data: [{
 					x: formattedData[formattedData.length - 1].x,
-					y: formattedData[formattedData.length - 1].y
+					y: (isnn) ? formattedData[formattedData.length - 1].y : @Html.Raw(Json.Serialize(Model.PCurLabel))
 				}, {
 					x: formattedPredictedDate,
 					y: predictedClosePrice
@@ -439,9 +440,9 @@
 																		}],
 				borderColor: 'black',
 				fill: false,
-				borderWidth: 0.7,
+				borderWidth: 3,
 				borderDash: [5, 5],
-				hidden: @Html.Raw(Json.Serialize(isTracing)) // 結案的話秀
+				hidden: false // 結案的話秀
 																		}, {
 				label: '近' + @Html.Raw(Json.Serialize(finishdate))+'日移動平均*',
 				data: [{
@@ -453,9 +454,9 @@
 																			}],
 				borderColor: 'red',
 				fill: false,
-				borderWidth: 0.7,
+				borderWidth: 3,
 				//borderDash: [5, 5],
-				hidden: false // 设置水平线1隐藏
+				hidden: @Html.Raw(Json.Serialize(!NeedShowAcc)) // 设置水平线1隐藏
 			}]
 		},
 		options: {
