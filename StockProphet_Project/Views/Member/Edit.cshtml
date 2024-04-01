@@ -4,6 +4,65 @@
 }
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
 <style>
+     /* radio標籤 */
+    .radio-button {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin: 10px;
+        position: relative;
+        align-items: center;
+
+    }
+
+
+        .radio-button input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            /* accent-color: #87aeb4; */
+        }
+
+ .gender-input{
+        display:flex;
+        align-items:center;
+    }
+    .radio {
+        position: relative;
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 2px solid #ccc;
+        box-shadow: 0px 0px 5px #ced4da;
+        transform: translateZ(-25px);
+        transition: all 0.2s ease-in-out;
+    }
+
+        .radio::before {
+            position: absolute;
+            content: '';
+            width: 10px;
+            height: 10px;
+            top: 5px;
+            left: 5px;
+            border-radius: 50%;
+            background-color: #87aeb4;
+            box-shadow: 0px 0px 10px #ced4da;
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+    .radio-button input[type="radio"]:checked + .radio {
+        border-color: #87aeb4;
+        transform: translateZ(0px);
+        background-color: #fff;
+    }
+
+        .radio-button input[type="radio"]:checked + .radio::before {
+            opacity: 1;
+        }
+
+
     #checkEye1 {
         position: absolute;
         top: 50%;
@@ -35,14 +94,10 @@
         /* box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168); */
     }   
 
-    .f1 {
-        border: 1px solid #ced4da;
-        border-radius:3px;
-        background-color: lightgrey;
+   #InvestYear, #MLevel{
+        margin-left:10px;
     }
-    .k1 {
-        padding-left: 10px;
-    }
+
     /* 下拉選單 */
     .news-filter select {
         background: #fff;
@@ -94,6 +149,10 @@
         background-color: #87aeb4;
         color: white;
     }
+        #InvestYear, #MLevel{
+        margin-left:10px;
+    }
+
 </style>
 @* <h1 class="text-">會員功能-修改個人資料</h1> *@
 <img class="bg-chart" src="~/homePage/chart.png" />
@@ -110,28 +169,28 @@
                     </div> *@
 
                     <div class="form-floating mb-3">
-                        <input class="form-control" type="password" pattern="@PasswordPattern" size="20" minlength="20" name="MPassword" id="Password" title="請輸入原始密碼" value="">
+                        <input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword" id="Password" title="請輸入原始密碼" value="">
                         <label class="form-label" for="Password">修改密碼:</label>
                         <i id="checkEye1" class="fas fa-eye-slash"></i>
                         <span id="passwordError" style="color: red;"></span>
 
                     </div>
                     <div id="pass1" class="form-floating mb-3">
-                        <input class="form-control" type="password" pattern="@PasswordPattern" size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼" value="">
+                        <input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼" value="">
                         <label class="form-label" for="Password">輸入新密碼:</label>
 
                         <i id="checkEye2" class="fas fa-eye-slash"></i>
                         <span id="passwordError" style="color: red;"></span>
                     </div>
                     <div id="pass2" class="form-floating mb-3">
-                        <input class="form-control" type="password" pattern="" size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="">
+                        <input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="">
                         <label class="form-label" for="Password">請再輸入一次新密碼:</label>
                         @* 再次輸入密碼不同時，顯示提示字 *@
                         <span id="passwordError" style="color: red;"></span>
                         <span id="pwdnoteword"><p style="color:red; ">您輸入的密碼不相同</p></span>
                     </div>
                     <div class="form-floating mb-3">
-                        <input class="form-control" type="email" pattern="@MEmailPattern" name="MEmail" id="Email" value="" required>
+                        <input class="form-control" type="email" pattern=@MEmailPattern name="MEmail" id="Email" value="" required>
                         <label class="form-label" for="Email">信箱:</label>
                         <span id="emailError" style="color: red;"></span>
                         <br>
@@ -142,16 +201,29 @@
                         <label class="form-label" for="UserName">姓名:</label>
                         <br>
                     </div>
-
-                    <div class="f1 mb-3">
-                        <label for="Birthday" id="Birthday" class="k1">生日: <br /></label>
-                        <br>
+                                    
+                    <div class="form-floating mb-3">                    
+                    <input class="form-control" type="date" name="MBirthday" id="Birthday" value="">                        
+                        <label class="form-label" for="Birthday">生日:</label>
                     </div>
 
-                    <div class="f1 mb-3 ">
-                        <label for="MGender" id="MGender" class="k1">性別:</label>
-                        <br>
-                    </div>
+                    <div class="mb-3">
+                    <label for="MGender" required="required" class="gender-input">
+                        性別:
+                        <label class="radio-button">
+                            <input class="testtt" type="radio" name="MGender" id="Male" value="1" required>
+                            <span class="radio"></span>
+                            <label for="Male">男</label>
+                        </label>
+
+                        <label class="radio-button">
+                            <input type="radio" name="MGender" id="Female" value="2" required>
+                            <span class="radio"></span>
+                            <label for="Female">女</label>
+                        </label>
+                    </label>
+                </div>
+
                     <div class="mb-3 news-filter">
                         <label for="MInvestYear">您的投資年數:</label>
                         <select name="MInvestYear" id="InvestYear" required>
@@ -161,13 +233,15 @@
                             <option value="4">5年以上</option>
                         </select>
                         <br>
-                    </div>
+                    </div>             
 
-                    <div class="f1 mb-3 ">
-                        <label for="MLevel" id="MLevel" class="k1">會員等級:</label>
-                        <br>
-                    </div>
-
+                       <div class="news-filter mb-3">
+                    <label for="MLevel">會員等級:</label>
+                    <select name="MLevel" id="MLevel" size="1">
+                        <option value="一般會員" class=".dropdown-item">一般會員</option>
+                        <option value="高級會員">高級會員</option>
+                    </select>
+                </div>
 
                     <button id="ReviseData" class="w-100 btn-w-hover mb-3 edit-btn">修改資料</button>
                     <button id="Reset" class="w-100 btn-w-hover cancle-btn">取消</button>
@@ -225,56 +299,26 @@
             $(this).toggleClass('fa-eye-slash').toggleClass('fa-eye');
         });
 
-
-        // // 1.點擊回到會員頁
-        // $('#showMemberIndex').on("click", function () {
-        //     window.location.href = "/Member/Index";
-        // })
-        // // 2.點擊修改個人資料
-        // $('#showRevise').on("click", function () {
-        //     window.location.href = "/Member/Edit";
-        // })
-        // // 3.點擊我的收藏
-        // $('#showFavoritesPage').on("click", function () {
-        //     window.location.href = "/Member/MyCollect";
-        // })
-        // // 4.點擊我要預測
-        // $('#showPredictFunc').on("click", function () {
-        //     window.location.href = "/StockModel/Predictindex";
-        // })
-        // // 5.點擊我的預測結果
-        // $('#showHistoryPage').on("click", function () {
-        //     window.location.href = "/Member/MyPredictResult";
-        // })
+       
         //將登入的會員資料帶到前台-不可修改的(帳號、生日、性別、會員等級)
         var LogAccount = sessionStorage.getItem("LogAccount");
         // $('#Account').append(`<label>${LogAccount}</label>`);
-        var LogMemberBirthday = sessionStorage.getItem("LogMemberBirthday");
-        $('#Birthday').append(`<label>${LogMemberBirthday}</label>`);
-        var LogMemberGender = sessionStorage.getItem("LogMemberGender");
-        $('#MGender').append(`<label>${LogMemberGender}</label>`);
-        var LogMemberLevel = sessionStorage.getItem("LogMemberLevel");
-        // console.log(LogMemberLevel);
-        switch (LogMemberLevel) {
-            case "normal":
-                $("#MLevel").append("<label>一般會員</label>");
-                break;
-            case "一般會員":
-                $("#MLevel").append("<label>一般會員</label>");
-                break;
-            case "high":
-                $("#MLevel").append("<label>高級會員</label>");
-                break;
-            case "高級會員":
-                $("#MLevel").append("<label>高級會員</label>");
-                break;
-            case "管理者":
-                $("#MLevel").append("<label>管理者</label>");
-                break;
-            default:
-                break;
-        }
 
+        var LogMemberBirthday = sessionStorage.getItem("LogMemberBirthday");       
+        $('#Birthday').val(`${LogMemberBirthday}`);
+        $('#Birthday').prop("disabled",true);
+        
+        var LogMemberGender = sessionStorage.getItem("LogMemberGender");
+        // console.log(typeof(LogMemberGender))
+        // console.log( "會員性別:"+ LogMemberGender)
+         $(`input[name='MGender'][value=${LogMemberGender}]`).prop("checked",true);
+         $("input[name='MGender']").prop("disabled",true);
+
+        var LogMemberLevel = sessionStorage.getItem("LogMemberLevel");        
+         $('select[name="MLevel"]').val(`${LogMemberLevel}`);
+         $('select[name="MLevel"]').prop("disabled",true);
+
+        
         //將登入的會員資料帶到前台-可修改的(信箱、姓名、投資年數)
         var LogMemberEmail = sessionStorage.getItem("LogMemberEmail");
         $('#Email').val(LogMemberEmail);
@@ -362,6 +406,7 @@
                 }
             });
         }
+
 
         //(1).判斷該會員的舊密碼是否一致
         //Yes =>可以修改

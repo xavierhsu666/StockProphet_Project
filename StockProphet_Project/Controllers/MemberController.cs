@@ -120,11 +120,7 @@ namespace StockProphet_Project.Controllers
             return ReviseMemberData.ToString()!;
         }
 
-        //我的預測結果頁面_1-3
-        public IActionResult MyPredictResult()
-        {
-            return View();
-        }
+      
         public IActionResult MySearchPage()
         {
             // 在加载搜索页面时返回一个空的视图
@@ -429,6 +425,12 @@ namespace StockProphet_Project.Controllers
         //return Json(query);
         //     }
 
+        //我的預測結果頁面_1-4
+        public IActionResult MyPredictResult()
+        {
+            return View();
+        }
+
         [HttpGet]
         public IActionResult MyPredictResultBoris(string customername)
         {
@@ -477,52 +479,103 @@ namespace StockProphet_Project.Controllers
             return Json(results);
         }
 
-        //我的預測結果
-        //沛棋繪製卡片的功能
+        //條件篩選-追蹤中(finishtime>currentdate)
+        public IActionResult MyPredictResultOngoing(string customername)
+        {
+            List<object> results = new List<object>();
+            string connectionString = _configuration.GetConnectionString("StocksConnstring");
+            string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
+                        B.PBulidTime,B.Pvariable, B.Pfinishtime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code,B.Pmodel,B.PAccuracyRatio
+                        FROM DB_model AS B 
+                        OUTER APPLY (
+                            SELECT TOP 5 *
+                            FROM Stock
+                            WHERE SN_code = B.Pstock
+                                  AND ST_Date <= B.PBulidTime
+                                  AND B.Pfinishtime
+                            ORDER BY ST_Date desc
+                        ) AS A 
+                        WHERE B.PAccount = '{customername}'";
+            Console.WriteLine(sqlQuery);
+            SqlConnection sqlconnect = new SqlConnection(connectionString);
+            sqlconnect.Open();
+            SqlCommand sqlCommand = new SqlCommand(sqlQuery, sqlconnect);
+            SqlDataReader reader = sqlCommand.ExecuteReader();
 
-        ////網址傳資料|回傳預測內容
-        //public IActionResult showPredictions(string id)
-        //{
-        //    var viewModel = _context.DbModels.ToList();
-        //    var query = from p in viewModel
-        //                where p.Paccount == id
-        //                select new
-        //                {
-        //                    Account = p.Paccount,
-        //                    Variable = p.Pvariable,
-        //                    Label = p.Plabel,
-        //                    FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd")
-        //                };
 
-        //    return Json(query);
-        //}
-        //如果該會員預測過10檔股票，就要跑10次!!!
-        //網址傳資料|該股票所有內容(for預測用
-        //public IActionResult showAllStocks(string id)
-        //{
-        //    var viewModel = _context.Stock.ToList();
-        //    var query = from p in viewModel
-        //                where p.SnCode == id
-        //                select new
-        //                {
-        //                    Date = p.StDate,
-        //                    Close = p.SteClose,
-        //                    StockName = p.SnName
-        //                };
+            while (reader.Read())
+            {
 
-        //    return Json(query);
-        //}
-        //抓取會員預測過的結果
-        //public IActionResult MemberPredictData(string LogAccount)
-        //{
-        //    //找出登入的會員共有幾筆預測資料
+                results.Add(new
+                {
+                    STdate = reader["ST_Date"],
+                    PAcount = reader["PAccount"],
+                    PStock = reader["Pstock"],
+                    PLabel = reader["Plabel"],
+                    Parameter = reader["dummyblock"],
+                    PBuildTime = reader["PBulidTime"],
+                    PFinsihTime = reader["Pfinishtime"],
+                    SteClose = reader["Ste_Close"],
+                    PID = reader["Pid"],
+                    preVariable = reader["Pvariable"],
+                    SName = reader["SN_Name"],
+                    SCode = reader["SN_Code"],
+                    Pmodel = reader["Pmodel"],
+                    PAccuracyRatio = reader["PAccuracyRatio"]
 
-        //    var query = from m in _context.DbModels
-        //                where m.Paccount == LogAccount
-        //                orderby m.PbulidTime descending
-        //                select new { PID = m.Pid, Paccount = m.Paccount, Pvariable = m.Pvariable, Plabel = m.Plabel, PbulidTime = m.PbulidTime, PfinishTime = m.PfinishTime };
-        //    return Json(query);
-        //}
+                });
+            }
+            return Json(results);
+        }
+
+        //條件篩選-結案
+        public IActionResult MyPredictResultfinished(string customername)
+        {
+            List<object> results = new List<object>();
+            string connectionString = _configuration.GetConnectionString("StocksConnstring");
+            string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
+                        B.PBulidTime,B.Pvariable, B.Pfinishtime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code,B.Pmodel,B.PAccuracyRatio
+                        FROM DB_model AS B 
+                        OUTER APPLY (
+                            SELECT TOP 5 *
+                            FROM Stock
+                            WHERE SN_code = B.Pstock
+                                  AND ST_Date <= B.PBulidTime
+                                  //AND B.Pfinishtime
+                            ORDER BY ST_Date desc
+                        ) AS A 
+                        WHERE B.PAccount = '{customername}'";
+            Console.WriteLine(sqlQuery);
+            SqlConnection sqlconnect = new SqlConnection(connectionString);
+            sqlconnect.Open();
+            SqlCommand sqlCommand = new SqlCommand(sqlQuery, sqlconnect);
+            SqlDataReader reader = sqlCommand.ExecuteReader();
+
+
+            while (reader.Read())
+            {
+
+                results.Add(new
+                {
+                    STdate = reader["ST_Date"],
+                    PAcount = reader["PAccount"],
+                    PStock = reader["Pstock"],
+                    PLabel = reader["Plabel"],
+                    Parameter = reader["dummyblock"],
+                    PBuildTime = reader["PBulidTime"],
+                    PFinsihTime = reader["Pfinishtime"],
+                    SteClose = reader["Ste_Close"],
+                    PID = reader["Pid"],
+                    preVariable = reader["Pvariable"],
+                    SName = reader["SN_Name"],
+                    SCode = reader["SN_Code"],
+                    Pmodel = reader["Pmodel"],
+                    PAccuracyRatio = reader["PAccuracyRatio"]
+
+                });
+            }
+            return Json(results);
+        }
 
         //註冊頁面-2		
         public IActionResult Register()
