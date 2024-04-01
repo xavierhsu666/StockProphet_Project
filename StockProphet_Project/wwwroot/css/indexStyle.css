@@ -124,7 +124,7 @@ body {
 }*/
 .search-hint {
     position: absolute;
-    transform: translateY(50px);
+    transform: translateY(80px);
 }
 
 .bottom-left {
@@ -257,7 +257,7 @@ a.ui-button:active,
     line-height: 28px;
     padding: 0 1rem;
     width: 100%;
-    padding-left: 2.5rem;
+    padding-left: 1rem;
     border: 2px solid transparent;
     border-radius: 8px;
     outline: none;
