@@ -3,123 +3,151 @@
 @{
 	ViewData["Title"] = "管理者頁面-Member資訊";
 }
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<h1>管理者頁面(Member)</h1>
-<br>
-<button onclick="loadModel('DbMembers')">Member</button>
-<button onclick="loadModel('DbModels')">Models</button>
-<button onclick="loadModel('Stocks')">Stocks</button>
-<button onclick="window.location.href='/stockmodel/updateAllStock';">updateAllStock</button>
+<style>
+	.manager-container{
+		width:80%;
+		display:flex;
+		flex-direction:column;
 
-<br>
-<br>
-<p>
-	<a asp-action="Create">Create New</a>
-</p>
+	}
 
-<div class="d-xl-inline-flex">
+	.myTable thead tr::after {
+		content: "";
+		background-color: #f5f5f5;
+		height: 52px;
+	}
 
 
-	<canvas id="genderChart" width="400" height="400"></canvas>
-	<canvas id="preferChart" width="400" height="400"></canvas>
-	<canvas id="levelChart" width="400" height="400"></canvas>
+</style>
+<div class="area-container">
+	<div class="manager-container">
+		<h1>管理者頁面(Member)</h1>
+		<br>
+		<div class="btn-area">
+			<button class="btn-w-hover mg-btn" onclick="loadModel('DbMembers')">Member</button>
+			<button class="btn-w-hover mg-btn" onclick="loadModel('DbModels')">Models</button>
+			<button class="btn-w-hover mg-btn" onclick="loadModel('Stocks')">Stocks</button>
+			<button class="btn-w-hover mg-btn" onclick="window.location.href='/stockmodel/updateAllStock';">updateAllStock</button>
+		</div>
+		
+		<br>
+		<br>
+		<p>
+			<a asp-action="Create">Create New</a>
+		</p>
+
+		<div class="d-xl-inline-flex">
+
+
+			<canvas id="genderChart" width="400" height="400"></canvas>
+			<canvas id="preferChart" width="400" height="400"></canvas>
+			<canvas id="levelChart" width="400" height="400"></canvas>
+		</div>
+		<br>
+		<br>
+		<br>
+		<div class="member-search mb-3">
+			<label>客戶名稱搜尋欄</label>
+			<input type="type" name="name" id="customerselect" value="" />
+		</div>
+		
+		<div class="myTable">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.MaccoMnt)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.Mpassword)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.MtrueName)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.Mgender)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.Mbirthday)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.MinvestYear)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.Memail)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.Mlevel)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.Mprefer)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.MregisterTime)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.MlastLoginTime)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.MfavoriteModel)
+						</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody id="membertable" class="table-row-hover">
+					@foreach (var item in Model) {
+						<tr>
+							<td>
+								@Html.DisplayFor(modelItem => item.MaccoMnt)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.Mpassword)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.MtrueName)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.Mgender)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.Mbirthday)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.MinvestYear)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.Memail)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.Mlevel)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.Mprefer)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.MregisterTime)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.MlastLoginTime)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.MfavoriteModel)
+							</td>
+							<td>
+								<a class="a-style" asp-action="Edit" asp-route-id="@item.Mid">Edit</a>
+								<a class="a-style" asp-action="Details" asp-route-id="@item.Mid">Details</a>
+								<a class="a-style" asp-action="Delete" asp-route-id="@item.Mid">Delete</a>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+		
+	</div>
 </div>
-<br>
-<br>
-<br>
-<label>客戶名稱搜尋欄</label>
-<input type="type" name="name" id="customerselect" value="" />
-<table class="table">
-	<thead>
-		<tr>
-			<th>
-				@Html.DisplayNameFor(model => model.MaccoMnt)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.Mpassword)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.MtrueName)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.Mgender)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.Mbirthday)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.MinvestYear)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.Memail)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.Mlevel)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.Mprefer)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.MregisterTime)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.MlastLoginTime)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.MfavoriteModel)
-			</th>
-			<th></th>
-		</tr>
-	</thead>
-	<tbody id="membertable">
-		@foreach (var item in Model)
-		{
-			<tr>
-				<td>
-					@Html.DisplayFor(modelItem => item.MaccoMnt)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.Mpassword)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.MtrueName)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.Mgender)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.Mbirthday)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.MinvestYear)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.Memail)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.Mlevel)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.Mprefer)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.MregisterTime)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.MlastLoginTime)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.MfavoriteModel)
-				</td>
-				<td>
-					<a asp-action="Edit" asp-route-id="@item.Mid">Edit</a> |
-					<a asp-action="Details" asp-route-id="@item.Mid">Details</a> |
-					<a asp-action="Delete" asp-route-id="@item.Mid">Delete</a>
-				</td>
-			</tr>
-		}
-	</tbody>
-</table>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
 	function loadModel(model) {
 		window.location.href = `/${model}/Index`;
@@ -295,4 +323,10 @@
 			}
 		});
 	}
+	
+	
+	$(".btn-area .mg-btn:nth-child(1)").css({
+		"color":"white",
+		"background-color": "#87aeb4"
+	})
 </script>
