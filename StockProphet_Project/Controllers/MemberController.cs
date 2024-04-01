@@ -174,15 +174,15 @@ namespace StockProphet_Project.Controllers
                 results.Add(new
                 {
                     STdate = reader["ST_Date"],
-                    PAcount = reader["PAccount"],
+                    PAcount = reader["Paccount"],
                     PStock = reader["Pstock"],
                     PLabel = reader["Plabel"],
-                    Parameter = reader["dummyblock"],
-                    PBuildTime = reader["PBulidTime"],
+                    Parameter = reader["Dummyblock"],
+                    PBuildTime = reader["PbulidTime"],
                     PFinsihTime = reader["PfinishTime"],
                     SteClose = reader["Ste_Close"],
                     PID = reader["Pid"],
-                    preVariable = reader["PVariable"],
+                    preVariable = reader["Pvariable"],
                     SName = reader["SN_Name"],
                     SCode = reader["SN_Code"]
 
@@ -376,7 +376,7 @@ namespace StockProphet_Project.Controllers
                     PLabel = reader["Plabel"],
                     Parameter = reader["dummyblock"],
                     PBuildTime = reader["PBulidTime"],
-                    PFinsihTime = reader["PfinishTime"],
+                    PFinsihTime = reader["PFinishTime"],
                     SteClose = reader["Ste_Close"],
                     PID = reader["Pid"],
                     preVariable = reader["PVariable"],
