@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="~/css/drawCard.css" type="text/css" />
     <link rel="stylesheet" href="~/css/indexStyle.css" type="text/css" />
     <link rel="stylesheet" href="~/css/highlevel.css" />
+    <link rel="stylesheet" href="~/css/mainStyle.css" />
     @* d3.js及圖表會用的到的 *@
     <script src="https://d3js.org/d3.v4.js"></script>
     <script src="https://techanjs.org/techan.min.js"></script>
@@ -39,7 +40,7 @@
             </div>
         </nav> *@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light mb-3" style="background-color:none;">
-            <div class="container-fluid" style="background-color: #f5f5f5; z-index:10">
+            <div class="container-fluid" style="z-index:10">
                 <img src="~/Logo.svg" class="main-logo" onclick="backHome()" />
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +48,7 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between ">
                     <ul class="navbar-nav" id="mynavgation-left">
-                        <li class="nav-item" id="myPre" >
+                        <li class="nav-item" id="myPre">
                             <a class="nav-link text-dark text-right " asp-area="" asp-controller="StockModel" asp-action="Predictindex" >我要預測</a>
                         </li>
                         <li class="nav-item" id="myVisitor">
@@ -64,8 +65,6 @@
                         <li class="nav-item" id="myRegister">
                             <a class="nav-link text-dark text-right" asp-area="" asp-controller="Member" asp-action="Register" id="sign-up">註冊</a>
                         </li>
-                    </ul>
-                    <ul class="navbar-nav" id="">
                         <li class="nav-item" id="">
                             <a type="button" class="btn btn-primary" asp-area="" asp-controller="" asp-action="" data-bs-toggle="modal" data-bs-target="#exampleModal" id="highlevel">
                                 會員升級
@@ -175,17 +174,19 @@
     
 	@await RenderSectionAsync("Scripts", required: false)
 	<script>
+        //預設隱藏
+        $(".text-content").hide();
         $("#highlevel").css("display", "none");
 		$(document).ready(function () {
             
 			if (sessionStorage.getItem("LogAccount") == null) {
-                $(".note-area").css("display","none");
-                console.log(1)
+                $(".note-area").css("display", "none");
                 $('.dropdown-menu').css("display", "none")
                 $('#mynavgation-right').prepend(`<li b-vkyxnss9jg class="nav-item" id="myLogin"><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login">登入</a></li>`);
 				$('#loginlink').show();
 				$('#logoutlink').hide();
 			} else {
+                $(".note-area").css("opacity", "1");
                 console.log(2)
                 $('.dropdown-menu').append(` 
                                              <a class="dropdown-item" href="/Member/Edit">個人資料修改</a>
@@ -215,8 +216,6 @@
 			})
 
 		})
-        //預設隱藏
-        $(".text-content").hide();
         $(".slide-btn").click(function () {
             if ($(".text-content").is(":hidden")) {
 

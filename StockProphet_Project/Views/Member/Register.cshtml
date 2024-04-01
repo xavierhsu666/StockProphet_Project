@@ -6,240 +6,373 @@
 }
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
 <style>
-	/* 帳號檢查小動畫 */
-	#ckeckOk {
-		font-size: 24px;
-		position: absolute;
-		top: 60%;
-		right: 10px;
-		transform: translateY(-50%);
-		*/
-		/* visibility: hidden;  */
-		/* visibility: visible; */
-		width: 30px;
-		height: 30px;
-	}
-	/* 小眼睛 */
-	#checkEye {
-		position: absolute;
-		top: 50%;
-		right: 10px;
-		transform: translateY(-50%);
-	}
-	/* 外層 */
-	.form-container {
-		max-width: 500px;
-		background-color: #fff;
-		padding: 32px 24px;
-		font-size: 14px;
-		font-family: inherit;
-		color: #212121;
-		display: flex;
-		flex-direction: column;
-		gap: 20px;
-		box-sizing: border-box;
-		border-radius: 10px;
-		box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
-	}
-	/* 下拉選單 */
-	.news-filter select {
-		background: #fff;
-		color: black;
-		margin: 5px;
-		width: 300px;
-		height: 3em;
-		/* padding: 8px; */
-		position: relative;
-		border-radius: 5px;
-		appearance: none;
-		-moz-appearance: none;
-		-webkit-appearance: none;
-		/*  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), linear-gradient(#003d79, #003d79);
-								background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -webkit-linear-gradient(#003d79, #003d79);
-								background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -moz-linear-gradient(#003d79, #003d79);
-								*/
-		background-position: right 0.5em top 50%, 0 0;
-		background-size: contain, cover;
-		background-repeat: no-repeat, repeat;
-	}
 
-	option {
-		appearance: none;
-		background: #fff;
-		position: absolute;
-	}
+    /* radio標籤 */
+    .radio-button {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin: 10px;
+        position: relative;
+        align-items: center;
+
+    }
+
+
+        .radio-button input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            /* accent-color: #87aeb4; */
+        }
+
+
+    .radio {
+        position: relative;
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 2px solid #ccc;
+        box-shadow: 0px 0px 5px #ced4da;
+        transform: translateZ(-25px);
+        transition: all 0.2s ease-in-out;
+    }
+
+        .radio::before {
+            position: absolute;
+            content: '';
+            width: 10px;
+            height: 10px;
+            top: 5px;
+            left: 5px;
+            border-radius: 50%;
+            background-color: #87aeb4;
+            box-shadow: 0px 0px 10px #ced4da;
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+    .radio-button input[type="radio"]:checked + .radio {
+        border-color: #87aeb4;
+        transform: translateZ(0px);
+        background-color: #fff;
+    }
+
+        .radio-button input[type="radio"]:checked + .radio::before {
+            opacity: 1;
+        }
+    /* 帳號檢查小動畫 */
+    #ckeckOk {
+        font-size: 24px;
+        position: absolute;       
+        top: 60%;
+        right: 10px;
+        transform: translateY(-50%); */
+        /* visibility: hidden;  */
+        /* visibility: visible; */
+        width: 30px;
+        height: 30px;
+    }
+    /* 小眼睛 */
+    #checkEye {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+    }
+    /* 外層 */
+    .form-container {
+        
+        /* max-width: 500px; */
+        background-color: #fff;
+        padding: 32px 24px;
+        font-size: 14px;
+        font-family: inherit;
+        color: #212121;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        box-sizing: border-box;
+        border-start-start-radius: 10px;
+        border-bottom-left-radius: 10px;
+        /* box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168); */
+    }
+    /* 下拉選單 */
+    .news-filter select {
+        outline:none;
+        border: 1px solid #ced4da;
+        background: #fff;
+        color: black;
+        margin: 3px;
+        width: 300px;
+        height: 3em;
+        /* padding: 8px; */
+        position: relative;
+        border-radius: 5px;
+        /* appearance: none; */
+        /* -moz-appearance: none; */
+        /* -webkit-appearance: none; */
+        /*  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), linear-gradient(#003d79, #003d79);
+            background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -webkit-linear-gradient(#003d79, #003d79);
+            background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -moz-linear-gradient(#003d79, #003d79);
+            */
+        background-position: right 0.5em top 50%, 0 0;
+        background-size: contain, cover;
+        background-repeat: no-repeat, repeat;
+        padding-left: 10px;
+        transition:all 0.3s
+    }
+
+        .news-filter select:focus {
+            box-shadow: 0 0 8px #87aeb4;
+            border: 1px solid #86b7fe;
+        }
+
+    option {
+        appearance: none;
+        background: #fff;
+        position: absolute;
+    }
+
+    .register-container{
+        /* height:80%; */
+        width: 70%;
+        background-color: white;
+        box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
+        border-radius: 10px;
+        display: flex;
+        min-width: 400px;
+    }
+
+    .register-left , .register-right{
+        padding: 40px;
+        padding-top: 80px;
+        padding-bottom: 80px;
+    }
+    .register-left{
+        width:50%;
+        display: flex;
+        flex-direction: column;
+
+
+    }
+
+    .register-right{
+        display:flex;
+        flex-grow:1;
+        background-color: #87aeb4;
+        border-start-end-radius: 10px;
+        border-bottom-right-radius: 10px;
+
+    }
+
+    .gender-input{
+        display:flex;
+        align-items:center;
+    }
+
+
+    @@media screen and (max-width: 1200px) {
+        .register-right {
+            display: none;
+        }
+
+        .register-left {
+            width: 100%;
+        }
+    }
+
+    .cancle-btn:hover {
+        background-color: transparent;
+        color: #87aeb4;
+    }
+
+    .reg-btn{
+        background-color: #87aeb4;
+        color: white;
+    }
+
+    #InvestYear, #MLevel{
+        margin-left:10px;
+    }
+
 </style>
+<img class="bg-chart" src="~/homePage/chart.png" />
+<img class="bg-line" src="~/homePage/chart2.png" />
+<div class="area-container">
+    <div class="register-container">
+        <div id="RegisterData" class="form-container register-left">
+            <form autocomplete="on">
+                <div class="logo-container h5">註冊資料</div>
+                <div class="form-floating mb-3">
+                    @* +正則 *@
+                    <input class="form-control" type="text" pattern=@AccountPattern size="20" maxlength="20" name="MAccoMnt" id="Account" value="" required="required">
+                    <label class="form-label" for="Account">帳號:</label>
+                    @* 打勾動畫 "*@
+                    <i id="ckeckOk" class="fa-solid fa-circle-check" style="color: #63E6BE; display:none"></i>
+                    @* <div id="lottie333" style="display: none"></div> *@
+                    <span id="checkName"></span>@* 檢查帳戶名稱是否重複 *@
+                    <span id="accountError" style="color: red;"></span> @* 不符合格式跳提示 *@
+                </div>
 
+                <div class="form-floating mb-3">
+                    @* +正則 *@
+                    <input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword1" id="Password1" autocomplete=“off”>
+                    <label class="form-label" for="Password">密碼:</label>
+                    <i id="checkEye" class="fas fa-eye-slash"></i>
+                    <span id="passwordError" style="color: red;"></span>
+                </div>
+                <div class="form-floating mb-3">
+                    @* +正則 *@
+                    <input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword2" id="Password2" value="" autocomplete=“off”>
+                    <label class="form-label" for="Password">請再次輸入密碼:</label>
+                    <span id="confirmPasswordError" style="color: red;"></span>
+                    @* 再次輸入密碼不同時，顯示提示字 *@
+                    <span id="pwdnoteword" style="color: red;">您輸入的密碼不相同</span>
 
-<div id="RegisterData" class="form-container">
-	<div class="logo-container">註冊資料</div>
-	<form autocomplete="on">
+                </div>
 
-		<div class="form-floating mb-3">
-			@* +正則 *@
-			<input class="form-control" type="text" pattern=@AccountPattern size="20" maxlength="20" name="MAccoMnt" id="Account" value="" required="required">
-			<label class="form-label" for="Account">帳號:</label>
-			@* 打勾動畫 "*@
-			<i id="ckeckOk" class="fa-solid fa-circle-check" style="color: #63E6BE; display:none"></i>
-			@* <div id="lottie333" style="display: none"></div> *@
-			<span id="checkName"></span>@* 檢查帳戶名稱是否重複 *@
-			<span id="accountError" style="color: red;"></span> @* 不符合格式跳提示 *@
+                <div class="logo-container h5">基本資料</div>
+                <div class="form-floating">
+                    @* +正則 *@
+                    <input class="form-control" type="email" pattern=@MEmailPattern name="MEmail" id="Email" value="">
+                    <label class="form-label" class="form-label" for="MEmail">信箱:</label>
+                    <span id="emailError" style="color: red;"></span>
+                    <br>
+                </div>
+                <div class="form-floating ">
+                    <input class="form-control" type="text" name="MTrueName" id="UserName" value="">
+                    <label class="form-label" for="MTrueName">姓名:</label>
+                    <br>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input class="form-control" type="date" name="MBirthday" id="Birthday" value="">
+                    <label class="form-label" for="Birthday">生日:</label>
+                </div>
+
+                <div class="mb-3">
+                    <label for="MGender" required="required" class="gender-input">
+                        性別:
+                        <label class="radio-button">
+                            <input class="testtt" type="radio" name="MGender" id="Male" value="男" required>
+                            <span class="radio"></span>
+                            <label for="Male">男</label>
+                        </label>
+
+                        <label class="radio-button">
+                            <input type="radio" name="MGender" id="Female" value="女" required>
+                            <span class="radio"></span>
+                            <label for="Female">女</label>
+                        </label>
+                    </label>
+                </div>
+
+                <div class="news-filter mb-3">
+                    <label for="MInvestYear" required>您的投資年數:</label>
+                    <select name="MInvestYear" id="InvestYear">
+                        <option value="1">未滿1年</option>
+                        <option value="2">1-3年</option>
+                        <option value="3">3-5年</option>
+                        <option value="4">5年以上</option>
+                    </select>
+                </div>
+
+                <div class="news-filter mb-3">
+                    <label for="MLevel">會員等級:</label>
+                    <select name="MLevel" id="MLevel" size="1">
+                        <option value="一般會員" class=".dropdown-item">一般會員</option>
+                        <option value="高級會員">高級會員</option>
+                    </select>
+                </div>
+
+                @*   下拉選單測試
+                <div class="news-filter">
+                <label class="form-label" for="MTrueName">測試:</label>
+                <select name="name" id="">
+                <option value="First value">First</option>
+                <option value="Second value">Second</option>
+                <option value="Third value">Third</option>
+                <option value="Forth value">Forth</option>
+                <option value="Fifth value">Fifth</option>
+                </select>
+                </div> *@
+
+                <button class="w-100 btn-w-hover mb-3 reg-btn" type="submit" id="RegisterSubmit">立即註冊</button>
+                <button class="w-100 btn-w-hover cancle-btn" id="Reset">取消填寫</button>
+            </form>
 		</div>
-
-		<div class="form-floating mb-3">
-			@* +正則 *@
-			<input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword1" id="Password1" autocomplete=“off”>
-			<label class="form-label" for="Password">密碼:</label>
-			<i id="checkEye" class="fas fa-eye-slash"></i>
-			<span id="passwordError" style="color: red;"></span>
-		</div>
-		<div class="form-floating mb-3">
-			@* +正則 *@
-			<input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword2" id="Password2" value="" autocomplete=“off”>
-			<label class="form-label" for="Password">請再次輸入密碼:</label>
-			<span id="confirmPasswordError" style="color: red;"></span>
-			@* 再次輸入密碼不同時，顯示提示字 *@
-			<span id="pwdnoteword" style="color: red;">您輸入的密碼不相同</span>
-
-		</div>
-
-		<div class="logo-container">基本資料</div>
-
-		<div class="form-floating mb-3">
-			@* +正則 *@
-			<input class="form-control" type="email" pattern=@MEmailPattern name="MEmail" id="Email" value="">
-			<label class="form-label" class="form-label" for="MEmail">信箱:</label>
-			<span id="emailError" style="color: red;"></span>
-			<br>
-		</div>
-
-		<div class="form-floating mb-3">
-			<input class="form-control" type="text" name="MTrueName" id="UserName" value="">
-			<label class="form-label" for="MTrueName">姓名:</label>
-			<br>
-		</div>
-
-		<div class="form-floating mb-3">
-			<input class="form-control" type="date" name="MBirthday" id="Birthday" value="">
-			<label class="form-label" for="Birthday">生日:</label>
-			<br>
-		</div>
-
-		<div>
-			<label for="MGender" required="required">性別:</label>
-			<input type="radio" name="MGender" id="Male" value="男" required>
-			<label for="Male">男</label>
-			<input type="radio" name="MGender" id="Female" value="女" required>
-			<label for="Female">女</label>
-			<br>
-		</div>
-
-		<div class="news-filter">
-			<label for="MInvestYear" required>您的投資年數:</label>
-			<select name="MInvestYear" id="InvestYear">
-				<option value="1">未滿1年</option>
-				<option value="2">1-3年</option>
-				<option value="3">3-5年</option>
-				<option value="4">5年以上</option>
-			</select>
-			<br>
-		</div>
-
-		<div class="news-filter">
-			<label for="MLevel">會員等級:</label>
-			<select name="MLevel" id="MLevel" size="1">
-				<option value="一般會員">一般會員</option>
-				<option value="高級會員">高級會員</option>
-			</select>
-			<br>
-		</div>
-
-		@*   下拉選單測試
-		<div class="news-filter">
-		<label class="form-label" for="MTrueName">測試:</label>
-		<select name="name" id="">
-		<option value="First value">First</option>
-		<option value="Second value">Second</option>
-		<option value="Third value">Third</option>
-		<option value="Forth value">Forth</option>
-		<option value="Fifth value">Fifth</option>
-		</select>
-		</div> *@
-
-		<button class="w-100 btn btn-lg btn-primary" type="submit" id="RegisterSubmit">立即註冊</button>
-		<button class="w-100 btn btn-lg btn-secondary" id="Reset">取消填寫</button>
-	</form>
-
-	@* 儲值窗 *@
-	<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-xl">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">會員等級權益說明</h5>
-					<button type="button" id="closebtn" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<div class="wrap">
-						<div class="item">
-							<div class="icon"><i class="fa-solid fa-chess-pawn" style="color: #73bbbf;"></i></div>
-							<div class="txt" style="font-size: 1.2em;">
-								<h3>訪客</h3>
-								<ul>
-									<li class="text-lg-right">可收藏預測筆數:無</li>
-									<li class="text-lg-right">預測模型選擇:無</li>
-									<li class="text-lg-right">預測模型數量:無</li>
-									<li class="text-lg-right">Free</li>
-								</ul>
-							</div>
+		<div class="register-right"></div>
+	</div>
+</div>
+@* 儲值窗 *@
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-xl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">會員等級權益說明</h5>
+				<button type="button" id="closebtn" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="wrap">
+					<div class="item">
+						<div class="icon"><i class="fa-solid fa-chess-pawn" style="color: #73bbbf;"></i></div>
+						<div class="txt" style="font-size: 1.2em;">
+							<h3>訪客</h3>
+							<ul>
+								<li class="text-lg-right">可收藏預測筆數:無</li>
+								<li class="text-lg-right">預測模型選擇:無</li>
+								<li class="text-lg-right">預測模型數量:無</li>
+								<li class="text-lg-right">Free</li>
+							</ul>
 						</div>
-						<div class="item">
-							<div class="icon"><i class="fa-solid fa-chess-knight" style="color: #73b5c5;"></i></i></div>
-							<div class="txt" style="font-size: 1.2em;">
-								<h3>一般會員</h3>
+					</div>
+					<div class="item">
+						<div class="icon"><i class="fa-solid fa-chess-knight" style="color: #73b5c5;"></i></i></div>
+						<div class="txt" style="font-size: 1.2em;">
+							<h3>一般會員</h3>
+							<ul>
+								<li class="text-lg-right">可收藏預測筆數:5筆</li>
+								<li class="text-lg-right">預測模型選擇:</li>
 								<ul>
-									<li class="text-lg-right">可收藏預測筆數:5筆</li>
-									<li class="text-lg-right">預測模型選擇:</li>
-									<ul>
-										<li>迴歸</li>
-										<li>時間序列</li>
-									</ul>
-									<li class="text-lg-right">預測模型數量:5筆</li>
-									<li class="text-lg-right">Free</li>
+									<li>迴歸</li>
+									<li>時間序列</li>
 								</ul>
-							</div>
-						</div>
-
-						<div class="item">
-							<div class="icon"><i class="fa-solid fa-chess-king fa-bounce" style="color: #73b5c5;"></i></div>
-							<div class="txt" style="font-size: 1.2em;">
-								<h3>高級會員</h3>
-								<ul>
-									<li class="text-lg-right">可收藏預測筆數:不限</li>
-									<li class="text-lg-right">
-										預測模型選擇:
-										<ul>
-											<li>迴歸</li>
-											<li>時間序列</li>
-											<li>LSTM</li>
-											<li>FNN</li>
-										</ul>
-									</li>
-									<li class="text-lg-right">預測模型數量:不限</li>
-									<li class="text-lg-right">NTD$ 365/月</li>
-								</ul>
-							</div>
+								<li class="text-lg-right">預測模型數量:5筆</li>
+								<li class="text-lg-right">Free</li>
+							</ul>
 						</div>
 					</div>
 
+					<div class="item">
+						<div class="icon"><i class="fa-solid fa-chess-king fa-bounce" style="color: #73b5c5;"></i></div>
+						<div class="txt" style="font-size: 1.2em;">
+							<h3>高級會員</h3>
+							<ul>
+								<li class="text-lg-right">可收藏預測筆數:不限</li>
+								<li class="text-lg-right">
+									預測模型選擇:
+									<ul>
+										<li>迴歸</li>
+										<li>時間序列</li>
+										<li>LSTM</li>
+										<li>FNN</li>
+									</ul>
+								</li>
+								<li class="text-lg-right">預測模型數量:不限</li>
+								<li class="text-lg-right">NTD$ 365/月</li>
+							</ul>
+						</div>
+					</div>
 				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="upgradeclose1">Close</button>
-					<button type="button" class="btn btn-primary" id="upgrade1">升級</button>
-				</div>
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="upgradeclose1">Close</button>
+				<button type="button" class="btn btn-primary" id="upgrade1">升級</button>
 			</div>
 		</div>
 	</div>
-
 </div>
 
 
