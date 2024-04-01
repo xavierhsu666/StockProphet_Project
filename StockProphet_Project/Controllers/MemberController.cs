@@ -167,6 +167,7 @@ namespace StockProphet_Project.Controllers
             SqlCommand sqlCommand = new SqlCommand(sqlQuery, sqlconnect);
             SqlDataReader reader = sqlCommand.ExecuteReader();
 
+            Console.WriteLine("--------------------");
 
             while (reader.Read())
             {
@@ -187,8 +188,10 @@ namespace StockProphet_Project.Controllers
                     SCode = reader["SN_Code"]
 
                 });
+                Console.WriteLine("???"+reader["Pid"]);
             }
 
+            Console.WriteLine("--------------------");
 
             return Json(results);
 
