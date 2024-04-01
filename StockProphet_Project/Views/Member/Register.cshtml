@@ -9,10 +9,11 @@
     /* 帳號檢查小動畫 */
     #ckeckOk {
         font-size: 24px;
-        position: absolute;       
+        position: absolute;
         top: 60%;
         right: 10px;
-        transform: translateY(-50%); */
+        transform: translateY(-50%);
+        */
         /* visibility: hidden;  */
         /* visibility: visible; */
         width: 30px;
@@ -27,7 +28,6 @@
     }
     /* 外層 */
     .form-container {
-        
         max-width: 500px;
         background-color: #fff;
         padding: 32px 24px;
@@ -55,9 +55,9 @@
         -moz-appearance: none;
         -webkit-appearance: none;
         /*  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), linear-gradient(#003d79, #003d79);
-            background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -webkit-linear-gradient(#003d79, #003d79);
-            background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -moz-linear-gradient(#003d79, #003d79);
-            */
+                background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -webkit-linear-gradient(#003d79, #003d79);
+                background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -moz-linear-gradient(#003d79, #003d79);
+                */
         background-position: right 0.5em top 50%, 0 0;
         background-size: contain, cover;
         background-repeat: no-repeat, repeat;
@@ -88,14 +88,14 @@
 
         <div class="form-floating mb-3">
             @* +正則 *@
-            <input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword1" id="Password1" autocomplete=“off”>
+            <input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="8" name="MPassword1" id="Password1" autocomplete=“off”>
             <label class="form-label" for="Password">密碼:</label>
             <i id="checkEye" class="fas fa-eye-slash"></i>
             <span id="passwordError" style="color: red;"></span>
         </div>
         <div class="form-floating mb-3">
             @* +正則 *@
-            <input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword2" id="Password2" value="" autocomplete=“off”>
+            <input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="8" name="MPassword2" id="Password2" value="" autocomplete=“off”>
             <label class="form-label" for="Password">請再次輸入密碼:</label>
             <span id="confirmPasswordError" style="color: red;"></span>
             @* 再次輸入密碼不同時，顯示提示字 *@
@@ -180,7 +180,7 @@
     //再次輸入密碼不同時，顯示提示字
     $('#pwdnoteword').hide();
 
-    $(function () {      
+    $(function () {
 
         //密碼欄位小眼睛
         $("#checkEye").click(function () {
@@ -282,11 +282,16 @@
                             $('#checkName').show();
                             $('#checkName').text("帳號名稱已被註冊");
                         } else {
-                            $('#checkName').hide();
-                            // $('#accountError').hide();
-                            $('#ckeckOk').css("display", "block");
-                            // playAni();
-                            // alert('帳號未使用')
+                            //
+                            if (checkAccount.length < 7) {
+                                $('#ckeckOk').css("display", "none");
+                            } else {
+                                $('#checkName').hide();
+                                // $('#accountError').hide();
+                                $('#ckeckOk').css("display", "block");
+                                // playAni();
+                                // alert('帳號未使用')
+                            }
                         }
                     }
                     // alert(e);
