@@ -690,7 +690,7 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
         .attr("dy", ".15em")
         .attr("transform", "rotate(-25) translate(20, 10)");
 
-    preSvg.select("g.y.axis.pre").call(preAxisY.tickSizeInner(-preWidth - 10, -preWidth).tickPadding(10).tickFormat(d3.format(".1f")).tickValues([minCPre-10, d3.mean([minCPre, maxCPre]), maxCPre+10]));
+    preSvg.select("g.y.axis.pre").call(preAxisY.tickSizeInner(-preWidth - 10, -preWidth).tickPadding(10).tickFormat(d3.format(".1f")).tickValues([minCPre, d3.mean([minCPre, maxCPre]), maxCPre]));
 
     //--點點--//
     //提示框

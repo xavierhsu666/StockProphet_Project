@@ -8,10 +8,10 @@
     font-family: "Noto Sans TC", sans-serif;
 }
 
-html,
+/*html,
 body {
     height: 100%;
-}
+}*/
 
 
 
@@ -26,23 +26,25 @@ body {
     width: 30%;
     margin: 0 auto;
     text-align: center;
-    border: 10px solid #cedba0;
-    background-color: #cedba0;
+    border: 2px solid #87aeb4;
+    background-color: white;
     border-radius: 20px;
-    box-shadow: 10px 20px 50px #f7b6a7;
+    box-shadow: 0px 0px 10px #bbbdbe, 0px 10px 3px #87aeb4;
+    position:relative;
 }
 
 .icon {
     width: 130px;
     height: 130px;
-    background-color: #fcfcfc;
+    background-color: white;
     margin: -75px auto 0;
     font-size: 4rem;
     /* 用來幫icon設定垂直居中 */
-    line-height: 150px;
+    left: 50%;
+    transform: translateX(-50%);
     border-radius: 50%;
     color: #f9cec2;
-    position: relative;
+    position: absolute;
 }
 
     .icon::before {
@@ -50,20 +52,38 @@ body {
         position: absolute;
         width: 100%;
         height: 100%;
-        border-top: 10px solid #f9cec2;
-        border-right: 10px solid #f9cec2;
-        border-bottom: 10px solid transparent;
-        border-left: 10px solid transparent;
-        left: -10px;
+        /*        border-top: 3px solid #87aeb4;
+        border-right: 3px solid #87aeb4;
+        border-bottom: 3px solid transparent;
+        border-left: 3px solid transparent;*/
+        left: 0;
         top: -10px;
         border-radius: 50%;
         transform: rotate(-45deg);
+        background-color: #87aeb4;
+        z-index: -1;
+        box-shadow: 0px 0px 5px #87aeb4;
     }
 
 .txt {
-    padding: 20px 20px 2rem;
+    padding: 55px 20px 2rem;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 }
+.item ul {
+    padding-left:0;
+}
+.item li {
+    margin: 15px;
+    list-style: none;
+    text-align:center;
+    position:relative;
+}
+    .item li::after {
 
+    }
+}
 .item h3 {
     color: #403f3d;
     margin-bottom: 10px;
@@ -78,5 +98,39 @@ body {
 
 .item:hover {
     animation: shake 0.5s linear infinite alternate;
+}
+
+.member-a-table {
+    width:100%;
+    font-size:18px;
+}
+
+    .member-a-table tr {
+        width: 100%;
+        border-bottom: 2px solid #f3f2f1;
+    }
+    .member-a-table th {
+        width: 55%;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left:5px;
+        text-align: start;
+        vertical-align: top;
+    }
+    .member-a-table td {
+        width: 45%;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 5px;
+        text-align: end;
+    }
+
+.x-mark-td {
+    color: #bbbdbe;
+    /*background-color: #f3f2f1;*/
+    /*border: 2px solid white;*/
+}
+.member-price{
+    border-bottom:none !important;
 }
 
