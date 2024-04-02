@@ -21,6 +21,7 @@ using System.Linq;
 using System.Collections;
 using static HDF.PInvoke.H5T;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Net.NetworkInformation;
 
 namespace StockProphet_Project.Controllers
 {
@@ -147,7 +148,7 @@ namespace StockProphet_Project.Controllers
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
             string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-                 B.PBulidTime,B.Pvariable, B.Pfinishtime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code
+                 B.PBulidTime,B.Pvariable, B.PFinishTime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code,B.Pstatus,B.Pmodel,B.PAccuracyRatio
     FROM DB_model AS B 
     OUTER APPLY (
         SELECT TOP 5 *
@@ -163,6 +164,7 @@ namespace StockProphet_Project.Controllers
             SqlCommand sqlCommand = new SqlCommand(sqlQuery, sqlconnect);
             SqlDataReader reader = sqlCommand.ExecuteReader();
 
+            Console.WriteLine("--------------------");
 
             while (reader.Read())
             {
@@ -170,21 +172,25 @@ namespace StockProphet_Project.Controllers
                 results.Add(new
                 {
                     STdate = reader["ST_Date"],
-                    PAcount = reader["PAccount"],
+                    PAcount = reader["Paccount"],
                     PStock = reader["Pstock"],
                     PLabel = reader["Plabel"],
-                    Parameter = reader["dummyblock"],
-                    PBuildTime = reader["PBulidTime"],
-                    PFinsihTime = reader["Pfinishtime"],
+                    Parameter = reader["Dummyblock"],
+                    PBuildTime = reader["PbulidTime"],
+                    PFinsihTime = reader["PfinishTime"],
                     SteClose = reader["Ste_Close"],
                     PID = reader["Pid"],
-                    preVariable = reader["PVariable"],
+                    preVariable = reader["Pvariable"],
                     SName = reader["SN_Name"],
-                    SCode = reader["SN_Code"]
-
+                    SCode = reader["SN_Code"],
+                    Pstatus = reader["Pstatus"],
+                    Pmodel = reader["Pmodel"],
+                    PAccuracyRatio = reader["PAccuracyRatio"]
                 });
+                Console.WriteLine("???"+reader["Pid"]);
             }
 
+            Console.WriteLine("--------------------");
 
             return Json(results);
 
@@ -249,20 +255,19 @@ namespace StockProphet_Project.Controllers
                             // 將數字陣列傳遞到 View
                             ViewBag.FavoriteNumbers = pidList;
                             ViewBag.PidStringsCount = pidStrings.Length;
+                            //ViewData["PidStringsCount"] = ViewBag.PidStringsCount;
+                            // 将数字数组的长度存入 ViewData 中
+                            ViewData["PidStringsCount"] = pidList.Count;
 
+                            Console.WriteLine("這裡");
 
-                            // 使用 LINQ 查詢 DbModels 資料表，找出符合條件的資料列
-                            //var favoriteItems = _context.DbModels.Where(model => pidList.Contains(model.Pid)).ToList();
-
-                            // 將查詢結果傳遞到 View
-                            //ViewBag.FavoriteItems = favoriteItems;
-
-
+                            Console.WriteLine(pidList);
 
                         }
                     }
                     else
                     {
+                        ViewBag.PidStringsCount = 0;
                         ViewBag.FormattedMfavoriteModel = "尚無收藏項目"; // 若找不到對應的資料，則設為空字串
                         ViewBag.FavoriteNumbers = new int[0]; // 若找不到對應的資料，則設為空陣列
                     }
@@ -276,7 +281,7 @@ namespace StockProphet_Project.Controllers
             }
 
             return Json(pidList);
-            // return View();
+            
 
         }
 
@@ -345,7 +350,7 @@ namespace StockProphet_Project.Controllers
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
             string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-                 B.PBulidTime,B.Pvariable, B.Pfinishtime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code
+                 B.PBulidTime,B.Pvariable, B.PFinishTime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code, B.Pmodel, B.PAccuracyRatio
     FROM DB_model AS B 
     OUTER APPLY (
         SELECT TOP 5 *
@@ -373,15 +378,15 @@ namespace StockProphet_Project.Controllers
                     PLabel = reader["Plabel"],
                     Parameter = reader["dummyblock"],
                     PBuildTime = reader["PBulidTime"],
-                    PFinsihTime = reader["Pfinishtime"],
+                    PFinsihTime = reader["PFinishTime"],
                     SteClose = reader["Ste_Close"],
                     PID = reader["Pid"],
                     preVariable = reader["PVariable"],
                     SName = reader["SN_Name"],
-                    SCode = reader["SN_Code"]
-
-
-                });
+                    SCode = reader["SN_Code"],
+					Pmodel = reader["Pmodel"],
+					PAccuracyRatio = reader["PAccuracyRatio"]
+				});
             }
 
 
@@ -652,6 +657,13 @@ namespace StockProphet_Project.Controllers
                     //再判斷密碼是否正確
                     if (member.Mpassword == MPassword)
                     {
+                        //1.存下會員登入時間
+                        DateTime LogTime = DateTime.Now;
+                        //Console.WriteLine(LogTime);
+                        member.MlastLoginTime = LogTime;
+                        _context.SaveChanges();
+
+
                         //2.包成Json傳值
 
                         var LogMember = new
@@ -699,6 +711,13 @@ namespace StockProphet_Project.Controllers
                     //再判斷密碼是否正確					
                     if (member.Mpassword == MPassword)
                     {
+                        //1.存下會員登入時間
+                        DateTime LogTime = DateTime.Now;
+                        //Console.WriteLine(LogTime);
+                        member.MlastLoginTime = LogTime;
+                        _context.SaveChanges();
+
+
                         //2.包成Json傳值
                         var LogMember = new
                         {
@@ -732,7 +751,8 @@ namespace StockProphet_Project.Controllers
                     return "會員名稱錯誤";
                 }
             }
-        }
+        }          
+     
 
         //忘記密碼頁forgot-password-4
         public IActionResult ForgotPassword()
@@ -771,7 +791,7 @@ namespace StockProphet_Project.Controllers
                 //                          前面是發信的email  後面是顯示的名稱   
                 mail.From = new MailAddress("j1129w@gmail.com", "系統驗證碼發送");
                 //收件者email
-                mail.To.Add(MEmail);//result\
+                mail.To.Add(MEmail);//result
                                     //mail.To.Add("wryi636@gmail.com");//result\
                 mail.To.Add("boris83418@gmail.com");//result
                                                     //設定優先權

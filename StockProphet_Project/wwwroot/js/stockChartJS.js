@@ -448,6 +448,7 @@ function smaClick(btn) {
     }
 }
 
+var finishCard = false;
 //撈預測區資料
 d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
 
@@ -538,7 +539,7 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
     <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preBuildDate}</td></tr>
     <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${preDate}</td></tr>
     <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5].Close}</td></tr>
-    <tr><th class="pre-th">準確率</th><td class="pre-td pre-date">${d3.format(".2f")(PAR)}</td></tr>
+    <tr><th class="pre-th">準確率</th><td class="pre-td pre-date">${d3.format(".1f")(PAR)}</td></tr>
     </table>
     <p class="collectNum card${PID}">${ collect > 0 ? collect : 0 }<p>
     <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♡</button>
@@ -907,3 +908,27 @@ function cardDetail(card) {
         window.location.href = `/StockModel/predictphoto?Pid=${cardNum}`
     }
 }
+
+$(".change-list-btn:first-child").css({
+    "color": "white",
+    "background-color": "#87aeb4"
+}).addClass("selectChange");
+function changelist(btn) {
+    if (!($(btn).hasClass("selectChange"))) {
+        console.log("new click");
+    }
+    $(".change-list-btn").css({
+        "color": "#87aeb4",
+        "background-color": "#f5f5f5"
+    }).removeClass("selectChange")
+    $(btn).css({
+        "color": "white",
+        "background-color": "#87aeb4"
+    }).addClass("selectChange")
+}
+
+//卡片重新排序區
+$(function () {
+    var cardLists = $(".prediction-card");
+    console.log(cardLists);
+})

@@ -1,4 +1,7 @@
-﻿@* <script src="https://d3js.org/d3.v4.js"></script> *@
+﻿@* @{
+    var pidStringsCount = ViewData["PidStringsCount"] as int?;
+} *@
+@* <script src="https://d3js.org/d3.v4.js"></script> *@
 @* <link rel="stylesheet" href="~/css/stockChartStyle.css" type="text/css" /> *@
 <link rel="stylesheet" href="~/css/drawCard.css" type="text/css" />
 
@@ -10,17 +13,332 @@
     .y.axis.pre path {
         display: none;
     }
+
+    .bar {
+        /*  background: #A3D0C3; */
+        /* text-align: center;*/
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .bar input {
+            border: 3px solid #7BA7AB;
+            border-radius: 5px;
+            background: rgb(240, 248, 255);
+            color: #9E9C9C;
+            /*  padding: 5px 10px; */
+            padding: 10px; /* Increase padding */
+            width: 400px; /* Increase width */
+            height: 40px; /* Increase height */
+            font-size: 16px; /* Increase font size */
+        }
+
+        .bar button {
+            top: 0;
+            right: 0;
+            background: rgb(176, 224, 230);
+            border-radius: 5px;
+            padding: 10px; /* Increase padding */
+            height: 40px; /* Match height of input */
+            font-size: 16px; /* Increase font size */
+        }
+
+            .bar button:before {
+                content: "GO";
+                font-family: FontAwesome;
+                text-align: center;
+                font-size: 16px;
+                color: rgb(95, 158, 160);
+            }
+
+    .btn {
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    .btn {
+        position: relative;
+        color: #111111;
+        font-size: 1rem;
+        text-transform: uppercase;
+        font-weight: bold;
+        text-align: center;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        padding: 12px 20px;
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .btn:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+            border-radius: 28px;
+            background: rgb(176, 224, 230);
+            width: 56px;
+            height: 56px;
+            transition: all 0.3s ease;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn svg {
+            position: relative;
+            top: 0;
+            margin-left: 10px;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke: #111111;
+            stroke-width: 2;
+            transform: translateX(-5px);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover:before {
+            width: 100%;
+            background: rgb(173, 216, 230);
+            ;
+        }
+
+        .btn:hover svg {
+            transform: translateX(0);
+        }
+
+        .btn:hover,
+        .btn:focus {
+            color: rgb(95, 158, 160));
+        }
+
+        .btn:active {
+            color: #111111;
+            transform: scale(0.96);
+        }
+
+/*     .predictionArea {
+        display: flex;
+        flex-wrap: wrap; /* 让卡片换行 */
+    /*justify-content: flex-start;
+        align-items: center;
+    } */
+
+        .predictionArea .card {
+            width: calc(50% - 10px); /* 每个卡片占据父容器的 1/3，减去一定的间距 */
+            margin-right: 10px; /* 设置卡片之间的间距，可以根据需要调整 */
+            margin-bottom: 10px; /* 设置卡片之间的间距，可以根据需要调整 */
+        }
+
+    /* －－－改過↓－－－ */
+    .MyFavorite, .predictionArea {
+/*         display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: center; */
+
+
+        max-width: 1400px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        /* margin-top: 50px; */
+        margin-bottom: 20px;
+    }
+
+/*     .prediction-card{
+            margin-left: 55px;
+    margin-right: 55px;
+    } */
+
+    /* －－－改過↑－－－ */
+
+        .MyFavorite .card {
+            width: calc(50% - 10px);
+            margin-right: 10px; /* 设置卡片之间的间距，可以根据需要调整 */
+            margin-bottom: 10px; /* 设置卡片之间的间距，可以根据需要调整 */
+            margin-left: auto;
+            */ width: 50%; /* 每个卡片占据一行的一半宽度 */
+            box-sizing: border-box; /* 盒子模型包含内边距和边框 */
+        }
+
+
+
+    #totalCountDisplay {
+        color: #73b5c5;
+        font-size: 20px;
+        position: absolute;
+        top: 280px;
+        right: 200px;
+    }
+
+/*     .container {
+        text-align: center;
+    }  */
+
+    #Collect {
+        color: #73b5c5;
+        font-size: 20px;
+        text-align: right;
+        position: absolute;
+        text-align: center;
+    }
+
+
+    .btn_T,
+    .btn_T:focus {
+        position: relative;
+        min-width: 100px;
+        background: none;
+        border: none;
+        color: #73b5c5;
+        font-size: 1rem;
+        font-weight: bold;
+        text-align: center;
+        text-decoration: none;
+        box-shadow: inset 0 0 0 4px #73b5c5;
+        transition: color 0.25s 0.0833333333s;
+        /*  padding: 10px 20px;*/
+        padding: 10px;
+    }
+
+        .btn_T:before,
+        .btn_T:after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 0;
+            bottom: 0;
+            right: 0;
+            border: 0 solid transparent;
+            box-sizing: border-box;
+            border-radius: 5px;
+        }
+
+        .btn_T:before {
+            border-bottom-width: 2px;
+            border-left-width: 2px;
+        }
+
+        .btn_T:after {
+            border-top-width: 2px;
+            border-right-width: 2px;
+        }
+
+        .btn_T:hover {
+            color: rgb(95, 158, 160);
+        }
+
+            .btn_T:hover:before,
+            .btn_T:hover:after {
+                border-color: rgb(95, 158, 160);
+                transition: border-color 0s, width 0.25s, height 0.25s;
+                width: 100%;
+                height: 100%;
+            }
+
+            .btn_T:hover:before {
+                transition-delay: 0s, 0s, 0.25s;
+            }
+
+            .btn_T:hover:after {
+                transition-delay: 0s, 0.25s, 0s;
+            }
+
+    .btn_A,
+    .btn_A:focus {
+        position: relative;
+        min-width: 100px;
+        background: none;
+        border: none;
+        color: #73b5c5;
+        font-size: 1rem;
+        font-weight: bold;
+        text-align: center;
+        text-decoration: none;
+        box-shadow: inset 0 0 0 4px #73b5c5;
+        transition: color 0.25s 0.0833333333s;
+        /*  padding: 10px 20px;*/
+        padding: 10px;
+    }
+
+        .btn_A:before,
+        .btn_A:after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 0;
+            bottom: 0;
+            right: 0;
+            border: 0 solid transparent;
+            box-sizing: border-box;
+            border-radius: 5px;
+        }
+
+        .btn_A:before {
+            border-bottom-width: 2px;
+            border-left-width: 2px;
+        }
+
+        .btn_A:after {
+            border-top-width: 2px;
+            border-right-width: 2px;
+        }
+
+        .btn_A:hover {
+            color: rgb(95, 158, 160);
+        }
+
+            .btn_A:hover:before,
+            .btn_A:hover:after {
+                border-color: rgb(95, 158, 160);
+                transition: border-color 0s, width 0.25s, height 0.25s;
+                width: 100%;
+                height: 100%;
+            }
+
+            .btn_A:hover:before {
+                transition-delay: 0s, 0s, 0.25s;
+            }
+
+            .btn_A:hover:after {
+                transition-delay: 0s, 0.25s, 0s;
+            }
+
+    .pre-name, .pre-code {
+        font-size: 24px;
+        text-align:left !important;
+    }
+
+    #Ongoing, #Finished {
+        margin-right: 10px;
+    }
+
+    .collect-container{
+        width:80%;
+        display: flex;
+        flex-direction: column;
+        /* background-color:pink; */
+    }
 </style>
 
-<div class="row">
-    <div class="col-md-4">
-        
-        <button id="MemberExplore">探索</button><br>
-        
-    </div>
+    @* <div class="col-md-4">
 
-    <div class="col-md-8">
 
+    </div> *@
+
+    @* <div class="col-md-8"> *@
+
+<div class="area-container">
+    <div class="collect-container">
         <div id="beforeLog">
             <h1>請先登入會員</h1>
         </div>
@@ -28,303 +346,1045 @@
         <div id="afterLog">
 
             <div id="Search">
-                <i class="fa-duotone fa-magnifying-glass fa-beat-fade fa-xl" style="--fa-primary-color: #3d8bc7; --fa-secondary-color: #3d8bc7;"></i>
-                <!-- 搜尋欄 -->
-                <div id="searchForm">
-                    <input type="text" id="searchTerm" name="searchTerm" placeholder="輸入股票代號" required>
-                    <button type="submit">
-                        <i class="fa-duotone fa-magnifying-glass fa-beat-fade fa-xl" style="--fa-primary-color: #4778cd; --fa-secondary-color: #2d60b9;"></i>
-                    </button>
-                </div>
+                <a id="MyCollects" href="#MyFavorites" class="btn">
 
-                <div id="sortDropdown">
-                    <label for="sortSelection">显示：</label>
-                    <select id="sortOption">
-                        <option value="stockname">股票名称</option>
-                        <option value="Buildtime">建立时间</option>
-                        <!-- 添加其他排序选项 -->
-                    </select>
-                </div>
+                    <span>我的收藏</span>
+
+                    <svg width="13px" height="10px" viewBox="0 0 13 10">
+                        <path d="M1,5 L11,5"></path>
+                        <polyline points="8 1 12 5 8 9"></polyline>
+                    </svg>
+                </a>
+
+            <h4></h4>
+            <!-- 搜尋欄 -->
+            <br><br>
+            <div id="searchForm" class="bar">
+                <input type="text" id="searchTerm" name="searchTerm" placeholder="請輸入股票代號" required>
+                <button type="submit">
+                </button>
+            </div>
+            <br>
+            <button id="Ongoing2" class="btn_A">追蹤中</button>
+            <button id="Finished2" class="btn_A">已結案</button>
+
                 <div class="predictionArea">
                     <!-- 这里是生成的卡片 -->
                 </div>
 
-               
 
 
-                <b>搜尋結果卡片</b>
-                @* <!-- 卡片都會塞這裡 --> *@
-                <div class="predictionArea"></div>
+
+
+
+
+
+            </div>
+            <div id="MyFavorites">
+
+                <a id="Explore" href="#Search" class="btn">
+                    <span>探索更多</span>
+                    <svg width="13px" height="10px" viewBox="0 0 13 10">
+                        <path d="M1,5 L11,5"></path>
+                        <polyline points="8 1 12 5 8 9"></polyline>
+                    </svg>
+                </a>
+                <br><br><br>
+                <br>
+
+                <h1 id="Collect">我的收藏</h1>
+
+
+                <button id="Ongoing" class="btn_T">追蹤中</button>
+                <button id="Finished" class="btn_T">已結案</button>
+
+
+
+                <b id="totalCountDisplay"></b>
+
+
+                <div class="MyFavorite">
+                </div>
+
+
             </div>
 
+            @* </div> *@
 
         </div>
-        <div id="MyFavorites">
-            <h1>會員功能 - 我的收藏</h1>
-            <b>我的最愛</b>
-            <div class="MyFavorite"></div>
-
-            @*  @if (sessionStorage.getItem("LogMemberLevel") == "high")
-            {
-            <p class="align-right">(@ViewBag.PidStringsCount/∞)已收藏筆數</p>
-            }
-            else if (sessionStorage.getItem("LogMemberLevel") == "normal")
-            {
-            <p class="align-right">(@ViewBag.PidStringsCount/5)已收藏筆數</p>
-            }
-            else
-            {
-            <p class="align-right">无法获取会员等级</p>
-
-
-            } *@
-
-
-        </div>
-
     </div>
-
 </div>
+    
 
-<script src="https://kit.fontawesome.com/fe876fcce4.js" crossorigin="anonymous"></script>
-@* <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script> *@
-<script>
-    //判斷會員是否登入
-    var MID = sessionStorage.getItem("LogAccount");
+    <script src="https://kit.fontawesome.com/fe876fcce4.js" crossorigin="anonymous"></script>
+    @* <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
+    *@<script>
+          //判斷會員是否登入
+          var MID = sessionStorage.getItem("LogAccount");
 
-    if (MID == '') {
-        $('#beforeLog').show();
-        $('#afterLog').hide();
-    } else {
-        $('#beforeLog').hide();
-        $('#afterLog').show();
-        $('#Search').hide();
-    }
-    console.log("顯示MID:" + MID);
-    $(function () {
-        // 1.點擊回到會員頁
-        $('#showMemberIndex').on("click", function () {
-            window.location.href = "/Member/Index";
-        });
+          if (MID == '') {
+              $('#beforeLog').show();
+              $('#afterLog').hide();
 
-        // 2.點擊修改個人資料
-        $('#showRevise').on("click", function () {
-            window.location.href = "/Member/Edit";
-        });
-        //3.點擊我的收藏
-        $('#showFavoritesPage').on("click", function () {
-            $('#MyFavorites').show();
-            $('#Search').hide();
-        });
-        // 4.點擊我的收藏
-        $('#MemberExplore').on("click", function () {
-            $('#Search').show();
-            $('#MyFavorites').hide();
-        });
+          } else {
+              $('#beforeLog').hide();
+              $('#afterLog').show();
+              $('#Search').hide();
+          }
+          // console.log("顯示MID:" + MID);
 
-        // 5.點擊我要預測
-        $('#showPredictFunc').on("click", function () {
-            window.location.href = "/StockModel/Predictindex";
-        });
+          // 判斷會員等級
+          var MidLevel = sessionStorage.getItem("LogMemberLevel");
+          // console.log(MidLevel)
+          if (MidLevel == "高級會員") {
+              $('#HighMember').show();
+              $('#NormalMember').hide();
 
-        // 6.點擊我的預測結果
-        $('#showHistoryPage').on("click", function () {
-            window.location.href = "/Member/MyPredictResult";
-        });
+          } else {
+              $('#HighMember').hide();
+              $('#HighMember').show();
+              $('#NormalMember').hide();
+          }
+          // console.log("顯示MID:" + MID);
 
-        // 6.點擊登入會員
-        $('#MemberLogin').on("click", function () {
-            window.location.href = "/Member/Login";
-        });
+          $(function () {
+              // 1.點擊回到會員頁
+              $('#showMemberIndex').on("click", function () {
+                  window.location.href = "/Member/Index";
+              });
 
-        
-        // 個人收藏頁面
-        var parseDate = d3.timeParse("%Y-%m-%d");
-        var sessionMID = sessionStorage.getItem("LogMemberId");
-        var data = { sessionMID: sessionMID };
-        //console.log(data)
+              // 2.點擊修改個人資料
+              $('#showRevise').on("click", function () {
+                  window.location.href = "/Member/Edit";
+              });
+              //3.點擊我的收藏
+              $('#MyCollects').on("click", function () {
+                  $('#MyFavorites').show();
+                  $('#Search').hide();
+                  checkCollect();
 
-        var jsonforplot = [];
-        var Pbuildate;
-        var plotarray = [];
-        var otherprarmeter = [];
-        var parameter;
-        var subArray = [];
+              });
+              // 4.點擊探索更多
+              $('#Explore').on("click", function () {
+                  $('#Search').show();
+                  $('#MyFavorites').hide();
+                  checkCollect();
+              });
 
-        $.ajax({
-            url: "/Member/MyCollect2",
-            method: "get",
-            data: data,
-            success: function (e) {
-                console.log(e);
-                e.forEach(function (element) {
-                    var number = element;
-                    //console.log(number);
-                    $.ajax({
-                        method: "get",
-                        url: "/Member/Test",
-                        data: { sessionPID: number },
-                        success: function (e) {
-                            // console.log(e);
-                            jsonforplot = [];
-                            $.each(e, function (index, element) {
-                                var historydate1 = new Date(element["STdate"]);
-                                jsonforplot.push({ Date: historydate1, Close: element["SteClose"] });
-                            });
-                            var historydate2 = new Date(e[0]["PFinsihTime"]);
-                            jsonforplot.push({ Date: historydate2, Close: e[0]["PLabel"] });
-                            // console.log(jsonforplot);
-                            // console.log(jsonforplot)
-                            // console.log(e[0]["PStock"])
-                            var builddate3 = new Date(e[0]["PBuildTime"]);
-                            var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate();
-                            var FinsihTime = new Date(e[0]["PFinsihTime"]);
-                            var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate();
-                            
-                           
-                                jsonforplot.sort(function (a, b) {
-                                    // 获取当前子数组中每个对象的日期属性，并转换为日期对象
-                                    var dateA = new Date(a.Date);
-                                    var dateB = new Date(b.Date);
+              // 5.點擊我要預測
+              $('#showPredictFunc').on("click", function () {
+                  window.location.href = "/StockModel/Predictindex";
+              });
 
-                                    return dateA - dateB; // 降序排列
-                                });
-                            
-                            
-                            otherprarmeter = [];
-                            otherprarmeter.push({
-                                Buildtime: builddate4,
-                                stockname: e[0]["PStock"],
-                                parameter: e[0]["Parameter"],
-                                PID: e[0]["PID"],
-                                preVariable: e[0]["preVariable"],
-                                PAcount: e[0]["PAcount"],
-                                SName: e[0]["SName"],
-                                SCode: e[0]["SCode"],
-                                PFinsihTime: FinsihTime2
-                            });
-                            // console.log("4444444");
-                            // console.log(jsonforplot)
-                            var currentdate = new Date()
-                            var result;
-                            if (otherprarmeter[0]["PFinsihTime"] > currentdate) { 
-                                result = "未結案";
-                            
-                            } else {
-                                result = "結案";
-                            }
+              // 6.點擊我的預測結果
+              $('#showHistoryPage').on("click", function () {
+                  window.location.href = "/Member/MyPredictResult";
+              });
 
-                            // console.log(otherprarmeter);
-                            var parameter = JSON.parse(otherprarmeter[0]["parameter"]);
-                            var preVariable = JSON.parse(otherprarmeter[0]["preVariable"]);
-                            // // console.log(otherprarmeter[index]["Buildtime"]);
-                            // console.log(parameter)
-                            console.log(parameter)
-                            console.log(preVariable)
-                            drawPre(jsonforplot, number, result, otherprarmeter[0]["Buildtime"], otherprarmeter[0]["PID"], preVariable, parameter, otherprarmeter[0]["PAcount"], otherprarmeter[0]["SName"], otherprarmeter[0]["SCode"], otherprarmeter[0]["PFinsihTime"], '.MyFavorite');
+              // 6.點擊登入會員
+              $('#MemberLogin').on("click", function () {
+                  window.location.href = "/Member/Login";
+              });
+
+              // 個人收藏頁面
+              var parseDate = d3.timeParse("%Y-%m-%d");
+              var sessionMID = sessionStorage.getItem("LogMemberId");
+              var data = { sessionMID: sessionMID };
+              // console.log(data);
+
+              var jsonforplot = [];
+              var otherprarmeter = [];
+              var resultstatus = [];
+
+              $.ajax({
+                  url: "/Member/MyCollect2",
+                  method: "get",
+                  data: data,
+                  success: function (e) {
+
+                      var totalCount = e.length; // 收藏筆數
+                      $('#totalCountDisplay').text(`(${totalCount}`);
+                      // console.log(sessionStorage.getItem("LogMemberLevel"));
+                      if (MidLevel == "一般會員") {
+                          $('#totalCountDisplay').text(`( ${totalCount} / 5 ) 已收藏筆數`);
+                      } else {
+                          $('#totalCountDisplay').text(`( ${totalCount} / ∞ ) 已收藏筆數`);
+                      }
+                      e.forEach(function (element) {
+                          var number = element;
+                          // console.log("數字:");
+                          // console.log(number);
+                          $.ajax({
+                              method: "get",
+                              url: "/Member/Test",
+                              data: { sessionPID: number },
+                              success: function (e) {
+
+                                  jsonforplot = [];
+                                  $.each(e, function (index, element) {
+                                      var historydate1 = new Date(element["STdate"]);
+                                      jsonforplot.push({ Date: historydate1, Close: element["SteClose"] });
+
+                                  });
+                                  // console.log("-----------");
+                                  // console.log(e)
+                                  // console.log("-----------");
+
+                                  // console.log(jsonforplot)
+                                  // // 原本的程式
+                                  // var historydate2 = new Date(e[0].PFinsihTime);
+
+                                  // 修正版
+                                  // 从时间字符串创建一个日期对象
+                                  // var dateString = new Date(e[0].PFinsihTime);
+                                  var dateObject = new Date(e[0].PFinsihTime);
 
 
+                                  jsonforplot.push({ Date: dateObject, Close: e[0].PLabel });
+                                  //console.log("wwwwwwwwwwwwwwwww")
+                                  // console.log(jsonforplot)
 
-                        }
-                    });
-                });
-            },
-            error: function (xhr, status, error) {
-                // 处理错误
-            }
-        });
+                                  // console.log(e[0]["PFinsihTime"])
+                                  // console.log(formattedhistorydate2)
+                                  var builddate3 = new Date(e[0].PBuildTime);
+                                  var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate();
+                                  var FinsihTime = new Date(e[0].PFinsihTime);
+
+                                  var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate();
+
+                                  jsonforplot.sort(function (a, b) {
+                                      var dateA = new Date(a.Date);
+                                      var dateB = new Date(b.Date);
+                                      return dateA - dateB;
+                                  });
+
+                                  otherprarmeter = [];
+                                  otherprarmeter.push({
+                                      Buildtime: builddate4,
+                                      stockname: e[0].PStock,
+                                      parameter: e[0].Parameter,
+                                      PID: e[0].PID,
+                                      preVariable: e[0].preVariable,
+                                      PAcount: e[0].PAcount,
+                                      SName: e[0].SName,
+                                      SCode: e[0].SCode,
+                                      PFinsihTime: FinsihTime2
+
+                                  });
+                                  console.log(e);
+                                  var currentdate = new Date();
+                                  var year = currentdate.getFullYear();
+                                  var month = currentdate.getMonth() + 1;
+                                  var day = currentdate.getDate();
+                                  var formattedDate = year + "-" + month + "-" + day;
+                                  //console.log(formattedDate);
+
+                                  var result;
+                                  var Pstatus = e[0]["Pstatus"]; //狀態
+                                  var Pmodel = e[0]["Pmodel"];   //使用模型
+                                  var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
+                                  var PAR = e[0]['PAccuracyRatio'];
+
+                                  // if (otherprarmeter[0]["PFinsihTime"] > formattedDate) {
+                                  //     result = "追蹤中";
+                                     
+
+                                  // } else {
+                                  //     result = "已結案";
+                                     
+                                  // }
+                                  resultstatus.push({ "index": number, "result": result });
+
+                                  var parameter = JSON.parse(otherprarmeter[0]["parameter"]);
+                                  var preVariable = JSON.parse(otherprarmeter[0]["preVariable"]);
+                                  drawPre(jsonforplot, number, result, otherprarmeter[0]["Buildtime"], otherprarmeter[0]["PID"], preVariable, parameter, otherprarmeter[0]["PAcount"], otherprarmeter[0]["SName"], otherprarmeter[0]["SCode"], otherprarmeter[0]["PFinsihTime"], '.MyFavorite', Pmodel, PAR);
+
+                                  //console.log("啦啦啦");
+
+                                  // console.log(otherprarmeter[0]["PFinsihTime"]);
 
 
-        
-        // 股票卡片搜尋欄
-        $('#searchForm button').click(function (e) {
-            e.preventDefault();
-            var searchTerm = $('#searchTerm').val();
-            var jsonforplot;
-            var Pbuildate;
-            var plotarray = [];
-            var otherprarmeter = [];
-            console.log(searchTerm);
 
-            $.ajax({
-                type: 'get',
-                url: '/Member/Search',
-                data: { searchTerm: searchTerm },
-                success: function (e) {
-                    console.log("這裡");
 
-                    console.log(e);
 
-                    for (var i = 0; i < e.length; i += 5) {
-                        //console.log("----------" + i)
-                        var subArray = [];
-                        for (var j = 0; j < 5; j++) {
-                            var historydate1 = new Date(e[j]["STdate"])
-                            jsonforplot = ({ Date: historydate1, Close: e[j]["SteClose"] })
-                            subArray.push(jsonforplot);
-                        }
 
-                        console.log(jsonforplot)
-                        var finishdate2 = new Date(e[i]["PFinsihTime"])
-                        subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] })
-                        plotarray.push(subArray)
 
-                    }
+                              }
 
-                    for (var i = 0; i < plotarray.length; i++) {
-                        plotarray[i].sort(function (a, b) {
-                            // 获取当前子数组中每个对象的日期属性，并转换为日期对象
-                            var dateA = new Date(a.Date);
-                            var dateB = new Date(b.Date);
+                          });
+                      });
+                  },
+                  error: function (xhr, status, error) {
+                      // 处理错误
+                  }
+              });
 
-                            return dateA - dateB; // 降序排列
-                        });
-                    }
-                    // console.log(plotarray)
-                    for (var w = 0; w < e.length; w += 5) {
-                        var builddate3 = new Date(e[w]["PBuildTime"])
-                        var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate()
 
-                        var FinsihTime = new Date(e[w]["PFinsihTime"])
-                        var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate()
-                        otherprarmeter.push({
-                            Buildtime: builddate4,
-                            stockname: e[w]["PStock"],
-                            parameter: e[w]["Parameter"],
-                            PID: e[w]["PID"],
-                            preVariable: e[w]["preVariable"],
-                            PAcount: e[w]["PAcount"],
-                            SName: e[w]["SName"],
-                            SCode: e[w]["SCode"],
-                            PFinsihTime: FinsihTime2
-                        })
-                    }
 
-                    $.each(plotarray, function (index, element) {
-                        var finishtime = new Date(element[5]["Date"]);
-                        var currentdate = new Date()
-                        var result;
 
-                        // console.log(finishtime)
-                        // console.log(currentdate)
-                        if (finishtime > currentdate) {
-                            result = "未結案"
-                        } else {
-                            result = "結案"
-                        }
-                        
-                        //結案狀態
 
-                        //結果參數
-                        var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
-                        //選擇變數
-                        var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
-                        //console.log((otherprarmeter[index]["Buildtime"]))
-                        drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], '.predictionArea')
-                    });
+
+              //條件篩選-追蹤中、已結案
+              $('#Ongoing').on("click", function () {
+                  $(".prediction-card").show();
+
+                  alert('追蹤中')
+                  //console.log(resultstatus.length)
+                  $.each(resultstatus, function (index, element) {
+                      // console.log(element.index)
+
+                      // console.log("element")
+                      // console.log(element)
+                      if (element.result == "已結案") {
+                          $(`.prediction-card.${element.index}`).hide();
+                          // console.log("kkkkkkk")
+                          // console.log(element.result)
+                          // console.log("kkkkkkk")
+
+                          // console.log("qqqqqqqqqqqqqqqq")
+
+                          // console.log("隱藏")
+                          // console.log("qqqqqqqqqqqq")
+
+                      }
+                  })
+              })
+
+              $('#Finished').on("click", function () {
+                  $(".prediction-card").show();
+
+                  alert('結案')
+                  //console.log(resultstatus.length)
+                  $.each(resultstatus, function (index, element) {
+
+                      if (element.result == "追蹤中") {
+                          $(`.prediction-card.${element.index}`).hide();
+                          // console.log(index + 1)
+                          // console.log("qqqqqqqqqqqq")
+
+                          // console.log("隱藏")
+                          // console.log("qqqqqqqqqqqq")
+
+                      }
+                  })
+              })
+
+
+
+
+              // 股票卡片搜尋欄 (完成版)
+              $('#searchForm button').click(function (e) {
+                  e.preventDefault();
+                  var searchTerm = $('#searchTerm').val();
+                  var jsonforplot;
+                  var Pbuildate;
+                  var plotarray = [];
+                  var otherprarmeter = [];
+                  var resultstatus = [];
+                  checkCollect();
+                  // console.log(searchTerm);
+
+                  //var totalCount2 = 0; // 計數器
+                  $.ajax({
+                      type: 'get',
+                      url: '/Member/Search',
+                      data: { searchTerm: searchTerm },
+                      success: function (e) {
+                          //console.log("這裡");搜尋
+
+                          //console.log(e);
+
+                          for (var i = 0; i < e.length; i += 5) {
+                              //console.log("----------" + i)
+                              var subArray = [];
+                              for (var j = 0; j < 5; j++) {
+                                  var historydate1 = new Date(e[j]["STdate"])
+                                  jsonforplot = ({ Date: historydate1, Close: e[j]["SteClose"] })
+                                  subArray.push(jsonforplot);
+                              }
+
+                              // console.log(jsonforplot)
+                              var finishdate2 = new Date(e[i]["PFinsihTime"])
+                              subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] })
+                              plotarray.push(subArray)
+
+                          }
+
+                          for (var i = 0; i < plotarray.length; i++) {
+                              plotarray[i].sort(function (a, b) {
+                                  // 获取当前子数组中每个对象的日期属性，并转换为日期对象
+                                  var dateA = new Date(a.Date);
+                                  var dateB = new Date(b.Date);
+
+                                  return dateA - dateB; // 降序排列
+                              });
+                          }
+                          // console.log(plotarray)
+                          for (var w = 0; w < e.length; w += 5) {
+                              var builddate3 = new Date(e[w]["PBuildTime"])
+                              var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate()
+
+                              var FinsihTime = new Date(e[w]["PFinsihTime"])
+                              var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate()
+                              otherprarmeter.push({
+                                  Buildtime: builddate4,
+                                  stockname: e[w]["PStock"],
+                                  parameter: e[w]["Parameter"],
+                                  PID: e[w]["PID"],
+                                  preVariable: e[w]["preVariable"],
+                                  PAcount: e[w]["PAcount"],
+                                  SName: e[w]["SName"],
+                                  SCode: e[w]["SCode"],
+                                  PFinsihTime: FinsihTime2
+                              })
+                          }
+
+                          $.each(plotarray, function (index, element) {
+                              // console.log(element[5]["Date"]);
+                              var finishtime = new Date(element[5]["Date"]);
+                              var currentdate = new Date()
+                              var result;
+                              var Pstatus = e[0]["Pstatus"]; //狀態
+                              var Pmodel = e[0]["Pmodel"];   //使用模型
+                              var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
+                              var PAR = e[0]['PAccuracyRatio'];
+
+                              // console.log(finishtime)
+                              // console.log(currentdate)
+                              // if (finishtime > currentdate) {
+                              //     result = "追蹤中"
+                              // } else {
+                              //     result = "已結案"
+                              // }
+                              // resultstatus.push(result);
+                              resultstatus.push({ "index": index + 1, "result": result });
+                              console.log("yaaaaaa");
+                              console.log(resultstatus);
+                               console.log("yaaaaaa");
+
+                              //結案狀態
+
+                              //結果參數
+                              var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
+                              //選擇變數
+                              var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
+                              //console.log((otherprarmeter[index]["Buildtime"]))
+                              drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], '.predictionArea', Pmodel, PAR)
+
+
+
+                              //console.log("這裡");
+                              //console.log(plotarray)
+
+                              // 存储卡片数据到 cookie
+                              // var cardData = {
+                              //     plotarray: plotarray,
+                              //     otherprarmeter: otherprarmeter
+                              // };
+                              // document.cookie = "cardData=" + JSON.stringify(cardData) + "; path=/";
+                          });
+
+                          // console.log("_-------_");
+                          // console.log(resultstatus)
+                          // console.log("_-------_");
+
+
+                      }
+                  })
+              })
+
+              // 條件篩選-追蹤中、已結案
+              $('#Ongoing2').on("click", function () {
+                  alert('追蹤中')
+                  //console.log(resultstatus.length)
+                  //$(".prediction-card").show();
+                  $.each(resultstatus, function (index, element) {
+
+
+                      if (element.result == "已結案") {
+                          console.log("111111111111")
+
+                          // console.log(`index = ${index}, element = ${element}`)
+                          $(`.prediction-card.${index+1}`).hide();
+                          console.log(`index = ${index+1}, element = ${element.result}`)
+
+                          console.log("11111111111")
+
+                          console.log("隱藏")
+                      }
+                      // console.clear();
+                      // console.log($(`.prediction-card 54`).text());
+                  })
+              })
+
+              $('#Finished2').on("click", function () {
+
+                  //$(".prediction-card").show();
+                  $.each(resultstatus, function (index, element) {
+                      console.log(element.index)
+
+                      if (element.result == "追蹤中") {
+                          $(`.prediction-card.${index + 1}`).hide();
+                          console.log("pppp")
+                          console.log(index + 1)
+                          console.log("pppp")
+
+                          // console.log("隱藏")
+                      }
+                  })
+              })
+
+
+
+
+              // 存進 cookie 版本
+              // $('#searchForm button').click(function (e) {
+              //     e.preventDefault();
+              //     var searchTerm = $('#searchTerm').val();
+              //     var jsonforplot;
+              //     var Pbuildate;
+              //     var plotarray = [];
+              //     var otherprarmeter = [];
+              //     console.log(searchTerm);
+              //     var cardData = []
+
+              //     $.ajax({
+              //         type: 'get',
+              //         url: '/Member/Search',
+              //         data: { searchTerm: searchTerm },
+              //         success: function (e) {
+              //             var cardData = []; // Array to store card data
+
+              //             for (var i = 0; i < e.length; i += 5) {
+              //                 var subArray = [];
+              //                 for (var j = 0; j < 5; j++) {
+              //                     var historydate1 = new Date(e[j]["STdate"]);
+              //                     jsonforplot = ({ Date: historydate1, Close: e[j]["SteClose"] });
+              //                     subArray.push(jsonforplot);
+              //                 }
+
+              //                 var finishdate2 = new Date(e[i]["PFinsihTime"]);
+              //                 subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] });
+              //                 plotarray.push(subArray);
+              //             }
+
+              //             // Store card data
+              //             for (var w = 0; w < e.length; w += 5) {
+              //                 var builddate3 = new Date(e[w]["PBuildTime"]);
+              //                 var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate();
+
+              //                 var FinsihTime = new Date(e[w]["PFinsihTime"]);
+              //                 var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate();
+
+              //                 var data = {
+              //                     Buildtime: builddate4,
+              //                     stockname: e[w]["PStock"],
+              //                     parameter: e[w]["Parameter"],
+              //                     PID: e[w]["PID"],
+              //                     preVariable: e[w]["preVariable"],
+              //                     PAcount: e[w]["PAcount"],
+              //                     SName: e[w]["SName"],
+              //                     SCode: e[w]["SCode"],
+              //                     PFinsihTime: FinsihTime2
+              //                 };
+
+              //                 cardData.push(data);
+              //             }
+
+              //             // Save card data into cookie
+              //             document.cookie = "cardData=" + JSON.stringify(cardData) + "; path=/";
+
+              //             // Draw cards and use the data
+              //             $.each(plotarray, function (index, element) {
+              //                 // Draw card
+              //                 var finishtime = new Date(element[5]["Date"]);
+              //                 var currentdate = new Date();
+              //                 var result = (finishtime > currentdate) ? "追蹤中" : "已結案";
+
+              //                 var parameter = JSON.parse(cardData[index]["parameter"]);
+              //                 var preVariable = JSON.parse(cardData[index]["preVariable"]);
+
+
+              //                 drawPre(element, index + 1, result, cardData[index]["Buildtime"], cardData[index]["PID"], preVariable, parameter, cardData[index]["PAcount"], cardData[index]["SName"], cardData[index]["SCode"], cardData[index]["PFinsihTime"], '.predictionArea');
+
+              //                 //console.log("Cards data:", cardData);
+              //             });
+
+              //             //console.log("Cards data:", cardData);
+              //         }
+              //     });
+              // });
+              // console.log("Cards data:", cardData);
+
+              // $('#searchForm button').click(function (e) {
+              //     e.preventDefault();
+              //     var searchTerm = $('#searchTerm').val();
+              //     var jsonforplot;
+              //     var Pbuildate;
+              //     var plotarray = [];
+              //     var otherprarmeter = [];
+              //     console.log(searchTerm);
+
+              //     // var totalCount2 = 0; // 計數器
+              //     $.ajax({
+              //         type: 'get',
+              //         url: '/Member/Search',
+              //         data: { searchTerm: searchTerm },
+              //         success: function (e) {
+              //             // console.log("這裡");
+              //             // console.log(e);
+
+              //             for (var i = 0; i < e.length; i += 5) {
+              //                 // console.log("----------" + i)
+              //                 var subArray = [];
+              //                 for (var j = 0; j < 5; j++) {
+              //                     var historydate1 = new Date(e[j]["STdate"])
+              //                     jsonforplot = ({ Date: historydate1, Close: e[j]["SteClose"] })
+              //                     subArray.push(jsonforplot);
+              //                 }
+
+              //                 console.log(jsonforplot)
+              //                 var finishdate2 = new Date(e[i]["PFinsihTime"])
+              //                 subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] })
+              //                 plotarray.push(subArray)
+
+              //             }
+
+              //             for (var i = 0; i < plotarray.length; i++) {
+              //                 plotarray[i].sort(function (a, b) {
+              //                     // 获取当前子数组中每个对象的日期属性，并转换为日期对象
+              //                     var dateA = new Date(a.Date);
+              //                     var dateB = new Date(b.Date);
+
+              //                     return dateA - dateB; // 降序排列
+              //                 });
+              //             }
+              //             // console.log(plotarray)
+              //             for (var w = 0; w < e.length; w += 5) {
+              //                 var builddate3 = new Date(e[w]["PBuildTime"])
+              //                 var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate()
+
+              //                 var FinsihTime = new Date(e[w]["PFinsihTime"])
+              //                 var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate()
+              //                 otherprarmeter.push({
+              //                     Buildtime: builddate4,
+              //                     stockname: e[w]["PStock"],
+              //                     parameter: e[w]["Parameter"],
+              //                     PID: e[w]["PID"],
+              //                     preVariable: e[w]["preVariable"],
+              //                     PAcount: e[w]["PAcount"],
+              //                     SName: e[w]["SName"],
+              //                     SCode: e[w]["SCode"],
+              //                     PFinsihTime: FinsihTime2
+              //                 })
+              //             }
+
+              //             $.each(plotarray, function (index, element) {
+              //                 var finishtime = new Date(element[5]["Date"]);
+              //                 var currentdate = new Date()
+              //                 var result;
+
+              //                 // console.log(finishtime)
+              //                 // console.log(currentdate)
+              //                 if (finishtime > currentdate) {
+              //                     result = "追蹤中"
+              //                 } else {
+              //                     result = "已結案"
+              //                 }
+
+              //                 //結案狀態
+
+              //                 //結果參數
+              //                 var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
+              //                 //選擇變數
+              //                 var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
+              //                 //console.log((otherprarmeter[index]["Buildtime"]))
+              //                 drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], '.predictionArea')
+
+              //                 console.log("這裡");
+              //                 console.log(plotarray);
+
+              //                 // 存储卡片数据到 cookie
+              //                 var cardData = {
+              //                     plotarray: plotarray,
+              //                     otherprarmeter: otherprarmeter
+              //                 };
+              //                 document.cookie = "cardData=" + JSON.stringify(cardData) + "; path=/";
+              //             });
+
+
+              //         }
+              //     })
+              // })
+
+              // // Draw cards and use the data
+              // $.each(cardData, function (index, data) {
+              //     // Convert PFinsihTime to a Date object
+              //     //console.log("Cards data:", cardData);
+              //     var finishTime = new Date(data.PFinsihTime);
+
+              //     // Check if the finish time is greater than the current date
+              //     if (finishTime > new Date()) {
+              //         // Draw the card
+              //         var parameter = JSON.parse(data.parameter);
+              //         var preVariable = JSON.parse(data.preVariable);
+              //         var result = "追蹤中"; // Since the finish time is greater than the current date
+
+              //         // Draw the card
+              //         drawPre(null, index + 1, result, data.Buildtime, data.PID, preVariable, parameter, data.PAcount, data.SName, data.SCode, data.PFinsihTime, '.predictionArea');
+              //     }
+              // });
+
+              // console.log("Cards data:", cardData);
+
+
+
+
+
+
+
+
+              // 開始
+              // 生卡片
+              // function drawPre(myData, index, preState, preDate, PID, preVariable, parameter, PAcount, SName, SCode, PFinsihTime, targetSelector) {
+              //     console.log(myData);
+              //     var prelist = "";
+
+              //     if (preVariable[0] != null) {
+
+              //         prelist += `<button class="copyAll" id="card${PID}" onclick="copyAllList(this)">複製全部</button>`;
+              //         for (var i = 0; i < preVariable.length; i++) {
+              //             prelist += `<button class="pre-list-btn" onclick = "copyList(this)" > ${preVariable[i]} </button>`;
+
+              //         };
+
+              //     };
+              //     //var pa
+
+              //         // $(targetSelector).prepend(`<label class='prediction-card ${index}'>
+              //         //                                                                                                                                                                                                                                                                 <input type='checkbox' class='card-btn' />
+              //         //                                                                                                                                                                                                                                                                 <div class='card-content'><div class='card-front'>
+              //         //                                                                                                                                                                                                                                                                   <p class="pre-code" style="display:inline;">${SCode}</p>
+              //         //                                                                                                                                                                                                                                                                    <p class="pre-name" style="display:inline;margin-left:10px;">${SName}</p>
+              //         //                                                                                                                                                                                                                                                                  <p class="pre-state" style="display:inline;margin-left:10px;">${preState}</p>
+              //         //                                                                                                                                                                                                                                                                 <table>
+              //         //                                                                                                                                                                                                                                                                 <tr><th class="pre-th">建立帳號</th><td class="pre-td pre-date">${PAcount}</td></tr>
+              //         //                                                                                                                                                                                                                                                                 <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
+              //         //                                                                                                                                                                                                                                                                 <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${PFinsihTime}</td></tr>
+              //         //                                                                                                                                                                                                                                                                 <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
+              //         //                                                                                                                                                                                                                                                                 <tr><th class="pre-th">結果參數</th><td class="pre-td">MSE:${parameter.MSE}</td></tr>
+              //         //                                                                                                                                                                                                                                                                 </table>
+              //         //                                                                                                                                                                                                                                                                     <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
+              //         //                                                                                                                                                                                                                                                                 </div>
+
+              //         //                                                                                                                                                                                                                                                                 <div class='card-back'>
+              //         //                                                                                                                                                                                                                                                                 <div class='forPrediction'>
+              //         //                                                                                                                                                                                                                                                                 </div></div></div>
+              //         //                                                                                                                                                                                                                                                                 <div class="preVar">${prelist}</div></label>`);
+
+              //         // 构建卡片内容
+              //         var cardContent = `<label class='prediction-card ${index}'>
+              //                             <input type='checkbox' class='card-btn' />
+              //                             <div class='card-content'>
+              //                                 <div class='card-front'>
+              //                                     <p class="pre-code" style="display:inline;">${SCode}</p>
+              //                                     <p class="pre-name" style="display:inline;margin-left:10px;">${SName}</p>
+              //                                     <p class="pre-state" style="display:inline;margin-left:10px;">${preState}</p>
+              //                                     <table>
+              //                                         <tr><th class="pre-th">建立帳號</th><td class="pre-td pre-date">${PAcount}</td></tr>
+              //                                         <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
+              //                                         <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${PFinsihTime}</td></tr>
+              //                                         <tr><th class="pre-th">預測價格</th><td class="pre-td">${myData[5]["Close"]}</td></tr>
+              //                                         <tr><th class="pre-th">結果參數</th><td class="pre-td">MSE:${parameter.MSE}</td></tr>
+              //                                     </table>
+              //                                     <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
+              //                                 </div>
+              //                                 <div class='card-back'>
+              //                                     <div class='forPrediction'></div>
+              //                                 </div>
+              //                             </div>
+              //                             <div class="preVar">${prelist}</div>
+              //                         </label>`;
+
+              //         // 在目标选择器前插入卡片内容
+              //         $(targetSelector).prepend(cardContent);
+              //     }
+
+              // 開始
+              // 生卡片
+              function drawPre(myData, index, preState, preDate, PID, preVariable, parameter, PAcount, SName, SCode, PFinsihTime, targetSelector, Pmodel, PAR) {
+                  console.log(myData);
+                  var prelist = "";
+
+                  if (preVariable[0] != null) {
+                      prelist += `<button class="copyAll" id="card${PID}" onclick="copyAllList(this)">複製全部</button>`;
+                      for (var i = 0; i < preVariable.length; i++) {
+                          prelist += `<button class="pre-list-btn" onclick = "copyList(this)" > ${preVariable[i]} </button>`;
+                      }
+                  }
+
+
+                  $(targetSelector).prepend(`<label class='prediction-card ${index}'>
+                    <input type='checkbox' class='card-btn' />
+                    <div class='card-content'><div class='card-front'>
+                    <p class="pre-code" style="display:inline;">${SCode}</p>
+                    <p class="pre-name" style="display:inline;margin-left:10px;">${SName}</p>
+                    <button class="pre-state PS${PID} pre-state-member" style="display:inline;margin-left:10px;" onclick="cardDetail(this)">${preState}</button>
+                              <table class="table-inside">
+                    <tr><th class="pre-th">建立者</th><td class="pre-td pre-date">${PAcount}</td></tr>
+                    <tr><th class="pre-th">使用模型</th><td class="pre-td pre-date">${Pmodel}</td></tr>
+                    <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
+                    <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${PFinsihTime}</td></tr>
+                    <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
+                    <tr><th class="pre-th">準確率</th><td class="pre-td">${PAR}</td></tr>
+                    </table>
+                              <p class="collectNum card${PID}">0<p>
+                              <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♡</button>
+                    </div>
+
+                    <div class='card-back'>
+                    <div class='forPrediction'>
+                    </div></div></div>
+                    <div class="preVar">${prelist}</div></label>`);
+
+
+
+                  //重新整理日期
+                  var dateList = [];
+                  for (var i = 0; i < myData.length; i++) {
+                      dateList.push(myData[i].Date);
+                  }
+
+                  //圖表大小的設置
+                  var preMargin = { top: 20, right: 50, bottom: 30, left: 50 },
+                      preWidth = 325 - preMargin.left - preMargin.right,
+                      preHeight = 200 - preMargin.top - preMargin.bottom;
+
+                  //X、Y軸scale
+                  var preScaleX = d3.scaleBand().range([10, preWidth]).domain(dateList);
+                  var preScaleY = d3
+                      .scaleLinear()
+                      .range([preHeight - 35, 25])
+                      .domain(d3.extent(myData, (d) => d.Close));
+
+                  //X、Y軸
+                  var preAxisX = d3.axisBottom(preScaleX);
+                  var preAxisY = d3.axisLeft(preScaleY);
+
+                  //生成線
+                  var linePre = d3
+                      .line()
+                      .x((d) => preScaleX(d.Date))
+                      .y((d) => preScaleY(d.Close));
+                  /*.curve(d3.curveBasis);*/ //讓折線有弧度
+
+                  //生SVG
+                  var preSvg = d3
+                      .select(".forPrediction")
+                      .append("svg")
+                      .attr("class", "forPre")
+                      .attr("width", preWidth + preMargin.left + preMargin.right)
+                      .attr("height", preHeight + preMargin.top + preMargin.bottom)
+                      .append("g")
+                      .attr(
+                          "transform",
+                          "translate(" + preMargin.left + "," + preMargin.top + ")"
+                      );
+
+                  //顏色
+                  var maxDPre = d3.max(myData, function (d) {
+                      return +d.Date;
+                  });
+                  var maxCPre = d3.max(myData, function (d) {
+                      return +d.Close;
+                  });
+                  var minCPre = d3.min(myData, function (d) {
+                      return +d.Close;
+                  });
+
+                  var colorX = d3.scaleLinear().domain([0, maxDPre]).range([preWidth, 0]);
+
+                  preSvg
+                      .append("linearGradient")
+                      .attr("id", "line-gradient")
+                      .attr("gradientUnits", "userSpaceOnUse")
+                      .attr("x1", colorX(0))
+                      .attr("y1", 0)
+                      .attr("x2", colorX(maxDPre))
+                      .attr("y2", 0)
+                      .selectAll("stop")
+                      .data([
+                          { offset: "0%", color: "#51a1b7" },
+                          { offset: "100%", color: "#cedba0" },
+                      ])
+                      .enter()
+                      .append("stop")
+                      .attr("offset", function (d) {
+                          return d.offset;
+                      })
+                      .attr("stop-color", function (d) {
+                          return d.color;
+                      });
+
+                  preSvg
+                      .append("g")
+                      .datum(myData)
+                      .attr("class", "predictionLine here")
+                      .attr("transform", "translate(18,0)");   //折線
+                  preSvg
+                      .append("g")
+                      .attr("class", "x axis pre")
+                      .attr("transform", "translate(0," + preHeight + ")"); //X軸
+                  preSvg.append("g").attr("class", "y axis pre"); //Y軸
+
+                  preSvg
+                      .select("g.predictionLine.here")
+                      .append("path")
+                      .attr("class", "pathPre")
+                      .attr("d", linePre(myData))
+                      .attr("fill", "none")
+                      .attr("stroke", "#bbbdbe")
+                      .attr("stroke-width", 2);
+                  preSvg
+                      .select("g.x.axis.pre")
+                      .call(
+                          preAxisX
+                              .tickValues(dateList)
+                              .tickFormat(d3.timeFormat("%m/%d"))
+                              .tickPadding(10)
+                              .tickSizeInner(-preHeight - 10, -preHeight)
+                      )
+                      .selectAll("text")
+                      .style("text-anchor", "end")
+                      .attr("dx", "-.8em")
+                      .attr("dy", ".15em")
+                      .attr("transform", "rotate(-25) translate(20, 10)");
+
+                  preSvg.select("g.y.axis.pre")
+                      .call(preAxisY.tickSizeInner(-preWidth - 10, -preWidth)
+                          .tickPadding(10)
+                          .tickFormat(d3.format(".1f"))
+                          .tickValues([minCPre - 10, d3.mean([minCPre, maxCPre]), maxCPre + 10]));
+
+                  //--點點--//
+                  //提示框
+                  var Tooltip = d3
+                      .select(".forPrediction")
+                      .append("div")
+                      .style("opacity", 0)
+                      .attr("class", "tooltip")
+                      .style("background-color", "white")
+                      .style("border", "solid")
+                      .style("border-width", "2px")
+                      .style("border-radius", "5px")
+                      .style("padding", "5px")
+                      .style("width", "100px")
+                      .style("height", "33px")
+                      .style("text-align", "center");
+
+                  var mouseover = function (d) {
+                      Tooltip.style("opacity", 1);
+                  };
+                  var mousemove = function (d) {
+                      Tooltip.html("價格: " + d.Close)
+                          .style("left", d3.mouse(this)[0] + 20 + "px")
+                          .style("top", d3.mouse(this)[1] + "px");
+                  };
+                  //console.log($(".circleGroup"));
+                  var mouseleave = function (d) {
+                      Tooltip.style("opacity", 0);
+                  };
+                  //加圓點
+                  preSvg.append("g")
+                      .attr("class", `circleGroup${index}`)
+                      .attr("transform", "translate(18,0)")
+                      .selectAll("dot")
+                      .data(myData)
+                      .enter()
+                      .append("circle")
+                      .attr("class", "myCircle")
+                      .attr("cx", d => preScaleX(d.Date))
+                      .attr("cy", d => preScaleY(d.Close))
+                      .attr("r", 5)
+                      .attr("stroke", "#cedba0")
+                      .attr("fill", "#cedba0")
+                      .on("mouseover", mouseover)
+                      .on("mousemove", mousemove)
+                      .on("mouseleave", mouseleave);
+
+
+                  d3.selectAll(".prediction-card")
+                      .each(function () {
+                          var lastTick = d3.select(this).selectAll(".x.axis.pre .tick:last-child");
+                          lastTick.select("line").style("stroke-dasharray", "6,6");
+                      });
+
+                  //動畫?
+                  pointAni(index);
+                  function pointAni(index) {
+                      var strokeC = (myData[5].Close > myData[4].Close) ? "#b84121" : "#69b3a2";
+                      var fillC = preState == "已結案" ? strokeC : "white"
+
+                      //var fillC = (myData[5].Close > myData[4].Close) ? "#f77465" : "#cedba0";
+                      /*        console.log("strokeC:" + strokeC + "  fillC:" + fillC);*/
+
+                      d3.select(`.circleGroup${index} :last-child`)
+                          .attr("stroke", strokeC)
+                          .style("stroke-width", 2)
+                          .style("stroke-opacity", 1)
+                          .style("r", 5)
+
+                      d3.select(`.circleGroup${index} :last-child`)
+                          .attr("fill", fillC)
+                      .transition()
+                      .duration(1000)
+                      .style("stroke-width", 10)
+                      .style("stroke-opacity", 0)
+                      .style("r", 7)
+                      .on("end", function () { pointAni(index) });
+                  }
+              }
+
+          })
+
+
+          function copyList(obj) {
+              $(obj).addClass("pre-list-btn-click");
+              setTimeout(function () {
+                  $(obj).removeClass("pre-list-btn-click")
+                  $(obj).addClass("pre-list-btn-click-again");
+              }, 1000);
+              var content = $(obj).text();
+              navigator.clipboard.writeText(content);
+          }
+
+          function copyAllList(obj) {
+              $(obj).addClass("copyAllCopied");
+              setTimeout(function () {
+                  $(obj).removeClass("copyAllCopied");
+              }, 1000)
+              var thisCard = $(obj).attr("id");
+              var thisCardList = $(`#${thisCard} ~ .pre-list-btn`);
+              var content = "";
+              for (var i = 0; i < thisCardList.length; i++) {
+                  if (i != 0) content += ",";
+                  content += thisCardList[i].innerText;
+              }
+              navigator.clipboard.writeText(content);
+          }
+
+        setTimeout(function () {
+            $(".pre-list-btn").on({
+                mouseenter: function () {
+                    $(this).removeClass("pre-list-btn-he");
+                    $(this).removeClass("pre-list-btn-hl");
+                    $(this).addClass("pre-list-btn-he");
+                },
+                mouseleave: function () {
+                    $(this).addClass("pre-list-btn-hl");
                 }
             })
-        })
+        }, 0);
 
 
         
@@ -332,276 +1392,82 @@
 
 
 
-        // 開始
-        // 生卡片
-        function drawPre(myData, index, preState, preDate, PID, preVariable, parameter, PAcount, SName, SCode, PFinsihTime, targetSelector) {
-            console.log(myData);
-            var prelist = "";
+          function btnTest(btn) {
+              var dataToServer = { user: sessionStorage.getItem("LogAccount"), cardID: $(btn).attr("id").substring(3) };
 
-            if (preVariable[0] != null) {
+              $.ajax({
+                  url: "/Home/CheckCard",
+                  method: "POST",
+                  data: dataToServer,
+                  success: function (e) {
+                      console.log(e);
+                      switch (e.substring(0, 1)) {
+                          case "A": {
+                              $(btn).text("♥").css("color", "#87aeb4");
+                              console.log("新增一筆");
+                              sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                              sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                              var nowNum = $(`.card${dataToServer.cardID}`).text();
+                              setTimeout(function () { $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) + 1) }, 175);
+                              $(btn).addClass("preBtn-click");
+                              $(`.card${dataToServer.cardID}`).removeClass("collectNumAniDown");
+                              $(`.card${dataToServer.cardID}`).addClass("collectNumAniUp");
+                              break
+                          }
+                          case "D": {
+                              $(btn).text("♡").css("color", "#87aeb4");
+                              console.log("刪除一筆");
+                              sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                              sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                              var nowNum = $(`.card${dataToServer.cardID}`).text();
+                              setTimeout(function () { $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) - 1) }, 175);
+                              $(btn).removeClass("preBtn-click");
+                              $(`.card${dataToServer.cardID}`).removeClass("collectNumAniUp");
+                              $(`.card${dataToServer.cardID}`).addClass("collectNumAniDown");
+                              break;
+                          }
+                          case "R":
+                              console.log("收藏上限了朋友");
+                              break;
+                      }
+                  }
+              })
+          }
 
-                prelist += `<button class="copyAll" id="card${PID}" onclick="copyAllList(this)">複製全部</button>`;
-                for (var i = 0; i < preVariable.length; i++) {
-                    prelist += `<button class="pre-list-btn" onclick = "copyList(this)" > ${preVariable[i]} </button>`;
+        checkCollect();
+        function checkCollect() {
+              // 檢視愛心狀態
+              setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
 
-                };
-
-            };
-            //var pa
-            $(targetSelector).prepend(`<label class='prediction-card ${index}'>
-                                               <input type='checkbox' class='card-btn' />
-                                               <div class='card-content'><div class='card-front'>
-                                                 <p class="pre-code" style="display:inline;">${SCode}</p>
-                                                  <p class="pre-name" style="display:inline;margin-left:10px;">${SName}</p>
-                                                <p class="pre-state" style="display:inline;margin-left:10px;">${preState}</p>
-                                               <table>
-                                               <tr><th class="pre-th">建立帳號</th><td class="pre-td pre-date">${PAcount}</td></tr>
-                                               <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
-                                               <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${PFinsihTime}</td></tr>
-                                               <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
-                                               <tr><th class="pre-th">結果參數</th><td class="pre-td">MSE:${parameter.MSE}</td></tr>
-                                               </table>
-
-                                               </div>
-                                               <div class='card-back'>
-                                               <div class='forPrediction'>
-                                               </div></div></div>
-                                               <div class="preVar">${prelist}</div></label>`);
-            //重新整理日期
-            var dateList = [];
-            for (var i = 0; i < myData.length; i++) {
-                dateList.push(myData[i].Date);
-            }
-
-            //圖表大小的設置
-            var preMargin = { top: 20, right: 50, bottom: 30, left: 50 },
-                preWidth = 325 - preMargin.left - preMargin.right,
-                preHeight = 200 - preMargin.top - preMargin.bottom;
-
-            //X、Y軸scale
-            var preScaleX = d3.scaleBand().range([10, preWidth]).domain(dateList);
-            var preScaleY = d3
-                .scaleLinear()
-                .range([preHeight - 35, 25])
-                .domain(d3.extent(myData, (d) => d.Close));
-
-            //X、Y軸
-            var preAxisX = d3.axisBottom(preScaleX);
-            var preAxisY = d3.axisLeft(preScaleY);
-
-            //生成線
-            var linePre = d3
-                .line()
-                .x((d) => preScaleX(d.Date))
-                .y((d) => preScaleY(d.Close));
-            /*.curve(d3.curveBasis);*/ //讓折線有弧度
-
-            //生SVG
-            var preSvg = d3
-                .select(".forPrediction")
-                .append("svg")
-                .attr("class", "forPre")
-                .attr("width", preWidth + preMargin.left + preMargin.right)
-                .attr("height", preHeight + preMargin.top + preMargin.bottom)
-                .append("g")
-                .attr(
-                    "transform",
-                    "translate(" + preMargin.left + "," + preMargin.top + ")"
-                );
-
-            //顏色
-            var maxDPre = d3.max(myData, function (d) {
-                return +d.Date;
-            });
-            var maxCPre = d3.max(myData, function (d) {
-                return +d.Close;
-            });
-            var minCPre = d3.min(myData, function (d) {
-                return +d.Close;
-            });
-
-            var colorX = d3.scaleLinear().domain([0, maxDPre]).range([preWidth, 0]);
-
-            preSvg
-                .append("linearGradient")
-                .attr("id", "line-gradient")
-                .attr("gradientUnits", "userSpaceOnUse")
-                .attr("x1", colorX(0))
-                .attr("y1", 0)
-                .attr("x2", colorX(maxDPre))
-                .attr("y2", 0)
-                .selectAll("stop")
-                .data([
-                    { offset: "0%", color: "#51a1b7" },
-                    { offset: "100%", color: "#cedba0" },
-                ])
-                .enter()
-                .append("stop")
-                .attr("offset", function (d) {
-                    return d.offset;
-                })
-                .attr("stop-color", function (d) {
-                    return d.color;
-                });
-
-            preSvg
-                .append("g")
-                .datum(myData)
-                .attr("class", "predictionLine here")
-                .attr("transform", "translate(18,0)");   //折線
-            preSvg
-                .append("g")
-                .attr("class", "x axis pre")
-                .attr("transform", "translate(0," + preHeight + ")"); //X軸
-            preSvg.append("g").attr("class", "y axis pre"); //Y軸
-
-            preSvg
-                .select("g.predictionLine.here")
-                .append("path")
-                .attr("class", "pathPre")
-                .attr("d", linePre(myData))
-                .attr("fill", "none")
-                .attr("stroke", "#bbbdbe")
-                .attr("stroke-width", 2);
-            preSvg
-                .select("g.x.axis.pre")
-                .call(
-                    preAxisX
-                        .tickValues(dateList)
-                        .tickFormat(d3.timeFormat("%m/%d"))
-                        .tickPadding(10)
-                        .tickSizeInner(-preHeight - 10, -preHeight)
-                )
-                .selectAll("text")
-                .style("text-anchor", "end")
-                .attr("dx", "-.8em")
-                .attr("dy", ".15em")
-                .attr("transform", "rotate(-25) translate(20, 10)");
-
-            preSvg.select("g.y.axis.pre")
-                .call(preAxisY.tickSizeInner(-preWidth - 10, -preWidth)
-                .tickPadding(10)
-                .tickFormat(d3.format(".1f"))
-                .tickValues([minCPre - 10, d3.mean([minCPre, maxCPre]), maxCPre + 10]));
-
-            //--點點--//
-            //提示框
-            var Tooltip = d3
-                .select(".forPrediction")
-                .append("div")
-                .style("opacity", 0)
-                .attr("class", "tooltip")
-                .style("background-color", "white")
-                .style("border", "solid")
-                .style("border-width", "2px")
-                .style("border-radius", "5px")
-                .style("padding", "5px")
-                .style("width", "100px")
-                .style("height", "33px")
-                .style("text-align", "center");
-
-            var mouseover = function (d) {
-                Tooltip.style("opacity", 1);
-            };
-            var mousemove = function (d) {
-                Tooltip.html("價格: " + d.Close)
-                    .style("left", d3.mouse(this)[0] + 20 + "px")
-                    .style("top", d3.mouse(this)[1] + "px");
-            };
-            //console.log($(".circleGroup"));
-            var mouseleave = function (d) {
-                Tooltip.style("opacity", 0);
-            };
-            //加圓點
-            preSvg.append("g")
-                .attr("class", `circleGroup${index}`)
-                .attr("transform", "translate(18,0)")
-                .selectAll("dot")
-                .data(myData)
-                .enter()
-                .append("circle")
-                .attr("class", "myCircle")
-                .attr("cx", d => preScaleX(d.Date))
-                .attr("cy", d => preScaleY(d.Close))
-                .attr("r", 5)
-                .attr("stroke", "#cedba0")
-                .attr("fill", "#cedba0")
-                .on("mouseover", mouseover)
-                .on("mousemove", mousemove)
-                .on("mouseleave", mouseleave);
-
-
-            d3.selectAll(".prediction-card")
-                .each(function () {
-                    var lastTick = d3.select(this).selectAll(".x.axis.pre .tick:last-child");
-                    lastTick.select("line").style("stroke-dasharray", "6,6");
-                });
-
-            //動畫?
-            pointAni(index);
-            function pointAni(index) {
-                var strokeC = (myData[5].Close > myData[4].Close) ? "#b84121" : "#69b3a2";
-                var fillC = preState == "已結案" ? strokeC : "white"
-                //var fillC = (myData[5].Close > myData[4].Close) ? "#f77465" : "#cedba0";
-                /*        console.log("strokeC:" + strokeC + "  fillC:" + fillC);*/
-
-                d3.select(`.circleGroup${index} :last-child`)
-                    .attr("stroke", strokeC)
-                    .style("stroke-width", 2)
-                    //.style("stroke-opacity", 1)
-                    .style("r", 5)
-
-                d3.select(`.circleGroup${index} :last-child`)
-                    .attr("fill", fillC)
-                //.transition()
-                //.duration(1000)
-                //.style("stroke-width", 10)
-                //.style("stroke-opacity", 0)
-                //.style("r", 7)
-                //.on("end", function () { pointAni(index) });
-            }
+                  d3.json(`/Home/cardCheck/${sessionStorage.getItem("LogAccount")}`, function (list) {
+                      list.forEach(function (item, i) {
+                          //針對會員有按愛心的按鈕 變化
+                          $(`#PID${parseInt(item)}`).text("♥").css({
+                              color: "#87aeb4",
+                          });
+                      })
+                  });
+              }, 10);
         }
+   
 
-    })
-    function copyList(obj) {
-        $(obj).addClass("pre-list-btn-click");
-        setTimeout(function () {
-            $(obj).removeClass("pre-list-btn-click")
-            $(obj).addClass("pre-list-btn-click-again");
-        }, 1000);
-        var content = $(obj).text();
-        navigator.clipboard.writeText(content);
-    }
+          function cardDetail(card) {
+                var cardNum = $(card).attr('class').split(' ')[1].substring(2)
+                window.location.href = `/StockModel/predictphoto?Pid=${cardNum}`
+          }
 
-    function copyAllList(obj) {
-        $(obj).addClass("copyAllCopied");
-        setTimeout(function () {
-            $(obj).removeClass("copyAllCopied");
-        }, 1000)
-        var thisCard = $(obj).attr("id");
-        var thisCardList = $(`#${thisCard} ~ .pre-list-btn`);
-        var content = "";
-        for (var i = 0; i < thisCardList.length; i++) {
-            if (i != 0) content += ",";
-            content += thisCardList[i].innerText;
-        }
-        navigator.clipboard.writeText(content);
-    }
 
-    setTimeout(function () {
-        $(".pre-list-btn").on({
-            mouseenter: function () {
-                $(this).removeClass("pre-list-btn-he");
-                $(this).removeClass("pre-list-btn-hl");
-                $(this).addClass("pre-list-btn-he");
-            },
-            mouseleave: function () {
-                $(this).addClass("pre-list-btn-hl");
-            }
-        })
-    }, 500);
-
-</script>
+          setTimeout(function () {
+              d3.json(`/Home/cardCheck/${sessionStorage.getItem("LogAccount")}`, function (list) {
+                  list.forEach(function (item, i) {
+                      //針對會員有按愛心的按鈕 變化
+                      $(`#PID${parseInt(item)}`).text("♥").css({
+                          color: "#87aeb4",
+                      });
+                  })
+              });
+        },500)
+    </script>
 
 
 
