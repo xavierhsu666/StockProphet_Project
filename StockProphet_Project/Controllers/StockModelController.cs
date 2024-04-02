@@ -370,7 +370,7 @@ namespace StockProphet_Project.Controllers {
 
 		}
 
-		public void GetStockVarsMapTable() {
+		public string GetStockVarsMapTable() {
 			//http://localhost:5271/stockmodel/testbuild
 			// 用法: 在呼叫頁面action時呼叫此function，就會往ViewBag.VarsTable存入map表(JSON字串，直接前台JS呼叫即可)
 			Type stockType = typeof(Stock);
@@ -387,8 +387,9 @@ namespace StockProphet_Project.Controllers {
 				}
 			}
 			string VarsTable = JsonConvert.SerializeObject(keyValuePairs);
-			Console.WriteLine(VarsTable);
+			//Console.WriteLine(VarsTable);
 			ViewBag.VarsTable = VarsTable;
+			return VarsTable;
 		}
 		// <功能開發測試區>
 

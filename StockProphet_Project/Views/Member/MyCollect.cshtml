@@ -124,12 +124,12 @@
             transform: scale(0.96);
         }
 
-    .predictionArea {
+/*     .predictionArea {
         display: flex;
         flex-wrap: wrap; /* 让卡片换行 */
-        justify-content: flex-start;
+    /*justify-content: flex-start;
         align-items: center;
-    }
+    } */
 
         .predictionArea .card {
             width: calc(50% - 10px); /* 每个卡片占据父容器的 1/3，减去一定的间距 */
@@ -137,12 +137,29 @@
             margin-bottom: 10px; /* 设置卡片之间的间距，可以根据需要调整 */
         }
 
-    .MyFavorite {
-        display: flex;
+    /* －－－改過↓－－－ */
+    .MyFavorite, .predictionArea {
+/*         display: flex;
         flex-wrap: wrap;
         justify-content: flex-start;
-        align-items: center;
+        align-items: center; */
+
+
+        max-width: 1400px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        /* margin-top: 50px; */
+        margin-bottom: 20px;
     }
+
+/*     .prediction-card{
+            margin-left: 55px;
+    margin-right: 55px;
+    } */
+
+    /* －－－改過↑－－－ */
 
         .MyFavorite .card {
             width: calc(50% - 10px);
@@ -163,9 +180,9 @@
         right: 200px;
     }
 
-    .container {
+/*     .container {
         text-align: center;
-    }
+    }  */
 
     #Collect {
         color: #73b5c5;
@@ -295,9 +312,24 @@
             .btn_A:hover:after {
                 transition-delay: 0s, 0.25s, 0s;
             }
+
+    .pre-name, .pre-code {
+        font-size: 24px;
+        text-align:left !important;
+    }
+
+    #Ongoing, #Finished {
+        margin-right: 10px;
+    }
+
+    .collect-container{
+        width:80%;
+        display: flex;
+        flex-direction: column;
+        /* background-color:pink; */
+    }
 </style>
 
-<div class="row">
     @* <div class="col-md-4">
 
 
@@ -305,22 +337,24 @@
 
     @* <div class="col-md-8"> *@
 
-    <div id="beforeLog">
-        <h1>請先登入會員</h1>
-    </div>
+<div class="area-container">
+    <div class="collect-container">
+        <div id="beforeLog">
+            <h1>請先登入會員</h1>
+        </div>
 
-    <div id="afterLog">
+        <div id="afterLog">
 
-        <div id="Search">
-            <a id="MyCollects" href="#MyFavorites" class="btn">
+            <div id="Search">
+                <a id="MyCollects" href="#MyFavorites" class="btn">
 
-                <span>我的收藏</span>
+                    <span>我的收藏</span>
 
-                <svg width="13px" height="10px" viewBox="0 0 13 10">
-                    <path d="M1,5 L11,5"></path>
-                    <polyline points="8 1 12 5 8 9"></polyline>
-                </svg>
-            </a>
+                    <svg width="13px" height="10px" viewBox="0 0 13 10">
+                        <path d="M1,5 L11,5"></path>
+                        <polyline points="8 1 12 5 8 9"></polyline>
+                    </svg>
+                </a>
 
             <h4></h4>
             <!-- 搜尋欄 -->
@@ -334,52 +368,53 @@
             <button id="Ongoing2" class="btn_A">追蹤中</button>
             <button id="Finished2" class="btn_A">已結案</button>
 
-            <div class="predictionArea">
-                <!-- 这里是生成的卡片 -->
+                <div class="predictionArea">
+                    <!-- 这里是生成的卡片 -->
+                </div>
+
+
+
+
+
+
+
+
+            </div>
+            <div id="MyFavorites">
+
+                <a id="Explore" href="#Search" class="btn">
+                    <span>探索更多</span>
+                    <svg width="13px" height="10px" viewBox="0 0 13 10">
+                        <path d="M1,5 L11,5"></path>
+                        <polyline points="8 1 12 5 8 9"></polyline>
+                    </svg>
+                </a>
+                <br><br><br>
+                <br>
+
+                <h1 id="Collect">我的收藏</h1>
+
+
+                <button id="Ongoing" class="btn_T">追蹤中</button>
+                <button id="Finished" class="btn_T">已結案</button>
+
+
+
+                <b id="totalCountDisplay"></b>
+
+
+                <div class="MyFavorite">
+                </div>
+
+
             </div>
 
-
-
-
-
-
-
+            @* </div> *@
 
         </div>
-        <div id="MyFavorites">
-
-            <a id="Explore" href="#Search" class="btn">
-                <span>探索更多</span>
-                <svg width="13px" height="10px" viewBox="0 0 13 10">
-                    <path d="M1,5 L11,5"></path>
-                    <polyline points="8 1 12 5 8 9"></polyline>
-                </svg>
-            </a>
-            <br><br><br>
-            <br>
-
-            <h1 id="Collect">我的收藏</h1>
-
-
-            <button id="Ongoing" class="btn_T">追蹤中</button>
-            <button id="Finished" class="btn_T">已結案</button>
-
-
-
-            <b id="totalCountDisplay"></b>
-
-
-            <div class="MyFavorite">
-            </div>
-
-
-
-
-        </div>
-
-        @* </div> *@
-
     </div>
+</div>
+    
 
     <script src="https://kit.fontawesome.com/fe876fcce4.js" crossorigin="anonymous"></script>
     @* <script src="https://code.jquery.com/jquery-3.7.1.js" crossorigin="anonymous"></script>
@@ -400,7 +435,7 @@
 
           // 判斷會員等級
           var MidLevel = sessionStorage.getItem("LogMemberLevel");
-          console.log(MidLevel)
+          // console.log(MidLevel)
           if (MidLevel == "高級會員") {
               $('#HighMember').show();
               $('#NormalMember').hide();
@@ -426,12 +461,14 @@
               $('#MyCollects').on("click", function () {
                   $('#MyFavorites').show();
                   $('#Search').hide();
+                  checkCollect();
 
               });
               // 4.點擊探索更多
               $('#Explore').on("click", function () {
                   $('#Search').show();
                   $('#MyFavorites').hide();
+                  checkCollect();
               });
 
               // 5.點擊我要預測
@@ -534,7 +571,7 @@
                                       PFinsihTime: FinsihTime2
 
                                   });
-
+                                  console.log(e);
                                   var currentdate = new Date();
                                   var year = currentdate.getFullYear();
                                   var month = currentdate.getMonth() + 1;
@@ -543,20 +580,24 @@
                                   //console.log(formattedDate);
 
                                   var result;
+                                  var Pstatus = e[0]["Pstatus"]; //狀態
+                                  var Pmodel = e[0]["Pmodel"];   //使用模型
+                                  var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
+                                  var PAR = e[0]['PAccuracyRatio'];
 
-                                  if (otherprarmeter[0]["PFinsihTime"] > formattedDate) {
-                                      result = "追蹤中";
+                                  // if (otherprarmeter[0]["PFinsihTime"] > formattedDate) {
+                                  //     result = "追蹤中";
+                                     
 
-
-                                  } else {
-                                      result = "已結案";
-
-                                  }
+                                  // } else {
+                                  //     result = "已結案";
+                                     
+                                  // }
                                   resultstatus.push({ "index": number, "result": result });
 
                                   var parameter = JSON.parse(otherprarmeter[0]["parameter"]);
                                   var preVariable = JSON.parse(otherprarmeter[0]["preVariable"]);
-                                  drawPre(jsonforplot, number, result, otherprarmeter[0]["Buildtime"], otherprarmeter[0]["PID"], preVariable, parameter, otherprarmeter[0]["PAcount"], otherprarmeter[0]["SName"], otherprarmeter[0]["SCode"], otherprarmeter[0]["PFinsihTime"], '.MyFavorite');
+                                  drawPre(jsonforplot, number, result, otherprarmeter[0]["Buildtime"], otherprarmeter[0]["PID"], preVariable, parameter, otherprarmeter[0]["PAcount"], otherprarmeter[0]["SName"], otherprarmeter[0]["SCode"], otherprarmeter[0]["PFinsihTime"], '.MyFavorite', Pmodel, PAR);
 
                                   //console.log("啦啦啦");
 
@@ -639,9 +680,9 @@
                   var Pbuildate;
                   var plotarray = [];
                   var otherprarmeter = [];
-                  resultstatus = [];
-
-                  console.log(searchTerm);
+                  var resultstatus = [];
+                  checkCollect();
+                  // console.log(searchTerm);
 
                   //var totalCount2 = 0; // 計數器
                   $.ajax({
@@ -649,7 +690,7 @@
                       url: '/Member/Search',
                       data: { searchTerm: searchTerm },
                       success: function (e) {
-                          //console.log("這裡");
+                          //console.log("這裡");搜尋
 
                           //console.log(e);
 
@@ -703,12 +744,18 @@
                               var finishtime = new Date(element[5]["Date"]);
                               var currentdate = new Date()
                               var result;
+                              var Pstatus = e[0]["Pstatus"]; //狀態
+                              var Pmodel = e[0]["Pmodel"];   //使用模型
+                              var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
+                              var PAR = e[0]['PAccuracyRatio'];
 
-                              if (finishtime > currentdate) {
-                                  result = "追蹤中"
-                              } else {
-                                  result = "已結案"
-                              }
+                              // console.log(finishtime)
+                              // console.log(currentdate)
+                              // if (finishtime > currentdate) {
+                              //     result = "追蹤中"
+                              // } else {
+                              //     result = "已結案"
+                              // }
                               // resultstatus.push(result);
                               resultstatus.push({ "index": index + 1, "result": result });
                               console.log("yaaaaaa");
@@ -722,7 +769,7 @@
                               //選擇變數
                               var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
                               //console.log((otherprarmeter[index]["Buildtime"]))
-                              drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], '.predictionArea')
+                              drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], '.predictionArea', Pmodel, PAR)
 
 
 
@@ -782,7 +829,7 @@
                           console.log(index + 1)
                           console.log("pppp")
 
-                          console.log("隱藏")
+                          // console.log("隱藏")
                       }
                   })
               })
@@ -1065,8 +1112,8 @@
 
               // 開始
               // 生卡片
-              function drawPre(myData, index, preState, preDate, PID, preVariable, parameter, PAcount, SName, SCode, PFinsihTime, targetSelector) {
-                  // console.log(myData);
+              function drawPre(myData, index, preState, preDate, PID, preVariable, parameter, PAcount, SName, SCode, PFinsihTime, targetSelector, Pmodel, PAR) {
+                  console.log(myData);
                   var prelist = "";
 
                   if (preVariable[0] != null) {
@@ -1078,25 +1125,27 @@
 
 
                   $(targetSelector).prepend(`<label class='prediction-card ${index}'>
-                                                                                                                                                                                                                                                                                                                          <input type='checkbox' class='card-btn' />
-                                                                                                                                                                                                                                                                                                                          <div class='card-content'><div class='card-front'>
-                                                                                                                                                                                                                                                                                                                            <p class="pre-code" style="display:inline;">${SCode}</p>
-                                                                                                                                                                                                                                                                                                                             <p class="pre-name" style="display:inline;margin-left:10px;">${SName}</p>
-                                                                                                                                                                                                                                                                                                                                     <p class="pre-state" style="display:inline;margin-left:10px;">${preState}</p>
-                                                                                                                                                                                                                                                                                                                          <table>
-                                                                                                                                                                                                                                                                                                                          <tr><th class="pre-th">建立帳號</th><td class="pre-td pre-date">${PAcount}</td></tr>
-                                                                                                                                                                                                                                                                                                                          <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
-                                                                                                                                                                                                                                                                                                                          <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${PFinsihTime}</td></tr>
-                                                                                                                                                                                                                                                                                                                          <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
-                                                                                                                                                                                                                                                                                                                          <tr><th class="pre-th">結果參數</th><td class="pre-td">MSE:${parameter.MSE}</td></tr>
-                                                                                                                                                                                                                                                                                                                          </table>
-                                                                                                                                                                                                                                                                                                                              <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
-                                                                                                                                                                                                                                                                                                                          </div>
+                    <input type='checkbox' class='card-btn' />
+                    <div class='card-content'><div class='card-front'>
+                    <p class="pre-code" style="display:inline;">${SCode}</p>
+                    <p class="pre-name" style="display:inline;margin-left:10px;">${SName}</p>
+                    <button class="pre-state PS${PID} pre-state-member" style="display:inline;margin-left:10px;" onclick="cardDetail(this)">${preState}</button>
+                              <table class="table-inside">
+                    <tr><th class="pre-th">建立者</th><td class="pre-td pre-date">${PAcount}</td></tr>
+                    <tr><th class="pre-th">使用模型</th><td class="pre-td pre-date">${Pmodel}</td></tr>
+                    <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
+                    <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${PFinsihTime}</td></tr>
+                    <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
+                    <tr><th class="pre-th">準確率</th><td class="pre-td">${PAR}</td></tr>
+                    </table>
+                              <p class="collectNum card${PID}">0<p>
+                              <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♡</button>
+                    </div>
 
-                                                                                                                                                                                                                                                                                                                          <div class='card-back'>
-                                                                                                                                                                                                                                                                                                                          <div class='forPrediction'>
-                                                                                                                                                                                                                                                                                                                          </div></div></div>
-                                                                                                                                                                                                                                                                                                                          <div class="preVar">${prelist}</div></label>`);
+                    <div class='card-back'>
+                    <div class='forPrediction'>
+                    </div></div></div>
+                    <div class="preVar">${prelist}</div></label>`);
 
 
 
@@ -1282,17 +1331,17 @@
                       d3.select(`.circleGroup${index} :last-child`)
                           .attr("stroke", strokeC)
                           .style("stroke-width", 2)
-                          //.style("stroke-opacity", 1)
+                          .style("stroke-opacity", 1)
                           .style("r", 5)
 
                       d3.select(`.circleGroup${index} :last-child`)
                           .attr("fill", fillC)
-                      //.transition()
-                      //.duration(1000)
-                      //.style("stroke-width", 10)
-                      //.style("stroke-opacity", 0)
-                      //.style("r", 7)
-                      //.on("end", function () { pointAni(index) });
+                      .transition()
+                      .duration(1000)
+                      .style("stroke-width", 10)
+                      .style("stroke-opacity", 0)
+                      .style("r", 7)
+                      .on("end", function () { pointAni(index) });
                   }
               }
 
@@ -1324,19 +1373,21 @@
               navigator.clipboard.writeText(content);
           }
 
-          setTimeout(function () {
-              $(".pre-list-btn").on({
-                  mouseenter: function () {
-                      $(this).removeClass("pre-list-btn-he");
-                      $(this).removeClass("pre-list-btn-hl");
-                      $(this).addClass("pre-list-btn-he");
-                  },
-                  mouseleave: function () {
-                      $(this).addClass("pre-list-btn-hl");
-                  }
-              })
-          }, 500);
+        setTimeout(function () {
+            $(".pre-list-btn").on({
+                mouseenter: function () {
+                    $(this).removeClass("pre-list-btn-he");
+                    $(this).removeClass("pre-list-btn-hl");
+                    $(this).addClass("pre-list-btn-he");
+                },
+                mouseleave: function () {
+                    $(this).addClass("pre-list-btn-hl");
+                }
+            })
+        }, 0);
 
+
+        
 
 
 
@@ -1352,15 +1403,27 @@
                       console.log(e);
                       switch (e.substring(0, 1)) {
                           case "A": {
-                              $(btn).css("color", "red");
+                              $(btn).text("♥").css("color", "#87aeb4");
                               console.log("新增一筆");
                               sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                              sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                              var nowNum = $(`.card${dataToServer.cardID}`).text();
+                              setTimeout(function () { $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) + 1) }, 175);
+                              $(btn).addClass("preBtn-click");
+                              $(`.card${dataToServer.cardID}`).removeClass("collectNumAniDown");
+                              $(`.card${dataToServer.cardID}`).addClass("collectNumAniUp");
                               break
                           }
                           case "D": {
-                              $(btn).css("color", "black");
+                              $(btn).text("♡").css("color", "#87aeb4");
                               console.log("刪除一筆");
                               sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                              sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                              var nowNum = $(`.card${dataToServer.cardID}`).text();
+                              setTimeout(function () { $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) - 1) }, 175);
+                              $(btn).removeClass("preBtn-click");
+                              $(`.card${dataToServer.cardID}`).removeClass("collectNumAniUp");
+                              $(`.card${dataToServer.cardID}`).addClass("collectNumAniDown");
                               break;
                           }
                           case "R":
@@ -1371,23 +1434,39 @@
               })
           }
 
-          // 檢視愛心狀態
-          setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
+        checkCollect();
+        function checkCollect() {
+              // 檢視愛心狀態
+              setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
 
+                  d3.json(`/Home/cardCheck/${sessionStorage.getItem("LogAccount")}`, function (list) {
+                      list.forEach(function (item, i) {
+                          //針對會員有按愛心的按鈕 變化
+                          $(`#PID${parseInt(item)}`).text("♥").css({
+                              color: "#87aeb4",
+                          });
+                      })
+                  });
+              }, 10);
+        }
+   
+
+          function cardDetail(card) {
+                var cardNum = $(card).attr('class').split(' ')[1].substring(2)
+                window.location.href = `/StockModel/predictphoto?Pid=${cardNum}`
+          }
+
+
+          setTimeout(function () {
               d3.json(`/Home/cardCheck/${sessionStorage.getItem("LogAccount")}`, function (list) {
                   list.forEach(function (item, i) {
                       //針對會員有按愛心的按鈕 變化
-                      $(`#PID${parseInt(item)}`).css({
-                          color: "red",
-                          /* fontSize: "32px" */
+                      $(`#PID${parseInt(item)}`).text("♥").css({
+                          color: "#87aeb4",
                       });
                   })
               });
-          }, 500);
-
-
-
-
+        },500)
     </script>
 
 
