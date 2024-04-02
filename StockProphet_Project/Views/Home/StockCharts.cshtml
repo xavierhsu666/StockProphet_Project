@@ -3,7 +3,7 @@
 }
 
 <link rel="stylesheet" href="~/css/stockChartStyle.css" type="text/css" />
-<h1>123+@ViewBag.test</h1> 
+<input id="word-table" value="@ViewBag.word" style="display:none"/>
 
 <div class="upArea">
 	<div class="upLayer">
@@ -79,10 +79,11 @@
 </div>
 
 <div class="middle-area">
-	<button class="btn-w-hover change-list-btn" onclick="changelist(this)">建立時間</button>
-	<button class="btn-w-hover change-list-btn" onclick="changelist(this)">結案</button>
-	<button class="btn-w-hover change-list-btn" onclick="changelist(this)">未結案</button>
-	<button class="btn-w-hover change-list-btn" onclick="changelist(this)">收藏數</button>
+	<button class="btn-w-hover change-list-btn" onclick="changelist(this)" id="AllCard2">建立時間</button>
+	<button class="btn-w-hover change-list-btn" onclick="changelist(this)" id="Finished2">已結案</button>
+	<button class="btn-w-hover change-list-btn" onclick="changelist(this)" id="Ongoing2">追蹤中</button>
+	<button class="btn-w-hover change-list-btn" onclick="changelist(this)" id="LikeNum2">收藏數</button>
+	<p class="pre-warn">目前無資料，看看其他分類吧:)！</p>
 </div>
 
 <div class="predictionArea">

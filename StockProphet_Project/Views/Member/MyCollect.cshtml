@@ -344,7 +344,7 @@
         </div>
 
         <div id="afterLog">
-
+            <input id="word-table" value="@ViewBag.word" style="display:none" />
             <div id="Search">
                 <a id="MyCollects" href="#MyFavorites" class="btn">
 
@@ -495,6 +495,7 @@
               var jsonforplot = [];
               var otherprarmeter = [];
               var resultstatus = [];
+              var wordTable = JSON.parse($("#word-table").val());
 
               $.ajax({
                   url: "/Member/MyCollect2",
@@ -597,7 +598,14 @@
 
                                   var parameter = JSON.parse(otherprarmeter[0]["parameter"]);
                                   var preVariable = JSON.parse(otherprarmeter[0]["preVariable"]);
-                                  drawPre(jsonforplot, number, result, otherprarmeter[0]["Buildtime"], otherprarmeter[0]["PID"], preVariable, parameter, otherprarmeter[0]["PAcount"], otherprarmeter[0]["SName"], otherprarmeter[0]["SCode"], otherprarmeter[0]["PFinsihTime"], '.MyFavorite', Pmodel, PAR);
+
+                                  var varTochi = [];
+
+                                  preVariable.forEach(function (w) {
+                                      varTochi.push(wordTable[w]);
+
+                                  })
+                                  drawPre(jsonforplot, number, result, otherprarmeter[0]["Buildtime"], otherprarmeter[0]["PID"], varTochi, parameter, otherprarmeter[0]["PAcount"], otherprarmeter[0]["SName"], otherprarmeter[0]["SCode"], otherprarmeter[0]["PFinsihTime"], '.MyFavorite', Pmodel, PAR);
 
                                   //console.log("啦啦啦");
 
@@ -680,7 +688,7 @@
                   var Pbuildate;
                   var plotarray = [];
                   var otherprarmeter = [];
-                  var resultstatus = [];
+                  resultstatus = [];
                   checkCollect();
                   // console.log(searchTerm);
 
@@ -768,8 +776,13 @@
                               var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
                               //選擇變數
                               var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
-                              //console.log((otherprarmeter[index]["Buildtime"]))
-                              drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], '.predictionArea', Pmodel, PAR)
+                              var varTochi = [];
+
+                              preVariable.forEach(function (w) {
+                                  varTochi.push(wordTable[w]);
+
+                              })
+                              drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], varTochi, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], '.predictionArea', Pmodel, PAR)
 
 
 
@@ -797,7 +810,7 @@
               $('#Ongoing2').on("click", function () {
                   alert('追蹤中')
                   //console.log(resultstatus.length)
-                  //$(".prediction-card").show();
+                  $(".prediction-card").show();
                   $.each(resultstatus, function (index, element) {
 
 
@@ -819,7 +832,7 @@
 
               $('#Finished2').on("click", function () {
 
-                  //$(".prediction-card").show();
+                  $(".prediction-card").show();
                   $.each(resultstatus, function (index, element) {
                       console.log(element.index)
 
@@ -1274,8 +1287,7 @@
                       .style("opacity", 0)
                       .attr("class", "tooltip")
                       .style("background-color", "white")
-                      .style("border", "solid")
-                      .style("border-width", "2px")
+                      .style("border", "solid 2px #87aeb4")
                       .style("border-radius", "5px")
                       .style("padding", "5px")
                       .style("width", "100px")
@@ -1346,50 +1358,6 @@
               }
 
           })
-
-
-          function copyList(obj) {
-              $(obj).addClass("pre-list-btn-click");
-              setTimeout(function () {
-                  $(obj).removeClass("pre-list-btn-click")
-                  $(obj).addClass("pre-list-btn-click-again");
-              }, 1000);
-              var content = $(obj).text();
-              navigator.clipboard.writeText(content);
-          }
-
-          function copyAllList(obj) {
-              $(obj).addClass("copyAllCopied");
-              setTimeout(function () {
-                  $(obj).removeClass("copyAllCopied");
-              }, 1000)
-              var thisCard = $(obj).attr("id");
-              var thisCardList = $(`#${thisCard} ~ .pre-list-btn`);
-              var content = "";
-              for (var i = 0; i < thisCardList.length; i++) {
-                  if (i != 0) content += ",";
-                  content += thisCardList[i].innerText;
-              }
-              navigator.clipboard.writeText(content);
-          }
-
-        setTimeout(function () {
-            $(".pre-list-btn").on({
-                mouseenter: function () {
-                    $(this).removeClass("pre-list-btn-he");
-                    $(this).removeClass("pre-list-btn-hl");
-                    $(this).addClass("pre-list-btn-he");
-                },
-                mouseleave: function () {
-                    $(this).addClass("pre-list-btn-hl");
-                }
-            })
-        }, 0);
-
-
-        
-
-
 
 
           function btnTest(btn) {
@@ -1467,6 +1435,86 @@
                   })
               });
         },500)
+
+          function copyList(obj) {
+              var myList = $(".var-tag .var-tag-a");
+              var copyAlready = false;
+              if (myList[0] != null) {
+                  for (var i = 0; i < myList.length; i++) {
+                      if (myList[i].innerText == $(obj).text()) {
+                          copyAlready = true;
+                          $(obj).addClass("pre-list-btn-click-again");
+                          $(obj).addClass("pre-list-btn-click");
+                          setTimeout(function () {
+                              $(obj).removeClass("pre-list-btn-click")
+                          }, 1000);
+                          break;
+                      }
+                  }
+              }
+              if (!copyAlready) {
+                  $(".var-tag").append(`<div class="var-tag-a" id="${$(obj).text()}" onClick="tagClick(this)">${$(obj).text()}</div>`);
+                  saveTag();
+                  $(obj).removeClass("pre-list-btn-click-again");
+                  $(obj).addClass("pre-list-btn-click");
+                  setTimeout(function () {
+                      $(obj).removeClass("pre-list-btn-click")
+                      $(obj).addClass("pre-list-btn-click-again");
+                  }, 1000);
+
+              }
+
+              //console.log($(obj).text());
+              //
+              var content = $(obj).text();
+              navigator.clipboard.writeText(content);
+          }
+
+          function copyAllList(obj) {
+              $(obj).addClass("copyAllCopied");
+              setTimeout(function () {
+                  $(obj).removeClass("copyAllCopied");
+              }, 1000)
+              var thisCard = $(obj).attr("id");
+              var thisCardList = $(`#${thisCard} ~ .pre-list-btn`);
+
+              var content = "";
+              for (var i = 0; i < thisCardList.length; i++) {
+                  if (i != 0) content += ",";
+                  content += thisCardList[i].innerText;
+              }
+              navigator.clipboard.writeText(content);
+
+
+          }
+
+          setTimeout(function () {
+              $(".pre-list-btn").on({
+                  mouseenter: function () {
+                      $(this).removeClass("pre-list-btn-he");
+                      $(this).removeClass("pre-list-btn-hl");
+                      $(this).addClass("pre-list-btn-he");
+                  },
+                  mouseleave: function () {
+                      $(this).addClass("pre-list-btn-hl");
+                  }
+              })
+          }, 500);
+
+          var tagforSession = "";
+          function saveTag() {
+              tagforSession = "";
+              var myList = $(".var-tag .var-tag-a");
+              console.log(myList);
+
+              if (myList[0] != null) {
+                  for (var i = 0; i < myList.length; i++) {
+                      if (i != 0) tagforSession += ",";
+                      tagforSession += myList[i].innerText;
+                  }
+              }
+              sessionStorage.setItem("VarTag", tagforSession);
+          }
     </script>
 
 
