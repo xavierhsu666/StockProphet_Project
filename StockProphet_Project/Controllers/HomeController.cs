@@ -1,9 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using StockProphet_Project.Models;
 using System.Diagnostics;
+using HtmlAgilityPack;
 using ChoETL;
 using Microsoft.VisualBasic;
 using Tensorflow;
+using System.Collections;
+using System.Data;
+using System.Net;
+using System.Text;
 
 
 
