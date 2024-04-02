@@ -448,6 +448,11 @@ function smaClick(btn) {
     }
 }
 
+
+var wordTable = JSON.parse($("#word-table").val());
+console.log(wordTable);
+
+var resultstatus = [];
 var finishCard = false;
 //撈預測區資料
 d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
@@ -469,9 +474,13 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             var status = Ddata[i].Status;   //是否結案
             var model = Ddata[i].Pmodel;
             var PAR = Ddata[i].PAR;
+            
 
             var preState = (status == "Close") ? "已結案" : "追蹤中";
+
             var comDate = (status == "Close") ? preDate : preBuildDate;
+
+            
 
             //console.log("預測日: "+ xData)
             //用BuildDate去找列表中最近的日子(closestDate)，closestDate可能等於BuildDate，也可能是前一天
@@ -503,17 +512,75 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
                 preData[z] = { Date: parseDate(xData[z]), Close: yData[z] };
             }
             var index = i;
-
+            resultstatus.push({ "index": index, "result": preState, "collectNum": collectNum });
             //整理字串
             var preVariable = JSON.parse(Ddata[i].Variable);    //所選變數
             var preDummy = JSON.parse(Ddata[i].Dummyblock);     //結果參數
             var pAccount = Ddata[i].Account;
+            var varTochi = [];
 
-            drawPre(preData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy, pAccount, collectNum, model, PAR);
+            preVariable.forEach(function (w) {
+                varTochi.push(wordTable[w]);
+            
+            })
+            console.log(varTochi);
+            drawPre(preData, index, preState, preDate, PID, preBuildDate, varTochi, preDummy, pAccount, collectNum, model, PAR);
             //console.log(preState);
         }
     })
 })
+
+
+
+// 條件篩選-追蹤中、已結案
+$('#Ongoing2').on("click", function () {
+    var count = 0;
+    $(".prediction-card").show();
+    $.each(resultstatus, function (index, element) {
+        if (element.result == "已結案") {
+            $(`.prediction-card.${index}`).hide();
+            count++;
+        }
+    });
+
+        (count == resultstatus.length) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
+})
+
+$('#Finished2').on("click", function () {
+    $(".prediction-card").show();
+    var count = 0;
+    $.each(resultstatus, function (index, element) {
+        console.log(element.index)
+        if (element.result == "追蹤中") {
+            $(`.prediction-card.${index}`).hide();
+            count++;
+        }
+    });
+    (count == resultstatus.length) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
+})
+
+$("#AllCard2").on("click", function () {
+    $(".prediction-card").show();
+    for (var i = 0; i < resultstatus.length; i++) {
+        $(`.prediction-card.${resultstatus[resultstatus.length-1-i].index}`).css("order", i + 1);
+    }
+    console.log(resultstatus);
+    ($(`.prediction-card`) == null) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
+})
+
+$("#LikeNum2").on("click", function () {
+    $(".prediction-card").show();
+    function compare(a, b) {
+        return b.collectNum - a.collectNum
+    }
+    var likeList = resultstatus.sort(compare);
+    for (var i = 0; i < resultstatus.length; i++) {
+        $(`.prediction-card.${likeList[i].index}`).css("order", i + 1);
+    }
+
+})
+
+
 
 //畫圖資料,第n張卡片,卡片追蹤狀態,預測日,卡片ID,建立日,所選變數,結果評估,建立帳號,收藏數,使用模型,PAR
 function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy, pAccount, collect, model, PAR) {   
@@ -916,6 +983,9 @@ $(".change-list-btn:first-child").css({
 function changelist(btn) {
     if (!($(btn).hasClass("selectChange"))) {
         console.log("new click");
+        $('html, body').animate({
+            scrollTop: $('.middle-area').offset().top - 50
+        }, 500);
     }
     $(".change-list-btn").css({
         "color": "#87aeb4",
@@ -926,9 +996,3 @@ function changelist(btn) {
         "background-color": "#87aeb4"
     }).addClass("selectChange")
 }
-
-//卡片重新排序區
-$(function () {
-    var cardLists = $(".prediction-card");
-    console.log(cardLists);
-})

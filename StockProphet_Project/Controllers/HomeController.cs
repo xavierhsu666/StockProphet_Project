@@ -33,9 +33,9 @@ namespace StockProphet_Project.Controllers {
 			ViewBag.stockID = id;
 			var stockModelController = new StockModelController(null, _context);
 
-			string test=stockModelController.GetStockVarsMapTable();
+			string word = stockModelController.GetStockVarsMapTable();
 			//Console.WriteLine(test);
-			ViewBag.test = test;
+			ViewBag.word = word;
 			return View();
 		}
 

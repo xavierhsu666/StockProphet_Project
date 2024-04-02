@@ -25,6 +25,7 @@
 </style>
 
 <div class="area-container">
+    <input id="word-table" value="@ViewBag.word" style="display:none" />
     <div class="default-container">
         <div id="beforeLog">
             <b>請先登入會員</b>
@@ -88,7 +89,7 @@
 
 
         //我的預測結果-資料整理
-      
+        var wordTable = JSON.parse($("#word-table").val());
         //將預測結果帶到前端
         var parseDate = d3.timeParse("%Y-%m-%d");
         var data = { customername: sessionStorage.getItem("LogAccount") }
@@ -178,8 +179,15 @@
                     var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
                     //選擇變數
                     var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
-                    console.log(Pmodel)
-                    drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], Pmodel, PAR)
+                    // console.log(Pmodel)
+
+                    var varTochi = [];
+
+                    preVariable.forEach(function (w) {
+                        varTochi.push(wordTable[w]);
+
+                    })
+                    drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], varTochi, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], Pmodel, PAR)
                 });
             }
         })
@@ -391,8 +399,7 @@
                 .style("opacity", 0)
                 .attr("class", "tooltip")
                 .style("background-color", "white")
-                .style("border", "solid")
-                .style("border-width", "2px")
+                .style("border", "solid 2px #87aeb4")
                 .style("border-radius", "5px")
                 .style("padding", "5px")
                 .style("width", "100px")

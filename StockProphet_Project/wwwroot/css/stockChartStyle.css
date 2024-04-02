@@ -304,6 +304,7 @@ path.difference {
     margin-right:55px;
 }
 .predictionArea {
+    min-height:100px;
     max-width: 1400px;
     display: flex;
     flex-direction: row;
@@ -348,7 +349,19 @@ path.difference {
     opacity: 0;
     pointer-events: none;
 }
+.pre-warn {
+    position:absolute;
+    top:100%;
+    z-index:20;
+    left:50%;
+    transform:translateX(-50%);
+    display:none;
+}
 
+.wordTable {
+    overflow:hidden;
+
+}
 @keyframes visitorAlert {
     0% {
         transform: translateY(30px);
