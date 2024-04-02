@@ -14,9 +14,14 @@
 	.myTable thead tr::after {
 		content: "";
 		background-color: #f5f5f5;
-		height: 52px;
+		width: 100%;
+		height: 175px;
+
 	}
 
+	.wide-column {
+		width: 150px; 
+	}
 
 </style>
 <div class="area-container">
@@ -24,31 +29,34 @@
 		<h1>管理者頁面(Member)</h1>
 		<br>
 		<div class="btn-area">
-			<button class="btn-w-hover mg-btn" onclick="loadModel('DbMembers')">Member</button>
-			<button class="btn-w-hover mg-btn" onclick="loadModel('DbModels')">Models</button>
-			<button class="btn-w-hover mg-btn" onclick="loadModel('Stocks')">Stocks</button>
-			<button class="btn-w-hover mg-btn" onclick="window.location.href='/stockmodel/updateAllStock';">updateAllStock</button>
+			<button class="btn-w-hover mg-btn" id="memberbtn1" onclick="loadModel('DbMembers')">會員頁</button>
+			<button class="btn-w-hover mg-btn" onclick="loadModel('DbModels')">模型頁</button>
+			<button class="btn-w-hover mg-btn" onclick="loadModel('DbCollects')">會員收藏</button>
+			<button class="btn-w-hover mg-btn" onclick="loadModel('Stocks')">股票資料</button>
+			
 		</div>
 		
 		<br>
+		<div class="btn-area">
+		<button class="btn-w-hover mg-btn" onclick="window.location.href='/stockmodel/updateAllStock';">updateAllStock</button>
+		</div>
 		<br>
 		<p>
-			<a asp-action="Create">Create New</a>
+			<a asp-action="Create" class="a-style">Create New</a>
 		</p>
-
+		<br>
 		<div class="d-xl-inline-flex">
-
-
-			<canvas id="genderChart" width="400" height="400"></canvas>
-			<canvas id="preferChart" width="400" height="400"></canvas>
-			<canvas id="levelChart" width="400" height="400"></canvas>
+			<canvas id="genderChart" width="300" height="300"></canvas>
+			<canvas id="preferChart" width="300" height="300"></canvas>
+			<canvas id="levelChart" width="300" height="300"></canvas>
 		</div>
 		<br>
 		<br>
 		<br>
-		<div class="member-search mb-3">
-			<label>客戶名稱搜尋欄</label>
-			<input type="type" name="name" id="customerselect" value="" />
+		<div class="member-search form-floating mb-3" style="max-width: 300px;">
+			<input class="form-control" type="type" name="name" id="customerselect" value="" />
+			<label class="form-label">客戶名稱搜尋欄</label>
+			
 		</div>
 		
 		<div class="myTable">
@@ -61,7 +69,7 @@
 						<th>
 							@Html.DisplayNameFor(model => model.Mpassword)
 						</th>
-						<th>
+						<th class="wide-column">
 							@Html.DisplayNameFor(model => model.MtrueName)
 						</th>
 						<th>
@@ -157,7 +165,7 @@
 	var levels = [];
 	$("#customerselect").on("change", function () {
 		if ($("#customerselect").val() == "") {
-			location.reload(); // 重新加载页面
+			location.reload(); 
 		}
 		else {
 			$.ajax({
@@ -165,11 +173,11 @@
 				method: "get",
 				data: { data: $("#customerselect").val() },
 				success: function (e) {
-					// 清空表格
 					$("#membertable").empty();
-					// 遍历响应数据，将每个项目添加到表格中
 					$.each(e, function (index, item) {
-
+						var editUrl = '@Url.Action("Edit", "ControllerName")' + '?id=' + item.Mid;
+						var detailsUrl = '@Url.Action("Details", "ControllerName")' + '?id=' + item.Mid;
+						var deleteUrl = '@Url.Action("Delete", "ControllerName")' + '?id=' + item.Mid;
 						var row = "<tr>" +
 							"<td>" + item.MaccoMnt + "</td>" +
 							"<td>" + item.Mpassword + "</td>" +
@@ -184,9 +192,9 @@
 							"<td>" + item.MlastLoginTime + "</td>" +
 							"<td>" + item.MfavoriteModel + "</td>" +
 							"<td>" +
-							"<a asp-action='Edit' asp-route-id='" + item.Mid + "'>Edit</a> |" +
-							"<a asp-action='Details' asp-route-id='" + item.Mid + "'>Details</a> |" +
-							"<a asp-action='Delete' asp-route-id='" + item.Mid + "'>Delete</a>" +
+							"<a class='a-style' href='" + editUrl + "'>Edit</a> |" +
+							"<a class='a-style' href='" + detailsUrl + "'>Details</a> |" +
+							"<a class='a-style' href='" + deleteUrl + "'>Delete</a>" +
 							"</td>" +
 							"</tr>";
 						$("#membertable").append(row);
@@ -325,7 +333,7 @@
 	}
 	
 	
-	$(".btn-area .mg-btn:nth-child(1)").css({
+	$("#memberbtn1").css({
 		"color":"white",
 		"background-color": "#87aeb4"
 	})

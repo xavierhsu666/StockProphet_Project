@@ -14,47 +14,23 @@
 </style>
 <div class="area-container">
     <div class="default-container">
-        <h1>管理者頁面(Member)</h1>
+        <h1>管理者頁面(Stock)</h1>
         <br>
         <div class="btn-area">
-            <button class="btn-w-hover mg-btn" onclick="loadModel('DbMembers')">Member</button>
-            <button class="btn-w-hover mg-btn" onclick="loadModel('DbModels')">Models</button>
-            <button class="btn-w-hover mg-btn" onclick="loadModel('Stocks')">Stocks</button>
+            <button class="btn-w-hover mg-btn" onclick="loadModel('DbMembers')">會員頁</button>
+            <button class="btn-w-hover mg-btn" onclick="loadModel('DbModels')">模型頁</button>
+            <button class="btn-w-hover mg-btn" onclick="loadModel('DbCollects')">會員收藏</button>
+            <button class="btn-w-hover mg-btn" onclick="loadModel('Stocks')">股票資料</button>
         </div>
 
         <br>
         <br>
         <p>
-            <a asp-action="Create">Create New</a>
+            <a asp-action="Create" class="a-style">Create New</a>
         </p>
-        <!-- 分页导航 -->
-        @if (ViewData["TotalPages"] != null && ViewData["CurrentPage"] != null) {
-            int totalPages = (int)ViewData["TotalPages"];
-            int currentPage = (int)ViewData["CurrentPage"];
-
-            <!-- 首页 -->
-            @if (currentPage > 1) {
-                <a href="@Url.Action("Index", new { page = 1 })">First</a>
-            }
-
-            <!-- 上一页 -->
-            @if (currentPage > 1) {
-                <a href="@Url.Action("Index", new { page = currentPage - 1 })">Previous</a>
-            }
-
-            <!-- 显示当前页和总页数 -->
-            <span>Page @currentPage of @totalPages</span>
-
-            <!-- 下一页 -->
-            @if (currentPage < totalPages) {
-                <a href="@Url.Action("Index", new { page = currentPage + 1 })">Next</a>
-            }
-
-            <!-- 最后一页 -->
-            @if (currentPage < totalPages) {
-                <a href="@Url.Action("Index", new { page = totalPages })">Last</a>
-            }
-        }
+        
+       
+       
         <div class="myTable">
             <table class="table">
                 <thead>
@@ -279,7 +255,37 @@
                 </tbody>
             </table>
         </div>
-        
+        @if (ViewData["TotalPages"] != null && ViewData["CurrentPage"] != null)
+        {
+            int totalPages = (int)ViewData["TotalPages"];
+            int currentPage = (int)ViewData["CurrentPage"];
+
+            <span>Page @currentPage of @totalPages</span>
+            <div style="inline-block">
+                @if (currentPage > 1)
+                {
+                    <a href="@Url.Action("Index", new { page = 1 })" class="a-style">First</a>
+                }
+
+
+                @if (currentPage > 1)
+                {
+                    <a href="@Url.Action("Index", new { page = currentPage - 1 })" class="a-style">Previous</a>
+                }
+
+
+                @if (currentPage < totalPages)
+                {
+                    <a href="@Url.Action("Index", new { page = currentPage + 1 })" class="a-style">Next</a>
+
+                }
+
+                @if (currentPage < totalPages)
+                {
+                    <a href="@Url.Action("Index", new { page = totalPages })" class="a-style">Last</a>
+                }
+            </div>
+        }
     </div>
 </div>
 
@@ -290,7 +296,7 @@
         window.location.href = `/${model}/Index`
     }
 
-    $(".btn-area .mg-btn:nth-child(3)").css({
+    $(".btn-area .mg-btn:nth-child(4)").css({
         "color": "white",
         "background-color": "#87aeb4"
     })

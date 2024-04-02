@@ -2,21 +2,25 @@
 
 @{
 	ViewData["Title"] = "Collect";
+
 }
 <div class="area-container">
 	<div class="overflow-auto">
 		<h1>管理者頁面(Collect)</h1>
 		<br>
-		<button class="btn btn-outline-dark" onclick="loadModel('DbMembers')">Member</button>
-		<button class="btn btn-outline-dark" onclick="loadModel('DbModels')">Models</button>
-		<button class="btn btn-outline-dark" onclick="loadModel('Stocks')">Stocks</button>
-		<button class="btn btn-outline-dark" onclick="loadModel('DbCollects')">Collect</button>
-
+		<div class="btn-area">
+		<button class="btn-w-hover mg-btn" onclick="loadModel('DbMembers')">會員頁</button>
+		<button class="btn-w-hover mg-btn" onclick="loadModel('DbModels')">模型頁</button>
+		<button class="btn-w-hover mg-btn" onclick="loadModel('DbCollects')">會員收藏</button>
+		<button class="btn-w-hover mg-btn" onclick="loadModel('Stocks')">股票資料</button>
+		</div>
 		<br>
 		<br>
+		<canvas id="myChart" width="300" height="300"></canvas>
 		<p>
-			<a asp-action="Create">Create New</a>
+			<a asp-action="Create" class="a-style">Create New</a>
 		</p>
+		
 		<table class="table">
 			<thead>
 				<tr>
@@ -35,6 +39,7 @@
 			<tbody>
 				@foreach (var item in Model)
 				{
+					
 					<tr>
 
 						<td>
@@ -47,21 +52,79 @@
 							@Html.DisplayFor(modelItem => item.CDate)
 						</td>
 						<td>
-							<a asp-action="Edit" asp-route-id="@item.CID">Edit</a> |
-							<a asp-action="Details" asp-route-id="@item.CID">Details</a> |
-							<a asp-action="Delete" asp-route-id="@item.CID">Delete</a>
+							<a asp-action="Edit" asp-route-id="@item.CID" class="a-style">Edit</a> |
+							<a asp-action="Details" asp-route-id="@item.CID" class="a-style">Details</a> |
+							<a asp-action="Delete" asp-route-id="@item.CID" class="a-style">Delete</a>
 						</td>
 					</tr>
+					
+					
 				}
 			</tbody>
 		</table>
 	</div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 	function loadModel(model) {
 		// console.log(model)
 		window.location.href = `/${model}/Index`
 	}
+	$(".btn-area .mg-btn:nth-child(3)").css({
+		"color": "white",
+		"background-color": "#87aeb4"
+	})
+	var data1=[];
+	var data2 = [];
+	var counts;
+	$.ajax({
+		url: "/DbCollects/Top5select",
+		method:"get",
+		success: function (e) {
+			console.log(e)
+			var labels = [];
+			var values = [];
+			$.each(e, function (index,element) {
+
+				labels.push(element.PID);
+				values.push(element.CAccountCount);
+			
+			}
+
+			)
+
+			
+
+			// 使用 Chart.js 繪製圖表
+			var ctx = document.getElementById('myChart').getContext('2d');
+			var myChart = new Chart(ctx, {
+				type: 'bar',
+				data: {
+					labels: labels,
+					datasets: [{
+						label: 'Number of Collections',
+						data: values,
+						backgroundColor: 'rgba(54, 162, 235, 0.2)', // 淡藍色
+						borderColor: 'rgba(54, 162, 235, 1)', // 淡藍色
+						borderWidth: 1
+					}]
+				},
+				options: {
+					scales: {
+						y: {
+							beginAtZero: true
+						}
+					}
+				}
+			});
+			
+		}
+	
+	})
+
+
+
+
 
 
 </script>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -17,9 +18,26 @@ namespace StockProphet_Project.Controllers
         {
             _context = context;
         }
+        [HttpGet]
+		public  IActionResult Top5select()
+		{
+			var top5Accounts = _context.DbCollect
+		                .GroupBy(c => c.PID)
+		                .Select(g => new
+		                {
+			                PID = g.Key,
+			                CAccountCount = g.Count()
+		                })
+		                .OrderByDescending(x => x.CAccountCount)
+		                .Take(5)
+		                .ToList();
 
-        // GET: DbCollects
-        public async Task<IActionResult> Index()
+
+			return Json(top5Accounts);
+		}
+
+		// GET: DbCollects
+		public async Task<IActionResult> Index()
         {
             return View(await _context.DbCollect.ToListAsync());
         }
@@ -152,5 +170,6 @@ namespace StockProphet_Project.Controllers
         {
             return _context.DbCollect.Any(e => e.CID == id);
         }
+
     }
 }

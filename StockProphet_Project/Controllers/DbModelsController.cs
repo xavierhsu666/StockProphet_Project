@@ -49,7 +49,8 @@ namespace StockProphet_Project.Controllers
         }
 		public IActionResult orderdata(string data)
 		{
-			var query = _context.DbModels.Where(x => x.Pstock == data);
+           int data1= Convert.ToInt32(data);
+			var query = _context.DbModels.Where(x => x.Pid == data1);
 			return Json(query);
 		}
 		public IActionResult barchart()
