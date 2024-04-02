@@ -3,229 +3,234 @@
 @{
     ViewData["Title"] = "Delete";
 }
+<div class="area-container">
+    <div class="manager-modify">
+        <h1>Delete</h1>
 
-<h1>Delete</h1>
+        <h3>Are you sure you want to delete this?</h3>
+        <div>
+            <h4>Stock</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.StDate)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.StDate)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.StYearQuarter)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.StYearQuarter)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.StQuarter)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.StQuarter)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.StYear)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.StYear)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SnCode)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SnCode)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SnName)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SnName)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SteOpen)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SteOpen)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SteClose)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SteClose)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SteMax)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SteMax)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SteMin)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SteMin)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SteSpreadRatio)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SteSpreadRatio)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SteTradeMoney)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SteTradeMoney)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SteTradeQuantity)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SteTradeQuantity)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SteTransActions)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SteTransActions)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SteDividendYear)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SteDividendYear)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SbYield)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SbYield)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SbPbratio)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SbPbratio)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SbEps)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SbEps)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SbBussinessIncome)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SbBussinessIncome)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SiMovingAverage5)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SiMovingAverage5)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SiMovingAverage30)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SiMovingAverage30)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SiRsv5)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SiRsv5)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SiRsv30)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SiRsv30)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SiK5)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SiK5)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SiK30)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SiK30)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SiD5)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SiD5)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SiD30)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SiD30)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SiLongEma)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SiLongEma)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SiShortEma)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SiShortEma)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SiDif)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SiDif)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SiMacd)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SiMacd)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SiOsc)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SiOsc)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SiPe)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SiPe)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.SiMa)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.SiMa)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.StUpdateDate)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.StUpdateDate)
+                </dd>
+            </dl>
+            </dl>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Stock</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StYearQuarter)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StYearQuarter)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StQuarter)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StQuarter)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StYear)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StYear)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SnCode)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SnCode)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SnName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SnName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SteOpen)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SteOpen)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SteClose)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SteClose)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SteMax)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SteMax)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SteMin)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SteMin)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SteSpreadRatio)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SteSpreadRatio)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SteTradeMoney)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SteTradeMoney)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SteTradeQuantity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SteTradeQuantity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SteTransActions)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SteTransActions)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SteDividendYear)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SteDividendYear)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SbYield)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SbYield)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SbPbratio)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SbPbratio)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SbEps)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SbEps)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SbBussinessIncome)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SbBussinessIncome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiMovingAverage5)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiMovingAverage5)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiMovingAverage30)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiMovingAverage30)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiRsv5)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiRsv5)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiRsv30)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiRsv30)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiK5)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiK5)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiK30)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiK30)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiD5)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiD5)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiD30)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiD30)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiLongEma)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiLongEma)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiShortEma)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiShortEma)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiDif)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiDif)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiMacd)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiMacd)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiOsc)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiOsc)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiPe)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiPe)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SiMa)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SiMa)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StUpdateDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StUpdateDate)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="SPk" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="SPk" />
+                <input type="submit" value="Delete" class="btn btn-danger" /> |
+                <a asp-action="Index">Back to List</a>
+            </form>
+        </div>
+    </div>
 </div>
+

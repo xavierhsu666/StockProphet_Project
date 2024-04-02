@@ -531,17 +531,17 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
     $(".predictionArea").prepend(`<label class='prediction-card ${index}'>
     <input type='checkbox' class='card-btn' />
     <div class='card-content'><div class='card-front'>
-    <p class="pre-state">${preState}</p>
+    <button class="pre-state PS${PID} ${(logging) ? "pre-state-member":""}" onclick="cardDetail(this)">${preState}</button>
     <table class="table-inside">
     <tr><th class="pre-th">建立者</th><td class="pre-td pre-date">${pAccount}</td></tr>
     <tr><th class="pre-th">使用模型</th><td class="pre-td pre-date">${model}</td></tr>
     <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preBuildDate}</td></tr>
     <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${preDate}</td></tr>
     <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5].Close}</td></tr>
-    <tr><th class="pre-th">準確率</th><td class="pre-td pre-date">${d3.format(".2f")(PAR)}</td></tr>
+    <tr><th class="pre-th">準確率</th><td class="pre-td pre-date">${d3.format(".1f")(PAR)}</td></tr>
     </table>
     <p class="collectNum card${PID}">${ collect > 0 ? collect : 0 }<p>
-    <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
+    <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♡</button>
     </div>
     <div class='card-back'>
     <div class='forPrediction'>
@@ -631,8 +631,7 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
         .style("opacity", 0)
         .attr("class", "tooltip")
         .style("background-color", "white")
-        .style("border", "solid")
-        .style("border-width", "2px")
+        .style("border", "solid 2px #87aeb4")
         .style("border-radius", "5px")
         .style("padding", "5px")
         .style("width", "100px")
@@ -750,17 +749,29 @@ function btnTest(btn) {
             data: dataToServer,
             success: function (e) {
                 console.log(e);
-                switch (e.substring(0,1)) {
+                switch (e.substring(0, 1)) {
                     case "A": {
-                        $(btn).css("color", "red");
+                        $(btn).text("♥").css("color", "#87aeb4");
                         console.log("新增一筆");
                         sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                        var nowNum = $(`.card${dataToServer.cardID}`).text();
+                        setTimeout(function () { $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) + 1) }, 175);
+                        $(btn).addClass("preBtn-click");
+                        $(`.card${dataToServer.cardID}`).removeClass("collectNumAniDown");
+                        $(`.card${dataToServer.cardID}`).addClass("collectNumAniUp");
+
                         break
                     }
                     case "D": {
-                        $(btn).css("color", "black");
+                        $(btn).text("♡").css("color", "#87aeb4");
                         console.log("刪除一筆");
                         sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                        var nowNum = $(`.card${dataToServer.cardID}`).text();
+                        setTimeout(function () { $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) - 1) }, 175);
+                        $(btn).removeClass("preBtn-click");
+                        $(`.card${dataToServer.cardID}`).removeClass("collectNumAniUp");
+                        $(`.card${dataToServer.cardID}`).addClass("collectNumAniDown");
+
                         break;
                     }
                     case "R":
@@ -792,9 +803,8 @@ setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
         d3.json(`/Home/cardCheck/${user}`, function (list) {
             list.forEach(function (item, i) {
                 //針對會員有按愛心的按鈕 變化
-                $(`#PID${parseInt(item)}`).css({
-                    color: "red",
-                    /* fontSize: "32px" */
+                $(`#PID${parseInt(item)}`).text("♥").css({
+                    color: "#87aeb4",
                 });
             })
         });
@@ -889,4 +899,11 @@ function saveTag() {
         }
     }
     sessionStorage.setItem("VarTag", tagforSession);
+}
+
+function cardDetail(card) {
+    if (logging) {
+        var cardNum = $(card).attr('class').split(' ')[1].substring(2)
+        window.location.href = `/StockModel/predictphoto?Pid=${cardNum}`
+    }
 }

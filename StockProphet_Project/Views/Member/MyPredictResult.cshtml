@@ -12,26 +12,27 @@
     .y.axis.pre path {
         display: none;
     }
+
+    .pre-name, .pre-code {
+        font-size:24px;
+    }
+
+    #Ongoing, #Finished{
+        margin-right:10px;
+       
+    }
+
 </style>
 
-<div class="row">
-    @* <div class="col-md-4">
-    <button id="showMemberIndex">回到會員頁</button><br>
-    <button id="showRevise">修改個人資料</button><br>
-    <button id="showFavoritesPage">我的收藏</button><br>
-    <button id="showPredictFunc">我要預測</button><br>
-    <button id="showHistoryPage">我的預測結果</button><br>
-
-    </div> *@
-    <div class="col-md-8">
-
+<div class="area-container">
+    <div class="default-container">
         <div id="beforeLog">
             <b>請先登入會員</b>
         </div>
 
         <div id="afterLog">
-            <button id="Ongoing">追蹤中</button>
-            <button id="Finished">已結案</button>
+            <button id="Ongoing" class="btn-w-hover">追蹤中</button>
+            <button id="Finished" class="btn-w-hover">已結案</button>
 
             @* 4.我的預測結果 *@
             <div id="FavoritesPage">
@@ -41,9 +42,13 @@
             </div>
 
         </div>
-
     </div>
 </div>
+  
+
+
+
+
 
 <script>
     //判斷會員是否登入
@@ -138,22 +143,32 @@
                         PAcount: e[w]["PAcount"],
                         SName: e[w]["SName"],
                         SCode: e[w]["SCode"],
-                        PFinsihTime: FinsihTime2
+                        PFinsihTime: FinsihTime2,
+                        Pstatus: e["Pstatus"],
+                        Pmodel: e["Pmodel"],
+                        PAccuracyRatio: e["PAccuracyRatio"]
                     })
                 }
+              
+                console.log(e[0]['PAccuracyRatio']);
+                
 
                 $.each(plotarray, function (index, element) {
                     var finishtime = new Date(element[5]["Date"]);
                     var currentdate = new Date()
                     var result;
+                    var Pstatus = otherprarmeter[index]["Pstatus"]; //狀態
+                    var Pmodel = e[index]["Pmodel"];   //使用模型
+                    var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
+                    var PAR = e[index]['PAccuracyRatio'];
 
                     // console.log(finishtime)
                     // console.log(currentdate)
-                    if (finishtime > currentdate) {
-                        result = "追蹤中"
-                    } else {
-                        result = "結案"
-                    }
+                    // if (finishtime > currentdate) {
+                    //     result = "追蹤中"
+                    // } else {
+                    //     result = "結案"
+                    // }
                     resultstatus.push(result);
                     //在这里执行你的操作
                     //結案狀態
@@ -162,8 +177,8 @@
                     var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
                     //選擇變數
                     var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
-                    // console.log((otherprarmeter[index]["Buildtime"]))
-                    drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"])
+                    console.log(Pmodel)
+                    drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], Pmodel, PAR)
                 });
             }
         })
@@ -172,18 +187,36 @@
         $('#Ongoing').on("click", function () {
             alert('追蹤中')
             console.log(resultstatus.length)
+            $("#Ongoing").css({
+                "color": "white",
+                "background": "#87aeb4"
+            })
+            $("#Finished").css({
+                "color": "#87aeb4",
+                "background": "transparent"
+            })
             $.each(resultstatus, function (index, element) {
             
-                if (element == "結案") {
-                    $(`.prediction-card.${index+1}`).hide();
+                if (element == "已結案") {
+                    $(`.prediction-card.${index + 1}`).hide();
                     console.log(index+1)
                     console.log("隱藏")
-                }      
+                } else if (element == "追蹤中") {
+                    $(`.prediction-card.${index + 1}`).show();
+                }
             })
         })
 
         $('#Finished').on("click", function () {
-            alert('結案')
+            alert('已結案')
+            $("#Finished").css({
+                "color": "white",
+                "background": "#87aeb4"
+            })
+            $("#Ongoing").css({
+                "color": "#87aeb4",
+                "background": "transparent"
+            })
             console.log(resultstatus.length)
             $.each(resultstatus, function (index, element) {
 
@@ -191,6 +224,8 @@
                     $(`.prediction-card.${index + 1}`).hide();
                     console.log(index + 1)
                     console.log("隱藏")
+                } else if (element == "已結案") {
+                    $(`.prediction-card.${index + 1}`).show();
                 }
             })
         })
@@ -200,6 +235,7 @@
         //生卡片
         function drawPre(myData, index, preState, preDate, PID, preVariable, parameter, PAcount, SName, SCode, PFinsihTime, Pmodel, PAccuracyRatio) {
             // console.log(PAcount + "/" + SName + "/" + SCode)
+            console.log(PAccuracyRatio);
             var prelist = "";
             if (preVariable[0] != null) {
                 prelist += `<button class="copyAll" id="card${PID}" onclick="copyAllList(this)">複製全部</button>`;
@@ -215,13 +251,14 @@
                 <div class='card-content'><div class='card-front'>
                         <p class="pre-code" style="display:inline;">${SCode}</p>
                             <p class="pre-name" style="display:inline;margin-left:10px;">${SName}</p>
-                    <p class="pre-state" style="display:inline;margin-left:10px;">${preState}</p>
-                <table>
-                <tr><th class="pre-th">建立帳號</th><td class="pre-td pre-date">${PAcount}</td></tr>
+                                        <button class="pre-state PS${PID} pre-state-member" style="display:inline;margin-left:10px;" onclick="cardDetail(this)">${preState}</button>
+                    <table class="table-inside">
+                <tr><th class="pre-th">建立者</th><td class="pre-td pre-date">${PAcount}</td></tr>
+                    <tr><th class="pre-th">使用模型</th><td class="pre-td pre-date">${Pmodel}</td></tr>
                 <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
                 <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${PFinsihTime}</td></tr>
                 <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
-                <tr><th class="pre-th">結果參數</th><td class="pre-td">MSE:${parameter.MSE}</td></tr>
+                <tr><th class="pre-th">準確率</th><td class="pre-td">${d3.format(".2f")(PAccuracyRatio)}</td></tr>
                 </table>
 
                 </div>
@@ -409,99 +446,102 @@
                 d3.select(`.circleGroup${index} :last-child`)
                     .attr("stroke", strokeC)
                     .style("stroke-width", 2)
-                    //.style("stroke-opacity", 1)
+                    .style("stroke-opacity", 1)
                     .style("r", 5)
 
                 d3.select(`.circleGroup${index} :last-child`)
                     .attr("fill", fillC)
-                //.transition()
-                //.duration(1000)
-                //.style("stroke-width", 10)
-                //.style("stroke-opacity", 0)
-                //.style("r", 7)
-                //.on("end", function () { pointAni(index) });
+                .transition()
+                .duration(1000)
+                .style("stroke-width", 10)
+                .style("stroke-opacity", 0)
+                .style("r", 7)
+                .on("end", function () { pointAni(index) });
             }
         }
-
-        function copyList(obj) {
-            var myList = $(".var-tag .var-tag-a");
-            var copyAlready = false;
-            if (myList[0] != null) {
-                for (var i = 0; i < myList.length; i++) {
-                    if (myList[i].innerText == $(obj).text()) {
-                        copyAlready = true;
-                        $(obj).addClass("pre-list-btn-click-again");
-                        $(obj).addClass("pre-list-btn-click");
-                        setTimeout(function () {
-                            $(obj).removeClass("pre-list-btn-click")
-                        }, 1000);
-                        break;
-                    }
-                }
-            }
-            if (!copyAlready) {
-                $(".var-tag").append(`<div class="var-tag-a" id="${$(obj).text()}" onClick="tagClick(this)">${$(obj).text()}</div>`);
-                saveTag();
-                $(obj).removeClass("pre-list-btn-click-again");
-                $(obj).addClass("pre-list-btn-click");
-                setTimeout(function () {
-                    $(obj).removeClass("pre-list-btn-click")
-                    $(obj).addClass("pre-list-btn-click-again");
-                }, 1000);
-
-            }
-
-            //console.log($(obj).text());
-            //
-            var content = $(obj).text();
-            navigator.clipboard.writeText(content);
-        }
-
-        function copyAllList(obj) {
-            $(obj).addClass("copyAllCopied");
-            setTimeout(function () {
-                $(obj).removeClass("copyAllCopied");
-            }, 1000)
-            var thisCard = $(obj).attr("id");
-            var thisCardList = $(`#${thisCard} ~ .pre-list-btn`);
-
-            var content = "";
-            for (var i = 0; i < thisCardList.length; i++) {
-                if (i != 0) content += ",";
-                content += thisCardList[i].innerText;
-            }
-            navigator.clipboard.writeText(content);
-
-
-        }
-
-        setTimeout(function () {
-            $(".pre-list-btn").on({
-                mouseenter: function () {
-                    $(this).removeClass("pre-list-btn-he");
-                    $(this).removeClass("pre-list-btn-hl");
-                    $(this).addClass("pre-list-btn-he");
-                },
-                mouseleave: function () {
-                    $(this).addClass("pre-list-btn-hl");
-                }
-            })
-        }, 500);
-
-        var tagforSession = "";
-        function saveTag() {
-            tagforSession = "";
-            var myList = $(".var-tag .var-tag-a");
-            console.log(myList);
-
-            if (myList[0] != null) {
-                for (var i = 0; i < myList.length; i++) {
-                    if (i != 0) tagforSession += ",";
-                    tagforSession += myList[i].innerText;
-                }
-            }
-            sessionStorage.setItem("VarTag", tagforSession);
-        }       
     })
-</script>
+    function copyList(obj) {
+        var myList = $(".var-tag .var-tag-a");
+        var copyAlready = false;
+        if (myList[0] != null) {
+            for (var i = 0; i < myList.length; i++) {
+                if (myList[i].innerText == $(obj).text()) {
+                    copyAlready = true;
+                    $(obj).addClass("pre-list-btn-click-again");
+                    $(obj).addClass("pre-list-btn-click");
+                    setTimeout(function () {
+                        $(obj).removeClass("pre-list-btn-click")
+                    }, 1000);
+                    break;
+                }
+            }
+        }
+        if (!copyAlready) {
+            $(".var-tag").append(`<div class="var-tag-a" id="${$(obj).text()}" onClick="tagClick(this)">${$(obj).text()}</div>`);
+            saveTag();
+            $(obj).removeClass("pre-list-btn-click-again");
+            $(obj).addClass("pre-list-btn-click");
+            setTimeout(function () {
+                $(obj).removeClass("pre-list-btn-click")
+                $(obj).addClass("pre-list-btn-click-again");
+            }, 1000);
 
+        }
+
+        //console.log($(obj).text());
+        //
+        var content = $(obj).text();
+        navigator.clipboard.writeText(content);
+    }
+
+    function copyAllList(obj) {
+        $(obj).addClass("copyAllCopied");
+        setTimeout(function () {
+            $(obj).removeClass("copyAllCopied");
+        }, 1000)
+        var thisCard = $(obj).attr("id");
+        var thisCardList = $(`#${thisCard} ~ .pre-list-btn`);
+
+        var content = "";
+        for (var i = 0; i < thisCardList.length; i++) {
+            if (i != 0) content += ",";
+            content += thisCardList[i].innerText;
+        }
+        navigator.clipboard.writeText(content);
+
+
+    }
+
+    setTimeout(function () {
+        $(".pre-list-btn").on({
+            mouseenter: function () {
+                $(this).removeClass("pre-list-btn-he");
+                $(this).removeClass("pre-list-btn-hl");
+                $(this).addClass("pre-list-btn-he");
+            },
+            mouseleave: function () {
+                $(this).addClass("pre-list-btn-hl");
+            }
+        })
+    }, 500);
+
+    var tagforSession = "";
+    function saveTag() {
+        tagforSession = "";
+        var myList = $(".var-tag .var-tag-a");
+        console.log(myList);
+
+        if (myList[0] != null) {
+            for (var i = 0; i < myList.length; i++) {
+                if (i != 0) tagforSession += ",";
+                tagforSession += myList[i].innerText;
+            }
+        }
+        sessionStorage.setItem("VarTag", tagforSession);
+    }
+
+    function cardDetail(card) {
+        var cardNum = $(card).attr('class').split(' ')[1].substring(2)
+        window.location.href = `/StockModel/predictphoto?Pid=${cardNum}`
+    }
+</script>

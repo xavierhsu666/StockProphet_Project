@@ -4,9 +4,11 @@
 
 <link rel="stylesheet" href="~/css/stockChartStyle.css" type="text/css" />
 
+
 <div class="upArea">
 	<div class="upLayer">
 		<div class="ctrlBtn">
+
 			<button class="btnT changeMA" onclick="smaClick(this)">SMA5</button>
 			<button class="btnT changeMA" onclick="smaClick(this)">SMA30</button>
 		</div>
@@ -85,13 +87,13 @@
 </div>
 
 <div class="predictionArea">
-	@*   <label class='prediction-card ${index}'>
+@*  	<label class='prediction-card ${index}'>
 		<input type='checkbox' class='card-btn' />
 		<div class='card-content'>
 			
 			<div class='card-front'>
+				<button class="pre-state">追蹤中</button>
 
-				<p class="pre-state">追蹤中</p>
 				<table class="table-inside">
 					<tr><th class="pre-th">建立者</th><td class="pre-td pre-date">-</td></tr>
 					<tr><th class="pre-th">使用模型</th><td class="pre-td pre-date">-</td></tr>
@@ -119,38 +121,7 @@
 			<button class="pre-list-btn" onclick="copyList(this)">V3</button>
 		
 		</div>
-	</label> *@
-
-	@* <label class="prediction-card">
-	<input type="checkbox" class="card-btn" />
-	<div class="card-content">
-	<div class="card-front">
-	<button class="prediction-collect">♥</button>
-	</div>
-	<div class="card-back">
-	<div class="forPrediction"></div>
-	</div>
-	</div>
-	</label>
-
-	<label class="prediction-card">
-	<input type="checkbox" class="card-btn" />
-	<div class="card-content">
-	<div class="card-front">
-	<button class="prediction-collect">♥</button>
-	</div>
-	<div class="card-back"><div class="forPrediction"></div></div>
-	</div>
-	</label>
-	<label class="prediction-card">
-	<input type="checkbox" class="card-btn" />
-	<div class="card-content">
-	<div class="card-front">
-	<button class="prediction-collect">♥</button>
-	</div>
-	<div class="card-back"><div class="forPrediction"></div></div>
-	</div>
-	</label> *@
+	</label>   *@
 
 </div>
 
@@ -173,6 +144,5 @@
 		window.location.href = "/StockModel/predictindex";
 	})
 
-		
 
 </script>

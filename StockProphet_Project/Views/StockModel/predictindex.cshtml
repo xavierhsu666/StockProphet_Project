@@ -16,337 +16,372 @@
 		width: 100%;
 	}
 
+	.pre-container{
+		background-color:pink;
+		width:80%;
+		padding: 40px;
+		background-color: white;
+		box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
+		border-radius: 10px;
+	}
+
+	.input-group{
+		width:50%;
+	}
+
+	@@media screen and (max-width: 1200px) {
+		.pre-container {
+			width:100%;
+		}
+
+		.input-group {
+			width: 100%;
+		}
+	}
+
+	#longterm, #shortterm{
+		margin-right:20px;
+	}
 </style>
 
 @* 驗證登入與否 *@
 <div id="beforeLog">
 	<b>請先登入會員</b>
 </div>
-<div id="afterLog">
-	<div>
-		<h3 class="display-6">第一步:選定股票</h3>
-		<div class="input-group mb-3">
-			<span class="input-group-text" id="inputGroup-sizing-default">股票代號</span>
-			<input type="text" class="form-control SnCode" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="stockid" name="SnCode" onchange="stockinput()">
-		</div>
-		<div style="display: flex;">
-			<div class="input-group mb-3">
-				<span class="input-group-text" id="inputGroup-sizing-default">股票名稱</span>
-				<div id="stockname" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" readonly></div>
-			</div>
-		</div>
-	</div>
-	<div id="step2" hidden="true">
-		<h3 class="display-6">第二步:選定投資偏好及選擇模型</h3>
-		<h4><b>投資偏好</b></h4>
-		<center>
-			<div style="display: flex;">
-				<div class="btn-group" role="group" aria-label="Basic example">
-					<button id="longterm" type="button" class="btn btn-primary">長期</button>
-					<button id="shortterm" type="button" class="btn btn-primary">短期</button>
+<div class="area-container">
+	<div class="pre-container">
+		<div id="afterLog">
+			<div>
+				<h3 class="display-6 mb-3">第一步:選定股票</h3>
+
+				<div class="input-group mb-3">
+					<span class="input-group-text" id="inputGroup-sizing-default">股票代號</span>
+					<input type="text" class="form-control SnCode" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="stockid" name="SnCode" onchange="stockinput()">
 				</div>
-			</div>
-		</center>
-		<br>
-		<label><h4><b>選擇模型</b></h4></label>
-		<select class="form-select" id="selectmodel" multiple aria-label="multiple select example">
-			<option value="1">LSTM</option>
-			<option value="2">FNN</option>
-			<option value="3">迴歸</option>
-			<option value="4">時間序列</option>
-		</select>
-	</div>
-	<br>
-	<br>
-
-	@* LSTM model 參數變數選擇 *@
-	<div id="borisform1" class="modelformforBoris">
-		<h3 class="display-6">第三步:設定參數並建置模型預測</h3>
-		<h4><b>變數選擇</b></h4>
-		<div class="accordion accordion-flush" id="accordionFlushExample">
-			<div class="accordion-item">
-				<h2 class="accordion-header" id="flush-headingOne">
-					<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-						技術面
-					</button>
-				</h2>
-				<div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-					<div class="accordion-body ">
-
-						<h5 class="technicalparamlist ParaArea"></h5>
-						@* JS-append *@
+				<div>
+					<div class="input-group mb-3">
+						<span class="input-group-text" id="inputGroup-sizing-default">股票名稱</span>
+						<div id="stockname" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" readonly></div>
 					</div>
 				</div>
+			
+				
 			</div>
-			<div class="accordion-item">
-				<h2 class="accordion-header" id="flush-headingTwo">
-					<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-						基本面
-					</button>
-				</h2>
-				<div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
-					<div class="accordion-body ">
-						<h5 class="foundmentalparamlist ParaArea"></h5>
-						@* JS-append *@
+			<div id="step2" hidden="true">
+				<h3 class="display-6 mb-3">第二步:選定投資偏好及選擇模型</h3>
+				<h4><b>投資偏好</b></h4>
+				<center>
+					<div style="display: flex;">
+						<div class="btn-group" role="group" aria-label="Basic example">
+							<button id="longterm" type="button" class="btn-w-hover">長期</button>
+							<button id="shortterm" type="button" class="btn-w-hover">短期</button>
+						</div>
 					</div>
-				</div>
+				</center>
+				<br>
+				<label><h4><b>選擇模型</b></h4></label>
+				<select class="form-select" id="selectmodel" multiple aria-label="multiple select example">
+					<option value="1">LSTM</option>
+					<option value="2">FNN</option>
+					<option value="3">迴歸</option>
+					<option value="4">時間序列</option>
+				</select>
 			</div>
-		</div>
-		
-		
-		<br>
-	
-	
-		@* 投入天數 *@
-		<table>
-			<tr>
-				<td>
-					<h5 class=""><b>數據區間(選擇幾天前的數據當作預測投入)</b></h5>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<h5 class="predicintervallist"></h5>
-					@* JS-append *@
-				</td>
-			</tr>
-		</table>
+			<br>
+			<br>
 
-	
+			@* LSTM model 參數變數選擇 *@
+			<div id="borisform1" class="modelformforBoris">
+				<h3 class="display-6 mb-3">第三步:設定參數並建置模型預測</h3>
+				<h4><b>變數選擇</b></h4>
+				<div class="accordion accordion-flush" id="accordionFlushExample">
+					<div class="accordion-item">
+						<h2 class="accordion-header" id="flush-headingOne">
+							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+								技術面
+							</button>
+						</h2>
+						<div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+							<div class="accordion-body ">
 
-		<br>
-		<h4><b>參數選擇</b></h4>
-		<table class="table " style="text-align:center;vertical-align: middle;">
-			<thead>
-				<tr>
-					<th>
-						迭代次數
-					</th>
-					<th>
-						模型層數選擇(預設輸入層+輸出層共兩層)
-					</th>
-				</tr>
-			</thead>
-			<tr>
-				<td>
-					<input type="number" style="width:75%" class="appendTt" id="iterationtime1" name="iterationtime" value="200" min="100" max="300">
-				</td>
-				<td>
-					<input type="number" style="width:25%" class="appendTt" id="layer1" name="" value="0" min="0" max="10">
-				</td>
-			</tr>
-		</table>
-		<br>
-		<button id="predict1" class="btn btn-outline-primary">建立模型</button>
-		<br>
-		<div id="predictionResult1"></div>
-		<div class="progress">
-			<div class="progress-bar progress-bar-striped progress-bar-animated" id="progress1" role="progressbar"
-				 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-			</div>
-		</div>
-
-	</div>
-
-	@* FNN model 參數變數選擇  *@
-	<div id="borisform2" class="modelformforBoris">
-		<h3 class="display-6">第三步:設定參數並建置模型預測</h3>
-		<h4><b>變數選擇</b></h4>
-		<div class="accordion accordion-flush" id="accordionFlushExample">
-			<div class="accordion-item">
-				<h2 class="accordion-header" id="flush-headingOne">
-					<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-						技術面
-					</button>
-				</h2>
-				<div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-					<div class="accordion-body ">
-						<h5 class="technicalparamlist ParaArea"></h5>
-						@* JS-append *@
+								<h5 class="technicalparamlist ParaArea"></h5>
+								@* JS-append *@
+							</div>
+						</div>
 					</div>
-				</div>
-			</div>
-			<div class="accordion-item">
-				<h2 class="accordion-header" id="flush-headingTwo">
-					<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-						基本面
-					</button>
-				</h2>
-				<div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
-					<div class="accordion-body ">
-						<h5 class="foundmentalparamlist ParaArea"></h5>
-						@* JS-append *@
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<br>
-
-
-		@* 投入天數 *@
-		<table>
-			<tr>
-				<td>
-					<h5 class=""><b>數據區間(選擇幾天前的數據當作預測投入)</b></h5>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<h5 class="predicintervallist"></h5>
-				</td>
-			</tr>
-		</table>
-		@* JS-append *@
-		<br>
-		<h4><b>參數選擇</b></h4>
-		<table class="table " style="text-align:center;vertical-align: middle;">
-			<thead>
-				<tr>
-					<th>
-						迭代次數
-					</th>
-					<th>
-						模型層數選擇(預設輸入層+輸出層共兩層)
-					</th>
-				</tr>
-			</thead>
-			<tr>
-				<td>
-					<input type="number" style="width:75%" class="appendTt" id="iterationtime2" name="iterationtime" value="200" min="100" max="300">
-				</td>
-				<td>
-					<input type="number" style="width:25%" class="appendTt" id="layer2" name="" value="0" min="0" max="10">
-				</td>
-			</tr>
-		</table>
-
-		<br>
-		<button id="predict2" class="btn btn-outline-primary">建立模型</button>
-		<br>
-		<div id="predictionResult2"></div>
-		<div class="progress">
-			<div class="progress-bar progress-bar-striped progress-bar-animated" id="progress2" role="progressbar"
-				 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
-		</div>
-	</div>
-
-	@* xaiver model *@
-	<div id="kazuoform3">
-		<h3 class="display-6">第三步:設定參數並建置模型預測</h3>
-		<h4>變數選擇:</h4>
-		<div id="ksParaArea">
-			<div class="accordion accordion-flush" id="accordionFlushExample">
-				<div class="accordion-item">
-					<h2 class="accordion-header" id="flush-headingOne">
-						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-							技術面
-						</button>
-					</h2>
-					<div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-						<div class="accordion-body ParaArea">
-
-							<input type="checkbox" id="kazuopara1" name="SteOpen" autocomplete="off" class="btn-check">
-							<label class="btn btn-outline-secondary" for="kazuopara1">開盤價</label>
-							<input type="checkbox" id="kazuopara2" name="SteClose" autocomplete="off" class="btn-check">
-							<label for="kazuopara2" class="btn btn-outline-secondary">收盤價</label>
-							<input type="checkbox" id="kazuopara3" name="SteMax" autocomplete="off" class="btn-check">
-							<label for="kazuopara3" class="btn btn-outline-secondary">最高價</label>
-							<input type="checkbox" id="kazuopara4" name="SteMin" autocomplete="off" class="btn-check">
-							<label for="kazuopara4" class="btn btn-outline-secondary">最低價</label>
-							<input type="checkbox" id="kazuopara5" name="SteSpreadRatio" autocomplete="off" class="btn-check">
-							<label for="kazuopara5" class="btn btn-outline-secondary">震幅</label>
-							<input type="checkbox" id="kazuopara6" name="SteTradeMoney" autocomplete="off" class="btn-check">
-							<label for="kazuopara6" class="btn btn-outline-secondary">當日交易額</label>
-							<input type="checkbox" id="kazuopara7" name="SteTradeQuantity" autocomplete="off" class="btn-check">
-							<label for="kazuopara7" class="btn btn-outline-secondary">當日交易量</label>
-							<input type="checkbox" id="kazuopara8" name="SteTransActions" autocomplete="off" class="btn-check">
-							<label for="kazuopara8" class="btn btn-outline-secondary">當日交易比數</label>
-							<input type="checkbox" id="kazuopara9" name="SiMovingAverage5" autocomplete="off" class="btn-check">
-							<label for="kazuopara9" class="btn btn-outline-secondary">移動平均_5天</label>
-							<input type="checkbox" id="kazuopara10" name="SiMovingAverage30" autocomplete="off" class="btn-check">
-							<label for="kazuopara10" class="btn btn-outline-secondary">移動平均_30天</label>
-							<input type="checkbox" id="kazuopara11" name="SiRsv5" autocomplete="off" class="btn-check">
-							<label for="kazuopara11" class="btn btn-outline-secondary">RSV_5天</label>
-							<input type="checkbox" id="kazuopara12" name="SiRsv30" autocomplete="off" class="btn-check">
-							<label for="kazuopara12" class="btn btn-outline-secondary">RSV_30天</label>
-							<input type="checkbox" id="kazuopara13" name="SiK5" autocomplete="off" class="btn-check">
-							<label for="kazuopara13" class="btn btn-outline-secondary">K_5天</label>
-							<input type="checkbox" id="kazuopara14" name="SiK30" autocomplete="off" class="btn-check">
-							<label for="kazuopara14" class="btn btn-outline-secondary">K_30天</label>
-							<input type="checkbox" id="kazuopara15" name="SiD5" autocomplete="off" class="btn-check">
-							<label for="kazuopara15" class="btn btn-outline-secondary">D_5天</label>
-							<input type="checkbox" id="kazuopara16" name="SiD30" autocomplete="off" class="btn-check">
-							<label for="kazuopara16" class="btn btn-outline-secondary">D_30天</label>
-							<input type="checkbox" id="kazuopara17" name="SiLongEma" autocomplete="off" class="btn-check">
-							<label for="kazuopara17" class="btn btn-outline-secondary">EMA長 (指數移動平均線 - 長期)</label>
-							<input type="checkbox" id="kazuopara18" name="SiShortEma" autocomplete="off" class="btn-check">
-							<label for="kazuopara18" class="btn btn-outline-secondary">EMA短 (指數移動平均線 - 短期)</label>
-							<input type="checkbox" id="kazuopara19" name="SiDif" autocomplete="off" class="btn-check">
-							<label for="kazuopara19" class="btn btn-outline-secondary">DIF (差離值)</label>
-							<input type="checkbox" id="kazuopara20" name="SiMacd" autocomplete="off" class="btn-check">
-							<label for="kazuopara20" class="btn btn-outline-secondary">MACD</label>
-							<input type="checkbox" id="kazuopara21" name="SiOsc" autocomplete="off" class="btn-check">
-							<label for="kazuopara21" class="btn btn-outline-secondary">OSC</label>
-							<input type="checkbox" id="kazuopara22" name="SiMa" autocomplete="off" class="btn-check">
-							<label for="kazuopara22" class="btn btn-outline-secondary">OSC_MA</label>
+					<div class="accordion-item">
+						<h2 class="accordion-header" id="flush-headingTwo">
+							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+								基本面
+							</button>
+						</h2>
+						<div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+							<div class="accordion-body ">
+								<h5 class="foundmentalparamlist ParaArea"></h5>
+								@* JS-append *@
+							</div>
 						</div>
 					</div>
 				</div>
-				<div class="accordion-item">
-					<h2 class="accordion-header" id="flush-headingTwo">
-						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-							基本面
-						</button>
-					</h2>
-					<div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
-						<div class="accordion-body ParaArea">
-							<input type="checkbox" id="kazuopara23" name="SbYield" autocomplete="off" class="btn-check">
-							<label for="kazuopara23" class="btn btn-outline-secondary">殖利率</label>
-							<input type="checkbox" id="kazuopara24" name="SbPbratio" autocomplete="off" class="btn-check">
-							<label for="kazuopara24" class="btn btn-outline-secondary">淨值比</label>
-							<input type="checkbox" id="kazuopara25" name="SbEps" autocomplete="off" class="btn-check">
-							<label for="kazuopara25" class="btn btn-outline-secondary">EPS</label>
-							<input type="checkbox" id="kazuopara26" name="SbBussinessIncome" autocomplete="off" class="btn-check">
-							<label for="kazuopara26" class="btn btn-outline-secondary">營業收入</label>
-							<input type="checkbox" id="kazuopara27" name="SiPe" autocomplete="off" class="btn-check">
-							<label for="kazuopara27" class="btn btn-outline-secondary">PE (市盈率)</label>
+
+
+				<br>
+
+
+				@* 投入天數 *@
+				<table>
+					<tr>
+						<td>
+							<h5 class=""><b>數據區間(選擇幾天前的數據當作預測投入)</b></h5>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<h5 class="predicintervallist"></h5>
+							@* JS-append *@
+						</td>
+					</tr>
+				</table>
+
+
+
+				<br>
+				<h4><b>參數選擇</b></h4>
+				<table class="table " style="text-align:center;vertical-align: middle;">
+					<thead>
+						<tr>
+							<th>
+								迭代次數
+							</th>
+							<th>
+								模型層數選擇(預設輸入層+輸出層共兩層)
+							</th>
+						</tr>
+					</thead>
+					<tr>
+						<td>
+							<input type="number" style="width:75%" class="appendTt" id="iterationtime1" name="iterationtime" value="200" min="100" max="300">
+						</td>
+						<td>
+							<input type="number" style="width:25%" class="appendTt" id="layer1" name="" value="0" min="0" max="10">
+						</td>
+					</tr>
+				</table>
+				<br>
+				<button id="predict1" class="btn-w-hover">建立模型</button>
+				<br>
+				<div id="predictionResult1"></div>
+				<div class="progress">
+					<div class="progress-bar progress-bar-striped progress-bar-animated" id="progress1" role="progressbar"
+						 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+					</div>
+				</div>
+
+			</div>
+
+			@* FNN model 參數變數選擇  *@
+			<div id="borisform2" class="modelformforBoris">
+				<h3 class="display-6">第三步:設定參數並建置模型預測</h3>
+				<h4><b>變數選擇</b></h4>
+				<div class="accordion accordion-flush" id="accordionFlushExample">
+					<div class="accordion-item">
+						<h2 class="accordion-header" id="flush-headingOne">
+							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+								技術面
+							</button>
+						</h2>
+						<div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+							<div class="accordion-body ">
+								<h5 class="technicalparamlist ParaArea"></h5>
+								@* JS-append *@
+							</div>
+						</div>
+					</div>
+					<div class="accordion-item">
+						<h2 class="accordion-header" id="flush-headingTwo">
+							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+								基本面
+							</button>
+						</h2>
+						<div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+							<div class="accordion-body ">
+								<h5 class="foundmentalparamlist ParaArea"></h5>
+								@* JS-append *@
+							</div>
 						</div>
 					</div>
 				</div>
+
+				<br>
+
+
+				@* 投入天數 *@
+				<table>
+					<tr>
+						<td>
+							<h5 class=""><b>數據區間(選擇幾天前的數據當作預測投入)</b></h5>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<h5 class="predicintervallist"></h5>
+						</td>
+					</tr>
+				</table>
+				@* JS-append *@
+				<br>
+				<h4><b>參數選擇</b></h4>
+				<table class="table " style="text-align:center;vertical-align: middle;">
+					<thead>
+						<tr>
+							<th>
+								迭代次數
+							</th>
+							<th>
+								模型層數選擇(預設輸入層+輸出層共兩層)
+							</th>
+						</tr>
+					</thead>
+					<tr>
+						<td>
+							<input type="number" style="width:75%" class="appendTt" id="iterationtime2" name="iterationtime" value="200" min="100" max="300">
+						</td>
+						<td>
+							<input type="number" style="width:25%" class="appendTt" id="layer2" name="" value="0" min="0" max="10">
+						</td>
+					</tr>
+				</table>
+
+				<br>
+				<button id="predict2" class="btn-w-hover">建立模型</button>
+				<br>
+				<div id="predictionResult2"></div>
+				<div class="progress">
+					<div class="progress-bar progress-bar-striped progress-bar-animated" id="progress2" role="progressbar"
+						 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+				</div>
 			</div>
 
+			@* xaiver model *@
+			<div id="kazuoform3">
+				<h3 class="display-6">第三步:設定參數並建置模型預測</h3>
+				<h4>變數選擇:</h4>
+				<div id="ksParaArea">
+					<div class="accordion accordion-flush" id="accordionFlushExample">
+						<div class="accordion-item">
+							<h2 class="accordion-header" id="flush-headingOne">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+									技術面
+								</button>
+							</h2>
+							<div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+								<div class="accordion-body ParaArea">
+
+									<input type="checkbox" id="kazuopara1" name="SteOpen" autocomplete="off" class="btn-check">
+									<label class="btn btn-outline-secondary" for="kazuopara1">開盤價</label>
+									<input type="checkbox" id="kazuopara2" name="SteClose" autocomplete="off" class="btn-check">
+									<label for="kazuopara2" class="btn btn-outline-secondary">收盤價</label>
+									<input type="checkbox" id="kazuopara3" name="SteMax" autocomplete="off" class="btn-check">
+									<label for="kazuopara3" class="btn btn-outline-secondary">最高價</label>
+									<input type="checkbox" id="kazuopara4" name="SteMin" autocomplete="off" class="btn-check">
+									<label for="kazuopara4" class="btn btn-outline-secondary">最低價</label>
+									<input type="checkbox" id="kazuopara5" name="SteSpreadRatio" autocomplete="off" class="btn-check">
+									<label for="kazuopara5" class="btn btn-outline-secondary">震幅</label>
+									<input type="checkbox" id="kazuopara6" name="SteTradeMoney" autocomplete="off" class="btn-check">
+									<label for="kazuopara6" class="btn btn-outline-secondary">當日交易額</label>
+									<input type="checkbox" id="kazuopara7" name="SteTradeQuantity" autocomplete="off" class="btn-check">
+									<label for="kazuopara7" class="btn btn-outline-secondary">當日交易量</label>
+									<input type="checkbox" id="kazuopara8" name="SteTransActions" autocomplete="off" class="btn-check">
+									<label for="kazuopara8" class="btn btn-outline-secondary">當日交易比數</label>
+									<input type="checkbox" id="kazuopara9" name="SiMovingAverage5" autocomplete="off" class="btn-check">
+									<label for="kazuopara9" class="btn btn-outline-secondary">移動平均_5天</label>
+									<input type="checkbox" id="kazuopara10" name="SiMovingAverage30" autocomplete="off" class="btn-check">
+									<label for="kazuopara10" class="btn btn-outline-secondary">移動平均_30天</label>
+									<input type="checkbox" id="kazuopara11" name="SiRsv5" autocomplete="off" class="btn-check">
+									<label for="kazuopara11" class="btn btn-outline-secondary">RSV_5天</label>
+									<input type="checkbox" id="kazuopara12" name="SiRsv30" autocomplete="off" class="btn-check">
+									<label for="kazuopara12" class="btn btn-outline-secondary">RSV_30天</label>
+									<input type="checkbox" id="kazuopara13" name="SiK5" autocomplete="off" class="btn-check">
+									<label for="kazuopara13" class="btn btn-outline-secondary">K_5天</label>
+									<input type="checkbox" id="kazuopara14" name="SiK30" autocomplete="off" class="btn-check">
+									<label for="kazuopara14" class="btn btn-outline-secondary">K_30天</label>
+									<input type="checkbox" id="kazuopara15" name="SiD5" autocomplete="off" class="btn-check">
+									<label for="kazuopara15" class="btn btn-outline-secondary">D_5天</label>
+									<input type="checkbox" id="kazuopara16" name="SiD30" autocomplete="off" class="btn-check">
+									<label for="kazuopara16" class="btn btn-outline-secondary">D_30天</label>
+									<input type="checkbox" id="kazuopara17" name="SiLongEma" autocomplete="off" class="btn-check">
+									<label for="kazuopara17" class="btn btn-outline-secondary">EMA長 (指數移動平均線 - 長期)</label>
+									<input type="checkbox" id="kazuopara18" name="SiShortEma" autocomplete="off" class="btn-check">
+									<label for="kazuopara18" class="btn btn-outline-secondary">EMA短 (指數移動平均線 - 短期)</label>
+									<input type="checkbox" id="kazuopara19" name="SiDif" autocomplete="off" class="btn-check">
+									<label for="kazuopara19" class="btn btn-outline-secondary">DIF (差離值)</label>
+									<input type="checkbox" id="kazuopara20" name="SiMacd" autocomplete="off" class="btn-check">
+									<label for="kazuopara20" class="btn btn-outline-secondary">MACD</label>
+									<input type="checkbox" id="kazuopara21" name="SiOsc" autocomplete="off" class="btn-check">
+									<label for="kazuopara21" class="btn btn-outline-secondary">OSC</label>
+									<input type="checkbox" id="kazuopara22" name="SiMa" autocomplete="off" class="btn-check">
+									<label for="kazuopara22" class="btn btn-outline-secondary">OSC_MA</label>
+								</div>
+							</div>
+						</div>
+						<div class="accordion-item">
+							<h2 class="accordion-header" id="flush-headingTwo">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+									基本面
+								</button>
+							</h2>
+							<div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+								<div class="accordion-body ParaArea">
+									<input type="checkbox" id="kazuopara23" name="SbYield" autocomplete="off" class="btn-check">
+									<label for="kazuopara23" class="btn btn-outline-secondary">殖利率</label>
+									<input type="checkbox" id="kazuopara24" name="SbPbratio" autocomplete="off" class="btn-check">
+									<label for="kazuopara24" class="btn btn-outline-secondary">淨值比</label>
+									<input type="checkbox" id="kazuopara25" name="SbEps" autocomplete="off" class="btn-check">
+									<label for="kazuopara25" class="btn btn-outline-secondary">EPS</label>
+									<input type="checkbox" id="kazuopara26" name="SbBussinessIncome" autocomplete="off" class="btn-check">
+									<label for="kazuopara26" class="btn btn-outline-secondary">營業收入</label>
+									<input type="checkbox" id="kazuopara27" name="SiPe" autocomplete="off" class="btn-check">
+									<label for="kazuopara27" class="btn btn-outline-secondary">PE (市盈率)</label>
+								</div>
+							</div>
+						</div>
+					</div>
 
 
-			@* 標註 *@
-			@* <input type="checkbox" id="kazuopara28" name="ST_Date" autocomplete="off" class="btn-check">
-			<label for="kazuopara28" class="btn btn-outline-secondary">日期</label>
-			<input type="checkbox" id="kazuopara29" name="ST_Year_Quarter" autocomplete="off" class="btn-check">
-			<label for="kazuopara29" class="btn btn-outline-secondary">年/季</label>
-			<input type="checkbox" id="kazuopara30" name="SteDividendYear" autocomplete="off" class="btn-check">
-			<label for="kazuopara30" class="btn btn-outline-secondary">最近一筆股利發放年</label> *@
-		</div>
 
-		<br>
-		<h5>參數選擇:</h5>
-		<div id="ModelParaInputArea">
-		</div>
-		<br>
-		<button id="ksOkbutton2" class="btn btn-outline-primary">Build</button>
-		<br>
-		<br>
-		<div id="predictionResult2"></div>
-		<div class="progress" id="ksprogressOuter">
-			<div class="progress-bar progress-bar-striped progress-bar-animated" id="ksprogress" role="progressbar"
-				 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+					@* 標註 *@
+					@* <input type="checkbox" id="kazuopara28" name="ST_Date" autocomplete="off" class="btn-check">
+					<label for="kazuopara28" class="btn btn-outline-secondary">日期</label>
+					<input type="checkbox" id="kazuopara29" name="ST_Year_Quarter" autocomplete="off" class="btn-check">
+					<label for="kazuopara29" class="btn btn-outline-secondary">年/季</label>
+					<input type="checkbox" id="kazuopara30" name="SteDividendYear" autocomplete="off" class="btn-check">
+					<label for="kazuopara30" class="btn btn-outline-secondary">最近一筆股利發放年</label> *@
+				</div>
+
+				<br>
+				<h5>參數選擇:</h5>
+				<div id="ModelParaInputArea">
+				</div>
+				<br>
+				<button id="ksOkbutton2" class="btn btn-outline-primary">Build</button>
+				<br>
+				<br>
+				<div id="predictionResult2"></div>
+				<div class="progress" id="ksprogressOuter">
+					<div class="progress-bar progress-bar-striped progress-bar-animated" id="ksprogress" role="progressbar"
+						 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+				</div>
+			</div>
+			<br>
+			<br>
+			@* <button id="updateAllStockBtn">update All Stock Btn</button> *@
 		</div>
 	</div>
-	<br>
-	<br>
-	@* <button id="updateAllStockBtn">update All Stock Btn</button> *@
 </div>
 
+
 <script>
+	var newHeight = 0;
 	//判斷會員是否登入
 	var MID = sessionStorage.getItem("LogAccount");
 	if (MID == '') {
@@ -783,8 +818,14 @@
 			// 根據會員等級開放不同Model使用權限
 			if (sessionStorage.getItem("LogMemberLevel") == "高級會員") {
 				$("#longterm").on("click", function () {
-					$("#longterm").css("color", "black")
-					$("#shortterm").css("color", "white")
+					$("#longterm").css({
+						"color": "white",
+						"background-color":"#87aeb4"
+					})
+					$("#shortterm").css({
+						"color": "#87aeb4",
+						"background-color": "white"
+					})
 					$("#selectmodel").prop("disabled", false);
 					$("#selectmodel option[value='1']").prop("selected", true);
 					$("#selectmodel option[value='2']").prop("selected", false);
@@ -795,8 +836,14 @@
 					prefertype = 2;
 				})
 				$("#shortterm").on("click", function () {
-					$("#shortterm").css("color", "black")
-					$("#longterm").css("color", "white")
+					$("#shortterm").css({
+						"color": "white",
+						"background-color": "#87aeb4"
+					})
+					$("#longterm").css({
+						"color": "#87aeb4",
+						"background-color": "white"
+					})
 					$("#selectmodel").prop("disabled", false);
 					$("#selectmodel option[value='1']").prop("selected", false);
 					$("#selectmodel option[value='2']").prop("selected", true);
@@ -811,8 +858,14 @@
 			else 
 			{
 				$("#longterm").on("click", function () {
-					$("#longterm").css("color", "black")
-					$("#shortterm").css("color", "white")
+					$("#longterm").css({
+						"color": "white",
+						"background-color": "#87aeb4"
+					})
+					$("#shortterm").css({
+						"color": "#87aeb4",
+						"background-color": "white"
+					})
 					$("#selectmodel").prop("disabled", false);
 					$("#selectmodel option[value='1']").prop("disabled", true);
 					$("#selectmodel option[value='2']").prop("disabled", true);
@@ -826,8 +879,14 @@
 					prefertype = 2;
 				})
 				$("#shortterm").on("click", function () {
-					$("#shortterm").css("color", "black")
-					$("#longterm").css("color", "white")
+					$("#shortterm").css({
+						"color": "white",
+						"background-color": "#87aeb4"
+					})
+					$("#longterm").css({
+						"color": "#87aeb4",
+						"background-color": "white"
+					})
 					$("#selectmodel").prop("disabled", false);
 					$("#selectmodel option[value='1']").prop("disabled", true);
 					$("#selectmodel option[value='2']").prop("disabled", true);
@@ -1005,6 +1064,10 @@
 				if (!Okbutton12()) {
 
 				} else {
+					$("#predict1, #predict2").css({
+						"color": "white",
+						"background-color": "#87aeb4"
+					})
 					var buttonId = $(this).prop("id"); // 獲取按鈕的 ID
 					var number = parseInt(buttonId.match(/\d+/)[0]); // 從 ID 中提取數字部分
 
