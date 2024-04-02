@@ -47,7 +47,7 @@
             .bar button:before {
                 content: "GO";
                 font-family: FontAwesome;
-                text-align:center;
+                text-align: center;
                 font-size: 16px;
                 color: rgb(95, 158, 160);
             }
@@ -191,7 +191,7 @@
         transition: color 0.25s 0.0833333333s;
         /*  padding: 10px 20px;*/
         padding: 10px;
-    } 
+    }
 
         .btn_T:before,
         .btn_T:after {
@@ -235,6 +235,66 @@
             .btn_T:hover:after {
                 transition-delay: 0s, 0.25s, 0s;
             }
+
+    .btn_A,
+    .btn_A:focus {
+        position: relative;
+        min-width: 100px;
+        background: none;
+        border: none;
+        color: #73b5c5;
+        font-size: 1rem;
+        font-weight: bold;
+        text-align: center;
+        text-decoration: none;
+        box-shadow: inset 0 0 0 4px #73b5c5;
+        transition: color 0.25s 0.0833333333s;
+        /*  padding: 10px 20px;*/
+        padding: 10px;
+    }
+
+        .btn_A:before,
+        .btn_A:after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 0;
+            bottom: 0;
+            right: 0;
+            border: 0 solid transparent;
+            box-sizing: border-box;
+            border-radius: 5px;
+        }
+
+        .btn_A:before {
+            border-bottom-width: 2px;
+            border-left-width: 2px;
+        }
+
+        .btn_A:after {
+            border-top-width: 2px;
+            border-right-width: 2px;
+        }
+
+        .btn_A:hover {
+            color: rgb(95, 158, 160);
+        }
+
+            .btn_A:hover:before,
+            .btn_A:hover:after {
+                border-color: rgb(95, 158, 160);
+                transition: border-color 0s, width 0.25s, height 0.25s;
+                width: 100%;
+                height: 100%;
+            }
+
+            .btn_A:hover:before {
+                transition-delay: 0s, 0s, 0.25s;
+            }
+
+            .btn_A:hover:after {
+                transition-delay: 0s, 0.25s, 0s;
+            }
 </style>
 
 <div class="row">
@@ -271,8 +331,8 @@
                 </button>
             </div>
             <br>
-            <button id="Ongoing2" class="btn_T">追蹤中</button>
-            <button id="Finished2" class="btn_T">已結案</button>
+            <button id="Ongoing2" class="btn_A">追蹤中</button>
+            <button id="Finished2" class="btn_A">已結案</button>
 
             <div class="predictionArea">
                 <!-- 这里是生成的卡片 -->
@@ -310,7 +370,6 @@
 
 
             <div class="MyFavorite">
-               
             </div>
 
 
@@ -399,7 +458,7 @@
               var jsonforplot = [];
               var otherprarmeter = [];
               var resultstatus = [];
-              
+
               $.ajax({
                   url: "/Member/MyCollect2",
                   method: "get",
@@ -423,7 +482,7 @@
                               url: "/Member/Test",
                               data: { sessionPID: number },
                               success: function (e) {
-                                  
+
                                   jsonforplot = [];
                                   $.each(e, function (index, element) {
                                       var historydate1 = new Date(element["STdate"]);
@@ -443,10 +502,10 @@
                                   // var dateString = new Date(e[0].PFinsihTime);
                                   var dateObject = new Date(e[0].PFinsihTime);
 
-                                  
+
                                   jsonforplot.push({ Date: dateObject, Close: e[0].PLabel });
-                                    //console.log("wwwwwwwwwwwwwwwww")
-                                    console.log(jsonforplot)
+                                  //console.log("wwwwwwwwwwwwwwwww")
+                                  // console.log(jsonforplot)
 
                                   // console.log(e[0]["PFinsihTime"])
                                   // console.log(formattedhistorydate2)
@@ -482,26 +541,26 @@
                                   var day = currentdate.getDate();
                                   var formattedDate = year + "-" + month + "-" + day;
                                   //console.log(formattedDate);
-                                  
+
                                   var result;
 
                                   if (otherprarmeter[0]["PFinsihTime"] > formattedDate) {
                                       result = "追蹤中";
-                                     
+
 
                                   } else {
                                       result = "已結案";
-                                     
+
                                   }
                                   resultstatus.push({ "index": number, "result": result });
-                                  
+
                                   var parameter = JSON.parse(otherprarmeter[0]["parameter"]);
                                   var preVariable = JSON.parse(otherprarmeter[0]["preVariable"]);
                                   drawPre(jsonforplot, number, result, otherprarmeter[0]["Buildtime"], otherprarmeter[0]["PID"], preVariable, parameter, otherprarmeter[0]["PAcount"], otherprarmeter[0]["SName"], otherprarmeter[0]["SCode"], otherprarmeter[0]["PFinsihTime"], '.MyFavorite');
 
                                   //console.log("啦啦啦");
 
-                                  console.log(otherprarmeter[0]["PFinsihTime"]);
+                                  // console.log(otherprarmeter[0]["PFinsihTime"]);
 
 
 
@@ -519,9 +578,9 @@
                   }
               });
 
-              
-              
-              
+
+
+
 
 
               //條件篩選-追蹤中、已結案
@@ -540,7 +599,7 @@
                           // console.log("kkkkkkk")
                           // console.log(element.result)
                           // console.log("kkkkkkk")
-                          
+
                           // console.log("qqqqqqqqqqqqqqqq")
 
                           // console.log("隱藏")
@@ -569,7 +628,7 @@
                   })
               })
 
-             
+
 
 
               // 股票卡片搜尋欄 (完成版)
@@ -580,7 +639,7 @@
                   var Pbuildate;
                   var plotarray = [];
                   var otherprarmeter = [];
-                  var resultstatus = [];
+                  resultstatus = [];
 
                   console.log(searchTerm);
 
@@ -603,7 +662,7 @@
                                   subArray.push(jsonforplot);
                               }
 
-                              console.log(jsonforplot)
+                              // console.log(jsonforplot)
                               var finishdate2 = new Date(e[i]["PFinsihTime"])
                               subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] })
                               plotarray.push(subArray)
@@ -640,22 +699,21 @@
                           }
 
                           $.each(plotarray, function (index, element) {
+                              // console.log(element[5]["Date"]);
                               var finishtime = new Date(element[5]["Date"]);
                               var currentdate = new Date()
                               var result;
 
-                              // console.log(finishtime)
-                              // console.log(currentdate)
                               if (finishtime > currentdate) {
                                   result = "追蹤中"
                               } else {
                                   result = "已結案"
                               }
                               // resultstatus.push(result);
-                              resultstatus.push({ "index": otherprarmeter[index]["PID"], "result": result });
+                              resultstatus.push({ "index": index + 1, "result": result });
                               console.log("yaaaaaa");
                               console.log(resultstatus);
-                              console.log("yaaaaaa");
+                               console.log("yaaaaaa");
 
                               //結案狀態
 
@@ -666,8 +724,8 @@
                               //console.log((otherprarmeter[index]["Buildtime"]))
                               drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], '.predictionArea')
 
-                             
-                              
+
+
                               //console.log("這裡");
                               //console.log(plotarray)
 
@@ -679,6 +737,10 @@
                               // document.cookie = "cardData=" + JSON.stringify(cardData) + "; path=/";
                           });
 
+                          // console.log("_-------_");
+                          // console.log(resultstatus)
+                          // console.log("_-------_");
+
 
                       }
                   })
@@ -686,29 +748,38 @@
 
               // 條件篩選-追蹤中、已結案
               $('#Ongoing2').on("click", function () {
-                  //alert('追蹤中')
+                  alert('追蹤中')
                   //console.log(resultstatus.length)
-                  $(".prediction-card").show();
-                  $.each(resultstatus, function (index , element) {
-                      console.log(element.index)
+                  //$(".prediction-card").show();
+                  $.each(resultstatus, function (index, element) {
+
 
                       if (element.result == "已結案") {
-                          $(`.prediction-card.${index }`).hide();
-                          console.log(element.index)
+                          console.log("111111111111")
+
+                          // console.log(`index = ${index}, element = ${element}`)
+                          $(`.prediction-card.${index+1}`).hide();
+                          console.log(`index = ${index+1}, element = ${element.result}`)
+
+                          console.log("11111111111")
+
                           console.log("隱藏")
                       }
+                      // console.clear();
+                      // console.log($(`.prediction-card 54`).text());
                   })
               })
 
               $('#Finished2').on("click", function () {
-                  
-                  $(".prediction-card").show();
-                  $.each(resultstatus, function (index , element) {
+
+                  //$(".prediction-card").show();
+                  $.each(resultstatus, function (index, element) {
+                      console.log(element.index)
 
                       if (element.result == "追蹤中") {
-                          $(`.prediction-card.${element.index}`).hide();
+                          $(`.prediction-card.${index + 1}`).hide();
                           console.log("pppp")
-                          console.log(element.index)
+                          console.log(index + 1)
                           console.log("pppp")
 
                           console.log("隱藏")
@@ -716,7 +787,7 @@
                   })
               })
 
-             
+
 
 
               // 存進 cookie 版本
@@ -995,7 +1066,7 @@
               // 開始
               // 生卡片
               function drawPre(myData, index, preState, preDate, PID, preVariable, parameter, PAcount, SName, SCode, PFinsihTime, targetSelector) {
-                  console.log(myData);
+                  // console.log(myData);
                   var prelist = "";
 
                   if (preVariable[0] != null) {
@@ -1007,27 +1078,27 @@
 
 
                   $(targetSelector).prepend(`<label class='prediction-card ${index}'>
-                                                                                                                                                                                                                                                                                            <input type='checkbox' class='card-btn' />
-                                                                                                                                                                                                                                                                                            <div class='card-content'><div class='card-front'>
-                                                                                                                                                                                                                                                                                              <p class="pre-code" style="display:inline;">${SCode}</p>
-                                                                                                                                                                                                                                                                                               <p class="pre-name" style="display:inline;margin-left:10px;">${SName}</p>
-                                                                                                                                                                                                                                                                                             <p class="pre-state" style="display:inline;margin-left:10px;">${preState}</p>
-                                                                                                                                                                                                                                                                                            <table>
-                                                                                                                                                                                                                                                                                            <tr><th class="pre-th">建立帳號</th><td class="pre-td pre-date">${PAcount}</td></tr>
-                                                                                                                                                                                                                                                                                            <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
-                                                                                                                                                                                                                                                                                            <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${PFinsihTime}</td></tr>
-                                                                                                                                                                                                                                                                                            <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
-                                                                                                                                                                                                                                                                                            <tr><th class="pre-th">結果參數</th><td class="pre-td">MSE:${parameter.MSE}</td></tr>
-                                                                                                                                                                                                                                                                                            </table>
-                                                                                                                                                                                                                                                                                                <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
-                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                          <input type='checkbox' class='card-btn' />
+                                                                                                                                                                                                                                                                                                                          <div class='card-content'><div class='card-front'>
+                                                                                                                                                                                                                                                                                                                            <p class="pre-code" style="display:inline;">${SCode}</p>
+                                                                                                                                                                                                                                                                                                                             <p class="pre-name" style="display:inline;margin-left:10px;">${SName}</p>
+                                                                                                                                                                                                                                                                                                                                     <p class="pre-state" style="display:inline;margin-left:10px;">${preState}</p>
+                                                                                                                                                                                                                                                                                                                          <table>
+                                                                                                                                                                                                                                                                                                                          <tr><th class="pre-th">建立帳號</th><td class="pre-td pre-date">${PAcount}</td></tr>
+                                                                                                                                                                                                                                                                                                                          <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
+                                                                                                                                                                                                                                                                                                                          <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${PFinsihTime}</td></tr>
+                                                                                                                                                                                                                                                                                                                          <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
+                                                                                                                                                                                                                                                                                                                          <tr><th class="pre-th">結果參數</th><td class="pre-td">MSE:${parameter.MSE}</td></tr>
+                                                                                                                                                                                                                                                                                                                          </table>
+                                                                                                                                                                                                                                                                                                                              <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
+                                                                                                                                                                                                                                                                                                                          </div>
 
-                                                                                                                                                                                                                                                                                            <div class='card-back'>
-                                                                                                                                                                                                                                                                                            <div class='forPrediction'>
-                                                                                                                                                                                                                                                                                            </div></div></div>
-                                                                                                                                                                                                                                                                                            <div class="preVar">${prelist}</div></label>`);
+                                                                                                                                                                                                                                                                                                                          <div class='card-back'>
+                                                                                                                                                                                                                                                                                                                          <div class='forPrediction'>
+                                                                                                                                                                                                                                                                                                                          </div></div></div>
+                                                                                                                                                                                                                                                                                                                          <div class="preVar">${prelist}</div></label>`);
 
-                  
+
 
                   //重新整理日期
                   var dateList = [];
@@ -1204,6 +1275,7 @@
                   function pointAni(index) {
                       var strokeC = (myData[5].Close > myData[4].Close) ? "#b84121" : "#69b3a2";
                       var fillC = preState == "已結案" ? strokeC : "white"
+
                       //var fillC = (myData[5].Close > myData[4].Close) ? "#f77465" : "#cedba0";
                       /*        console.log("strokeC:" + strokeC + "  fillC:" + fillC);*/
 
@@ -1313,8 +1385,8 @@
               });
           }, 500);
 
-        
-          
+
+
 
     </script>
 
