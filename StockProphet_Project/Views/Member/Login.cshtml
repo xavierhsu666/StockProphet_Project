@@ -152,7 +152,6 @@
 						else {
 
 							var LogMember = JSON.parse(e);
-
                             //使用sessionStorage進行跨頁面傳值
                             sessionStorage.setItem("LogAccount", LogMember.MaccoMnt);
                             sessionStorage.setItem("LogMemberLevel", LogMember.Mlevel);
@@ -164,23 +163,26 @@
                             sessionStorage.setItem("LogMemberGender", LogMember.Mgender);
                             sessionStorage.setItem("LogMemberInvestYear", LogMember.MinvestYear);
                             sessionStorage.setItem("LogMemberfavoriteModel", LogMember.MfavoriteModel);
-                            if (sessionStorage.getItem("LogMemberName") == "管理者") {
-                                window.location.href = "/DbMembers/Index";
-                            } else {
+                           
+							if (sessionStorage.getItem("LogMemberName") == "管理者") {
+								window.location.href = "/DbMembers/Index";
+							} else {
+								window.location.href = "/home/index";
+								
+								//     try {
+								//     var para1 = new URL(window.location.href).searchParams.toString().split('&')[0].split('=')[1];
+								//     var para2 = new URL(window.location.href).searchParams.toString().split('&')[1].split('=')[1];
+								// } catch (e) {
 
-                                try {
-                                var para1 = new URL(window.location.href).searchParams.toString().split('&')[0].split('=')[1];
-                                var para2 = new URL(window.location.href).searchParams.toString().split('&')[1].split('=')[1];
-                            } catch (e) {
-                                
-                            }
-                          
-                            if (para1 == null)
-                                window.location.href = "/home/index";
-                            else
-                                window.location.href = "/" + para1 + "/" + para2;
+								// }
 
-                            }
+								// if (para1 == null)
+								//     window.location.href = "/home/index";
+								// else
+								//     window.location.href = "/" + para1 + "/" + para2;
+
+								// }
+							}
                         }
                     }
                 })

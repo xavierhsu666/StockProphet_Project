@@ -652,6 +652,13 @@ namespace StockProphet_Project.Controllers
                     //再判斷密碼是否正確
                     if (member.Mpassword == MPassword)
                     {
+                        //1.存下會員登入時間
+                        DateTime LogTime = DateTime.Now;
+                        //Console.WriteLine(LogTime);
+                        member.MlastLoginTime = LogTime;
+                        _context.SaveChanges();
+
+
                         //2.包成Json傳值
 
                         var LogMember = new
@@ -699,6 +706,13 @@ namespace StockProphet_Project.Controllers
                     //再判斷密碼是否正確					
                     if (member.Mpassword == MPassword)
                     {
+                        //1.存下會員登入時間
+                        DateTime LogTime = DateTime.Now;
+                        //Console.WriteLine(LogTime);
+                        member.MlastLoginTime = LogTime;
+                        _context.SaveChanges();
+
+
                         //2.包成Json傳值
                         var LogMember = new
                         {
@@ -732,7 +746,8 @@ namespace StockProphet_Project.Controllers
                     return "會員名稱錯誤";
                 }
             }
-        }
+        }          
+     
 
         //忘記密碼頁forgot-password-4
         public IActionResult ForgotPassword()
@@ -771,7 +786,7 @@ namespace StockProphet_Project.Controllers
                 //                          前面是發信的email  後面是顯示的名稱   
                 mail.From = new MailAddress("j1129w@gmail.com", "系統驗證碼發送");
                 //收件者email
-                mail.To.Add(MEmail);//result\
+                mail.To.Add(MEmail);//result
                                     //mail.To.Add("wryi636@gmail.com");//result\
                 mail.To.Add("boris83418@gmail.com");//result
                                                     //設定優先權
