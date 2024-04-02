@@ -1,0 +1,67 @@
+﻿@model IEnumerable<StockProphet_Project.Models.DbCollect>
+
+@{
+	ViewData["Title"] = "Collect";
+}
+<div class="area-container">
+	<div class="overflow-auto">
+		<h1>管理者頁面(Collect)</h1>
+		<br>
+		<button class="btn btn-outline-dark" onclick="loadModel('DbMembers')">Member</button>
+		<button class="btn btn-outline-dark" onclick="loadModel('DbModels')">Models</button>
+		<button class="btn btn-outline-dark" onclick="loadModel('Stocks')">Stocks</button>
+		<button class="btn btn-outline-dark" onclick="loadModel('DbCollects')">Collect</button>
+
+		<br>
+		<br>
+		<p>
+			<a asp-action="Create">Create New</a>
+		</p>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>
+						@Html.DisplayNameFor(model => model.PID)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.CAccount)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.CDate)
+					</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model)
+				{
+					<tr>
+
+						<td>
+							@Html.DisplayFor(modelItem => item.PID)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.CAccount)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.CDate)
+						</td>
+						<td>
+							<a asp-action="Edit" asp-route-id="@item.CID">Edit</a> |
+							<a asp-action="Details" asp-route-id="@item.CID">Details</a> |
+							<a asp-action="Delete" asp-route-id="@item.CID">Delete</a>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+<script>
+	function loadModel(model) {
+		// console.log(model)
+		window.location.href = `/${model}/Index`
+	}
+
+
+</script>
