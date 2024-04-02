@@ -448,6 +448,7 @@ function smaClick(btn) {
     }
 }
 
+var finishCard = false;
 //撈預測區資料
 d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
 
@@ -907,3 +908,27 @@ function cardDetail(card) {
         window.location.href = `/StockModel/predictphoto?Pid=${cardNum}`
     }
 }
+
+$(".change-list-btn:first-child").css({
+    "color": "white",
+    "background-color": "#87aeb4"
+}).addClass("selectChange");
+function changelist(btn) {
+    if (!($(btn).hasClass("selectChange"))) {
+        console.log("new click");
+    }
+    $(".change-list-btn").css({
+        "color": "#87aeb4",
+        "background-color": "#f5f5f5"
+    }).removeClass("selectChange")
+    $(btn).css({
+        "color": "white",
+        "background-color": "#87aeb4"
+    }).addClass("selectChange")
+}
+
+//卡片重新排序區
+$(function () {
+    var cardLists = $(".prediction-card");
+    console.log(cardLists);
+})
