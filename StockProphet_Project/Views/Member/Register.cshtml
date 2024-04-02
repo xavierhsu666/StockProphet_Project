@@ -1,4 +1,4 @@
-﻿@{
+﻿﻿@{
 	string AccountPattern = @"^[a-zA-Z0-9]{8,15}$";
 	string PasswordPattern = @"^(?=.*[!@#$%^&*])(?=.{8,})[a-zA-Z0-9!@#$%^&*]+$";
 	string MEmailPattern = @"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$";
@@ -255,13 +255,13 @@
                     <label for="MGender" required="required" class="gender-input">
                         性別:
                         <label class="radio-button">
-                            <input class="testtt" type="radio" name="MGender" id="Male" value="男" required>
+                            <input class="testtt" type="radio" name="MGender" id="Male" value="1" required>
                             <span class="radio"></span>
                             <label for="Male">男</label>
                         </label>
 
                         <label class="radio-button">
-                            <input type="radio" name="MGender" id="Female" value="女" required>
+                            <input type="radio" name="MGender" id="Female" value="2" required>
                             <span class="radio"></span>
                             <label for="Female">女</label>
                         </label>
@@ -465,37 +465,44 @@
 
 
 		// 1.判斷帳戶名是否有重複+小動畫
-		$('#Account').on("change", function () {
+				$('#Account').on("change", function () {
 			var checkAccount = $('#Account').val()
 			// console.log(checkAccount);
 
-			$.ajax({
-				url: "/Member/RegisterA",
-				method: "get",
-				data: { MAccoMnt: checkAccount },
-				success: function (e) {
-					// console.log(e)
-					if (checkAccount == "") {
-						$('#ckeckOk').css("display", "none");
-						$('#checkName').show();
-						$('#checkName').text("必填");
-					} else {
-						if (e) {
-							$('#ckeckOk').css("display", "none");
-							$('#checkName').show();
-							$('#checkName').text("帳號名稱已被註冊");
-						} else {
-							$('#checkName').hide();
-							// $('#accountError').hide();
-							$('#ckeckOk').css("display", "block");
-							// playAni();
-							// alert('帳號未使用')
-						}
-					}
-					// alert(e);
-				}
-			})
-		})
+            $.ajax({
+                url: "/Member/RegisterA",
+                method: "get",
+                data: { MAccoMnt: checkAccount },
+                success: function (e) {
+                    // console.log(e)
+                    if (checkAccount == "") {
+                        $('#ckeckOk').css("display", "none");
+                        $('#checkName').show();
+                        $('#checkName').text("必填");
+                    } else {
+                        if (e) {
+                            $('#ckeckOk').css("display", "none");
+                            $('#checkName').show();
+                            $('#checkName').text("帳號名稱已被註冊");
+                        } else {
+                            if(checkAccount.length < 7){
+                            $('#ckeckOk').css("display", "none");                            
+                            }
+                            else
+                            {
+                            $('#checkName').hide();
+                            // $('#accountError').hide();
+                            $('#ckeckOk').css("display", "block");
+                            // playAni();
+                            // alert('帳號未使用')
+                        }
+                       }
+                    }
+                    // alert(e);
+                }
+            })
+        })
+
 
 		//2.檢查兩次輸入的密碼是否一致
 		$('#Password2').on("change", function () {

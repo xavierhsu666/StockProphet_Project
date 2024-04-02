@@ -298,9 +298,12 @@ path.difference {
     width: auto;
     height: 50px;
 }
-
+/*個股頁要調整距離*/
+.prediction-card {
+    margin-left:55px;
+    margin-right:55px;
+}
 .predictionArea {
-    min-width: 600px;
     max-width: 1400px;
     display: flex;
     flex-direction: row;
@@ -308,6 +311,8 @@ path.difference {
     flex-wrap: wrap;
     /*margin-top: 50px;*/
     margin-bottom: 20px;
+    /*    padding-left: 20px;
+    padding-right: 20px;*/
 }
 
 
@@ -319,7 +324,7 @@ path.difference {
     font-size: 20px;
     width: 200px;
     height: 80px;
-    background-color: pink;
+    background-color: #87aeb4;
     top: -100px;
     left: -80px;
     display: flex;
@@ -327,6 +332,8 @@ path.difference {
     justify-content: center;
     animation: visitorAlert 0.5s;
     pointer-events: none;
+    color:white;
+    border-radius:15px;
 }
 
 .collectBtnStart::before {
@@ -334,7 +341,7 @@ path.difference {
     content: '';
     width: 30px;
     height: 30px;
-    background-color: pink;
+    background-color: #87aeb4;
     top: -45px;
     left: 7px;
     animation: visitorAlert-D 0.3s 0.1s forwards;

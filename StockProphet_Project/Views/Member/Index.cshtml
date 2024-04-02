@@ -1,26 +1,100 @@
-﻿<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
+﻿<button id="Ongoing">追蹤中</button>
+<button id="Finished">已結案</button>
 
-<h1>動畫測試</h1>
+<div id="FavoritesPage">
+
+    @* <!-- 自動畫卡片 --> *@
+    <div class="predictionArea"></div>
+</div>
+
+<script>
+    //將預測結果帶到前端
+    var parseDate = d3.timeParse("%Y-%m-%d");
+    var data = { customername: sessionStorage.getItem("LogAccount") }
+    var jsonforplot;
+    var Pbuildate;
+    var plotarray = [];
+    var otherprarmeter = [];
+    $.ajax({
+        url: "/Member/MyPredictResultBoris",
+        method: "get",
+        data: data,
+        success: function (e) {
+
+            console.log(e);
+            for (var i = 0; i < e.length; i += 5) {
+                // console.log("----------"+i)
+                var subArray = [];
+                for (var j = i; j < i + 5; j++) {
+                    var historydate1 = new Date(e[j]["STdate"])
+                    jsonforplot = ({ Date: historydate1, Close: e[j]["SteClose"] })
+                    subArray.push(jsonforplot);
+                }
+                //console.log(jsonforplot)
+                var finishdate2 = new Date(e[i]["PFinsihTime"])
+                subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] })
+                plotarray.push(subArray)
+            }
+            for (var i = 0; i < plotarray.length; i++) {
+                plotarray[i].sort(function (a, b) {
+                    // 获取当前子数组中每个对象的日期属性，并转换为日期对象
+                    var dateA = new Date(a.Date);
+                    var dateB = new Date(b.Date);
+
+                    return dateA - dateB; // 降序排列
+                });
+            }
+            console.log(plotarray); // 输出降序排列后的数组
+
+            for (var w = 0; w < e.length; w += 5) {
+                var builddate3 = new Date(e[w]["PBuildTime"])
+                var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate()
+
+                var FinsihTime = new Date(e[w]["PFinsihTime"])
+                var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate()
+                otherprarmeter.push({
+                    Buildtime: builddate4,
+                    stockname: e[w]["PStock"],
+                    parameter: e[w]["Parameter"],
+                    PID: e[w]["PID"],
+                    preVariable: e[w]["preVariable"],
+                    PAcount: e[w]["PAcount"],
+                    SName: e[w]["SName"],
+                    SCode: e[w]["SCode"],
+                    PFinsihTime: FinsihTime2
+                })
+            }
+
+            $.each(plotarray, function (index, element) {
+                var finishtime = new Date(element[5]["Date"]);
+                var currentdate = new Date()
+                var result;
+
+                // console.log(finishtime)
+                // console.log(currentdate)
+                if (finishtime > currentdate) {
+                    result = "追蹤中"
+                } else {
+                    result = "結案"
+                }
+                //在这里执行你的操作
+                //結案狀態
+
+                //結果參數
+                var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
+                //選擇變數
+                var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
+                // console.log((otherprarmeter[index]["Buildtime"]))
+                drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"])
+            });
+        }
+
+        //條件篩選-追蹤中、已結案
+            $('#Ongoing').on("click", function () { 
+            
+            })
 
 
-<div id="lottie" style="display: none"></div>
-<button onclick="playAni()">click me</button>
+    })
 
-<script>    
-
-    // 載入 Lottie 動畫-引用json檔?
-    var animation = lottie.loadAnimation({
-        container: document.getElementById("lottie"), //要動畫的地方
-        renderer: "svg",
-        loop: false,
-        autoplay: false,
-        path: "https://lottie.host/0048e6de-acad-4663-94b9-187c2f40255b/9Fk17moKIb.json"
-    });
-
-    //畫打勾
-    function playAni() {
-        document.getElementById("lottie").style.display = "block";
-        animation.play();
-    }
-
-</script> 
+</script>

@@ -138,207 +138,243 @@
 		padding-bottom: 10px;
 	}
 
+	.photo-container{
+		width:80%;
+		display:flex;
+		flex-direction:column;
+	}
+
+	.py-5{
+		padding-top:0 !important;
+	}
+
+	@@media screen and (max-width: 1200px) {
+		.photo-container {
+			width: 100%;
+		}
+
+	}
+
+	.photo-box{
+		background-color:white !important;
+		border-radius:15px;
+		box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
+	}
+
+	.back-btn{
+		max-width:200px;
+		margin-left: auto;
+		/* width:15%; */
+	}
 </style>
-<div>
 
-	@* <h1 id="cmt" style="background-color:rgba(0, 98, 234, 0.1);padding:5px;">@finishdateCountDownStr </h1> *@
-	<div class="p-5 mb-4 bg-light rounded-3">
-		<div class="container-fluid py-5 w-100" 　>
-			<h1 id="cmt" class="display-5 fw-bold">Stock Propher</h1>
-			<p class="col-md-10 fs-4">@finishdateCountDownStr</p>
-			<button name="btn" class="btn btn-primary btn-lg" style="margin-right:12px" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c1" aria-expanded="true" aria-controls="flush-collapseOne">
-				績效
-			</button>
-			<button name="btn" class="btn btn-primary btn-lg ma-5" style="margin-right:12px" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c2" aria-expanded="true" aria-controls="flush-collapseOne">
-				結果
-			</button>
-			<button name ="btn" class="btn btn-primary btn-lg ma-5" style="margin-right:12px" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c3" aria-expanded="true" aria-controls="flush-collapseOne">
-				參數
-			</button>
-			<button name="btn" class="btn btn-primary btn-lg ma-5" style="margin-right:12px" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c4" aria-expanded="true" aria-controls="flush-collapseOne">
-				評估
-			</button>
-		</div>
+<div class="area-container">
+	<div class="photo-container">
+		<div>
 
-		<div class="accordion accordion-flush" id="accordionFlushExample">
-			<div class="accordion-item">
-				<h2 class="accordion-header" id="flush-headingOne1">
-					@* <button  class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c1" aria-expanded="false" aria-controls="flush-collapseOne">
-					模型績效
-					</button> *@
-				</h2>
-				<div id="flush-c1" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-					<div class="accordion-body ">
-						<div class="container-fluid">
-							<div class="row" name="th">
-								<div class="col">
-									預測前 時間
-								</div>
-								<div class="col">
-									@(isTracing ? "目前 時間" : "結案 時間")
-								</div>
-								<div class="col">
-									預測前 參考價<br>(A)
-								</div>
-								<div class="col">
-									預測 參考價<br>(B)
-								</div>
-								<div class="col">
-									目前 參考價<br>(C)
-								</div>
-								<div class="col">
-									預測走勢<br>(D, A vs B)
-								</div>
-								<div class="col">
-									實際走勢<br>(E, A vs C)
-								</div>
-								<div class="col">
-									@(isTracing ? "預估結果" : "結案結果")<br>(F, D vs E)
-								</div>
-								<div class="col">
-									@(isTracing ? "預估準確率" : "準確率")<br>(G, B vs C)
-								</div>
-								<div class="col">
-									@(isTracing ? "預測誤差" : "實際誤差")<br>(H, B vs C)
+			@* <h1 id="cmt" style="background-color:rgba(0, 98, 234, 0.1);padding:5px;">@finishdateCountDownStr </h1> *@
+			<div class="p-5 mb-4 rounded-3 photo-box">
+				<div class="container-fluid py-5 w-100" 　>
+					<h1 id="cmt" class="display-5 fw-bold">Stock Propher</h1>
+					<p class="col-md-10 fs-4">@finishdateCountDownStr</p>
+					<button name="btn" class="btn btn-primary btn-lg" style="margin-right:12px" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c1" aria-expanded="true" aria-controls="flush-collapseOne">
+						績效
+					</button>
+					<button name="btn" class="btn btn-primary btn-lg ma-5" style="margin-right:12px" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c2" aria-expanded="true" aria-controls="flush-collapseOne">
+						結果
+					</button>
+					<button name="btn" class="btn btn-primary btn-lg ma-5" style="margin-right:12px" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c3" aria-expanded="true" aria-controls="flush-collapseOne">
+						參數
+					</button>
+					<button name="btn" class="btn btn-primary btn-lg ma-5" style="margin-right:12px" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c4" aria-expanded="true" aria-controls="flush-collapseOne">
+						評估
+					</button>
+				</div>
+
+				<div class="accordion accordion-flush" id="accordionFlushExample">
+					<div class="accordion-item">
+						<h2 class="accordion-header" id="flush-headingOne1">
+							@* <button  class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c1" aria-expanded="false" aria-controls="flush-collapseOne">
+							模型績效
+							</button> *@
+						</h2>
+						<div id="flush-c1" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+							<div class="accordion-body ">
+								<div class="container-fluid">
+									<div class="row" name="th">
+										<div class="col">
+											預測前 時間
+										</div>
+										<div class="col">
+											@(isTracing ? "目前 時間" : "結案 時間")
+										</div>
+										<div class="col">
+											預測前 參考價<br>(A)
+										</div>
+										<div class="col">
+											預測 參考價<br>(B)
+										</div>
+										<div class="col">
+											目前 參考價<br>(C)
+										</div>
+										<div class="col">
+											預測走勢<br>(D, A vs B)
+										</div>
+										<div class="col">
+											實際走勢<br>(E, A vs C)
+										</div>
+										<div class="col">
+											@(isTracing ? "預估結果" : "結案結果")<br>(F, D vs E)
+										</div>
+										<div class="col">
+											@(isTracing ? "預估準確率" : "準確率")<br>(G, B vs C)
+										</div>
+										<div class="col">
+											@(isTracing ? "預測誤差" : "實際誤差")<br>(H, B vs C)
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col">
+											@(ori_timeArea)
+										</div>
+										<div class="col">
+											@timeArea
+										</div>
+										<div class="col">
+											@(Model.PreDictLabel)
+										</div>
+										<div class="col">
+											@(Model.Plabel)
+										</div>
+										<div class="col">
+											@(Model.PCurLabel)
+										</div>
+										<div class="col">
+											@(Model.PreTrend)
+										</div>
+										<div class="col">
+											@("走" + Model.PActTrend.Substring(1, 1))
+										</div>
+										<div class="col">
+											@(isTracing ? "-" : Model.PAccuracyRatio + "%")
+										</div>
+										<div class="col">
+											@(isTracing ? "-" : Model.PAccuracyRatio + "%")
+										</div>
+										<div class="col">
+											@(Model.PSpreadRatio + "%")
+										</div>
+									</div>
 								</div>
 							</div>
+						</div>
+					</div>
+					<div class="accordion-item">
+						<h2 class="accordion-header" id="flush-headingOne2">
+							@* <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c2" aria-expanded="false" aria-controls="flush-collapseOne">
+							預測結果
+							</button> *@
+						</h2>
+						<div id="flush-c2" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+							<div class="accordion-body ">
+								<div class="container-fluid">
+									<div class="row" name="th">
+										<div class="col">
+											股票名稱
+										</div>
+										<div class="col">
+											參考價格
+										</div>
+										<div class="col">
+											建立時間
+										</div>
+										<div class="col">
+											結案時間
+										</div>
+									</div>
 
-							<div class="row">
-								<div class="col">
-									@(ori_timeArea)
+									<div class="row">
+										<div class="col" id="stockname">
+										</div>
+										<div class="col">
+											@(Model.Plabel)
+										</div>
+										<div class="col">
+											@PbulidTime
+										</div>
+										<div class="col">
+											@PfinishTime
+										</div>
+									</div>
 								</div>
-								<div class="col">
-									@timeArea
+							</div>
+						</div>
+						<div class="accordion-item">
+							<h2 class="accordion-header" id="flush-headingOne3">
+								@* <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c3" aria-expanded="false" aria-controls="flush-collapseOne">
+								模型參數
+								</button> *@
+							</h2>
+							<div id="flush-c3" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
+								<div class="accordion-body ">
+									<div class="container-fluid">
+										<div class="row" id="HereParas_th" name="th">
+											<div class="col">
+												使用模型
+											</div>
+											<div class="col">
+												投資偏好
+											</div>
+											<div class="col">
+												使用變數
+											</div>
+										</div>
+										<div class="row" id="HereParas_td">
+											<div class="col">
+												@ViewBag.result.usingModel
+											</div>
+											<div class="col">
+												@((Model.Pprefer == 1) ? "短期投資" : "長期投資")
+											</div>
+											<div class="col" id="Pvariable">
+											</div>
+										</div>
+									</div>
 								</div>
-								<div class="col">
-									@(Model.PreDictLabel)
-								</div>
-								<div class="col">
-									@(Model.Plabel)
-								</div>
-								<div class="col">
-									@(Model.PCurLabel)
-								</div>
-								<div class="col">
-									@(Model.PreTrend)
-								</div>
-								<div class="col">
-									@("走" + Model.PActTrend.Substring(1, 1))
-								</div>
-								<div class="col">
-									@(isTracing ? "-" : Model.PAccuracyRatio + "%")
-								</div>
-								<div class="col">
-									@(isTracing ? "-" : Model.PAccuracyRatio + "%")
-								</div>
-								<div class="col">
-									@(Model.PSpreadRatio + "%")
+							</div>
+						</div>
+						<div class="accordion-item">
+							<h2 class="accordion-header" id="flush-headingOne4">
+								@* <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c4" aria-expanded="false" aria-controls="flush-collapseOne">
+								模型評估
+								</button> *@
+							</h2>
+							<div id="flush-c4" class="accordion-collapse collapse" aria-labelledby="flush-headingFour" data-bs-parent="#accordionFlushExample">
+								<div class="accordion-body">
+									<div class="container-fluid">
+										<div class="row" id="modelEva_th" name="th">
+										</div>
+										<div class="row" id="modelEva_tb">
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+
 			</div>
-			<div class="accordion-item">
-				<h2 class="accordion-header" id="flush-headingOne2">
-					@* <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c2" aria-expanded="false" aria-controls="flush-collapseOne">
-					預測結果
-					</button> *@
-				</h2>
-				<div id="flush-c2" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
-					<div class="accordion-body ">
-						<div class="container-fluid">
-							<div class="row" name="th">
-								<div class="col">
-									股票名稱
-								</div>
-								<div class="col">
-									參考價格
-								</div>
-								<div class="col">
-									建立時間
-								</div>
-								<div class="col">
-									結案時間
-								</div>
-							</div>
-
-							<div class="row">
-								<div class="col" id="stockname">
-								</div>
-								<div class="col">
-									@(Model.Plabel)
-								</div>
-								<div class="col">
-									@PbulidTime
-								</div>
-								<div class="col">
-									@PfinishTime
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="accordion-item">
-					<h2 class="accordion-header" id="flush-headingOne3">
-						@* <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c3" aria-expanded="false" aria-controls="flush-collapseOne">
-						模型參數
-						</button> *@
-					</h2>
-					<div id="flush-c3" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
-						<div class="accordion-body ">
-							<div class="container-fluid">
-								<div class="row" id="HereParas_th" name="th">
-									<div class="col">
-										使用模型
-									</div>
-									<div class="col">
-										投資偏好
-									</div>
-									<div class="col">
-										使用變數
-									</div>
-								</div>
-								<div class="row" id="HereParas_td">
-									<div class="col">
-										@ViewBag.result.usingModel
-									</div>
-									<div class="col">
-										@((Model.Pprefer == 1) ? "短期投資" : "長期投資")
-									</div>
-									<div class="col" id="Pvariable">
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="accordion-item">
-					<h2 class="accordion-header" id="flush-headingOne4">
-						@* <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-c4" aria-expanded="false" aria-controls="flush-collapseOne">
-						模型評估
-						</button> *@
-					</h2>
-					<div id="flush-c4" class="accordion-collapse collapse" aria-labelledby="flush-headingFour" data-bs-parent="#accordionFlushExample">
-						<div class="accordion-body">
-							<div class="container-fluid">
-								<div class="row" id="modelEva_th" name="th">
-								</div>
-								<div class="row" id="modelEva_tb">
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
 		</div>
-
+		@* style="max-width:1200px;max-height:700px;display:block" *@
+		<div class="p-5 mb-4 rounded-3 photo-box" style="margin-top:30px">
+			<canvas id="stockChart" style="width:70vw;height:50vw"></canvas>
+		</div>
+		<button class="btn-w-hover back-btn">要返回哪裡？？</button>
 	</div>
+	
 </div>
-@* style="max-width:1200px;max-height:700px;display:block" *@
-<div class="p-5 mb-4 bg-light rounded-3" style="margin-top:30px">
-	<canvas id="stockChart" style="width:70vw;height:50vw"></canvas>
-</div>
+
 <script>
 
 

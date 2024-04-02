@@ -3,15 +3,33 @@
 @{
 	ViewData["Title"] = "管理者頁面-Model資訊";
 }
+<style>
+	.model-container{
+		width:80%;
+	}
+
+	@@media screen and (max-width: 1200px)
+		.model-container {
+			width: 100%;
+		}
+	}
+
+	.myTable thead tr::after {
+		content: "";
+		background-color: #f5f5f5;
+		height: 52px;
+	}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div class="area-container">
-	<div class="overflow-auto">
+	<div class="model-container">
 		<h1>管理者頁面(Model)</h1>
 		<br>
-		<button class="btn btn-outline-dark" onclick="loadModel('DbMembers')">Member</button>
-		<button class="btn btn-outline-dark" onclick="loadModel('DbModels')">Models</button>
-		<button class="btn btn-outline-dark" onclick="loadModel('Stocks')">Stocks</button>
-		<button class="btn btn-outline-dark" onclick="loadModel('DbCollects')">Collect</button>
-
+		<div class="btn-area">
+		<button class="btn-w-hover mg-btn" onclick="loadModel('DbMembers')">Member</button>
+		<button class="btn-w-hover mg-btn" onclick="loadModel('DbModels')">Models</button>
+		<button class="btn-w-hover mg-btn" onclick="loadModel('Stocks')">Stocks</button>
+		</div>
 		<br>
 		<br>
 		<div class="d-xl-flex justify-content-around">
@@ -22,8 +40,11 @@
 		<p>
 			<a asp-action="Create">Create New</a>
 		</p>
-		<label>Stock搜尋欄</label>
-		<input type="type" name="name" id="stockselect" value="" />
+		<div class="mb-5">
+			<label>Stock搜尋欄</label>
+			<input type="type" name="name" id="stockselect" value="" />
+		</div>
+		<div class="myTable"></div>
 		<table class="table">
 			<thead>
 				<tr>
@@ -54,38 +75,11 @@
 					<th>
 						@Html.DisplayNameFor(model => model.Dummyblock)
 					</th>
-					<th>
-						@Html.DisplayNameFor(model => model.Pmodel)
-					</th>
-					<th>
-						@Html.DisplayNameFor(model => model.PAccuracyRatio)
-					</th>
-					<th>
-						@Html.DisplayNameFor(model => model.PreDictLabel)
-					</th>
-					<th>
-						@Html.DisplayNameFor(model => model.PCurLabel)
-					</th>
-					<th>
-						@Html.DisplayNameFor(model => model.PreTrend)
-					</th>
-					<th>
-						@Html.DisplayNameFor(model => model.PActTrend)
-					</th>
-					<th>
-						@Html.DisplayNameFor(model => model.PResult)
-					</th>
-					<th>
-						@Html.DisplayNameFor(model => model.PSpreadRatio)
-					</th>
-					<th>
-						@Html.DisplayNameFor(model => model.PUpdateTime)
-					</th>
+					<th></th>
 				</tr>
 			</thead>
-			<tbody id="tableBody">
-				@foreach (var item in Model)
-				{
+			<tbody id="tableBody" class="table-row-hover">
+				@foreach (var item in Model) {
 					<tr>
 						<td>
 							@Html.DisplayFor(modelItem => item.Pstock)
@@ -98,16 +92,11 @@
 								a = a.Replace("[", "");
 								a = a.Replace("]", "");
 								a = "," + a;
-								for (int i = 1; i < a.Split(",").Count(); i++)
-								{
-									if (i % 4 == 0)
-									{
+								for (int i = 1; i < a.Split(",").Count(); i++) {
+									if (i % 4 == 0) {
 										b += a.Split(",")[i] + "\r\n";
 
-									}
-
-									else
-									{
+									} else {
 
 										b += a.Split(",")[i] + ", ";
 									}
@@ -145,16 +134,11 @@
 								c = c.Replace("{", "");
 								c = c.Replace("}", "");
 								c = "," + c;
-								for (int i = 1; i < c.Split(",").Count(); i++)
-								{
-									if (i % 4 == 0)
-									{
+								for (int i = 1; i < c.Split(",").Count(); i++) {
+									if (i % 4 == 0) {
 										d += c.Split(",")[i] + "\r\n";
 
-									}
-
-									else
-									{
+									} else {
 
 										d += c.Split(",")[i] + ", ";
 									}
@@ -166,36 +150,9 @@
 							@d
 						</td>
 						<td>
-							@Html.DisplayFor(modelItem => item.Pmodel)
-						</td>
-						<td>
-							@Html.DisplayFor(modelItem => item.PAccuracyRatio)
-						</td>
-						<td>
-							@Html.DisplayFor(modelItem => item.PreDictLabel)
-						</td>
-						<td>
-							@Html.DisplayFor(modelItem => item.PCurLabel)
-						</td>
-						<td>
-							@Html.DisplayFor(modelItem => item.PreTrend)
-						</td>
-						<td>
-							@Html.DisplayFor(modelItem => item.PActTrend)
-						</td>
-						<td>
-							@Html.DisplayFor(modelItem => item.PResult)
-						</td>
-						<td>
-							@Html.DisplayFor(modelItem => item.PSpreadRatio)
-						</td>
-						<td>
-							@Html.DisplayFor(modelItem => item.PUpdateTime)
-						</td>
-						<td>
-							<a asp-action="Edit" asp-route-id="@item.Pid">Edit</a> |
-							<a asp-action="Details" asp-route-id="@item.Pid">Details</a> |
-							<a asp-action="Delete" asp-route-id="@item.Pid">Delete</a>
+							<a class="a-style" asp-action="Edit" asp-route-id="@item.Pid">Edit</a>
+							<a class="a-style" asp-action="Details" asp-route-id="@item.Pid">Details</a>
+							<a class="a-style" asp-action="Delete" asp-route-id="@item.Pid">Delete</a>
 						</td>
 					</tr>
 				}
@@ -203,7 +160,6 @@
 		</table>
 	</div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 
@@ -388,6 +344,9 @@
 	}
 
 
-
+	$(".btn-area .mg-btn:nth-child(2)").css({
+		"color": "white",
+		"background-color": "#87aeb4"
+	})
 	
 </script>
