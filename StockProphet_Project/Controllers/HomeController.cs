@@ -6,6 +6,7 @@ using Microsoft.VisualBasic;
 using Tensorflow;
 
 
+
 namespace StockProphet_Project.Controllers {
 	public class HomeController : Controller {
 		private readonly StocksContext _context;
@@ -25,9 +26,11 @@ namespace StockProphet_Project.Controllers {
 		//­ÓªÑ­¶­±
 		public IActionResult StockCharts( string id ) {
 			ViewBag.stockID = id;
-			//var stockModelController = new StockModelController(null, _context);
-			//stockModelController.GetStockVarsMapTable();
+			var stockModelController = new StockModelController(null, _context);
 
+			string test=stockModelController.GetStockVarsMapTable();
+			//Console.WriteLine(test);
+			ViewBag.test = test;
 			return View();
 		}
 
