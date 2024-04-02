@@ -10,14 +10,19 @@ using System.Data;
 using System.Net;
 using System.Text;
 
+
 namespace StockProphet_Project.Controllers {
 	public class HomeController : Controller {
 		private readonly StocksContext _context;
-		public HomeController( StocksContext context ) {
+
+
+		public HomeController(StocksContext context) {
 			_context = context;
 		}
 
 		public IActionResult Index() {
+
+
 			return View();
 		}
 
@@ -25,13 +30,16 @@ namespace StockProphet_Project.Controllers {
 		//個股頁面
 		public IActionResult StockCharts( string id ) {
 			ViewBag.stockID = id;
+			//var stockModelController = new StockModelController(null, _context);
+			//stockModelController.GetStockVarsMapTable();
+
 			return View();
 		}
 
 
 		//網址傳資料|從資料庫抓股票資料
 		public IActionResult showStocks( string id ) {
-			var myDateNow = DateOnly.FromDateTime(DateTime.Now);    //測試日是03/22
+			var myDateNow = DateOnly.FromDateTime(DateTime.Now);
 			var myDate = DateOnly.FromDateTime(DateTime.Now.AddYears(-1));
 			var viewModel = _context.Stock.ToList();
 			var query = from p in viewModel
@@ -63,10 +71,9 @@ namespace StockProphet_Project.Controllers {
 							//NonBussinessIncome = p.SbNonBussinessIncome,
 							//NonBussinessIncomeRatio = p.SbNonBussinessIncomeRatio
 
-						};   //取前一百筆
-							 //->這樣表會顛倒啊朋友
+						};
 			Console.WriteLine(query);
-			//記得顛倒回來
+
 			return Json(query);
 		}
 

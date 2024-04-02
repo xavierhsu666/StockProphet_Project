@@ -100,17 +100,19 @@
 
     /* 下拉選單 */
     .news-filter select {
+        outline: none;
+        border: 1px solid #ced4da;
         background: #fff;
         color: black;
-        margin: 5px;
+        margin: 3px;
         width: 300px;
         height: 3em;
         /* padding: 8px; */
         position: relative;
         border-radius: 5px;
-        appearance: none;
-        -moz-appearance: none;
-        -webkit-appearance: none;
+        /* appearance: none; */
+        /* -moz-appearance: none; */
+        /* -webkit-appearance: none; */
         /*  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), linear-gradient(#003d79, #003d79);
                 background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -webkit-linear-gradient(#003d79, #003d79);
                 background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -moz-linear-gradient(#003d79, #003d79);
@@ -118,7 +120,14 @@
         background-position: right 0.5em top 50%, 0 0;
         background-size: contain, cover;
         background-repeat: no-repeat, repeat;
+        padding-left: 10px;
+        transition: all 0.3s
     }
+
+        .news-filter select:focus {
+            box-shadow: 0 0 8px #87aeb4;
+            border: 1px solid #86b7fe;
+        }
 
     option {
         appearance: none;
@@ -149,10 +158,11 @@
         background-color: #87aeb4;
         color: white;
     }
-        #InvestYear, #MLevel{
-        margin-left:10px;
-    }
 
+    #MLevel{
+        background-color: #e9ecef;
+        appearance: none
+    }
 </style>
 @* <h1 class="text-">會員功能-修改個人資料</h1> *@
 <img class="bg-chart" src="~/homePage/chart.png" />
@@ -235,13 +245,13 @@
                         <br>
                     </div>             
 
-                       <div class="news-filter mb-3">
-                    <label for="MLevel">會員等級:</label>
-                    <select name="MLevel" id="MLevel" size="1">
-                        <option value="一般會員" class=".dropdown-item">一般會員</option>
-                        <option value="高級會員">高級會員</option>
-                    </select>
-                </div>
+                    <div class="news-filter mb-3">
+                        <label for="MLevel">會員等級:</label>
+                        <select name="MLevel" id="MLevel" size="1">
+                            <option value="一般會員" class=".dropdown-item">一般會員</option>
+                            <option value="高級會員">高級會員</option>
+                        </select>
+                    </div>
 
                     <button id="ReviseData" class="w-100 btn-w-hover mb-3 edit-btn">修改資料</button>
                     <button id="Reset" class="w-100 btn-w-hover cancle-btn">取消</button>

@@ -21,6 +21,7 @@ using System.Linq;
 using System.Collections;
 using static HDF.PInvoke.H5T;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Net.NetworkInformation;
 
 namespace StockProphet_Project.Controllers
 {
@@ -181,8 +182,10 @@ namespace StockProphet_Project.Controllers
                     PID = reader["Pid"],
                     preVariable = reader["Pvariable"],
                     SName = reader["SN_Name"],
-                    SCode = reader["SN_Code"]
-
+                    SCode = reader["SN_Code"],
+                    Pstatus = reader["Pstatus"],
+                    Pmodel = reader["Pmodel"],
+                    PAccuracyRatio = reader["PAccuracyRatio"]
                 });
                 Console.WriteLine("???"+reader["Pid"]);
             }

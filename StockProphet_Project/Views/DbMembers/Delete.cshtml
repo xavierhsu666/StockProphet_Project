@@ -4,90 +4,95 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
+<div class="area-container">
+    <div class="manager-modify">
+        <h1>Delete</h1>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>DbMember</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MaccoMnt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MaccoMnt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Mpassword)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Mpassword)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MtrueName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MtrueName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Mgender)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Mgender)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Mbirthday)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Mbirthday)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MinvestYear)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MinvestYear)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Memail)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Memail)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Mlevel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Mlevel)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Mprefer)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Mprefer)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MregisterTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MregisterTime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MlastLoginTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MlastLoginTime)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MfavoriteModel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MfavoriteModel)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Mid" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+        <h3>Are you sure you want to delete this?</h3>
+        <div>
+            <h4>DbMember</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.MaccoMnt)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.MaccoMnt)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.Mpassword)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.Mpassword)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.MtrueName)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.MtrueName)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.Mgender)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.Mgender)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.Mbirthday)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.Mbirthday)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.MinvestYear)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.MinvestYear)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.Memail)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.Memail)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.Mlevel)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.Mlevel)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.Mprefer)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.Mprefer)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.MregisterTime)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.MregisterTime)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.MlastLoginTime)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.MlastLoginTime)
+                </dd>
+                <dt class="col-sm-2 mb-3">
+                    @Html.DisplayNameFor(model => model.MfavoriteModel)
+                </dt>
+                <dd class="col-sm-10 mb-3">
+                    @Html.DisplayFor(model => model.MfavoriteModel)
+                </dd>
+            </dl>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Mid" />
+                <input type="submit" value="Delete" class="btn btn-danger" /> |
+                <a asp-action="Index">Back to List</a>
+            </form>
+        </div>
+
+    </div>
 </div>
