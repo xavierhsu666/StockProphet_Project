@@ -404,7 +404,7 @@ path {
     background-color: white;
     border-radius: 15px;
     overflow:hidden;
-
+    z-index:10;
 }
     .pre-state-member::before {
         content: "查看細節";
