@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol;
 using StockProphet_Project.Models;
 
 namespace StockProphet_Project.Controllers
@@ -34,6 +35,17 @@ namespace StockProphet_Project.Controllers
 
 
 			return Json(top5Accounts);
+		}
+		[HttpGet]
+		public IActionResult Top5selecttable(int data)
+		{
+
+            var top5data = _context.DbModels.Where(x => x.Pid == data).ToList();
+
+			
+
+
+			return Json(top5data);
 		}
 
 		// GET: DbCollects
