@@ -816,6 +816,13 @@ def isoneTimeApi_call(stockNo):
 
     connection_string = f'mssql+pyodbc://{server_name}/{database_name}?trusted_connection=yes&driver=ODBC+Driver+17+for+SQL+Server'
     engine = create_engine(connection_string)
+    try:
+    # 尝试连接数据库
+        connection = engine.connect()
+        print("数据库连接成功！")
+        connection.close()
+    except SQLAlchemyError as e:
+        print("数据库连接失败:", e)
     existing_data_df = pd.read_sql('SELECT * FROM Stock where SN_Code = '+stockNo, engine)
     if(existing_data_df.shape[0]>0):
         print("資料庫有資料，只呼叫API抓兩個月數據")

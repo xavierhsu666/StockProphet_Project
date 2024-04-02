@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 namespace StockProphet_Project.Models;
 
 public partial class DbModel {
-	[Display(Name = "PK")]
+	[Display(Name = "PID")]
 	public int Pid { get; set; }
 	[Display(Name = "股票代號")]
 	public string? Pstock { get; set; }
