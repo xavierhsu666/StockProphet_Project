@@ -35,7 +35,7 @@
 		<br>
 		<div class="d-xl-flex justify-content-around">
 			<canvas id="barChart" width="400" height="400"></canvas>
-			<canvas id="accountprefer" width="400" height="400"></canvas>
+			<canvas id="accountprefer" width="400" height="425"></canvas>
 
 		</div>
 		<p>
@@ -349,12 +349,21 @@
 						}
 					}]
 				},
-				responsive: false
+				responsive: false,
+				plugins: {
+					title: {
+						display: true,
+						text: '個股預測數量',
+						align: 'center'
+					},
+					legend: {
+						position: 'bottom',
+					}
+				}
 			}
 		});
 	}
 	function drawcustomerChart(accountprefer) {
-		// Convert preference numbers to labels
 		accountprefer.forEach(function (item) {
 			item.accountprefer = item.accountprefer === 1 ? 'Short-term' : 'Long-term';
 		});
@@ -363,7 +372,6 @@
 		var labels = [];
 		var datasets = {};
 
-		// Count the occurrences of each accountprefer for each accountname
 		accountprefer.forEach(function (item) {
 			var accountName = item.accountname;
 			var preference = item.accountprefer;
@@ -421,6 +429,16 @@
 							display: true,
 							text: 'Number of Preferences'
 						}
+					}
+				},
+				plugins: {
+					title: {
+						display: true,
+						text: '客戶偏好',
+						align: 'center'
+					},
+					legend: {
+						position: 'bottom',
 					}
 				}
 			}
