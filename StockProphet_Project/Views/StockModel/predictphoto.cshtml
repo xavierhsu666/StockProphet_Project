@@ -626,7 +626,7 @@
 		$.each(eva, function (i, val) {
 			if (i == "預計準確率" || i == "準確率") { } else {
 				$("#modelEva_th").append("<div class='col'>" + i + "</div>");
-				$("#modelEva_tb").append("<div class='col'>" + val + "</div>");
+				$("#modelEva_tb").append("<div class='col'>" + val.toFixed(2) + "</div>");
 			}
 		})
 		$.each(pars, function (i, val) {
