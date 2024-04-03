@@ -66,6 +66,8 @@
 				</div>
 			
 				
+			
+				
 			</div>
 			<div id="step2" hidden="true">
 				<h3 class="display-6 mb-3">第二步:選定投資偏好及選擇模型</h3>
@@ -168,7 +170,9 @@
 					</tr>
 				</table>
 				<br>
-				<button id="predict1" class="btn-w-hover">建立模型</button>
+				<div class="text-center">
+					<button id="predict1" class="btn-w-hover">建立模型</button>
+				</div>
 				<br>
 				<div id="predictionResult1"></div>
 				<div class="progress">
@@ -253,7 +257,9 @@
 				</table>
 
 				<br>
+				<div class="text-center">
 				<button id="predict2" class="btn-w-hover">建立模型</button>
+				</div>
 				<br>
 				<div id="predictionResult2"></div>
 				<div class="progress">
@@ -265,7 +271,7 @@
 			@* xaiver model *@
 			<div id="kazuoform3">
 				<h3 class="display-6">第三步:設定參數並建置模型預測</h3>
-				<h4>變數選擇:</h4>
+				<h4>變數選擇</h4>
 				<div id="ksParaArea">
 					<div class="accordion accordion-flush" id="accordionFlushExample">
 						<div class="accordion-item">
@@ -359,11 +365,13 @@
 				</div>
 
 				<br>
-				<h5>參數選擇:</h5>
+				<h4><b>參數選擇</b></h4>
 				<div id="ModelParaInputArea">
 				</div>
 				<br>
-				<button id="ksOkbutton2" class="btn btn-outline-primary">Build</button>
+				<div class="text-center">
+					<button id="ksOkbutton2" class="btn-w-hover">建立模型</button>
+				</div>
 				<br>
 				<br>
 				<div id="predictionResult2"></div>
@@ -829,8 +837,8 @@
 					$("#selectmodel").prop("disabled", false);
 					$("#selectmodel option[value='1']").prop("selected", true);
 					$("#selectmodel option[value='2']").prop("selected", false);
-					$("#selectmodel option[value='3']").prop("selected", true);
-					$("#selectmodel option[value='4']").prop("selected", false);
+					$("#selectmodel option[value='3']").prop("selected", false);
+					$("#selectmodel option[value='4']").prop("selected", true);
 					$("#checkmodel").prop("disabled", false);
 					$(".progress").hide();
 					prefertype = 2;
@@ -847,8 +855,8 @@
 					$("#selectmodel").prop("disabled", false);
 					$("#selectmodel option[value='1']").prop("selected", false);
 					$("#selectmodel option[value='2']").prop("selected", true);
-					$("#selectmodel option[value='3']").prop("selected", false);
-					$("#selectmodel option[value='4']").prop("selected", true);
+					$("#selectmodel option[value='3']").prop("selected", true);
+					$("#selectmodel option[value='4']").prop("selected", false);
 
 					$("#checkmodel").prop("disabled", false);
 					$(".progress").hide();
