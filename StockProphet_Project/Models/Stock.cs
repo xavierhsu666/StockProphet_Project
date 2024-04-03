@@ -69,35 +69,35 @@ public partial class Stock
 	[Display(Name = "業內收入")]
 	public long? SbBussinessIncome { get; set; }
 
-	[Display(Name = "五日移動平均")]
+	[Display(Name = "5日移動平均")]
     [DisplayFormat(DataFormatString = "{0:0.00}")]
     public double? SiMovingAverage5 { get; set; }
 
-	[Display(Name = "三十日移動平均")]
+	[Display(Name = "30日移動平均")]
     [DisplayFormat(DataFormatString = "{0:0.00}")]
     public double? SiMovingAverage30 { get; set; }
 
-	[Display(Name = "五日RSV")]
+	[Display(Name = "5日RSV")]
     [DisplayFormat(DataFormatString = "{0:0.00}")]
     public double? SiRsv5 { get; set; }
 
-	[Display(Name = "三十日RSV")]
+	[Display(Name = "30日RSV")]
     [DisplayFormat(DataFormatString = "{0:0.00}")]
     public double? SiRsv30 { get; set; }
 
-	[Display(Name = "五日K")]
+	[Display(Name = "5日K")]
     [DisplayFormat(DataFormatString = "{0:0.00}")]
     public double? SiK5 { get; set; }
 
-	[Display(Name = "三十日K")]
+	[Display(Name = "30日K")]
     [DisplayFormat(DataFormatString = "{0:0.00}")]
     public double? SiK30 { get; set; }
 
-	[Display(Name = "五日D")]
+	[Display(Name = "5日D")]
     [DisplayFormat(DataFormatString = "{0:0.00}")]
     public double? SiD5 { get; set; }
 
-	[Display(Name = "三十日D")]
+	[Display(Name = "30日D")]
     [DisplayFormat(DataFormatString = "{0:0.00}")]
     public double? SiD30 { get; set; }
 

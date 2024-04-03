@@ -50,11 +50,11 @@ namespace StockProphet_Project.Controllers
         [HttpGet]
         public bool checkPassword(string Account, string checkPassword)
         {
-            System.Diagnostics.Debug.WriteLine("帳號+舊密碼:" + Account+ checkPassword);
+            System.Diagnostics.Debug.WriteLine("帳號+舊密碼:" + Account + checkPassword);
 
             //判斷該會員的舊密碼是否一致            
-           
-            var member = _context.DbMembers.Where(x => x.MaccoMnt== Account);
+
+            var member = _context.DbMembers.Where(x => x.MaccoMnt == Account);
             var result = member.Where(x => x.Mpassword == checkPassword);
             System.Diagnostics.Debug.WriteLine("測試會員" + member);
 
@@ -121,7 +121,7 @@ namespace StockProphet_Project.Controllers
             return ReviseMemberData.ToString()!;
         }
 
-      
+
         public IActionResult MySearchPage()
         {
             // 在加载搜索页面时返回一个空的视图
@@ -152,9 +152,21 @@ namespace StockProphet_Project.Controllers
             int PID = Convert.ToInt32(sessionPID);
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
+            //        string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
+            //             B.PBulidTime,B.Pvariable, B.PFinishTime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code,B.Pstatus,B.Pmodel,B.PAccuracyRatio
+            //FROM DB_model AS B 
+            //OUTER APPLY (
+            //    SELECT TOP 5 *
+            //    FROM Stock
+            //    WHERE SN_code = B.Pstock
+            //          AND ST_Date <= B.PBulidTime
+            //    ORDER BY ST_Date DESC
+            //) AS A 
+            //WHERE B.Pid = {PID}";
             string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-                 B.PBulidTime,B.Pvariable, B.PFinishTime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code,B.Pstatus,B.Pmodel,B.PAccuracyRatio
+                 B.PBulidTime,B.Pvariable, B.PFinishTime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code,B.Pstatus,B.Pmodel,B.PAccuracyRatio, COUNT(c.PID) as collectNum
     FROM DB_model AS B 
+ left join DB_Collect c on B.Pid = c.PID  
     OUTER APPLY (
         SELECT TOP 5 *
         FROM Stock
@@ -162,7 +174,25 @@ namespace StockProphet_Project.Controllers
               AND ST_Date <= B.PBulidTime
         ORDER BY ST_Date DESC
     ) AS A 
-    WHERE B.Pid = {PID}";
+ 
+    WHERE B.Pid ={PID}
+ GROUP BY 
+    B.PAccount,
+    B.Dummyblock,
+    B.Plabel,
+    B.PfinishTime,
+    B.Pid,
+    B.PbulidTime,
+    B.Pvariable,
+    B.Pstatus,
+    B.Pmodel,
+    B.PAccuracyRatio,
+ B.Pstock,
+ A.ST_Date,A.ste_Close,
+ A.SN_Name,
+ A.SN_Code,B.Pstatus,
+ B.Pmodel,
+ B.PAccuracyRatio";
             Console.WriteLine(sqlQuery);
             SqlConnection sqlconnect = new SqlConnection(connectionString);
             sqlconnect.Open();
@@ -188,11 +218,12 @@ namespace StockProphet_Project.Controllers
                     preVariable = reader["Pvariable"],
                     SName = reader["SN_Name"],
                     SCode = reader["SN_Code"],
+                    collectNum = (int)reader["collectNum"],
                     Pstatus = reader["Pstatus"],
                     Pmodel = reader["Pmodel"],
                     PAccuracyRatio = reader["PAccuracyRatio"]
                 });
-                Console.WriteLine("???"+reader["Pid"]);
+                Console.WriteLine("???" + (int)reader["collectNum"]);
             }
 
             Console.WriteLine("--------------------");
@@ -286,7 +317,7 @@ namespace StockProphet_Project.Controllers
             }
 
             return Json(pidList);
-            
+
 
         }
 
@@ -350,8 +381,8 @@ namespace StockProphet_Project.Controllers
         [HttpGet]
         public IActionResult Search(string searchTerm)
         {
-            
-                int searchNum = Convert.ToInt32(searchTerm);
+
+            int searchNum = Convert.ToInt32(searchTerm);
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
             string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
@@ -389,9 +420,9 @@ namespace StockProphet_Project.Controllers
                     preVariable = reader["PVariable"],
                     SName = reader["SN_Name"],
                     SCode = reader["SN_Code"],
-					Pmodel = reader["Pmodel"],
-					PAccuracyRatio = reader["PAccuracyRatio"]
-				});
+                    Pmodel = reader["Pmodel"],
+                    PAccuracyRatio = reader["PAccuracyRatio"]
+                });
             }
 
 
@@ -484,7 +515,7 @@ namespace StockProphet_Project.Controllers
                     PFinsihTime = reader["Pfinishtime"],
                     SteClose = reader["Ste_Close"],
                     PID = reader["Pid"],
-					preVariable= reader["Pvariable"],
+                    preVariable = reader["Pvariable"],
                     SName = reader["SN_Name"],
                     SCode = reader["SN_Code"],
                     Pmodel = reader["Pmodel"],
@@ -649,7 +680,7 @@ namespace StockProphet_Project.Controllers
         {
             return View();
         }
-        
+
         //判斷登入會員等級並決定可看到頁面的權限
         [HttpGet]
         public string checkLogin(string MAccoMnt, string MPassword)
@@ -762,8 +793,8 @@ namespace StockProphet_Project.Controllers
                     return "會員名稱錯誤";
                 }
             }
-        }          
-     
+        }
+
 
         //忘記密碼頁forgot-password-4
         public IActionResult ForgotPassword()
@@ -839,7 +870,7 @@ namespace StockProphet_Project.Controllers
         public bool Memberupgrade(string data)
         {
             Console.WriteLine(data);
-            var query = _context.DbMembers.FirstOrDefault(x => x.MaccoMnt==data);
+            var query = _context.DbMembers.FirstOrDefault(x => x.MaccoMnt == data);
             Console.WriteLine(query);
             query.Mlevel = "高級會員";
             _context.SaveChanges();
@@ -848,8 +879,9 @@ namespace StockProphet_Project.Controllers
             {
                 result = true;
             }
-            else {
-                result= false;  
+            else
+            {
+                result = false;
             }
             return result;
         }
@@ -874,7 +906,7 @@ namespace StockProphet_Project.Controllers
                 _context.SaveChanges();
             }
             return true;
-        }         
+        }
 
 
     }
