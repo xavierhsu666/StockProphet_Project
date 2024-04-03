@@ -17,22 +17,25 @@ def install_requirements():
     except subprocess.CalledProcessError as e:
         print("Error occurred while installing requirements:", e)
 
-# 调用函数来安装 requirements.txt 中的依赖项
-install_requirements()
-os.system('cls')
-from datetime import datetime
-import requests
-import pandas as pd
-import numpy as np
-from io import StringIO
-from sqlalchemy import create_engine, Numeric,text
- 
-import warnings
 
+
+try:
+    from datetime import datetime
+    import requests
+    import pandas as pd
+    import numpy as np
+    from io import StringIO
+    from sqlalchemy import create_engine, Numeric,text
+    import warnings
+except:
+    # 调用函数来安装 requirements.txt 中的依赖项
+    install_requirements()
+    os.system('cls')
 # 忽略所有警告
 warnings.filterwarnings("ignore")
 
 def  mutiTimesApi_call(stockNo,dates_input):
+    print("Call mutiTimesApi_call")
         
     dates=[]
     month=int(str(dates_input)[4:6])
@@ -50,7 +53,7 @@ def  mutiTimesApi_call(stockNo,dates_input):
     all_data = pd.DataFrame()
 
     for date in dates:
-        print(date)
+        # print(date)
         # 取得第一個 API 的數據
         url1 = url_template1.format(date, stockNo)
         
@@ -417,13 +420,14 @@ def  mutiTimesApi_call(stockNo,dates_input):
     
      
 def oneTimeApi_call(stockNo,dates_input):
+    print("Call oneTimeApi_call")
     from dateutil.relativedelta import relativedelta
     dates=[]
     month=int(str(dates_input)[4:6])
     
     curTime = datetime.strptime(dates_input, '%Y%m%d')
     
-    result_date = curTime - relativedelta(months=1)
+    result_date = curTime - relativedelta(months=2)
     dates.append(int(result_date.strftime('%Y%m%d')))
     dates.append(int(dates_input))
     
@@ -442,7 +446,7 @@ def oneTimeApi_call(stockNo,dates_input):
     all_data = pd.DataFrame()
 
     for date in dates:
-        # print(date)
+        print(date)
         # 取得第一個 API 的數據
         url1 = url_template1.format(date, stockNo)
         
@@ -484,7 +488,8 @@ def oneTimeApi_call(stockNo,dates_input):
         month_df = month_df[month_df['公司名稱'] != '合計']
         month_df = month_df.reset_index(drop=True) 
         month_end_df = month_df.loc[month_df['公司 代號'] == stockNo]
-    
+        print(month_df)
+        print(month_end_df)
         i=0
         key=0
         while len(month_end_df)==0:
@@ -816,22 +821,36 @@ def isoneTimeApi_call(stockNo):
 
     connection_string = f'mssql+pyodbc://{server_name}/{database_name}?trusted_connection=yes&driver=ODBC+Driver+17+for+SQL+Server'
     engine = create_engine(connection_string)
-    existing_data_df = pd.read_sql('SELECT * FROM Stock where SN_Code = '+stockNo, engine)
-    if(existing_data_df.shape[0]>0):
-        print("資料庫有資料，只呼叫API抓兩個月數據")
-        return True
-    else:
-        print("資料庫無資料，呼叫API抓一年的數據")
-        return False
+    try:
+    # 尝试连接数据库
+        connection = engine.connect()
+        print("数据库连接成功！")
+        existing_data_df = pd.read_sql('SELECT * FROM Stock where SN_Code = '+stockNo, engine)
+        connection.close()
+        if(existing_data_df.shape[0]>0):
+            print("資料庫有資料，只呼叫API抓兩個月數據")
+            return True
+        else:
+            print("資料庫無資料，呼叫API抓一年的數據")
+            return False
+            
+    except SQLAlchemyError as e:
+        print("数据库连接失败:", e)
+
 #  Main----------------------------
 
 # 使用者輸入股票代號和日期
 stockNo = input("請輸入股票代號: ")
 dates_input = input("請輸入日期(例如: 20230201,20230301): ")
-# mutiTimesApi_call(stockNo,dates_input)
-# oneTimeApi_call(stockNo,dates_input)
-isoneTimeApi = (isoneTimeApi_call(stockNo))
 
-oneTimeApi_call(stockNo,dates_input) if isoneTimeApi else mutiTimesApi_call(stockNo,dates_input)
+isoneTimeApi = (isoneTimeApi_call(stockNo))
+try:
+    print("Excute normal route")
+    oneTimeApi_call(stockNo,dates_input) if isoneTimeApi else mutiTimesApi_call(stockNo,dates_input)
+except:
+    print("Failed return mutiTimesApi_call")
+    mutiTimesApi_call(stockNo,dates_input)
 
 #  Main----------------------------
+# dates = [20240301, 20240401]
+# print(dates[10])

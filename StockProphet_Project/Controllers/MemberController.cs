@@ -136,7 +136,12 @@ namespace StockProphet_Project.Controllers
 
         public IActionResult MyCollect()
         {
-            return View();
+			var stockModelController = new StockModelController(null, _context);
+
+			string word = stockModelController.GetStockVarsMapTable();
+			//Console.WriteLine(test);
+			ViewBag.word = word;
+			return View();
         }
 
 
@@ -464,7 +469,13 @@ namespace StockProphet_Project.Controllers
         //我的預測結果頁面_1-4
         public IActionResult MyPredictResult()
         {
-            return View();
+			var stockModelController = new StockModelController(null, _context);
+
+			string word = stockModelController.GetStockVarsMapTable();
+			//Console.WriteLine(test);
+			ViewBag.word = word;
+
+			return View();
         }
 
         [HttpGet]

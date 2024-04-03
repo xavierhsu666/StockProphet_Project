@@ -695,10 +695,11 @@ namespace StockProphet_Project.Controllers {
 		//計算區間
 		private int predictdatacount(string sncode, int predictday)
 		{
-			DateTime now = DateTime.Now;
-			string formattedNow = now.ToString("yyyy-MM-dd");
-			DateTime currentday = DateTime.Parse(formattedNow);
-			//DateTime currentday = DateTime.Parse("2024-03-08");
+			Console.WriteLine("predictday1:" + predictday);
+			//DateTime now = DateTime.Now;
+			//string formattedNow = now.ToString("yyyy-MM-dd");
+			//DateTime currentday = DateTime.Parse(formattedNow);
+			DateTime currentday = DateTime.Parse("2024-03-25");
 			DateTime previousdateTime = currentday.AddDays(-predictday);
 			DateOnly previousdateOnly = DateOnly.Parse(previousdateTime.ToString("yyyy-MM-dd"));
 
@@ -721,6 +722,7 @@ namespace StockProphet_Project.Controllers {
 			//}
 			//Console.WriteLine(stockDatafromtime.Count);
 			predictday = stockDatafromtime.Count;
+			Console.WriteLine("predictday2:" + predictday);
 			return predictday;
 		}
 		[HttpPost]
@@ -1177,17 +1179,18 @@ namespace StockProphet_Project.Controllers {
 				}
 			}
 
-			//測試區
+			////測試區
 			//foreach (var feature in features)
 			//{
-			//    foreach (var value in feature)
-			//    {
-			//        Console.Write(value + " ");
-			//    }
-			//    Console.WriteLine();
+			//	foreach (var value in feature)
+			//	{
+			//		Console.Write(value + " ");
+			//	}
+			//	Console.WriteLine();
 			//}
 			//return Ok("Some result");
-			//foreach (var item in features) {
+			//foreach (var item in features)
+			//{
 			//	System.Diagnostics.Debug.WriteLine("swith" + item);
 
 			//}
@@ -1263,7 +1266,7 @@ namespace StockProphet_Project.Controllers {
 
 			int stockDatafromtime = predictdatacount(sncode, predictday);
 
-			Console.WriteLine(stockDatafromtime);
+			//Console.WriteLine(stockDatafromtime);
 
 			// 提取最後 predictday 天的特徵 X 的數據進行預測
 			var lastData = new List<float[]>();
@@ -1289,7 +1292,7 @@ namespace StockProphet_Project.Controllers {
 			// 輸出預測結果
 			predictionResult = prediction[0].numpy()[0, 0];
 			predictionResulttoString = predictionResult.ToString();
-
+	
 			return Content($"{predictionResulttoString},{lastLosstostring}");
 
 		}

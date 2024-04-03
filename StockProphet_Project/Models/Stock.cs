@@ -41,6 +41,7 @@ public partial class Stock
 	public decimal? SteMin { get; set; }
 
 	[Display(Name = "震幅")]
+	[DisplayFormat(DataFormatString = "{0:0.00}")]
 	public double? SteSpreadRatio { get; set; }
 
 	[Display(Name = "交易額")]
@@ -62,55 +63,71 @@ public partial class Stock
 	public double? SbPbratio { get; set; }
 
 	[Display(Name = "EPS")]
-	public double? SbEps { get; set; }
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SbEps { get; set; }
 
 	[Display(Name = "業內收入")]
 	public long? SbBussinessIncome { get; set; }
 
 	[Display(Name = "五日移動平均")]
-	public double? SiMovingAverage5 { get; set; }
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiMovingAverage5 { get; set; }
 
 	[Display(Name = "三十日移動平均")]
-	public double? SiMovingAverage30 { get; set; }
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiMovingAverage30 { get; set; }
 
 	[Display(Name = "五日RSV")]
-	public double? SiRsv5 { get; set; }
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiRsv5 { get; set; }
 
 	[Display(Name = "三十日RSV")]
-	public double? SiRsv30 { get; set; }
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiRsv30 { get; set; }
 
 	[Display(Name = "五日K")]
-	public double? SiK5 { get; set; }
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiK5 { get; set; }
 
 	[Display(Name = "三十日K")]
-	public double? SiK30 { get; set; }
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiK30 { get; set; }
 
 	[Display(Name = "五日D")]
-	public double? SiD5 { get; set; }
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiD5 { get; set; }
 
 	[Display(Name = "三十日D")]
-	public double? SiD30 { get; set; }
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiD30 { get; set; }
 
 	[Display(Name = "長期EMA")]
-	public double? SiLongEma { get; set; }
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiLongEma { get; set; }
 
 	[Display(Name = "短期EMA")]
-	public double? SiShortEma { get; set; }
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiShortEma { get; set; }
 
 	[Display(Name = "DIF")]
-	public double? SiDif { get; set; }
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiDif { get; set; }
 
 	[Display(Name = "MACD")]
-	public double? SiMacd { get; set; }
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiMacd { get; set; }
 
 	[Display(Name = "OSC")]
-	public double? SiOsc { get; set; }
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiOsc { get; set; }
 
 	[Display(Name = "PE")]
-	public double? SiPe { get; set; }
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiPe { get; set; }
 
 	[Display(Name = "MA")]
-	public double? SiMa { get; set; }
+    [DisplayFormat(DataFormatString = "{0:0.00}")]	
+    public double? SiMa { get; set; }
 	[Display(Name = "上次更新時間")]
 	public DateOnly StUpdateDate { get; set; }
 }

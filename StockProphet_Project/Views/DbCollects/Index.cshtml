@@ -1,0 +1,201 @@
+﻿@model IEnumerable<StockProphet_Project.Models.DbCollect>
+
+@{
+	ViewData["Title"] = "Collect";
+
+}
+<div class="area-container">
+	<div class="overflow-auto">
+		<h1>管理者頁面(Collect)</h1>
+		<br>
+		<div class="btn-area">
+			<button class="btn-w-hover mg-btn" onclick="loadModel('DbMembers')">會員頁</button>
+			<button class="btn-w-hover mg-btn" onclick="loadModel('DbModels')">模型頁</button>
+			<button class="btn-w-hover mg-btn" onclick="loadModel('DbCollects')">會員收藏</button>
+			<button class="btn-w-hover mg-btn" onclick="loadModel('Stocks')">股票資料</button>
+		</div>
+		<br>
+		<br>
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6">
+					<canvas id="myChart" width="400" height="400"></canvas>
+				</div>
+				<div class="col-lg-6">
+					<h5>Top5 卡片細節</h5>
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">PID</th>
+								<th scope="col">預測股票</th>
+								<th scope="col">建立預測者</th>
+								<th scope="col">使用模型</th>
+								<th scope="col">準確率(%)</th>
+								<th scope="col">走勢預測結果</th>
+							</tr>
+						</thead>
+						<tbody id="top5detail">
+							<!-- 此處將使用 JavaScript 動態插入數據 -->
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<p>
+			<a asp-action="Create" class="a-style">Create New</a>
+		</p>
+
+
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th>
+						@Html.DisplayNameFor(model => model.PID)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.CAccount)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.CDate)
+					</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model)
+				{
+
+					<tr>
+
+						<td>
+							@Html.DisplayFor(modelItem => item.PID)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.CAccount)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.CDate)
+						</td>
+						<td>
+							<a asp-action="Edit" asp-route-id="@item.CID" class="a-style">Edit</a> |
+							<a asp-action="Details" asp-route-id="@item.CID" class="a-style">Details</a> |
+							<a asp-action="Delete" asp-route-id="@item.CID" class="a-style">Delete</a>
+						</td>
+					</tr>
+
+
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+	function loadModel(model) {
+		// console.log(model)
+		window.location.href = `/${model}/Index`
+	}
+	$(".btn-area .mg-btn:nth-child(3)").css({
+		"color": "white",
+		"background-color": "#87aeb4"
+	})
+	var data1 = [];
+	var data2 = [];
+	var counts;
+	$.ajax({
+		url: "/DbCollects/Top5select",
+		method: "get",
+		success: function (e) {
+			console.log(e)
+			var labels = [];
+			var values = [];
+			$.each(e, function (index, element) {
+
+				labels.push(element.PID);
+				values.push(element.CAccountCount);
+				$.ajax({
+					url: "/DbCollects/Top5selecttable",
+					data: { data: element.PID },
+					method: "get",
+					success: function (e) {
+						$("#top5detail").append(`
+								<tr>
+									<td >
+												${e[0].Pid}
+									</td>
+
+									<td >
+												${e[0].Pstock}
+									</td>
+
+										<td >
+														${e[0].Paccount}
+										</td>
+									<td>
+												${e[0].Pmodel}
+									</td>
+									<td>
+												${e[0].PAccuracyRatio}
+									</td>
+										<td>
+														${e[0].PResult}
+										</td>
+								</tr>
+								`)
+						console.log(e)
+					}
+				})
+			})
+
+
+
+
+			// 使用 Chart.js 繪製圖表
+			var ctx = document.getElementById('myChart').getContext('2d');
+			var myChart = new Chart(ctx, {
+				type: 'bar',
+				data: {
+					labels: labels,
+					datasets: [{
+						label: 'Number of Collections',
+						data: values,
+						backgroundColor: 'rgba(54, 162, 235, 0.2)', // 淡藍色
+						borderColor: 'rgba(54, 162, 235, 1)', // 淡藍色
+						borderWidth: 1
+					}]
+				},
+				options: {
+					responsive: false,
+					scales: {
+						y: {
+							beginAtZero: true,
+							ticks: {
+								stepSize: 1 // 設置刻度以1為單位
+							}
+						}
+					},
+					plugins: {
+						title: {
+							display: true,
+							text: 'Top5 被收藏的卡片次數',
+							align: 'center'
+						},
+						legend: {
+							position: 'bottom',
+						}
+					}
+				}
+			});
+
+		}
+
+	})
+
+
+
+
+
+
+</script>
