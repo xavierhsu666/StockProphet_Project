@@ -45,8 +45,8 @@
 
 		<div class="form-floating mb-3" style="max-width: 300px;">
 			
-			<input class="form-control" type="type" name="name" id="Pidselect" value="" />
-			<label class="form-label">PID搜尋欄</label>
+			<input class="form-control" type="type" name="name" id="modelselect" value="" />
+			<label class="form-label">模型搜尋欄</label>
 		</div>
 		<div class="myTable" id="modelpage">
 			<table class="table">
@@ -242,14 +242,14 @@
 		window.location.href = `/${model}/Index`
 	}
 
-	$("#Pidselect").on("change", function () {
-		if ($("#Pidselect").val() == "") {
+	$("#modelselect").on("change", function () {
+		if ($("#modelselect").val() == "") {
 			location.reload(); // 重新加载页面
 		} else {
 			$.ajax({
 				url: "/DbModels/orderdata",
 				method: "get",
-				data: { data: $("#Pidselect").val() },
+				data: { data: $("#modelselect").val() },
 				success: function (e) {
 					console.log(e);
 					$("#tableBody").empty();
@@ -383,11 +383,11 @@
 			counts[accountName][preference]++;
 		});
 
-		// Extract unique accountnames and preferences
+
 		labels = Object.keys(counts);
 		var preferences = ['Short-term', 'Long-term'];
 
-		// Initialize datasets
+
 		preferences.forEach(function (preference) {
 			datasets[preference] = {
 				label: preference,
@@ -398,7 +398,7 @@
 			};
 		});
 
-		// Populate data for each dataset
+
 		labels.forEach(function (label) {
 			preferences.forEach(function (preference) {
 				datasets[preference].data.push(counts[label][preference] || 0);
