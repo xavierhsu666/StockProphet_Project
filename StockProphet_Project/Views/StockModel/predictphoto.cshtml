@@ -381,7 +381,7 @@
 
 <script>
 	$("#IndividualStock").on("click", function () {
-		window.location.href = "/Home/StockCharts?"+@Html.Raw(Json.Serialize(Model.Pstock))
+		window.location.href = "/Home/StockCharts/"+@Html.Raw(Json.Serialize(Model.Pstock))
 	
 	
 	})
@@ -403,6 +403,7 @@
 			label: '日期: ' + date + ', 收盤價: ' + item.SteClose
 		};
 	});
+	console.log(formattedData)
 	var formattedDataRemoveLast = formattedData.slice();
 
 	formattedDataRemoveLast.pop();
@@ -429,13 +430,14 @@
 
 	var lastActualDate = moment(formattedData[formattedData.length - 1].x);
 	var predictedDate = moment(lastActualDate);
-	var formattedPredictedDate = predictedDate.format('YYYY-MM-DD');
+	var formattedPredictedDate = moment(new Date(@Html.Raw(Json.Serialize(PfinishTime)))).format('YYYY-MM-DD');
 	var predictedClosePrice = predictedData;
 	var predictedDate1 = predictedDate.format('YYYY-MM-DD');
 	var isnn = @Html.Raw(Json.Serialize(IsNNModel));
 	// console.log(typeof predictedDate1);
 	// console.log(typeof formattedPredictedDate);
 	var ctx = document.getElementById('stockChart').getContext('2d');
+
 
 	var stockChart = new Chart(ctx, {
 		type: 'line',
