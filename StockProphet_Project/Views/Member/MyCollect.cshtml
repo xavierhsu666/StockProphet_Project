@@ -370,8 +370,12 @@
 
                 </div>
                 <br>
+                <button id="AllCard2" class="btn_A" onclick="changelist(this)">建立時間</button>
+
                 <button id="Ongoing2" class="btn_A">追蹤中</button>
                 <button id="Finished2" class="btn_A">已結案</button>
+                <button id="LikeNum2" class="btn_A" onclick="changelist(this)">收藏數</button>
+
 
                 <div class="predictionArea">
                     <!-- 这里是生成的卡片 -->
@@ -399,10 +403,10 @@
 
                 @*  <h1 id="Collect">我的收藏</h1> *@
 
-
+                <button id="AllCard1" class="btn_T onclick="changelist(this)">建立時間</button>
                 <button id="Ongoing" class="btn_T">追蹤中</button>
                 <button id="Finished" class="btn_T">已結案</button>
-
+                <button id="LikeNum1" class="btn_T onclick="changelist(this)">收藏數</button>
 
 
                 <b id="totalCountDisplay"></b>
@@ -599,7 +603,7 @@
                                   //     result = "已結案";
 
                                   // }
-                                  resultstatus.push({ "index": number, "result": result });
+                                  resultstatus.push({ "index": number, "result": result, "collectNum": collectNum });
 
                                   var parameter = JSON.parse(otherprarmeter[0]["parameter"]);
                                   var preVariable = JSON.parse(otherprarmeter[0]["preVariable"]);
@@ -675,6 +679,28 @@
                   })
               })
 
+              // 條件篩選 - 收藏數
+              $("#LikeNum1").on("click", function () {
+                  $(".prediction-card").show();
+                  function compare(a, b) {
+                      return b.collectNum - a.collectNum
+                  }
+                  var likeList = resultstatus.sort(compare);
+                  for (var i = 0; i < resultstatus.length; i++) {
+                      $(`.prediction-card.${likeList[i].index}`).css("order", i + 1);
+                  }
+
+              })
+
+              // 條件篩選 - 建立時間
+              $("#AllCard1").on("click", function () {
+                  $(".prediction-card").show();
+                  for (var i = 0; i < resultstatus.length; i++) {
+                      $(`.prediction-card.${resultstatus[resultstatus.length - 1 - i].index}`).css("order", i + 1);
+                  }
+                  console.log(resultstatus);
+                  ($(`.prediction-card`) == null) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
+              })
 
 
 
@@ -771,7 +797,7 @@
                                   //     result = "已結案"
                                   // }
                                   // resultstatus.push(result);
-                                  resultstatus.push({ "index": index + 1, "result": result });
+                                  resultstatus.push({ "index": index + 1, "result": result, "collectNum": collectNum });
 
                                   //結案狀態
 
@@ -824,6 +850,30 @@
 
                       }
                   })
+              })
+
+              
+              // 條件篩選 - 收藏數
+               $("#LikeNum2").on("click", function () {
+                  $(".prediction-card").show();
+                  function compare(a, b) {
+                      return b.collectNum - a.collectNum
+                  }
+                  var likeList = resultstatus.sort(compare);
+                  for (var i = 0; i < resultstatus.length; i++) {
+                      $(`.prediction-card.${likeList[i].index}`).css("order", i + 1);
+                  }
+
+              })
+
+              // 條件篩選 - 建立時間
+              $("#AllCard2").on("click", function () {
+                  $(".prediction-card").show();
+                  for (var i = 0; i < resultstatus.length; i++) {
+                      $(`.prediction-card.${resultstatus[resultstatus.length - 1 - i].index}`).css("order", i + 1);
+                  }
+                  console.log(resultstatus);
+                  ($(`.prediction-card`) == null) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
               })
 
 
@@ -1129,7 +1179,7 @@
                               sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
                               sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
                               var nowNum = $(`.card${dataToServer.cardID}`).text();
-                              setTimeout(function () { $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) + 1) }, 175);
+                              $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) + 1);
                               $(btn).addClass("preBtn-click");
                               $(`.card${dataToServer.cardID}`).removeClass("collectNumAniDown");
                               $(`.card${dataToServer.cardID}`).addClass("collectNumAniUp");
@@ -1141,7 +1191,7 @@
                               sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
                               sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
                               var nowNum = $(`.card${dataToServer.cardID}`).text();
-                              setTimeout(function () { $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) - 1) }, 175);
+                              $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) - 1);
                               $(btn).removeClass("preBtn-click");
                               $(`.card${dataToServer.cardID}`).removeClass("collectNumAniUp");
                               $(`.card${dataToServer.cardID}`).addClass("collectNumAniDown");
