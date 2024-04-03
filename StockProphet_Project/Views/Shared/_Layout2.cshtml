@@ -62,14 +62,19 @@
                         </li>
                     </ul>
 
-                    <ul class="navbar-nav" id="mynavgation-right">
+                    <ul class="navbar-nav" id="mynavgation-right" style="background-color:#f5f5f5">
                         <li class="nav-item" id="myRegister">
                             <a class="nav-link text-dark text-right" asp-area="" asp-controller="Member" asp-action="Register" id="sign-up">註冊</a>
                         </li>
                         <li class="nav-item" id="">
-                            <a type="button" class="btn btn-primary" asp-area="" asp-controller="" asp-action="" data-bs-toggle="modal" data-bs-target="#exampleModal" id="highlevel">
+                            <button class="cssbuttons-io member-vip-btn" asp-area="" asp-controller="" asp-action="" data-bs-toggle="modal" data-bs-target="#exampleModal" id="highlevel">
+                                <span>
+                                   會員升級
+                                </span>
+                            </button>
+@*                             <a type="button" class="btn-w-hover member-vip-btn" asp-area="" asp-controller="" asp-action="" data-bs-toggle="modal" data-bs-target="#exampleModal" id="highlevel">
                                 會員升級
-                            </a>
+                            </a> *@
                         </li>
                     </ul>
                 </div>
@@ -100,59 +105,86 @@
                 <div class="modal-body">
                     <div class="wrap">
                         <div class="item">
-                            <div class="icon"><i class="fa-solid fa-chess-pawn" style="color: #73bbbf;"></i></div>
+                            <div class="icon"><i class="fa-solid fa-chess-pawn" style="color: white;"></i></div>
                             <div class="txt" style="font-size: 1.2em;">
                                 <h3>訪客</h3>
-                                <ul>
-                                    <li class="text-lg-right">可收藏預測筆數:無</li>
-                                    <li class="text-lg-right">預測模型選擇:無</li>
-                                    <li class="text-lg-right">預測模型數量:無</li>
-                                    <li class="text-lg-right">Free</li>
-                                </ul>
+                                <table class="member-a-table">
+                                     <tr>
+                                        <th>體驗預測</th>
+                                        <td><i class="fa-solid fa-check"></i></td>
+                                     </tr>
+                                    <tr class="x-mark-td">
+                                        <th>預測模型選擇</th>
+                                        <td>
+                                            迴歸 <i class="fa-solid fa-xmark"></i><br />
+                                            時間序列 <i class="fa-solid fa-xmark"></i><br />
+                                            LSTM <i class="fa-solid fa-xmark"></i><br />
+                                            FNN <i class="fa-solid fa-xmark"></i>
+                                        </td>
+                                    </tr>
+                                    <tr class="x-mark-td"><th>可收藏預測筆數</th><td><i class="fa-solid fa-xmark"></i></td></tr>         
+                                    <tr class="x-mark-td"><th>預測模型數量</th><td><i class="fa-solid fa-xmark"></i></td></tr>
+                                    <tr class="member-price"><th>價格</th><td>free</td></tr>
+                                 </table>   
                             </div>
                         </div>
                         <div class="item">
-                            <div class="icon"><i class="fa-solid fa-chess-knight" style="color: #73b5c5;"></i></i></div>
+                            <div class="icon"><i class="fa-solid fa-chess-knight" style="color: white;"></i></i></div>
                             <div class="txt" style="font-size: 1.2em;">
                                 <h3>一般會員</h3>
-                                <ul>
-                                    <li class="text-lg-right">可收藏預測筆數:5筆</li>
-                                    <li class="text-lg-right">預測模型選擇:</li>
-                                        <ul>
-                                        <li>迴歸</li>
-                                        <li>時間序列</li>
-                                        </ul>
-                                    <li class="text-lg-right">預測模型數量:5筆</li>
-                                    <li class="text-lg-right">Free</li>
-                                </ul>
+                                <table class="member-a-table">
+                                    <tr>
+                                        <th>體驗預測</th>
+                                        <td><i class="fa-solid fa-check"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <th>預測模型選擇</th>
+                                        <td>
+                                            迴歸 <i class="fa-solid fa-check"></i><br />
+                                            時間序列 <i class="fa-solid fa-check"></i><br />
+                                            <p class="member-model">LSTM <i class="fa-solid fa-xmark"></i></p><br />
+                                            <p class="member-model">FNN <i class="fa-solid fa-xmark"></i></p>
+                                        </td>
+                                    </tr>
+                                    <tr><th>可收藏預測筆數</th><td>5筆</td></tr>
+                                    
+                                    <tr><th>預測模型數量</th><td>5筆</td></tr>
+                                    <tr class="member-price"><th>價格</th><td>free</td></tr>
+                                </table>
                             </div>
                         </div>
 
                         <div class="item">
-                            <div class="icon"><i class="fa-solid fa-chess-king fa-bounce" style="color: #73b5c5;"></i></div>
+                            <div class="icon"><i class="fa-solid fa-chess-king fa-bounce" style="color: white;"></i></div>
                             <div class="txt" style="font-size: 1.2em;">
                                 <h3>高級會員</h3>
-                                <ul>
-                                    <li class="text-lg-right">可收藏預測筆數:不限</li>
-                                    <li class="text-lg-right">預測模型選擇:
-                                        <ul>
-                                            <li>迴歸</li>
-                                            <li>時間序列</li>
-                                            <li>LSTM</li>
-                                            <li>FNN</li>
-                                        </ul>
-                                    </li>
-                                    <li class="text-lg-right">預測模型數量:不限</li>
-                                    <li class="text-lg-right">NTD$ 365/月</li>
-                                </ul>
+                                <table class="member-a-table">
+                                    <tr>
+                                        <th>體驗預測</th>
+                                        <td><i class="fa-solid fa-check"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <th>預測模型選擇</th>
+                                        <td>
+                                            迴歸 <i class="fa-solid fa-check"></i><br />
+                                            時間序列 <i class="fa-solid fa-check"></i><br />
+                                            LSTM <i class="fa-solid fa-check"></i><br />
+                                            FNN <i class="fa-solid fa-check">
+                                        </td>
+                                    </tr>
+                                    <tr><th>可收藏預測筆數</th><td>無限制</td></tr>
+                                    
+                                    <tr><th>預測模型數量</th><td>無限制</td></tr>
+                                    <tr class="member-price"><th>價格</th><td>NTD$ 365/月</td></tr>
+                                </table>
                             </div>
                         </div>
                     </div>
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="upgradeclose">Close</button>
-                    <button type="button" class="btn btn-primary" id="upgrade">升級</button>
+                    <button type="button" class="btn-w-hover" data-bs-dismiss="modal" id="upgradeclose">Close</button>
+                    <button type="button" class="btn-w-hover" id="upgrade">升級</button>
                 </div>
             </div>
         </div>
@@ -181,12 +213,14 @@
 		$(document).ready(function () {
             
 			if (sessionStorage.getItem("LogAccount") == null) {
+                $("#myMember").hide();
                 $(".note-area").css("display", "none");
                 $('.dropdown-menu').css("display", "none")
                 $('#mynavgation-right').prepend(`<li b-vkyxnss9jg class="nav-item" id="myLogin"><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login">登入</a></li>`);
 				$('#loginlink').show();
 				$('#logoutlink').hide();
 			} else {
+                $("#sign-up").hide();
                 $(".note-area").css("opacity", "1");
                 console.log(2)
                 $('.dropdown-menu').append(` 
@@ -195,7 +229,7 @@
                                              <a class="dropdown-item" href="/Member/MyCollect"> 我的收藏頁面</a>
                                              <a class="dropdown-item" href="/Member/MyPredictResult">我的預測結果頁面</a>`)
 
-                $("#mynavgation-right").append(`<li b-vkyxnss9jg class="nav-item" id="myLogout"><a class="nav-link text-dark text-right" id="logoutlink" href="/Home/Index">登出</a></li> `)
+                $("#mynavgation-right").append(`<li b-vkyxnss9jg class="nav-item" id="myLogout"><a class="nav-link text-dark" id="logoutlink" href="/Home/Index">登出</a></li> `)
 				$('#loginlink').hide();
 				$('#logoutlink').show();
                 if (sessionStorage.getItem("LogMemberLevel") === "一般會員") {

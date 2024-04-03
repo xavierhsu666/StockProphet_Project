@@ -389,7 +389,7 @@
             preSvg.select("g.y.axis.pre")
                 .call(preAxisY.tickSizeInner(-preWidth - 10, -preWidth)
                     .tickPadding(10).tickFormat(d3.format(".1f"))
-                    .tickValues([minCPre - 10, d3.mean([minCPre, maxCPre]), maxCPre + 10]));
+                    .tickValues([minCPre , d3.mean([minCPre, maxCPre]), maxCPre]));
 
             //--點點--//
             //提示框
