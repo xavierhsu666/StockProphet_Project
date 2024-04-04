@@ -168,6 +168,7 @@ var yScaleKD = d3.scaleLinear()
 var dataAll;
 
 d3.json(`/Home/showStocks/${stocksID}`, function (data) {
+    console.log(data);
     $(".td-tittle").text(data[0].StockName) //股票名稱
     data = data.map(function (d) {
         return {
@@ -561,8 +562,12 @@ $('#Finished2').on("click", function () {
 
 $("#AllCard2").on("click", function () {
     $(".prediction-card").show();
+    function compare(a, b) {
+        return b.index -a.index
+    }
+    var DateList = resultstatus.sort(compare);
     for (var i = 0; i < resultstatus.length; i++) {
-        $(`.prediction-card.${resultstatus[resultstatus.length-1-i].index}`).css("order", i + 1);
+        $(`.prediction-card.${DateList[i].index}`).css("order", i + 1);
     }
     console.log(resultstatus);
     ($(`.prediction-card`) == null) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
@@ -823,7 +828,7 @@ function btnTest(btn) {
                         console.log("新增一筆");
                         sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
                         var nowNum = $(`.card${dataToServer.cardID}`).text();
-                        setTimeout(function () { $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) + 1) }, 175);
+                        $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) + 1);
                         $(btn).addClass("preBtn-click");
                         $(`.card${dataToServer.cardID}`).removeClass("collectNumAniDown");
                         $(`.card${dataToServer.cardID}`).addClass("collectNumAniUp");
@@ -835,7 +840,7 @@ function btnTest(btn) {
                         console.log("刪除一筆");
                         sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
                         var nowNum = $(`.card${dataToServer.cardID}`).text();
-                        setTimeout(function () { $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) - 1) }, 175);
+                        $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) - 1);
                         $(btn).removeClass("preBtn-click");
                         $(`.card${dataToServer.cardID}`).removeClass("collectNumAniUp");
                         $(`.card${dataToServer.cardID}`).addClass("collectNumAniDown");

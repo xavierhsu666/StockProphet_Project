@@ -163,23 +163,23 @@ main {
     }
 }
 
-#upgrade, #upgradeclose {
-    padding:0;
-    min-height:50px;
-    width:100px;
+#upgrade, #upgradeclose, #upgrade1, #upgradeclose1 {
+    padding: 0;
+    min-height: 50px;
+    width: 100px;
     padding-left: 10px;
     padding-right: 10px;
-    margin-right:10px;
+    margin-right: 10px;
 }
 
-#upgrade {
+#upgrade, #upgrade1 {
     background-color: #87aeb4;
-    color:white;
+    color: white;
 }
 
-#upgradeclose:hover {
+#upgradeclose:hover, #upgradeclose1:hover {
     color: #87aeb4;
-    background-color:white;
+    background-color: white;
 }
 
 .member-vip-btn {

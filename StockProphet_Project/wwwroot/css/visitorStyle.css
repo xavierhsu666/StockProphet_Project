@@ -1,4 +1,7 @@
-﻿.appendTt {
+﻿body {
+    overflow-x:hidden;
+}
+.appendTt {
     padding: 5px 15px;
     background: #ccc;
     border: 0 none;
@@ -24,7 +27,51 @@
 .input-group {
     width: 50%;
 }
+button[name='btn'] {
+    background-color: #73b5c5;
+    border-color: #73b5c5;
+}
 
+div[name='th'] {
+    align-content: center;
+    background-color: #cedba0;
+    font-weight: 700;
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.photo-container {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+.py-5 {
+    padding-top: 0 !important;
+}
+
+.main-detail {
+    width: 100%;
+}
+
+
+.photo-box {
+    background-color: white !important;
+    border-radius: 15px;
+    width:100%;
+}
+
+.back-btn {
+    position:absolute;
+    top:46%;
+    right:15%;
+    max-width: 200px;
+    margin-left: auto;
+    /* width:15%; */
+}
 @media screen and (max-width: 1200px) {
     .pre-container {
         width: 100%;
@@ -35,7 +82,7 @@
     }
 }
 
-#longterm, #shortterm {
+#longterm {
     margin-right: 20px;
 }
 
@@ -45,11 +92,17 @@
     position: absolute;
     bottom: 20px;
     left: 50%;
-    transform: translateY(-50%);
+    transform: translateX(-50%);
     transform: scale(2, 1);
     font-weight: bold;
     color: #87aeb4;
     animation: arrowAni 1s infinite;
+}
+
+.arror-icon-content {
+    position:absolute;
+    right:20px;
+    bottom: -5px;
 }
 @keyframes arrowAni {
     0% {
@@ -141,6 +194,25 @@
         left: 15%;
     }
 
+
+}
+.point-box2 {
+    width:300px;
+    padding: 20px;
+    background-color: #87aeb4;
+    position: absolute;
+    z-index: 999;
+    border-radius: 10px;
+}
+.point-box2::before {
+    content: "";
+    position: absolute;
+    background-color: #87aeb4;
+    height: 20px;
+    width: 20px;
+    transform: rotate(45deg);
+    left: -10px;
+    top:20px;
 }
 
 .point-box {
@@ -150,24 +222,33 @@
     padding-left: 30px;
     background-color: #87aeb4;
     position: absolute;
-    transition: all 0.5s;
     z-index: 999;
     top: 260px;
     left: 650px;
     animation: part-one-dia 1s;
-    transition:all 0.5s;
+    transition: all 0.5s;
     border-radius: 10px;
     /*    transform: translatex(10px);*/
 }
-    .point-box::before {
+    .point-box-left::before {
         content: "";
         position: absolute;
-        background-color: #cedba0;
+        background-color: #87aeb4;
         height: 20px;
         width: 20px;
         transform: rotate(45deg);
         left: -10px;
     }
+.point-box-down::before {
+    content: "";
+    position: absolute;
+    background-color: #87aeb4;
+    height: 20px;
+    width: 20px;
+    transform: rotate(45deg);
+    left: 50px;
+    bottom:-10px;
+}
 @keyframes part-one-dia {
     0% {
         opacity: 0;
@@ -177,6 +258,10 @@
     }
 }
 
+.lontermBtnS {
+    color: white;
+    background-color: #87aeb4;
+}
 .step-btn {
     padding-top: 3px;
     padding-bottom: 3px;
@@ -184,12 +269,13 @@
     padding-left: 5px;
     border: 2px solid white;
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    bottom: 15px;
+    right: 25px;
     background-color: transparent;
     border-radius: 10px;
     color: white;
     transition: all 0.2s
+
      
 }
 
@@ -197,3 +283,16 @@
         color: #87aeb4;
         background-color:white;
     }
+
+#stockidV:read-only {
+    background-color: white;
+}
+
+#selectmodel {
+    width: 50%;
+    overflow-y: hidden;
+}
+
+.resultBtnG {
+    width: 40%;
+}

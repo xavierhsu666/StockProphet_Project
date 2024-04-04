@@ -2,8 +2,9 @@
 @{
 	//http://localhost:5271/stockmodel/predictphoto?pid=49
 	ViewData["Title"] = "股票預測";
-	DateTime PfinishTime = (DateTime)Model.PfinishTime;
-	DateTime PbulidTime = (DateTime)Model.PbulidTime;
+
+	DateTime PfinishTime = DateTime.Today.AddDays(5);
+	DateTime PbulidTime = DateTime.Today;
 
 	TimeSpan difference = DateTime.Now.Subtract(PfinishTime);
 	TimeSpan differenceOpp = (PfinishTime).Subtract(DateTime.Now);
@@ -122,53 +123,47 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
 <style>
-	button[name='btn']{
+	button[name='btn'] {
 		background-color: #73b5c5;
 		border-color: #73b5c5;
 	}
 
 	div[name='th'] {
-		align-content:center;
+		align-content: center;
 		background-color: #cedba0;
-		font-weight:700;
-		border-radius:10px;
+		font-weight: 700;
+		border-radius: 10px;
 		margin-top: 10px;
 		margin-bottom: 10px;
-		padding-top :10px;
+		padding-top: 10px;
 		padding-bottom: 10px;
 	}
 
-	.photo-container{
-		width:80%;
-		display:flex;
-		flex-direction:column;
+	.photo-container {
+		width: 80%;
+		display: flex;
+		flex-direction: column;
 	}
 
-	.py-5{
-		padding-top:0 !important;
+	.py-5 {
+		padding-top: 0 !important;
 	}
 
-	@@media screen and (max-width: 1200px) {
-		.photo-container {
-			width: 100%;
-		}
-
+	.main-detail {
+		width: 100%;
 	}
 
-	.photo-box{
-		background-color:white !important;
-		border-radius:15px;
+
+	.photo-box {
+		background-color: white !important;
+		border-radius: 15px;
 		box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
 	}
 
-	.back-btn{
-		max-width:200px;
+	.back-btn {
+		max-width: 200px;
 		margin-left: auto;
 		/* width:15%; */
-	}
-
-	.main-detail{
-		width:100%;
 	}
 </style>
 
@@ -376,7 +371,7 @@
 		</div>
 		<button class="btn-w-hover back-btn">要返回哪裡？？</button>
 	</div>
-	
+
 </div>
 
 <script>
@@ -460,7 +455,7 @@
 				data: [{
 					x: formattedData[formattedData.length - 1].x,
 					y: (isnn) ? formattedData[formattedData.length - 1].y : @Html.Raw(Json.Serialize(Model.PCurLabel))
-				}, {
+					}, {
 					x: formattedPredictedDate,
 					y: predictedClosePrice
 				}],
@@ -474,30 +469,30 @@
 				data: [{
 					x: dateObjects_Ori[0],
 					y: @Html.Raw(Json.Serialize(Model.PreDictLabel)) // 设置水平线的 y 坐标值
-																		}, {
+																			}, {
 					x: dateObjects_Ori[dateObjects_Ori.length - 1],
 					y: @Html.Raw(Json.Serialize(Model.PreDictLabel))
-																		}],
+																			}],
 				borderColor: 'black',
 				fill: false,
 				borderWidth: 3,
 				borderDash: [5, 5],
 				hidden: false // 結案的話秀
-																		}, {
+			}, {
 				label: '近' + @Html.Raw(Json.Serialize(finishdate))+'日移動平均*',
 				data: [{
 					x: dateObjects_Lat[0],
 					y: @Html.Raw(Json.Serialize(Model.PCurLabel)) // 设置水平线的 y 坐标值
-																		}, {
+																			}, {
 					x: dateObjects_Lat[dateObjects_Lat.length - 1],
 					y: @Html.Raw(Json.Serialize(Model.PCurLabel))
-																			}],
+																				}],
 				borderColor: 'red',
 				fill: false,
 				borderWidth: 3,
 				//borderDash: [5, 5],
 				hidden: @Html.Raw(Json.Serialize(!NeedShowAcc)) // 设置水平线1隐藏
-			}]
+				}]
 		},
 		options: {
 			responsive: true, // 禁用響應式
@@ -524,7 +519,7 @@
 	})
 	$("#mystockid").on("click", function () {
 		window.location.href = "/Home/StockCharts/" + @Model.Pstock
-																														})
+																															})
 	$.ajax({
 		url: "/StockModel/stocksnamewithcsv",
 		method: "get",
