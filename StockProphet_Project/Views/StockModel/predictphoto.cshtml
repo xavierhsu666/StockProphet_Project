@@ -374,13 +374,26 @@
 		<div class="p-5 mb-4 rounded-3 photo-box" style="margin-top:30px">
 			<canvas id="stockChart" style="width:70vw;height:50vw"></canvas>
 		</div>
-		<button class="btn-w-hover back-btn">要返回哪裡？？</button>
+		<div class="d-inline-block text-end">
+			<button class="btn-w-hover back-btn" id="IndividualStock">返回個股分頁</button>
+			<button class="btn-w-hover back-btn" id="MypredictResult">返回我的預測</button>
+		</div>
+
 	</div>
 	
 </div>
 
 <script>
+	$("#IndividualStock").on("click", function () {
+		window.location.href = "/Home/StockCharts/"+@Html.Raw(Json.Serialize(Model.Pstock))
+	
+	
+	})
+	$("#MypredictResult").on("click", function () {
 
+		window.location.href = "/Member/MyPredictResult"
+
+	})
 
 
 	var actualData = @Html.Raw(Json.Serialize(ChartData));
@@ -394,6 +407,7 @@
 			label: '日期: ' + date + ', 收盤價: ' + item.SteClose
 		};
 	});
+	console.log(formattedData)
 	var formattedDataRemoveLast = formattedData.slice();
 
 	formattedDataRemoveLast.pop();
@@ -420,13 +434,14 @@
 
 	var lastActualDate = moment(formattedData[formattedData.length - 1].x);
 	var predictedDate = moment(lastActualDate);
-	var formattedPredictedDate = predictedDate.format('YYYY-MM-DD');
+	var formattedPredictedDate = moment(new Date(@Html.Raw(Json.Serialize(PfinishTime)))).format('YYYY-MM-DD');
 	var predictedClosePrice = predictedData;
 	var predictedDate1 = predictedDate.format('YYYY-MM-DD');
 	var isnn = @Html.Raw(Json.Serialize(IsNNModel));
 	// console.log(typeof predictedDate1);
 	// console.log(typeof formattedPredictedDate);
 	var ctx = document.getElementById('stockChart').getContext('2d');
+
 
 	var stockChart = new Chart(ctx, {
 		type: 'line',
@@ -615,7 +630,7 @@
 		$.each(eva, function (i, val) {
 			if (i == "預計準確率" || i == "準確率") { } else {
 				$("#modelEva_th").append("<div class='col'>" + i + "</div>");
-				$("#modelEva_tb").append("<div class='col'>" + val + "</div>");
+				$("#modelEva_tb").append("<div class='col'>" + val.toFixed(2) + "</div>");
 			}
 		})
 		$.each(pars, function (i, val) {

@@ -35,7 +35,7 @@
 		<br>
 		<div class="d-xl-flex justify-content-around">
 			<canvas id="barChart" width="400" height="400"></canvas>
-			<canvas id="accountprefer" width="400" height="400"></canvas>
+			<canvas id="accountprefer" width="400" height="425"></canvas>
 
 		</div>
 		<p>
@@ -45,8 +45,8 @@
 
 		<div class="form-floating mb-3" style="max-width: 300px;">
 			
-			<input class="form-control" type="type" name="name" id="Pidselect" value="" />
-			<label class="form-label">PID搜尋欄</label>
+			<input class="form-control" type="type" name="name" id="modelselect" value="" />
+			<label class="form-label">模型搜尋欄</label>
 		</div>
 		<div class="myTable" id="modelpage">
 			<table class="table">
@@ -242,14 +242,14 @@
 		window.location.href = `/${model}/Index`
 	}
 
-	$("#Pidselect").on("change", function () {
-		if ($("#Pidselect").val() == "") {
+	$("#modelselect").on("change", function () {
+		if ($("#modelselect").val() == "") {
 			location.reload(); // 重新加载页面
 		} else {
 			$.ajax({
 				url: "/DbModels/orderdata",
 				method: "get",
-				data: { data: $("#Pidselect").val() },
+				data: { data: $("#modelselect").val() },
 				success: function (e) {
 					console.log(e);
 					$("#tableBody").empty();
@@ -349,12 +349,21 @@
 						}
 					}]
 				},
-				responsive: false
+				responsive: false,
+				plugins: {
+					title: {
+						display: true,
+						text: '個股預測數量',
+						align: 'center'
+					},
+					legend: {
+						position: 'bottom',
+					}
+				}
 			}
 		});
 	}
 	function drawcustomerChart(accountprefer) {
-		// Convert preference numbers to labels
 		accountprefer.forEach(function (item) {
 			item.accountprefer = item.accountprefer === 1 ? 'Short-term' : 'Long-term';
 		});
@@ -363,7 +372,6 @@
 		var labels = [];
 		var datasets = {};
 
-		// Count the occurrences of each accountprefer for each accountname
 		accountprefer.forEach(function (item) {
 			var accountName = item.accountname;
 			var preference = item.accountprefer;
@@ -375,11 +383,11 @@
 			counts[accountName][preference]++;
 		});
 
-		// Extract unique accountnames and preferences
+
 		labels = Object.keys(counts);
 		var preferences = ['Short-term', 'Long-term'];
 
-		// Initialize datasets
+
 		preferences.forEach(function (preference) {
 			datasets[preference] = {
 				label: preference,
@@ -390,7 +398,7 @@
 			};
 		});
 
-		// Populate data for each dataset
+
 		labels.forEach(function (label) {
 			preferences.forEach(function (preference) {
 				datasets[preference].data.push(counts[label][preference] || 0);
@@ -421,6 +429,16 @@
 							display: true,
 							text: 'Number of Preferences'
 						}
+					}
+				},
+				plugins: {
+					title: {
+						display: true,
+						text: '客戶偏好',
+						align: 'center'
+					},
+					legend: {
+						position: 'bottom',
 					}
 				}
 			}
