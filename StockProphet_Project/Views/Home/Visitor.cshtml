@@ -1092,20 +1092,19 @@
 									"width": Bwidth,
 									"left": PBX,
 									"top": PBY
-								})
-								$(".describe").text("提供四種詳細資訊");
+							})
+							$(".describe").text("提供四種詳細資訊");
 								$(".point-box").css({
 								"left": PBX + Bwidth -10,
 								"top": PBY - 20,
 								"width": "auto"
-								});
+							});
 						})
 					}
 				})
 				}
 			}
 		});
-
 	})
 
 	//處理四個按紐的部分TT
@@ -1234,10 +1233,10 @@ function checkIsClick(btn) {  //實在抓不到  直接土法煉鋼
 				data: [{
 					x: dateObjects_Ori[0],
 					y: @Html.Raw(Json.Serialize(Model.PreDictLabel)) // 设置水平线的 y 坐标值
-																				}, {
+					}, {
 					x: dateObjects_Ori[dateObjects_Ori.length - 1],
 					y: @Html.Raw(Json.Serialize(Model.PreDictLabel))
-																				}],
+					}],
 				borderColor: 'black',
 				fill: false,
 				borderWidth: 3,
@@ -1248,10 +1247,10 @@ function checkIsClick(btn) {  //實在抓不到  直接土法煉鋼
 				data: [{
 					x: dateObjects_Lat[0],
 					y: @Html.Raw(Json.Serialize(Model.PCurLabel)) // 设置水平线的 y 坐标值
-																				}, {
+					}, {
 					x: dateObjects_Lat[dateObjects_Lat.length - 1],
 					y: @Html.Raw(Json.Serialize(Model.PCurLabel))
-																					}],
+					}],
 				borderColor: 'red',
 				fill: false,
 				borderWidth: 3,
