@@ -249,3 +249,32 @@ main {
     display: inline;
     color: #bbbdbe !important;
 }
+
+::-webkit-scrollbar {
+    width: 15px; /*右側捲軸寬度*/
+}
+
+#ui-id-1::-webkit-scrollbar {
+    width: 10px; /*右側捲軸寬度*/
+}
+::-webkit-scrollbar-track {
+    /*background: #b5cece;*/
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #87aeb4;
+}
+/*    ::-webkit-scrollbar-thumb:hover {
+        background: #bd451d;
+    }*/
+
+::-webkit-scrollbar-button {
+    /*background: transparent;*/
+    height:0;
+    background: #b5cece;
+}
+
+    /*#ui-id-1::-webkit-scrollbar-button:hover {
+        background-color: #65250f;
+    }*/

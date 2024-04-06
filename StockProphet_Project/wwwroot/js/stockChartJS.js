@@ -509,13 +509,14 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
 
             var preState = (status == "Close") ? "已結案" : "追蹤中";
 
-            var comDate = (status == "Close") ? preDate : preBuildDate;
+            //var comDate = (status == "Close") ? preDate : preBuildDate; 
+            var comDate = preDate;
 
-            
+            //console.log("已結案:" + preDate + "追蹤中" + preBuildDate);
 
             //console.log("預測日: "+ xData)
             //用BuildDate去找列表中最近的日子(closestDate)，closestDate可能等於BuildDate，也可能是前一天
-            var closestDate = dateList.reduce((prev, curr) => {     //動態追蹤（已
+            var closestDate = dateList.reduce((prev, curr) => {     //動態追蹤
                 var prevDiff = Math.abs(new Date(comDate) - new Date(prev));
                 var currDiff = Math.abs(new Date(comDate) - new Date(curr));
 
@@ -529,7 +530,7 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             for (var j = 0; j < Alldata.length; j++) {
                 if (Alldata[j].Date == closestDate) {
                     //最近的那天是建立那天嗎？（根據那張卡片對於使用者是當天or之前建立的）
-                    var endDate = j - (closestDate >= preBuildDate ? 1 : 0);
+                    var endDate = j - (closestDate >= preDate ? 1 : 0);
                     for (var x = 0; x < 5; x++) {
                         xData.unshift((Alldata[endDate - x]).Date);
                         yData.unshift((Alldata[endDate - x]).Close);
