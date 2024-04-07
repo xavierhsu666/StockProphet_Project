@@ -23,6 +23,8 @@ using static HDF.PInvoke.H5T;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Net.NetworkInformation;
 using ChoETL;
+using System.Text.RegularExpressions;
+
 
 namespace StockProphet_Project.Controllers
 {
@@ -302,34 +304,38 @@ namespace StockProphet_Project.Controllers
         }
 
 
+       
+
+        // 搜尋欄
         [HttpGet]
         public IActionResult Search(string searchTerm)
         {
-
-            int searchNum = Convert.ToInt32(searchTerm);
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
-            string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
+            string sqlQuery;
+            string searchTermNumber = ExtractNumberFromString(searchTerm); // 提取搜索字符串中的數字部分
+
+            // 使用提取的數字部分進行搜索
+            sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
                  B.PBulidTime,B.Pvariable, B.PFinishTime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code, B.Pmodel, B.PAccuracyRatio
-    FROM DB_model AS B 
-    OUTER APPLY (
-        SELECT TOP 5 *
-        FROM Stock
-        WHERE SN_code = B.Pstock
-              AND ST_Date <= B.PBulidTime
-        ORDER BY ST_Date DESC
-    ) AS A 
-    WHERE B.Pstock = {searchNum}";
+         FROM DB_model AS B 
+         OUTER APPLY (
+             SELECT TOP 5 *
+             FROM Stock
+             WHERE SN_code = B.Pstock
+                   AND ST_Date <= B.PBulidTime
+             ORDER BY ST_Date DESC
+         ) AS A 
+         WHERE B.Pstock = '{searchTermNumber}'"; // 使用數字部分作为搜尋條件
+
             Console.WriteLine(sqlQuery);
             SqlConnection sqlconnect = new SqlConnection(connectionString);
             sqlconnect.Open();
             SqlCommand sqlCommand = new SqlCommand(sqlQuery, sqlconnect);
             SqlDataReader reader = sqlCommand.ExecuteReader();
 
-
             while (reader.Read())
             {
-
                 results.Add(new
                 {
                     STdate = reader["ST_Date"],
@@ -349,11 +355,55 @@ namespace StockProphet_Project.Controllers
                 });
             }
 
-
             return Json(results);
-
-
         }
+
+        // 使用正則表達式從字符串中提取數字部分
+        private string ExtractNumberFromString(string input)
+        {
+            Match match = Regex.Match(input, @"\d+");
+            if (match.Success)
+            {
+                return match.Value;
+            }
+            return ""; // 如果找不到數字，則返回空字符串
+        }
+
+
+
+        //檢查股票是否存在
+        public string checkStocks(string id)
+        {
+            var ans = "Nah";
+            var stocksList = (from obj in new ChoCSVReader<stocksCheck>("wwwroot\\stocksList.csv").WithFirstLineHeader()
+                              select obj).ToList();
+            foreach (var stock in stocksList)
+            {
+                if (stock.Code == id || ((stock.Name).Split(' '))[0] == id || stock.Name == id)
+                {
+                    ans = stock.Code;
+                    break;
+                }
+                else ans = "wrongCode";
+            }
+            return ans;
+        }
+
+        //回傳股票名稱的陣列表
+        public IActionResult stocksListAC()
+        {
+            var stocksList = (from obj in new ChoCSVReader<stocksCheck>("wwwroot\\stocksList.csv").WithFirstLineHeader()
+                              select new
+                              {
+                                  label = obj.Name,
+                                  category = obj.type
+                              })
+                              .ToList();
+
+            return Json(stocksList);
+        }
+
+
 
 
 

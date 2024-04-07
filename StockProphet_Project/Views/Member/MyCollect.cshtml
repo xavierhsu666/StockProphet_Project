@@ -14,8 +14,6 @@
     }
 
     .bar {
-        /*  background: #A3D0C3; */
-        /* text-align: center;*/
         display: flex;
         justify-content: center;
         align-items: center;
@@ -123,50 +121,31 @@
             transform: scale(0.96);
         }
 
-    /*     .predictionArea {
-                            display: flex;
-                            flex-wrap: wrap; /* 让卡片换行 */
-    /*justify-content: flex-start;
-                            align-items: center;
-                        } */
 
     .predictionArea .card {
-        width: calc(50% - 10px); /* 每个卡片占据父容器的 1/3，减去一定的间距 */
-        margin-right: 10px; /* 设置卡片之间的间距，可以根据需要调整 */
-        margin-bottom: 10px; /* 设置卡片之间的间距，可以根据需要调整 */
+        width: calc(50% - 10px);
+        margin-right: 10px;
+        margin-bottom: 10px;
     }
 
-    /* －－－改過↓－－－ */
+
     .MyFavorite, .predictionArea {
-        /*         display: flex;
-                            flex-wrap: wrap;
-                            justify-content: flex-start;
-                            align-items: center; */
-
-
         max-width: 1400px;
         display: flex;
         flex-direction: row;
         justify-content: space-around;
         flex-wrap: wrap;
-        /* margin-top: 50px; */
         margin-bottom: 20px;
     }
 
-        /*     .prediction-card{
-                                margin-left: 55px;
-                        margin-right: 55px;
-                        } */
-
-        /* －－－改過↑－－－ */
 
         .MyFavorite .card {
             width: calc(50% - 10px);
-            margin-right: 10px; /* 设置卡片之间的间距，可以根据需要调整 */
-            margin-bottom: 10px; /* 设置卡片之间的间距，可以根据需要调整 */
+            margin-right: 10px;
+            margin-bottom: 10px;
             margin-left: auto;
-            */ width: 50%; /* 每个卡片占据一行的一半宽度 */
-            box-sizing: border-box; /* 盒子模型包含内边距和边框 */
+            */ width: 50%;
+            box-sizing: border-box;
         }
 
 
@@ -187,11 +166,20 @@
         right: 200px;
     }
 
-    #data-message{
+    #search-hint {
         color: #73b5c5;
         font-size: 20px;
-        text-align:center;
-        top: 280px;
+        text-align: center;
+        top: 300px;
+        right: 450px;
+    }
+
+    #data-message {
+        color: #73b5c5;
+        font-size: 20px;
+        text-align: center;
+        font-weight: bold;
+        top: 300px;
         right: 200px;
     }
 
@@ -199,7 +187,8 @@
         color: #73b5c5;
         font-size: 20px;
         text-align: center;
-        top: 280px;
+        font-weight: bold;
+        top: 300px;
         right: 200px;
     }
 
@@ -209,7 +198,6 @@
         text-align: right;
         position: absolute;
         text-align: center !important;
-        /* text-align: left ; */
     }
 
 
@@ -226,7 +214,6 @@
         text-decoration: none;
         box-shadow: inset 0 0 0 4px #73b5c5;
         transition: color 0.25s 0.0833333333s;
-        /*  padding: 10px 20px;*/
         padding: 10px;
         border-radius: 10px;
     }
@@ -292,7 +279,6 @@
         text-decoration: none;
         box-shadow: inset 0 0 0 4px #73b5c5;
         transition: color 0.25s 0.0833333333s;
-        /*  padding: 10px 20px;*/
         padding: 10px;
         border-radius: 10px;
     }
@@ -358,16 +344,10 @@
         width: 80%;
         display: flex;
         flex-direction: column;
-        /* background-color:pink; */
     }
 </style>
 
-@* <div class="col-md-4">
 
-
-    </div> *@
-
-@* <div class="col-md-8"> *@
 <img class="bg-chart" src="~/homePage/chart.png" />
 <img class="bg-line" src="~/homePage/chart2.png" />
 <div class="area-container">
@@ -394,7 +374,8 @@
                 <!-- 搜尋欄 -->
                 <br><br>
                 <div id="searchForm" class="bar">
-                    <input type="text" id="searchTerm" name="searchTerm" placeholder="請輸入股票代號" required>
+                    <input type="text" id="searchTerm" name="searchTerm" placeholder="請輸入股票名稱或代號" required>
+                    <b id="search-hint" class="search-hint" style="display:none">查無此股票名稱或代碼之相關歷史預測資料</b>
 
                 </div>
                 <br>
@@ -436,7 +417,7 @@
                 <br>
 
 
-               
+
                 <button id="AllCard1" class="btn_T onclick="changelist(this)">建立日期</button>
                 <button id="Ongoing" class="btn_T">追蹤中</button>
                 <button id="Finished" class="btn_T">已結案</button>
@@ -478,10 +459,10 @@
               $('#afterLog').show();
               $('#Search').hide();
           }
-          
+
           // 判斷會員等級
           var MidLevel = sessionStorage.getItem("LogMemberLevel");
-          
+
           if (MidLevel == "高級會員") {
               $('#HighMember').show();
               $('#NormalMember').hide();
@@ -491,417 +472,433 @@
               $('#HighMember').show();
               $('#NormalMember').hide();
           }
-          
-
-        $(function () {
-
-            // 點擊我的收藏
-            $('#MyCollects').on("click", function () {
-                $('#MyFavorites').show();
-                $('#Search').hide();
-                checkCollect();
-
-            });
-            // 點擊探索更多
-            $('#Explore').on("click", function () {
-                $('#Search').show();
-                $('#MyFavorites').hide();
-                checkCollect();
-            });
-
-
-            // 個人收藏頁面
-            var parseDate = d3.timeParse("%Y-%m-%d");
-            var sessionMID = sessionStorage.getItem("LogMemberId");
-            var data = { sessionMID: sessionMID };
-
-
-            var jsonforplot = [];
-            var otherprarmeter = [];
-            var resultstatus = [];
-            var wordTable = JSON.parse($("#word-table").val());
 
-            $.ajax({
-                url: "/Member/MyCollect2",
-                method: "get",
-                data: data,
-                success: function (e) {
 
-                    var totalCount = e.length; // 收藏筆數
-                    $('#totalCountDisplay').text(`(${totalCount}`);
+          $(function () {
+
+              // 點擊我的收藏
+              $('#MyCollects').on("click", function () {
+                  $('#MyFavorites').show();
+                  $('#Search').hide();
+                  checkCollect();
+
+              });
+              // 點擊探索更多
+              $('#Explore').on("click", function () {
+                  $('#Search').show();
+                  $('#MyFavorites').hide();
+                  checkCollect();
+              });
+
+
+              // 個人收藏頁面
+              var parseDate = d3.timeParse("%Y-%m-%d");
+              var sessionMID = sessionStorage.getItem("LogMemberId");
+              var data = { sessionMID: sessionMID };
 
-                    if (MidLevel == "一般會員") {
-                        $('#totalCountDisplay').text(`( ${totalCount} / 5 ) 已收藏筆數`);
-                    } else {
-                        $('#totalCountDisplay').text(`( ${totalCount} / ∞ ) 已收藏筆數`);
-                    }
-                    e.forEach(function (element) {
-                        var number = element;
-                        $.ajax({
-                            method: "get",
-                            url: "/Member/Test",
-                            data: { sessionPID: number },
-                            success: function (e) {
 
-                                jsonforplot = [];
-                                $.each(e, function (index, element) {
-                                    var historydate1 = new Date(element["STdate"]);
-                                    jsonforplot.push({ Date: historydate1, Close: element["SteClose"] });
+              var jsonforplot = [];
+              var otherprarmeter = [];
+              var resultstatus = [];
+              var wordTable = JSON.parse($("#word-table").val());
 
-                                });
+              $.ajax({
+                  url: "/Member/MyCollect2",
+                  method: "get",
+                  data: data,
+                  success: function (e) {
 
-                                var dateObject = new Date(e[0].PFinsihTime);
+                      var totalCount = e.length; // 收藏筆數
+                      $('#totalCountDisplay').text(`(${totalCount}`);
 
+                      if (MidLevel == "一般會員") {
+                          $('#totalCountDisplay').text(`( ${totalCount} / 5 ) 已收藏筆數`);
+                      } else {
+                          $('#totalCountDisplay').text(`( ${totalCount} / ∞ ) 已收藏筆數`);
+                      }
+                      e.forEach(function (element) {
+                          var number = element;
+                          $.ajax({
+                              method: "get",
+                              url: "/Member/Test",
+                              data: { sessionPID: number },
+                              success: function (e) {
 
-                                jsonforplot.push({ Date: dateObject, Close: e[0].PLabel });
+                                  jsonforplot = [];
+                                  $.each(e, function (index, element) {
+                                      var historydate1 = new Date(element["STdate"]);
+                                      jsonforplot.push({ Date: historydate1, Close: element["SteClose"] });
 
-                                var builddate3 = new Date(e[0].PBuildTime);
-                                var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate();
-                                var FinsihTime = new Date(e[0].PFinsihTime);
+                                  });
 
-                                var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate();
+                                  var dateObject = new Date(e[0].PFinsihTime);
 
-                                jsonforplot.sort(function (a, b) {
-                                    var dateA = new Date(a.Date);
-                                    var dateB = new Date(b.Date);
-                                    return dateA - dateB;
-                                });
 
-                                otherprarmeter = [];
-                                otherprarmeter.push({
-                                    Buildtime: builddate4,
-                                    stockname: e[0].PStock,
-                                    parameter: e[0].Parameter,
-                                    PID: e[0].PID,
-                                    preVariable: e[0].preVariable,
-                                    PAcount: e[0].PAcount,
-                                    SName: e[0].SName,
-                                    SCode: e[0].SCode,
-                                    PFinsihTime: FinsihTime2
+                                  jsonforplot.push({ Date: dateObject, Close: e[0].PLabel });
 
-                                });
-                                console.log(e);
-                                var currentdate = new Date();
-                                var year = currentdate.getFullYear();
-                                var month = currentdate.getMonth() + 1;
-                                var day = currentdate.getDate();
-                                var formattedDate = year + "-" + month + "-" + day;
+                                  var builddate3 = new Date(e[0].PBuildTime);
+                                  var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate();
+                                  var FinsihTime = new Date(e[0].PFinsihTime);
 
-                                var result;
-                                var collectNum = e[0]["collectNum"];
-                                var Pstatus = e[0]["Pstatus"]; //狀態
-                                var Pmodel = e[0]["Pmodel"];   //使用模型
-                                var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
-                                var PAR = e[0]['PAccuracyRatio'];
+                                  var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate();
 
-                                resultstatus.push({ "index": number, "result": result, "collectNum": collectNum });
+                                  jsonforplot.sort(function (a, b) {
+                                      var dateA = new Date(a.Date);
+                                      var dateB = new Date(b.Date);
+                                      return dateA - dateB;
+                                  });
 
-                                var parameter = JSON.parse(otherprarmeter[0]["parameter"]);
-                                var preVariable = JSON.parse(otherprarmeter[0]["preVariable"]);
+                                  otherprarmeter = [];
+                                  otherprarmeter.push({
+                                      Buildtime: builddate4,
+                                      stockname: e[0].PStock,
+                                      parameter: e[0].Parameter,
+                                      PID: e[0].PID,
+                                      preVariable: e[0].preVariable,
+                                      PAcount: e[0].PAcount,
+                                      SName: e[0].SName,
+                                      SCode: e[0].SCode,
+                                      PFinsihTime: FinsihTime2
 
-                                var varTochi = [];
+                                  });
+                                  console.log(e);
+                                  var currentdate = new Date();
+                                  var year = currentdate.getFullYear();
+                                  var month = currentdate.getMonth() + 1;
+                                  var day = currentdate.getDate();
+                                  var formattedDate = year + "-" + month + "-" + day;
 
-                                preVariable.forEach(function (w) {
-                                    varTochi.push(wordTable[w]);
+                                  var result;
+                                  var collectNum = e[0]["collectNum"];
+                                  var Pstatus = e[0]["Pstatus"]; //狀態
+                                  console.log("-------------")
 
-                                })
-                                drawPre(jsonforplot, number, result, otherprarmeter[0]["Buildtime"], otherprarmeter[0]["PID"], varTochi, parameter, otherprarmeter[0]["PAcount"], otherprarmeter[0]["SName"], otherprarmeter[0]["SCode"], otherprarmeter[0]["PFinsihTime"], '.MyFavorite', collectNum, Pmodel, PAR);
+                                  console.log(e[0]["Pstatus"])
+                                  console.log("-------------")
 
+                                  var Pmodel = e[0]["Pmodel"];   //使用模型
+                                  var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
+                                  var PAR = e[0]['PAccuracyRatio'];
 
+                                  resultstatus.push({ "index": number, "result": result, "collectNum": collectNum });
 
-                            }
+                                  var parameter = JSON.parse(otherprarmeter[0]["parameter"]);
+                                  var preVariable = JSON.parse(otherprarmeter[0]["preVariable"]);
 
-                        });
-                    });
-                },
-                error: function (xhr, status, error) {
+                                  var varTochi = [];
 
-                }
+                                  preVariable.forEach(function (w) {
+                                      varTochi.push(wordTable[w]);
 
+                                  })
+                                  drawPre(jsonforplot, number, result, otherprarmeter[0]["Buildtime"], otherprarmeter[0]["PID"], varTochi, parameter, otherprarmeter[0]["PAcount"], otherprarmeter[0]["SName"], otherprarmeter[0]["SCode"], otherprarmeter[0]["PFinsihTime"], '.MyFavorite', collectNum, Pmodel, PAR);
 
 
-            });
 
+                              }
 
-            //條件篩選-追蹤中、已結案
-            $('#Ongoing').on("click", function () {
-                $(".prediction-card").show();
+                          });
+                      });
+                  },
+                  error: function (xhr, status, error) {
 
-                var hasVisibleCard = false;
+                  }
 
 
-                $.each(resultstatus, function (index, element) {
 
-                    if (element.result == "已結案") {
-                        $(`.prediction-card.${element.index}`).hide();
+              });
 
-                    } else {
-                        hasVisibleCard = true;
-                    }
-                });
 
+              // 條件篩選 - 追蹤中、已結案
+              $('#Ongoing').on("click", function () {
+                  $(".prediction-card").show();
 
+                  var hasVisibleCard = false;
 
-                if (hasVisibleCard) {
-                    $(".no-data-message").hide();
-                } else {
-                    $(".no-data-message").show();
-                }
 
-            })
+                  $.each(resultstatus, function (index, element) {
 
+                      if (element.result == "已結案") {
+                          $(`.prediction-card.${element.index}`).hide();
 
-            $('#Finished').on("click", function () {
-                $(".prediction-card").show();
+                      } else {
+                          hasVisibleCard = true;
+                      }
+                  });
 
-                var hasVisibleCard = false;
 
-                $.each(resultstatus, function (index, element) {
 
-                    if (element.result == "追蹤中") {
-                        $(`.prediction-card.${element.index}`).hide();
-                    } else {
-                        hasVisibleCard = true;
-                    }
-                });
+                  if (hasVisibleCard) {
+                      $(".no-data-message").hide();
+                  } else {
+                      $(".no-data-message").show();
+                  }
 
+              })
 
-                if (hasVisibleCard) {
-                    $(".no-data-message").hide();
-                } else {
-                    $(".no-data-message").show();
-                }
-            });
 
-            // 條件篩選 - 收藏數
-            $("#LikeNum1").on("click", function () {
-                $(".prediction-card").show();
+              $('#Finished').on("click", function () {
+                  $(".prediction-card").show();
 
-                $(".no-data-message").hide();
+                  var hasVisibleCard = false;
 
-                function compare(a, b) {
-                    return b.collectNum - a.collectNum
-                }
-                var likeList = resultstatus.sort(compare);
-                for (var i = 0; i < resultstatus.length; i++) {
-                    $(`.prediction-card.${likeList[i].index}`).css("order", i + 1);
-                }
+                  $.each(resultstatus, function (index, element) {
 
-            })
+                      if (element.result == "追蹤中") {
+                          $(`.prediction-card.${element.index}`).hide();
+                      } else {
+                          hasVisibleCard = true;
+                      }
+                  });
 
-            // 條件篩選 - 建立時間
-            $("#AllCard1").on("click", function () {
-                $(".prediction-card").show();
 
-                $(".no-data-message").hide();
+                  if (hasVisibleCard) {
+                      $(".no-data-message").hide();
+                  } else {
+                      $(".no-data-message").show();
+                  }
+              });
 
-                function compare(a, b) {
-                    return b.index - a.index
-                }
-                var DateList = resultstatus.sort(compare);
-                for (var i = 0; i < resultstatus.length; i++) {
-                    $(`.prediction-card.${DateList[i].index}`).css("order", i + 1);
-                }
-                console.log(resultstatus);
-                ($(`.prediction-card`) == null) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
-            })
+              // 條件篩選 - 收藏數
+              $("#LikeNum1").on("click", function () {
+                  $(".prediction-card").show();
 
+                  $(".no-data-message").hide();
 
+                  function compare(a, b) {
+                      return b.collectNum - a.collectNum
+                  }
+                  var likeList = resultstatus.sort(compare);
+                  for (var i = 0; i < resultstatus.length; i++) {
+                      $(`.prediction-card.${likeList[i].index}`).css("order", i + 1);
+                  }
 
-            // 股票卡片搜尋欄 (完成版)
-            $('#searchTerm').keypress(function (e) {
-                if (e.which == 13) {
-                    e.preventDefault();
-                    
-                    var searchTerm = $('#searchTerm').val();
-                    var jsonforplot;
-                    var Pbuildate;
-                    var plotarray = [];
-                    var otherprarmeter = [];
-                    resultstatus = [];
-                    checkCollect();
+              })
 
-                    $.ajax({
-                        type: 'get',
-                        url: '/Member/Search',
-                        data: { searchTerm: searchTerm },
-                        success: function (e) {
-                            var totalCount2 = (e.length) / 5; // 收藏筆數
-                            $('#totalCountDisplay2').text(`搜尋結果筆數：共  ${totalCount2} 筆`);
+              // 條件篩選 - 建立時間
+              $("#AllCard1").on("click", function () {
+                  $(".prediction-card").show();
 
-                            if (e.length === 0) {
+                  $(".no-data-message").hide();
 
-                                alert("查無此代碼相關歷史預測資料");
-                                return;
-                            }
-                            for (var i = 0; i < e.length; i += 5) {
-                                //console.log("----------" + i)
-                                var subArray = [];
-                                for (var j = 0; j < 5; j++) {
-                                    var historydate1 = new Date(e[j]["STdate"])
-                                    jsonforplot = ({ Date: historydate1, Close: e[j]["SteClose"] })
-                                    subArray.push(jsonforplot);
-                                }
+                  function compare(a, b) {
+                      return b.index - a.index
+                  }
+                  var DateList = resultstatus.sort(compare);
+                  for (var i = 0; i < resultstatus.length; i++) {
+                      $(`.prediction-card.${DateList[i].index}`).css("order", i + 1);
+                  }
+                  console.log(resultstatus);
+                  ($(`.prediction-card`) == null) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
+              })
 
-                                var finishdate2 = new Date(e[i]["PFinsihTime"])
-                                subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] })
-                                plotarray.push(subArray)
 
-                            }
 
-                            for (var i = 0; i < plotarray.length; i++) {
-                                plotarray[i].sort(function (a, b) {
+              // 股票卡片搜尋欄
+              $('#searchTerm').keypress(function (e) {
+                  if (e.which == 13) {
+                      e.preventDefault();
+                      changePage();
+                      var searchTerm = $('#searchTerm').val();
+                      var jsonforplot;
+                      var Pbuildate;
+                      var plotarray = [];
+                      var otherprarmeter = [];
+                      resultstatus = [];
+                      var wordTable = JSON.parse($("#word-table").val());
 
-                                    var dateA = new Date(a.Date);
-                                    var dateB = new Date(b.Date);
+                      checkCollect();
 
-                                    return dateA - dateB; // 降序排列
-                                });
-                            }
+                      // 清空上一次搜索结果
+                      $('.predictionArea').empty();
 
-                            for (var w = 0; w < e.length; w += 5) {
-                                var builddate3 = new Date(e[w]["PBuildTime"])
-                                var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate()
+                      $.ajax({
+                          type: 'get',
+                          url: '/Member/Search',
+                          data: { searchTerm: searchTerm },
+                          success: function (e) {
+                              var totalCount2 = (e.length) / 5; // 收藏筆數
+                              $('#totalCountDisplay2').text(`搜尋結果筆數：共  ${totalCount2} 筆`);
 
-                                var FinsihTime = new Date(e[w]["PFinsihTime"])
-                                var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate()
-                                otherprarmeter.push({
-                                    Buildtime: builddate4,
-                                    stockname: e[w]["PStock"],
-                                    parameter: e[w]["Parameter"],
-                                    PID: e[w]["PID"],
-                                    preVariable: e[w]["preVariable"],
-                                    PAcount: e[w]["PAcount"],
-                                    SName: e[w]["SName"],
-                                    SCode: e[w]["SCode"],
-                                    PFinsihTime: FinsihTime2
-                                })
-                            }
+                              if (e.length === 0) {
 
-                            $.each(plotarray, function (index, element) {
+                                  $(".search-hint").css("display", "block");
 
-                                var finishtime = new Date(element[5]["Date"]);
-                                var currentdate = new Date()
-                                var result;
-                                var collectNum = e[0]["collectNum"];
-                                var Pstatus = e[0]["Pstatus"]; //狀態
-                                var Pmodel = e[0]["Pmodel"];   //使用模型
-                                var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
-                                var PAR = e[0]['PAccuracyRatio'];
+                                  return;
+                              }
+                              for (var i = 0; i < e.length; i += 5) {
+                                  //console.log("----------" + i)
+                                  var subArray = [];
+                                  for (var j = 0; j < 5; j++) {
+                                      var historydate1 = new Date(e[j]["STdate"])
+                                      jsonforplot = ({ Date: historydate1, Close: e[j]["SteClose"] })
+                                      subArray.push(jsonforplot);
+                                  }
 
+                                  var finishdate2 = new Date(e[i]["PFinsihTime"])
+                                  subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] })
+                                  plotarray.push(subArray)
 
-                                resultstatus.push({ "index": index + 1, "result": result, "collectNum": collectNum });
+                              }
 
-                                // 結案狀態
+                              for (var i = 0; i < plotarray.length; i++) {
+                                  plotarray[i].sort(function (a, b) {
 
-                                // 結果參數
-                                var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
-                                // 選擇變數
-                                var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
-                                var varTochi = [];
+                                      var dateA = new Date(a.Date);
+                                      var dateB = new Date(b.Date);
 
-                                preVariable.forEach(function (w) {
-                                    varTochi.push(wordTable[w]);
+                                      return dateA - dateB; // 降序排列
+                                  });
+                              }
 
-                                })
-                                drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], varTochi, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], '.predictionArea', collectNum, Pmodel, PAR)
+                              for (var w = 0; w < e.length; w += 5) {
+                                  var builddate3 = new Date(e[w]["PBuildTime"])
+                                  var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate()
 
-                            });
+                                  var FinsihTime = new Date(e[w]["PFinsihTime"])
+                                  var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate()
+                                  otherprarmeter.push({
+                                      Buildtime: builddate4,
+                                      stockname: e[w]["PStock"],
+                                      parameter: e[w]["Parameter"],
+                                      PID: e[w]["PID"],
+                                      preVariable: e[w]["preVariable"],
+                                      PAcount: e[w]["PAcount"],
+                                      SName: e[w]["SName"],
+                                      SCode: e[w]["SCode"],
+                                      PFinsihTime: FinsihTime2
+                                  })
+                              }
 
+                              $.each(plotarray, function (index, element) {
 
+                                  var finishtime = new Date(element[5]["Date"]);
+                                  var currentdate = new Date()
+                                  var result;
+                                  var collectNum = e[0]["collectNum"];
+                                  var Pstatus = e[0]["Pstatus"]; //狀態
+                                  var Pmodel = e[0]["Pmodel"];   //使用模型
+                                  var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
 
-                        }
-                    })
+                                  console.log("-------------")
 
-                }
-            })
+                                  console.log(e[0]["Pstatus"])
+                                  console.log("-------------")
+                                  var PAR = e[0]['PAccuracyRatio'];
 
-            // 條件篩選-追蹤中、已結案
-            $('#Ongoing2').on("click", function () {
-                $(".prediction-card").show();
-                var hasVisibleCard = false;
 
-                $.each(resultstatus, function (index, element) {
+                                  resultstatus.push({ "index": index + 1, "result": result, "collectNum": collectNum });
 
+                                  // 結案狀態
 
-                    if (element.result == "已結案") {
+                                  // 結果參數
+                                  var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
+                                  // 選擇變數
+                                  var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
+                                  var varTochi = [];
 
-                        $(`.prediction-card.${index + 1}`).hide();
+                                  preVariable.forEach(function (w) {
+                                      varTochi.push(wordTable[w]);
 
-                    }
-                    else {
-                        hasVisibleCard = true;
-                    }
+                                  })
+                                  drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], varTochi, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], '.predictionArea', collectNum, Pmodel, PAR)
 
-                });
+                              });
 
-                if (!hasVisibleCard) {
-                    $(".no-data-message2").show();
-                } else {
-                    $(".no-data-message2").hide();
-                }
-            });
 
 
+                          }
+                      })
 
-            $('#Finished2').on("click", function () {
+                  }
+              })
 
-                $(".prediction-card").show();
-                var hasVisibleCard = false;
-                $.each(resultstatus, function (index, element) {
+              // 條件篩選-追蹤中、已結案
+              $('#Ongoing2').on("click", function () {
+                  $(".prediction-card").show();
+                  var hasVisibleCard = false;
 
+                  $.each(resultstatus, function (index, element) {
 
-                    if (element.result == "追蹤中") {
-                        $(`.prediction-card.${index + 1}`).hide();
 
-                    } else {
-                        hasVisibleCard = true;
-                    }
+                      if (element.result == "已結案") {
 
-                });
+                          $(`.prediction-card.${index + 1}`).hide();
 
-                if (!hasVisibleCard) {
-                    $(".no-data-message2").show();
-                } else {
-                    $(".no-data-message2").hide();
-                }
-            });
+                      }
+                      else {
+                          hasVisibleCard = true;
+                      }
 
+                  });
 
+                  if (!hasVisibleCard) {
+                      $(".no-data-message2").show();
+                  } else {
+                      $(".no-data-message2").hide();
+                  }
+              });
 
-            // 條件篩選 - 收藏數
-            $("#LikeNum2").on("click", function () {
-                $(".prediction-card").show();
 
-                $(".no-data-message2").hide();
-                function compare(a, b) {
-                    return b.collectNum - a.collectNum
-                }
-                var likeList = resultstatus.sort(compare);
-                for (var i = 0; i < resultstatus.length; i++) {
-                    $(`.prediction-card.${likeList[i].index}`).css("order", i + 1);
-                }
 
-            })
+              $('#Finished2').on("click", function () {
 
-            // 條件篩選 - 建立時間
-            $("#AllCard2").on("click", function () {
-                $(".prediction-card").show();
+                  $(".prediction-card").show();
+                  var hasVisibleCard = false;
+                  $.each(resultstatus, function (index, element) {
 
-                $(".no-data-message2").hide();
 
-                function compare(a, b) {
-                    return b.index - a.index
-                }
-                var DateList = resultstatus.sort(compare);
-                for (var i = 0; i < resultstatus.length; i++) {
-                    $(`.prediction-card.${DateList[i].index}`).css("order", i + 1);
-                }
-                console.log(resultstatus);
-                ($(`.prediction-card`) == null) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
-            })
+                      if (element.result == "追蹤中") {
+                          $(`.prediction-card.${index + 1}`).hide();
 
-              
+                      } else {
+                          hasVisibleCard = true;
+                      }
+
+                  });
+
+                  if (!hasVisibleCard) {
+                      $(".no-data-message2").show();
+                  } else {
+                      $(".no-data-message2").hide();
+                  }
+              });
+
+
+
+              // 條件篩選 - 收藏數
+              $("#LikeNum2").on("click", function () {
+                  $(".prediction-card").show();
+
+                  $(".no-data-message2").hide();
+                  function compare(a, b) {
+                      return b.collectNum - a.collectNum
+                  }
+                  var likeList = resultstatus.sort(compare);
+                  for (var i = 0; i < resultstatus.length; i++) {
+                      $(`.prediction-card.${likeList[i].index}`).css("order", i + 1);
+                  }
+
+              })
+
+              // 條件篩選 - 建立時間
+              $("#AllCard2").on("click", function () {
+                  $(".prediction-card").show();
+
+                  $(".no-data-message2").hide();
+
+                  function compare(a, b) {
+                      return b.index - a.index
+                  }
+                  var DateList = resultstatus.sort(compare);
+                  for (var i = 0; i < resultstatus.length; i++) {
+                      $(`.prediction-card.${DateList[i].index}`).css("order", i + 1);
+                  }
+                  console.log(resultstatus);
+                  ($(`.prediction-card`) == null) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
+              })
+
+
 
               // 開始
               // 生卡片
@@ -918,27 +915,27 @@
 
 
                   $(targetSelector).prepend(`<label class='prediction-card ${index}'>
-                                                                      <input type='checkbox' class='card-btn' />
-                                                                      <div class='card-content'><div class='card-front'>
-                                                                      <p class="pre-code" style="display:inline;">${SCode}</p>
-                                                                      <p class="pre-name" style="display:inline;margin-left:10px;">${SName}</p>
-                                                                      <button class="pre-state PS${PID} pre-state-member" style="display:inline;margin-left:10px;" onclick="cardDetail(this)">${preState}</button>
-                                                                                <table class="table-inside">
-                                                                      <tr><th class="pre-th">建立者</th><td class="pre-td pre-date">${PAcount}</td></tr>
-                                                                      <tr><th class="pre-th">使用模型</th><td class="pre-td pre-date">${Pmodel}</td></tr>
-                                                                      <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
-                                                                      <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${PFinsihTime}</td></tr>
-                                                                      <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
-                                                                      <tr><th class="pre-th">準確率</th><td class="pre-td">${PAR}</td></tr>
-                                                                      </table>
-                                                                                          <p class="collectNum card${PID}">${collect > 0 ? collect : 0}<p>
-                                                                                <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♡</button>
-                                                                      </div>
+                                                                                          <input type='checkbox' class='card-btn' />
+                                                                                          <div class='card-content'><div class='card-front'>
+                                                                                          <p class="pre-code" style="display:inline;">${SCode}</p>
+                                                                                          <p class="pre-name" style="display:inline;margin-left:10px;">${SName}</p>
+                                                                                          <button class="pre-state PS${PID} pre-state-member" style="display:inline;margin-left:10px;" onclick="cardDetail(this)">${preState}</button>
+                                                                                                    <table class="table-inside">
+                                                                                          <tr><th class="pre-th">建立者</th><td class="pre-td pre-date">${PAcount}</td></tr>
+                                                                                          <tr><th class="pre-th">使用模型</th><td class="pre-td pre-date">${Pmodel}</td></tr>
+                                                                                          <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
+                                                                                          <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${PFinsihTime}</td></tr>
+                                                                                          <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
+                                                                                          <tr><th class="pre-th">準確率</th><td class="pre-td">${PAR}</td></tr>
+                                                                                          </table>
+                                                                                                              <p class="collectNum card${PID}">${collect > 0 ? collect : 0}<p>
+                                                                                                    <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♡</button>
+                                                                                          </div>
 
-                                                                      <div class='card-back'>
-                                                                      <div class='forPrediction'>
-                                                                      </div></div></div>
-                                                                      <div class="preVar">${prelist}</div></label>`);
+                                                                                          <div class='card-back'>
+                                                                                          <div class='forPrediction'>
+                                                                                          </div></div></div>
+                                                                                          <div class="preVar">${prelist}</div></label>`);
 
 
 
@@ -1315,8 +1312,76 @@
               sessionStorage.setItem("VarTag", tagforSession);
           }
 
+          $(".bg-right-hand").addClass("bg-right-hand-move");
+          $(".bg-left-hand").addClass("bg-left-hand-move");
 
-          
+          $("#loading-ani").hide();
+
+
+          setTimeout(function () {
+              $(".bg-water").addClass("bg-water-show");
+          }, 1000);
+
+          function changePage() {
+              $(".search-hint").hide();
+
+              $.ajax({
+                  url: `/Home/checkStocks/${$("#searchTerm").val()}`,
+                  method: "post"
+              }).done(function (ans) {
+
+                  if (ans == "wrongCode") {
+                      $(".search-hint").css("display", "block");
+                  } else {
+                      $("#loading-ani").show();
+                      $(".loading-info").css("display", "block");
+                      $(".search-hint").hide();
+                      // jget("/StockModel/UpdateOneStock", ans).then(function (e) {
+                      //     document.location.href = `/Home/StockCharts/${ans}`;
+                      // });
+                  }
+              })
+          }
+
+          $.widget("custom.catcomplete", $.ui.autocomplete, {
+              _create: function () {
+                  this._super();
+                  this.widget().menu("option", "items", "> :not(.ui-autocomplete-category)");
+              },
+              _renderMenu: function (ul, items) {
+                  var that = this,
+                      currentCategory = "";
+                  $.each(items, function (index, item) {
+                      var li;
+                      if (item.category != currentCategory) {
+                          ul.append("<li class='ui-autocomplete-category'>" + item.category + "</li>");   //標籤
+                          currentCategory = item.category;
+                      }
+                      li = that._renderItemData(ul, item);
+                      if (item.category) {
+                          li.attr("aria-label", item.category + " : " + item.label);  //內容
+                      }
+                  });
+              }
+          });
+
+          $.getJSON("/Home/stocksListAC", function (myData) {
+              $("#searchTerm").catcomplete({
+                  delay: 0,
+                  source: myData
+              });
+          })
+          $.getJSON("/stockmodel/stocksListACA", function (myData) {
+              $("#stockid").catcomplete({
+                  delay: 0,
+                  source: myData
+              });
+          })
+
+
+
+
+
 </script>
 
 
