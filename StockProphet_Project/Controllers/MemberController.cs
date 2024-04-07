@@ -22,6 +22,7 @@ using System.Collections;
 using static HDF.PInvoke.H5T;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Net.NetworkInformation;
+using ChoETL;
 
 namespace StockProphet_Project.Controllers
 {
@@ -122,26 +123,16 @@ namespace StockProphet_Project.Controllers
         }
 
 
-        public IActionResult MySearchPage()
-        {
-            // 在加载搜索页面时返回一个空的视图
-            return View();
-        }
-
-        //public IActionResult MyCollect()
-        //{
-
-        //    return View();
-        //}
+        
 
         public IActionResult MyCollect()
         {
-			var stockModelController = new StockModelController(null, _context);
+            var stockModelController = new StockModelController(null, _context);
 
-			string word = stockModelController.GetStockVarsMapTable();
-			//Console.WriteLine(test);
-			ViewBag.word = word;
-			return View();
+            string word = stockModelController.GetStockVarsMapTable();
+            //Console.WriteLine(test);
+            ViewBag.word = word;
+            return View();
         }
 
 
@@ -152,47 +143,38 @@ namespace StockProphet_Project.Controllers
             int PID = Convert.ToInt32(sessionPID);
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
-            //        string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-            //             B.PBulidTime,B.Pvariable, B.PFinishTime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code,B.Pstatus,B.Pmodel,B.PAccuracyRatio
-            //FROM DB_model AS B 
-            //OUTER APPLY (
-            //    SELECT TOP 5 *
-            //    FROM Stock
-            //    WHERE SN_code = B.Pstock
-            //          AND ST_Date <= B.PBulidTime
-            //    ORDER BY ST_Date DESC
-            //) AS A 
-            //WHERE B.Pid = {PID}";
-            string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
+
+            string sqlQuery = 
+                 $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
                  B.PBulidTime,B.Pvariable, B.PFinishTime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code,B.Pstatus,B.Pmodel,B.PAccuracyRatio, COUNT(c.PID) as collectNum
-    FROM DB_model AS B 
- left join DB_Collect c on B.Pid = c.PID  
-    OUTER APPLY (
-        SELECT TOP 5 *
-        FROM Stock
-        WHERE SN_code = B.Pstock
-              AND ST_Date <= B.PBulidTime
-        ORDER BY ST_Date DESC
-    ) AS A 
+                 FROM DB_model AS B 
+                 left join DB_Collect c on B.Pid = c.PID  
+                 OUTER APPLY (
+                 SELECT TOP 5 *
+                 FROM Stock
+                 WHERE SN_code = B.Pstock
+                 AND ST_Date <= B.PBulidTime
+                 ORDER BY ST_Date DESC
+                  ) AS A 
  
-    WHERE B.Pid ={PID}
- GROUP BY 
-    B.PAccount,
-    B.Dummyblock,
-    B.Plabel,
-    B.PfinishTime,
-    B.Pid,
-    B.PbulidTime,
-    B.Pvariable,
-    B.Pstatus,
-    B.Pmodel,
-    B.PAccuracyRatio,
- B.Pstock,
- A.ST_Date,A.ste_Close,
- A.SN_Name,
- A.SN_Code,B.Pstatus,
- B.Pmodel,
- B.PAccuracyRatio";
+                 WHERE B.Pid ={PID}
+                 GROUP BY 
+                 B.PAccount,
+                 B.Dummyblock,
+                 B.Plabel,
+                 B.PfinishTime,
+                 B.Pid,
+                 B.PbulidTime,
+                 B.Pvariable,
+                 B.Pstatus,
+                 B.Pmodel,
+                 B.PAccuracyRatio,
+                 B.Pstock,
+                 A.ST_Date,A.ste_Close,
+                 A.SN_Name,
+                 A.SN_Code,B.Pstatus,
+                 B.Pmodel,
+                 B.PAccuracyRatio";
             Console.WriteLine(sqlQuery);
             SqlConnection sqlconnect = new SqlConnection(connectionString);
             sqlconnect.Open();
@@ -279,7 +261,6 @@ namespace StockProphet_Project.Controllers
                             var pidStrings = MFavoriteModel.Split(',');
 
                             // 將字串轉換為整數並存儲在列表中
-                            //var pidList = new List<int>();
                             foreach (var pidString in pidStrings)
                             {
                                 if (int.TryParse(pidString, out int pid))
@@ -291,8 +272,7 @@ namespace StockProphet_Project.Controllers
                             // 將數字陣列傳遞到 View
                             ViewBag.FavoriteNumbers = pidList;
                             ViewBag.PidStringsCount = pidStrings.Length;
-                            //ViewData["PidStringsCount"] = ViewBag.PidStringsCount;
-                            // 将数字数组的长度存入 ViewData 中
+
                             ViewData["PidStringsCount"] = pidList.Count;
 
                             Console.WriteLine("這裡");
@@ -320,62 +300,6 @@ namespace StockProphet_Project.Controllers
 
 
         }
-
-        //[HttpPost]
-        //public IActionResult MyCollect(string sessionMID)
-        //{
-        //    // var sessionMID = HttpContext.Session.GetString(SessionKeys.MID);
-
-
-        //    if (int.TryParse(sessionMID, out int mid))
-        //    {
-        //        var item = _context.DbMembers.FirstOrDefault(item => item.Mid == mid);
-
-        //        if (item != null)
-        //        {
-        //            string formattedMfavoriteModel = string.Empty;
-
-        //            if (!string.IsNullOrEmpty(item.MfavoriteModel))
-        //            {
-        //                formattedMfavoriteModel = item.MfavoriteModel.Trim('{', '}');
-
-        //                if (formattedMfavoriteModel != "")
-        //                {
-        //                    var pidStrings = formattedMfavoriteModel.Split(',');
-        //                    var pidList = new List<int>();
-
-        //                    foreach (var pidString in pidStrings)
-        //                    {
-        //                        if (int.TryParse(pidString, out int pid))
-        //                        {
-        //                            pidList.Add(pid);
-        //                        }
-        //                    }
-
-        //                    var favoriteItems = _context.DbModels.Where(model => pidList.Contains(model.Pid)).ToList();
-
-        //                    // 将收藏项数据存储在sessionStorage中
-        //                    var favoriteItemsJson = JsonConvert.SerializeObject(favoriteItems);
-        //                    HttpContext.Session.SetString("FavoriteItems", favoriteItemsJson);
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return View();
-        //}
-
-        //// 我的收藏頁面
-        //public IActionResult MyCollect()
-        //{
-        //    // 使用 JavaScript 將 MID 存儲到 sessionStorage
-        //    var sessionMID = HttpContext.Session.GetString(SessionKeys.MID);
-        //    ViewData["SessionMID"] = sessionMID; // 在视图中使用 ViewData 传递 MID
-
-        //    return View();
-        //}
-
-
 
 
         [HttpGet]
@@ -431,51 +355,18 @@ namespace StockProphet_Project.Controllers
 
         }
 
-        //     //我的收藏 - 網址傳資料|回傳預測內容
-        //     public IActionResult showPredictions(string id)
-        //     {
-        //         var viewModel = _context.DbModels.ToList();
-        //         var query = from p in viewModel
-        //                     where p.Pstock == id
-        //                     select new
-        //                     {
-        //                         Account = p.Paccount,
-        //                         Variable = p.Pvariable,
-        //                         Label = p.Plabel,
-        //                         FinishTime = Convert.ToDateTime(p.PfinishTime).ToString("yyyy-MM-dd")
-        //                     };
-        //         return Json(query);
-        //     }
 
-        //     // 我的收藏 - 網址傳資料|該股票所有內容 ( for 預測用
-        //     public IActionResult showAllStocks(string id)
-        //     {
-
-        ////Console.WriteLine(id);
-        ////var query1 = _context.Stock.ToList();
-        //var viewModel = _context.Stock.ToList();
-        //var query = from p in viewModel
-        //			where p.SnCode == id
-        //			select new
-        //			{
-        //				Date = p.StDate,
-        //				Close = p.SteClose,
-        //				StockName = p.SnName
-        //			};
-        //Console.WriteLine(query);
-        //return Json(query);
-        //     }
 
         //我的預測結果頁面_1-4
         public IActionResult MyPredictResult()
         {
-			var stockModelController = new StockModelController(null, _context);
+            var stockModelController = new StockModelController(null, _context);
 
-			string word = stockModelController.GetStockVarsMapTable();
-			//Console.WriteLine(test);
-			ViewBag.word = word;
+            string word = stockModelController.GetStockVarsMapTable();
+            //Console.WriteLine(test);
+            ViewBag.word = word;
 
-			return View();
+            return View();
         }
 
         [HttpGet]
