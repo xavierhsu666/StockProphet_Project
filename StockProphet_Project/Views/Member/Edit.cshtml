@@ -179,14 +179,14 @@
 
                     <div class="form-floating mb-3">
                         <input class="form-control" type="password" pattern=@PasswordPattern maxlength="20" name="MPassword" id="Password" data-toggle="tooltip" title="請輸入原始密碼" value="">
-                        <label class="form-label" for="Password">修改密碼:</label>
+                        <label class="form-label" for="Password">若要更改，請先輸入原始密碼:</label>
                         <i id="checkEye1" class="fas fa-eye-slash"></i>
                         <span id="passwordError" style="color: red;"></span>
 
                     </div>
                     <div id="pass1" class="form-floating mb-3">
                         <input class="form-control" type="password" pattern=@PasswordPattern maxlength="20" name="MPassword1" id="Password1" data-toggle="tooltip" title="至少包含一個特殊符號，且長度須超過8碼" value="">
-                        <label class="form-label" for="Password">輸入新密碼:</label>
+                        <label class="form-label" for="Password">新密碼:</label>
                         <i id="checkEye2" class="fas fa-eye-slash"></i>
                         <span id="passwordError1" style="color: red;"></span>
 
@@ -194,7 +194,7 @@
                     </div>
                     <div id="pass2" class="form-floating mb-3">
                         <input class="form-control" type="password" pattern=@PasswordPattern maxlength="20" name="MPassword2" id="Password2" data-toggle="tooltip" title="請再輸入您剛才設定的密碼" value="">
-                        <label class="form-label" for="Password">請再輸入一次新密碼:</label>
+                        <label class="form-label" for="Password">請再次輸入新密碼:</label>
                         @* 再次輸入密碼不同時，顯示提示字 *@
                         <span id="passwordError2" style="color: red;"></span>
                         <span id="pwdnoteword2"><p style="color:red; ">您輸入的密碼不相同</p></span>
