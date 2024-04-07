@@ -9,6 +9,7 @@ using System.Collections;
 using System.Data;
 using System.Net;
 using System.Text;
+using System.Security.Cryptography;
 
 
 
@@ -239,18 +240,53 @@ namespace StockProphet_Project.Controllers {
 
 
 		public IActionResult Visitor() {
-			return View();
+
+			var q = from o in _context.DbModels.ToList()
+					where o.Pid == 12
+					select o;
+			var mr = q.FirstOrDefault();
+			StockModelController stc = new StockModelController(null, _context);
+			stc.UpdateModelResultsStatusAndRatio();
+			stc.GetStockVarsMapTable();
+
+			var stockData = _context.Stock.Where(x => x.SnCode == "2330").ToList();
+			int dataCount = _context.Stock.Where(x => x.SnCode == "2330").Count();
+			string usedModel = "°jÂk¼Ò«¬";
+			ViewBag.result = new {
+				DataCount = dataCount,
+				ChartData = stockData,
+				usingModel = usedModel,
+			};
+
+			return View(mr);
+			//return View();
 		}
+		//public IActionResult VisitorPhoto() {
+		//	var q = from o in _context.DbModels.ToList()
+		//			where o.Pid == 5
+		//			select o;
+		//	var mr = q.FirstOrDefault();
+		//	StockModelController stc = new StockModelController(null, _context);
+		//	stc.UpdateModelResultsStatusAndRatio();
+		//	stc.GetStockVarsMapTable();
 
+		//	var stockData = _context.Stock.Where(x => x.SnCode == "2330").ToList();
+		//	int dataCount = _context.Stock.Where(x => x.SnCode == "2330").Count();
+		//	string usedModel = "°jÂk¼Ò«¬";
+		//	ViewBag.result = new {
+		//		DataCount = dataCount,
+		//		ChartData = stockData,
+		//		usingModel = usedModel,
+		//	};
 
+		//	return View(mr);
+		//}
 
-		public IActionResult Privacy() {
-			return View();
-		}
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error() {
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 		}
+
 	}
 }
