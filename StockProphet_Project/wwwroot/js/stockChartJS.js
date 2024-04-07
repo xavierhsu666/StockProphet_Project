@@ -168,6 +168,7 @@ var yScaleKD = d3.scaleLinear()
 var dataAll;
 
 d3.json(`/Home/showStocks/${stocksID}`, function (data) {
+    //console.log(data);
     $(".td-tittle").text(data[0].StockName) //股票名稱
     data = data.map(function (d) {
         return {
@@ -427,30 +428,60 @@ $("#change").on("click", function () {
     svgMACD.append('g').attr("class", "crosshairMacd")
     if (!SIchange) {
         drawMACD(dataAll);
-        this.innerText = "KD"
+        this.innerText = "切換至KD"
         SIchange = true;
     } else {
         drawKD(dataAll);
-        this.innerText = "MACD"
+        this.innerText = "切換至MACD"
         SIchange = false;
     }
 })
 
 function smaClick(btn) {
-    switch (btn.innerText) {
-        case "SMA5":
+    console.log((btn.innerText).substring(1));
+    switch ((btn.innerText).substring(2)) {
+        case "SMA5": {
             $(".ma-5").toggleClass("hideElem");
-            break;
+            if ($(".ma-5").hasClass("hideElem")) {
+                $(".btn-sma5").css({
+                    "background-color": "white",
+                    "color": "#1f77b4"
+                })
+                btn.innerText = "顯示SMA5"
+            } else {
+                $(".btn-sma5").css({
+                    "background-color": "#1f77b4",
+                    "color": "white"
+                })
+                btn.innerText = "隱藏SMA5"
+            }
 
-        case "SMA30":
-            $(".ma-30").toggleClass("hideElem");
             break;
+        }
+
+        case "SMA30": {
+            $(".ma-30").toggleClass("hideElem");
+            if ($(".ma-30").hasClass("hideElem")) {
+                $(".btn-sma30").css({
+                    "background-color": "white",
+                    "color": "#ff8000"
+                })
+                btn.innerText = "顯示SMA30"
+            } else {
+                $(".btn-sma30").css({
+                    "background-color": "#ff8000",
+                    "color": "white"
+                })
+                btn.innerText = "隱藏SMA30"
+            }
+            break;
+        }
     }
 }
 
 
 var wordTable = JSON.parse($("#word-table").val());
-console.log(wordTable);
+//console.log(wordTable);
 
 var resultstatus = [];
 var finishCard = false;
@@ -478,13 +509,14 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
 
             var preState = (status == "Close") ? "已結案" : "追蹤中";
 
-            var comDate = (status == "Close") ? preDate : preBuildDate;
+            //var comDate = (status == "Close") ? preDate : preBuildDate; 
+            var comDate = preDate;
 
-            
+            //console.log("已結案:" + preDate + "追蹤中" + preBuildDate);
 
             //console.log("預測日: "+ xData)
             //用BuildDate去找列表中最近的日子(closestDate)，closestDate可能等於BuildDate，也可能是前一天
-            var closestDate = dateList.reduce((prev, curr) => {     //動態追蹤（已
+            var closestDate = dateList.reduce((prev, curr) => {     //動態追蹤
                 var prevDiff = Math.abs(new Date(comDate) - new Date(prev));
                 var currDiff = Math.abs(new Date(comDate) - new Date(curr));
 
@@ -498,7 +530,7 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             for (var j = 0; j < Alldata.length; j++) {
                 if (Alldata[j].Date == closestDate) {
                     //最近的那天是建立那天嗎？（根據那張卡片對於使用者是當天or之前建立的）
-                    var endDate = j - (closestDate >= preBuildDate ? 1 : 0);
+                    var endDate = j - (closestDate >= preDate ? 1 : 0);
                     for (var x = 0; x < 5; x++) {
                         xData.unshift((Alldata[endDate - x]).Date);
                         yData.unshift((Alldata[endDate - x]).Close);
@@ -523,7 +555,7 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
                 varTochi.push(wordTable[w]);
             
             })
-            console.log(varTochi);
+            //console.log(varTochi);
             drawPre(preData, index, preState, preDate, PID, preBuildDate, varTochi, preDummy, pAccount, collectNum, model, PAR);
             //console.log(preState);
         }
@@ -550,7 +582,7 @@ $('#Finished2').on("click", function () {
     $(".prediction-card").show();
     var count = 0;
     $.each(resultstatus, function (index, element) {
-        console.log(element.index)
+        //console.log(element.index)
         if (element.result == "追蹤中") {
             $(`.prediction-card.${index}`).hide();
             count++;
@@ -561,10 +593,14 @@ $('#Finished2').on("click", function () {
 
 $("#AllCard2").on("click", function () {
     $(".prediction-card").show();
-    for (var i = 0; i < resultstatus.length; i++) {
-        $(`.prediction-card.${resultstatus[resultstatus.length-1-i].index}`).css("order", i + 1);
+    function compare(a, b) {
+        return b.index -a.index
     }
-    console.log(resultstatus);
+    var DateList = resultstatus.sort(compare);
+    for (var i = 0; i < resultstatus.length; i++) {
+        $(`.prediction-card.${DateList[i].index}`).css("order", i + 1);
+    }
+    //console.log(resultstatus);
     ($(`.prediction-card`) == null) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
 })
 
@@ -816,14 +852,14 @@ function btnTest(btn) {
             method: "POST",
             data: dataToServer,
             success: function (e) {
-                console.log(e);
+                //console.log(e);
                 switch (e.substring(0, 1)) {
                     case "A": {
                         $(btn).text("♥").css("color", "#87aeb4");
                         console.log("新增一筆");
                         sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
                         var nowNum = $(`.card${dataToServer.cardID}`).text();
-                        setTimeout(function () { $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) + 1) }, 175);
+                        $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) + 1);
                         $(btn).addClass("preBtn-click");
                         $(`.card${dataToServer.cardID}`).removeClass("collectNumAniDown");
                         $(`.card${dataToServer.cardID}`).addClass("collectNumAniUp");
@@ -835,7 +871,7 @@ function btnTest(btn) {
                         console.log("刪除一筆");
                         sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
                         var nowNum = $(`.card${dataToServer.cardID}`).text();
-                        setTimeout(function () { $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) - 1) }, 175);
+                        $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) - 1);
                         $(btn).removeClass("preBtn-click");
                         $(`.card${dataToServer.cardID}`).removeClass("collectNumAniUp");
                         $(`.card${dataToServer.cardID}`).addClass("collectNumAniDown");
@@ -958,7 +994,7 @@ var tagforSession = "";
 function saveTag() {
     tagforSession = "";
     var myList = $(".var-tag .var-tag-a");
-    console.log(myList);
+    //console.log(myList);
     
     if (myList[0] != null) {
         for (var i = 0; i < myList.length; i++) {
@@ -982,7 +1018,7 @@ $(".change-list-btn:first-child").css({
 }).addClass("selectChange");
 function changelist(btn) {
     if (!($(btn).hasClass("selectChange"))) {
-        console.log("new click");
+        //console.log("new click");
         $('html, body').animate({
             scrollTop: $('.middle-area').offset().top - 50
         }, 500);

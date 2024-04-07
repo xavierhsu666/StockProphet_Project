@@ -1,5 +1,9 @@
 ﻿$(".bg-right-hand").addClass("bg-right-hand-move");
 $(".bg-left-hand").addClass("bg-left-hand-move");
+
+$("#loading-ani").hide();
+
+
 setTimeout(function () {
     $(".bg-water").addClass("bg-water-show");
 }, 1000);
@@ -25,9 +29,10 @@ function changePage() {
         if (ans == "wrongCode") {
             $(".search-hint").css("display", "block");
         } else {
-            //loadingAni.play();
+            $("#loading-ani").show();
+            $(".loading-info").css("display", "block");
+            $(".search-hint").hide();
             jget("/StockModel/UpdateOneStock", ans).then(function (e) {
-
                 document.location.href = `/Home/StockCharts/${ans}`;
             });
         } 
@@ -124,7 +129,7 @@ function fetchingData(url, stockId) {
 //                document.location.href = `/Home/StockCharts/${ans}`;
 //            })
 //        } else {
-//            alert("請選擇其他股票");
+//            alert("請選擇其他股票");s
 //            result = false;
 //        }
 //        console.log(rr);
@@ -134,21 +139,12 @@ function fetchingData(url, stockId) {
 
 //叫loading動畫
 var baseUrl = window.location.origin;
-var animationPath = baseUrl + '/icon/loadingChart.json';
-var loadingAni = lottie.loadAnimation({
-    container: $("#loading-ani div"),
-    renderer: "svg",
-    loop: true,
-    autoplay: true,
-    path: animationPath //載下來的動畫json黨
-});
+var animationPath = baseUrl + '/icon/loadingAni.json';
 
-loadingAni.play();
-console.log($("#loading-ani"));
-
-console.log("HIWWWWI");
-
-
-
-
-
+//var loadingAni = lottie.loadAnimation({
+//    container: document.getElementById('loading-ani'),
+//    renderer: "svg",
+//    loop: true,
+//    autoplay: true,
+//    path: animationPath //載下來的動畫json黨
+//});

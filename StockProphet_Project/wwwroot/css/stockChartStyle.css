@@ -170,18 +170,26 @@ path.difference {
 
 .btnT {
     margin-right: 5px;
-    width: 100px;
-    height: 30px;
+    width: 80px;
+    height: 35px;
+    padding: 0px;
+    min-height:0;
+    transform:translateY(10px);
+    font-weight:500;
 }
 
-.upArea {
-    max-width: 1800px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center; /*上下置中*/
-    padding-top: 50px;
-    flex-wrap: wrap;
-}
+    .btnT:hover {
+        transform: translateY(8px);
+    }
+
+    .upArea {
+        max-width: 1800px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center; /*上下置中*/
+        padding-top: 50px;
+        flex-wrap: wrap;
+    }
 
 .upLayer {
     width: 600px;
@@ -271,7 +279,7 @@ path.difference {
     position: relative;
     height: 250px;
     width: 420px;
-    background-color: blanchedalmond;
+    /*background-color: blanchedalmond;*/
     border-radius: 20px;
     display: flex;
     flex-direction: column;
@@ -293,6 +301,7 @@ path.difference {
 }
 
 .member-btn {
+    margin-top:10px;
     margin-left: 8px;
     margin-right: 8px;
     width: auto;
@@ -467,4 +476,32 @@ path.difference {
         width: 100%;
     }
 
+.btn-sma5 {
+    border: 2px solid #1f77b4;
+    background-color: #1f77b4;
+    color:white;
+    width:100px;
+}
 
+.btn-sma5:hover {
+    border: 2px solid #1f77b4;
+    background-color: #1f77b4;
+    color: white;
+
+}
+.btn-sma30 {
+    border: 2px solid #ff8000;
+    background-color: #ff8000;
+    color: white;
+    width: 100px;
+}
+
+.btn-sma30:hover {
+    border: 2px solid #ff8000;
+    background-color: #ff8000;
+    color: white;
+}
+
+#change {
+    width:120px;
+}

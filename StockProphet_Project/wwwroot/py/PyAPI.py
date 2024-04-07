@@ -6,8 +6,7 @@ import os
 current_file_path = os.path.abspath(__file__).replace('PyAPI.py','')
 combinePath = os.path.join(current_file_path,'requirements.txt')
 
-# print("当前文件的位置1:", current_file_path)
-# print("当前文件的位置2:", combinePath)
+
 
 def install_requirements():
     try:
@@ -35,7 +34,7 @@ except:
 warnings.filterwarnings("ignore")
 
 def  mutiTimesApi_call(stockNo,dates_input):
-    print("Call mutiTimesApi_call")
+    print("---Call mutiTimesApi_call")
         
     dates=[]
     month=int(str(dates_input)[4:6])
@@ -53,7 +52,6 @@ def  mutiTimesApi_call(stockNo,dates_input):
     all_data = pd.DataFrame()
 
     for date in dates:
-        # print(date)
         # 取得第一個 API 的數據
         url1 = url_template1.format(date, stockNo)
         
@@ -144,8 +142,6 @@ def  mutiTimesApi_call(stockNo,dates_input):
                 data2 = data2.drop(data2.index[-1])
             elif(max(data1.shape[0],data2.shape[0])==data1.shape[0]):
                 data1 = data1.drop(data1.index[-1])
-        # print("data1 shape:", data1.shape)
-        # print("data2 shape:", data2.shape)
         data2.iloc[:,0]=data1.iloc[:,0]
 
         # Ensure both DataFrames have a common column for merging
@@ -392,52 +388,45 @@ def  mutiTimesApi_call(stockNo,dates_input):
     SQL_data_df = SQL_data_df[existing_data_df.columns]
     
     # 找到目標表格中不存在的資料
-    # missing_data_df = SQL_data_df[~SQL_data_df.isin(existing_data_df)].dropna()
     missing_data_df = pd.merge(SQL_data_df, existing_data_df[['S_PK']], on='S_PK', how='outer', indicator=True)
     missing_data_df = missing_data_df[missing_data_df['_merge'] == 'left_only'].drop(columns=['_merge'])
     missing_data_df.dropna(subset=['S_PK'], inplace=True)
     missing_data_df.drop_duplicates(subset=['S_PK'], inplace=True)
-    # print(SQL_data_df)
-    # print(existing_data_df)
-    # print(missing_data_df)
 
     # 如果有缺失的資料，將其插入到目標表格中
     if existing_data_df.empty:
-        print("資料庫沒值，全部灌進DB")
+        print("---資料庫沒值，全部灌進DB")
         missing_data_df.to_sql(table_name, engine, if_exists='append', index=False)
-        print("成功")
+        print("---成功")
     else:
         if not missing_data_df.empty:
-            print("資料庫有值，並且有差異，將差異灌進DB")
+            print("---資料庫有值，並且有差異，將差異灌進DB")
             missing_data_df.to_sql(table_name, engine, if_exists='append', index=False)
-            print("成功")
+            print("---成功")
             
         else:
-            print("資料庫有值，但無差異，不動作")
+            print("---資料庫有值，但無差異，不動作")
 
     # SQL_data_df.to_sql(table_name, engine, index=False, if_exists='replace') # Change 'replace' to 'append' if you want to append data
 
     
      
 def oneTimeApi_call(stockNo,dates_input):
-    print("Call oneTimeApi_call")
+    print("---Call oneTimeApi_call")
     from dateutil.relativedelta import relativedelta
     dates=[]
     month=int(str(dates_input)[4:6])
     
     curTime = datetime.strptime(dates_input, '%Y%m%d')
     
-    result_date = curTime - relativedelta(months=2)
-    dates.append(int(result_date.strftime('%Y%m%d')))
+    # 設定要跑幾個月
+    lastN_Year = 3
     dates.append(int(dates_input))
-    
-    
-    
-    
-    # for i in range(12-month):
-    #     dates.append(int(dates_input)-10000+(1+i)*100)
-    # for i in range(month):
-    #     dates.append(int(dates_input)-100*(month-i-1))
+    for i in range(1,lastN_Year+1,1):
+        result_date = curTime - relativedelta(months=i)
+        dates.append(int(result_date.strftime('%Y%m%d')))
+    dates = dates[::-1]
+    # webapi urls
     url_template1 = "https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=html&date={}&stockNo={}"
     url_template2 = "https://www.twse.com.tw/rwd/zh/afterTrading/BWIBBU?response=html&date={}&stockNo={}"
     url_template3 = 'https://mops.twse.com.tw/nas/t21/sii/t21sc03_{}_0.html'
@@ -446,7 +435,6 @@ def oneTimeApi_call(stockNo,dates_input):
     all_data = pd.DataFrame()
 
     for date in dates:
-        print(date)
         # 取得第一個 API 的數據
         url1 = url_template1.format(date, stockNo)
         
@@ -475,8 +463,6 @@ def oneTimeApi_call(stockNo,dates_input):
         # Step3. 篩選出個股月營收資訊
         # 3.1 剃除行數錯誤的表格,並將表格合併
         month_df = pd.concat([df for df in html_df if df.shape[1] == 11]) 
-        # print(html_df)
-        # month_df = html_df
 
     
         
@@ -488,13 +474,12 @@ def oneTimeApi_call(stockNo,dates_input):
         month_df = month_df[month_df['公司名稱'] != '合計']
         month_df = month_df.reset_index(drop=True) 
         month_end_df = month_df.loc[month_df['公司 代號'] == stockNo]
-        print(month_df)
-        print(month_end_df)
+
         i=0
         key=0
         while len(month_end_df)==0:
             # If data for the current month is not available, fetch data for the previous month
-            previous_month = dates[10-i]  # Subtracting 100 from the date to get the previous month
+            previous_month = dates[lastN_Year-1-i]  # Subtracting 100 from the date to get the previous month
             i+=1
             head=int(str(previous_month)[0:4])-1911
             month_in=int(str(previous_month)[4:6])
@@ -540,8 +525,6 @@ def oneTimeApi_call(stockNo,dates_input):
                 data2 = data2.drop(data2.index[-1])
             elif(max(data1.shape[0],data2.shape[0])==data1.shape[0]):
                 data1 = data1.drop(data1.index[-1])
-        # print("data1 shape:", data1.shape)
-        # print("data2 shape:", data2.shape)
         data2.iloc[:,0]=data1.iloc[:,0]
 
         # Ensure both DataFrames have a common column for merging
@@ -579,25 +562,48 @@ def oneTimeApi_call(stockNo,dates_input):
                 "年":"ST_Year",
                 "季":"ST_Quarter",
                 "公司名稱":"SN_Name",
-                "當月營收":"SB_BussinessIncome",
+                "當月營收":"SB_BussinessIncome"
                 }
 
 
     # 新框架裡面放入原始資料
-    SQL_data_df = pd.DataFrame(all_data)
+    SQL_data_df1 = pd.DataFrame(all_data)
 
     # 使用 rename 函數進行欄位名稱轉換
-    SQL_data_df.rename(columns=SQL_data, inplace=True)
+    SQL_data_df1.rename(columns=SQL_data, inplace=True)
+    
+    # SQL Server 連線部分
+    server_name = 'localhost'
+    database_name = 'StockProphet'
+    username = 'sa'
+    password = 'sa'
 
-    # 避免數值類的出現其他奇怪的字串，先全部轉為Nah
+    connection_string = f'mssql+pyodbc://{server_name}/{database_name}?trusted_connection=yes&driver=ODBC+Driver+17+for+SQL+Server'
+    engine = create_engine(connection_string)
+    
+    # 從資料庫讀取目標表格的資料到 DataFrame 中
+    existing_data_df = pd.read_sql('SELECT * FROM Stock where SN_Code = '+stockNo, engine)
+    struc = pd.DataFrame(columns=existing_data_df.columns)
+    
+    SQL_data_df = pd.merge(struc,SQL_data_df1,how='cross')
+    for column in SQL_data_df1.columns:
+        SQL_data_df[column] = SQL_data_df1[column].values
+    
+    # 改順序
+    SQL_data_df = SQL_data_df[existing_data_df.columns]
+    
+    
+    ## workdir
+    # # 避免數值類的出現其他奇怪的字串，先全部轉為Nah
     SQL_data_df['STe_Close']=pd.to_numeric(SQL_data_df['STe_Close'], errors='coerce')
     SQL_data_df['STe_Open']=pd.to_numeric(SQL_data_df['STe_Open'], errors='coerce')
     SQL_data_df['STe_Max']=pd.to_numeric(SQL_data_df['STe_Max'], errors='coerce')
     SQL_data_df['STe_Min']=pd.to_numeric(SQL_data_df['STe_Min'], errors='coerce')
-    SQL_data_df['STe_TradeQuantity']=pd.to_numeric(SQL_data_df['STe_TradeQuantity'])
+    SQL_data_df['STe_TradeQuantity']=pd.to_numeric(SQL_data_df['STe_TradeQuantity'], errors='coerce')
     SQL_data_df['STe_TradeMoney']=pd.to_numeric(SQL_data_df['STe_TradeMoney'], errors='coerce')
     SQL_data_df['SI_PE'] = pd.to_numeric(SQL_data_df['SI_PE'], errors='coerce')
-    SQL_data_df['STe_TransActions']=pd.to_numeric(SQL_data_df['STe_TransActions'])
+    SQL_data_df['STe_TransActions']=pd.to_numeric(SQL_data_df['STe_TransActions'], errors='coerce')
+    
     SQL_data_df['STe_Close'] = SQL_data_df['STe_Close'].fillna(SQL_data_df['STe_Close'].mean())
     SQL_data_df['STe_Open'] = SQL_data_df['STe_Open'].fillna(SQL_data_df['STe_Open'].mean())
     SQL_data_df['STe_Max'] = SQL_data_df['STe_Max'].fillna(SQL_data_df['STe_Max'].mean())
@@ -723,14 +729,6 @@ def oneTimeApi_call(stockNo,dates_input):
         # Handle the ValueError when no tables are found
         SQL_data_df['SB_EPS']=pd.to_numeric(0)
 
-    # SQL Server 連線部分
-    server_name = 'localhost'
-    database_name = 'StockProphet'
-    username = 'sa'
-    password = 'sa'
-
-    connection_string = f'mssql+pyodbc://{server_name}/{database_name}?trusted_connection=yes&driver=ODBC+Driver+17+for+SQL+Server'
-    engine = create_engine(connection_string)
 
 
 
@@ -739,7 +737,7 @@ def oneTimeApi_call(stockNo,dates_input):
     SQL_data_df=SQL_data_df.reset_index(drop=True)
     
     for i in range(len(SQL_data_df)):
-        SQL_data_df.at[i,'ST_Date']=str(int(SQL_data_df.iloc[i][0].replace('/',''))+19110000)        
+        SQL_data_df.at[i,'ST_Date']=str(int(SQL_data_df.iloc[i]['ST_Date'].replace('/',''))+19110000)        
         # SQL_data_df.at[i,'ST_Date'] = str(int(str(SQL_data_df.iloc[i][0]).replace('/',''))+19110000)
         if i==0:
             # SQL_data_df.at[i,'STe_SpreadRatio']=(SQL_data_df.iloc[i][7]-SQL_data_df.iloc[i][8])/(SQL_data_df.iloc[i][9]+float(SQL_data_df.iloc[i][8]))*100
@@ -780,37 +778,30 @@ def oneTimeApi_call(stockNo,dates_input):
     SQL_data_df['SI_PE'] = SQL_data_df['SI_PE'].fillna(0)
 
 
-    # 從資料庫讀取目標表格的資料到 DataFrame 中
-    existing_data_df = pd.read_sql('SELECT * FROM Stock where SN_Code = '+stockNo, engine)
     
-    # 改順序
-    SQL_data_df = SQL_data_df[existing_data_df.columns]
+
     
     # 找到目標表格中不存在的資料
-    # missing_data_df = SQL_data_df[~SQL_data_df.isin(existing_data_df)].dropna()
     missing_data_df = pd.merge(SQL_data_df, existing_data_df[['S_PK']], on='S_PK', how='outer', indicator=True)
     missing_data_df = missing_data_df[missing_data_df['_merge'] == 'left_only'].drop(columns=['_merge'])
     missing_data_df.dropna(subset=['S_PK'], inplace=True)
     missing_data_df.drop_duplicates(subset=['S_PK'], inplace=True)
     
-    print(SQL_data_df)
-    # print(existing_data_df)
-    # print(missing_data_df)
+
 
     # 如果有缺失的資料，將其插入到目標表格中
     if existing_data_df.empty:
-        print("資料庫沒值，全部灌進DB")
+        print("---資料庫沒值，全部灌進DB")
         SQL_data_df.to_sql(table_name, engine, if_exists='append', index=False)
-        print("成功")
+        print("---成功")
     else:
         if not missing_data_df.empty:
-            print("資料庫有值，並且有差異，將差異灌進DB")
+            print("---資料庫有值，並且有差異，將差異灌進DB")
             missing_data_df.to_sql(table_name, engine, if_exists='append', index=False)
-            print("成功")
+            print("---成功")
         else:
-            print("資料庫有值，但無差異，不動作")
+            print("---資料庫有值，但無差異，不動作")
 
-    # SQL_data_df.to_sql(table_name, engine, index=False, if_exists='replace') # Change 'replace' to 'append' if you want to append data
 
 def isoneTimeApi_call(stockNo):
      # SQL Server 連線部分
@@ -824,18 +815,18 @@ def isoneTimeApi_call(stockNo):
     try:
     # 尝试连接数据库
         connection = engine.connect()
-        print("数据库连接成功！")
+        print("-數據庫連接成功!")
         existing_data_df = pd.read_sql('SELECT * FROM Stock where SN_Code = '+stockNo, engine)
         connection.close()
         if(existing_data_df.shape[0]>0):
-            print("資料庫有資料，只呼叫API抓兩個月數據")
+            print("-資料庫有資料，只呼叫API抓兩個月數據")
             return True
         else:
-            print("資料庫無資料，呼叫API抓一年的數據")
+            print("-資料庫無資料，呼叫API抓一年的數據")
             return False
             
-    except SQLAlchemyError as e:
-        print("数据库连接失败:", e)
+    except Exception as e:
+        print("-數據庫連接失敗!", e)
 
 #  Main----------------------------
 
@@ -844,13 +835,14 @@ stockNo = input("請輸入股票代號: ")
 dates_input = input("請輸入日期(例如: 20230201,20230301): ")
 
 isoneTimeApi = (isoneTimeApi_call(stockNo))
+print('____________________________start_')
 try:
-    print("Excute normal route")
+    print("--Excute normal route")
     oneTimeApi_call(stockNo,dates_input) if isoneTimeApi else mutiTimesApi_call(stockNo,dates_input)
 except:
-    print("Failed return mutiTimesApi_call")
+    print("--Failed return mutiTimesApi_call")
     mutiTimesApi_call(stockNo,dates_input)
+print('_end____________________________')
 
 #  Main----------------------------
-# dates = [20240301, 20240401]
-# print(dates[10])
+
