@@ -66,6 +66,10 @@
                         <li class="nav-item" id="myRegister">
                             <a class="nav-link text-dark text-right" asp-area="" asp-controller="Member" asp-action="Register" id="sign-up">註冊</a>
                         </li>
+                       
+                        <li id="sayHi">
+
+                        </li>
                         <li class="nav-item" id="">
                             <button class="cssbuttons-io member-vip-btn" asp-area="" asp-controller="" asp-action="" data-bs-toggle="modal" data-bs-target="#exampleModal" id="highlevel">
                                 <span>
@@ -222,13 +226,22 @@
 			} else {
                 $("#sign-up").hide();
                 $(".note-area").css("opacity", "1");
-                console.log(2)
+                console.log("1");
                 $('.dropdown-menu').append(` 
                                              <a class="dropdown-item" href="/Member/Edit">個人資料修改</a>
                                              <a class="dropdown-item" href="/StockModel/Predictindex">我要預測</a>
                                              <a class="dropdown-item" href="/Member/MyCollect"> 我的收藏頁面</a>
-                                             <a class="dropdown-item" href="/Member/MyPredictResult">我的預測結果頁面</a>`)
-
+                                             <a class="dropdown-item" href="/Member/MyPredictResult">我的預測結果頁面</a>`);
+                // 登入後打招呼 
+                LogMemberGender = sessionStorage.getItem("LogMemberGender");
+                LogAccount = sessionStorage.getItem("LogAccount");
+                LogMemberLevel = sessionStorage.getItem("LogMemberLevel");
+                if (LogMemberGender == 1) {
+                    $("#sayHi").append(`<li><i class="fa-solid fa-child" style="color: #3fcbd5;"></i><b>${LogMemberLevel}</b><p>Hi,${LogAccount}</p></li>`);
+                } else {
+                    $("#sayHi").append(`<li><i class="fa-solid fa-child-dress" style="color: #ca4e4e;"></i><b>${LogMemberLevel}</b><p>Hi,${LogAccount}</p></li>`);
+                }
+                   
                 $("#mynavgation-right").append(`<li b-vkyxnss9jg class="nav-item" id="myLogout"><a class="nav-link text-dark" id="logoutlink" href="/Home/Index">登出</a></li> `)
 				$('#loginlink').hide();
 				$('#logoutlink').show();

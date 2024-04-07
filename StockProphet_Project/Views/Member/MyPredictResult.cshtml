@@ -35,12 +35,16 @@
             <button id="Ongoing" class="btn-w-hover">追蹤中</button>
             <button id="Finished" class="btn-w-hover">已結案</button>
 
+            <b id="totalCountDisplay"></b>
+
+
             @* 4.我的預測結果 *@
             <div id="FavoritesPage">
 
                 @* <!-- 自動畫卡片 --> *@
                 <div class="predictionArea"></div>
             </div>
+
 
         </div>
     </div>
@@ -66,25 +70,22 @@
 
 
     $(function () {
-        // // 1.點擊回到會員頁
-        // $('#showMemberIndex').on("click", function () {
-        // 	window.location.href = "/Member/Index";
-        // })
-        // // 2.點擊修改個人資料
-        // $('#showRevise').on("click", function () {
-        // 	window.location.href = "/Member/Edit";
-        // })
-        // // 3.點擊我的收藏
-        // $('#showFavoritesPage').on("click", function () {
-        // 	window.location.href = "/Member/MyCollect";
-        // })
-        // // 4.點擊我要預測
-        // $('#showPredictFunc').on("click", function () {
-        // 	window.location.href = "/StockModel/Predictindex";
-        // })
-        // // 5.點擊我的預測結果
-        // $('#showHistoryPage').on("click", function () {
-        // 	window.location.href = "/Member/MyPredictResult";
+        //顯示我的預測筆數MyPredictResultCount
+        // $.ajax({
+        //     url: "/Member/MyPredictResultCount",
+        //     method: "get",
+        //     data: data,
+        //     success: function (e) {
+
+        //         var totalCount = e.length; // 收藏筆數
+        //         $('#totalCountDisplay').text(`(${totalCount}`);
+        //         // console.log(sessionStorage.getItem("LogMemberLevel"));
+        //         if (MidLevel == "一般會員") {
+        //             $('#totalCountDisplay').text(`( ${totalCount} / 5 ) 已收藏筆數`);
+        //         } else {
+        //             $('#totalCountDisplay').text(`( ${totalCount} / ∞ ) 已收藏筆數`);
+        //         }
+        //     }
         // })
 
 
