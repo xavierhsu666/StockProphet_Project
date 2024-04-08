@@ -393,7 +393,7 @@
                         $('#pwdnoteword2').show();
                     } else {
                         $('#pwdnoteword1').hide();
-                        // alert('變更密碼成功1');
+                        alert('變更成功!');
                     }
                 }
             })
@@ -419,7 +419,7 @@
                         $('#pwdnoteword2').show();
                     } else {
                         $('#pwdnoteword2').hide();
-                        // alert('變更密碼成功2');
+                        alert('變更成功!');
                     }
                 }
             })
@@ -541,7 +541,7 @@
                 } else {                   
                     SaveReviseMemberData();
                     console.log('不改密碼' + '修改成功')
-                   
+                    alert('修改成功!');
                     sessionStorage.setItem("LogMemberName", $('#UserName').val());
                     sessionStorage.setItem("LogMemberEmail", $('#Email').val());
                     sessionStorage.setItem("LogMemberInvestYear", $('#InvestYear').val());
@@ -568,6 +568,7 @@
                 } else {
                     SaveReviseMemberData();
                     console.log('改密碼' + '修改成功')
+                    alert('修改成功!');
 
                     sessionStorage.setItem("LogMemberName", $('#UserName').val());
                     sessionStorage.setItem("LogMemberEmail", $('#Email').val());

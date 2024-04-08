@@ -99,7 +99,7 @@ namespace StockProphet_Project.Controllers {
 				}
 				i++;
 			}
-			UpdateModelResultsStatusAndRatio();
+			//UpdateModelResultsStatusAndRatio();
 			return Content(log);
 
 		}
