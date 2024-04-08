@@ -111,7 +111,7 @@ namespace StockProphet_Project.Controllers
         }
 
         //讀取更新後的會員資料
-        [HttpGet]
+        [HttpPost]
         public string ReturnReviseMemberData(string LogAccount)
         {
             var query = _context.DbMembers.SingleOrDefault(x => x.MaccoMnt == LogAccount);
@@ -121,6 +121,7 @@ namespace StockProphet_Project.Controllers
                 MinvestYear = query.MinvestYear,
                 Memail = query.Memail
             };
+            Console.WriteLine(ReviseMemberData);
             return ReviseMemberData.ToString()!;
         }
 
@@ -418,6 +419,15 @@ namespace StockProphet_Project.Controllers
 
             return View();
         }
+
+        //已預測筆數-MyPredictResultCount
+        //[HttpPost]
+        //public bool MyPredictResultCount(string PIDCount)
+        //{
+
+        //}
+
+
 
         [HttpGet]
         public IActionResult MyPredictResultBoris(string customername)
