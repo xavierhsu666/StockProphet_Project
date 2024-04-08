@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - StockProphet_Project</title>
+    <title>StocksProphet</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/StockProphet_Project.styles.css" asp-append-version="true" />
@@ -28,6 +28,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     @* icon *@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    @* ICON *@
+    <link rel="icon" href="~/icon/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="~/icon/favicon.ico" type="image/x-icon" />
 </head>
 <body>
     @* <div id="loading-ani"><div class="loading-ani-here"></div></div> *@
@@ -56,7 +59,7 @@
                             <a class="nav-link text-dark text-right" asp-area="" asp-controller="Home" asp-action="Visitor">體驗預測</a>
                         </li>
                         @* 新增會員中心的下拉選單 *@
-                        <li class="nav-item dropdown" id="myMember">
+                        <li class="nav-item dropdown" id="myMember" style="display:none">
                             <a class="nav-link dropdown-toggle text-dark" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">會員中心</a>
                             <div class="dropdown-menu"></div>
                         </li>
@@ -67,7 +70,7 @@
                             <a class="nav-link text-dark text-right" asp-area="" asp-controller="Member" asp-action="Register" id="sign-up">註冊</a>
                         </li>
                         <li class="nav-item" id="">
-                            <button class="cssbuttons-io member-vip-btn" asp-area="" asp-controller="" asp-action="" data-bs-toggle="modal" data-bs-target="#exampleModal" id="highlevel">
+                            <button class="cssbuttons-io member-vip-btn" asp-area="" asp-controller="" asp-action="" data-bs-toggle="modal" data-bs-target="#exampleModal" id="highlevel" style="display:none">
                                 <span>
                                    會員升級
                                 </span>
@@ -193,6 +196,7 @@
     <div class="container">
         <main role="main" class="pb-3 mainArea">
             @RenderBody()
+            <p class="copyright">&copy; 2024 - Stocks Prophet</p>
         </main>
     </div>
 
@@ -209,17 +213,18 @@
 	<script>
         //預設隱藏
         $(".text-content").hide();
-        $("#highlevel").css("display", "none");
+        // $("#highlevel").css("display", "none");
 		$(document).ready(function () {
             
 			if (sessionStorage.getItem("LogAccount") == null) {
-                $("#myMember").hide();
+                
                 $(".note-area").css("display", "none");
                 $('.dropdown-menu').css("display", "none")
                 $('#mynavgation-right').prepend(`<li b-vkyxnss9jg class="nav-item" id="myLogin"><a class="nav-link text-dark text-right" id="loginlink" href="/Member/Login">登入</a></li>`);
 				$('#loginlink').show();
 				$('#logoutlink').hide();
 			} else {
+                $("#myMember").show();
                 $("#sign-up").hide();
                 $(".note-area").css("opacity", "1");
                 console.log(2)
