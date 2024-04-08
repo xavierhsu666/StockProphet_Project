@@ -22,6 +22,14 @@
        
     }
 
+    #totalCountDisplay {
+        color: #73b5c5;
+        font-size: 20px;
+        position: absolute;
+        top: 200px;
+        right: 200px;
+    }
+
 </style>
 <img class="bg-chart" src="~/homePage/chart.png" />
 <img class="bg-line" src="~/homePage/chart2.png" />
@@ -130,7 +138,16 @@
                     });
                 }
                 console.log(plotarray); // 输出降序排列后的数组
+                var totalCount = plotarray.length // 我的預測筆數
+                var MidLevel = sessionStorage.getItem("LogMemberLevel");
 
+                $('#totalCountDisplay').text(`(${totalCount}`);
+                // console.log(sessionStorage.getItem("LogMemberLevel"));
+                if (MidLevel == "一般會員") {
+                    $('#totalCountDisplay').text(`( ${totalCount} / 5 ) 已收藏筆數`);
+                } else {
+                    $('#totalCountDisplay').text(`( ${totalCount} / ∞ ) 已收藏筆數`);
+                }
                 for (var w = 0; w < e.length; w += 5) {
                     var builddate3 = new Date(e[w]["PBuildTime"])
                     var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate()
@@ -153,8 +170,7 @@
                         PAccuracyRatio: e[w]["PAccuracyRatio"]
                     })
                 }
-              
-                console.log(e[0]['PAccuracyRatio']);
+
                 
 
                 $.each(plotarray, function (index, element) {
@@ -165,7 +181,7 @@
                     var result;
                     var Pstatus = otherprarmeter[index]["Pstatus"]; //狀態
                     // console.log(otherprarmeter[0])
-                    var Pmodel = e[index]["Pmodel"];   //使用模型
+
                     var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
                     var PAR = e[index]['PAccuracyRatio'];
 
@@ -186,7 +202,18 @@
                     //選擇變數
                     var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
                     // console.log(Pmodel)
-
+                    var Pmodel = otherprarmeter[index]["Pmodel"];   //使用模型
+                    switch (Pmodel) { 
+                        case "R":
+                            Pmodel = "迴歸"
+                            break;
+                        case "T":
+                            Pmodel = "時間序列"
+                            break;
+                        default:
+                            break;
+                    }
+                    
                     var varTochi = [];
 
                     preVariable.forEach(function (w) {
