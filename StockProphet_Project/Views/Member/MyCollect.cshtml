@@ -24,7 +24,6 @@
             border-radius: 5px;
             background: rgb(240, 248, 255);
             color: #9E9C9C;
-            /*  padding: 5px 10px; */
             padding: 10px; /* Increase padding */
             width: 400px; /* Increase width */
             height: 40px; /* Increase height */
@@ -571,11 +570,6 @@
                                   var result;
                                   var collectNum = e[0]["collectNum"];
                                   var Pstatus = e[0]["Pstatus"]; //狀態
-                                  // console.log("-------------")
-
-                                  // console.log(e[0]["Pstatus"])
-                                  // console.log("-------------")
-
                                   var Pmodel = e[0]["Pmodel"];   //使用模型
                                   var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
                                   var PAR = e[0]['PAccuracyRatio'];
@@ -688,7 +682,6 @@
                   for (var i = 0; i < resultstatus.length; i++) {
                       $(`.prediction-card.${DateList[i].index}`).css("order", i + 1);
                   }
-                 // console.log(resultstatus);
                   ($(`.prediction-card`) == null) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
               })
 
@@ -705,12 +698,11 @@
                       var plotarray = [];
                       var otherprarmeter = [];
                       resultstatus = [];
-                      //var wordTable = JSON.parse($("#word-table").val());
-
-                      //checkCollect();
+                      var wordTable = JSON.parse($("#word-table").val());
 
                       // 清空上一次搜索结果
                       $('.predictionArea').empty();
+                      
 
                       $.ajax({
                           type: 'get',
@@ -727,7 +719,7 @@
                                   return;
                               }
                               for (var i = 0; i < e.length; i += 5) {
-                                  //console.log("----------" + i)
+                                 
                                   var subArray = [];
                                   for (var j = 0; j < 5; j++) {
                                       var historydate1 = new Date(e[j]["STdate"])
@@ -775,19 +767,11 @@
                               }
                             
                               $.each(plotarray, function (index, element) {
-                                  console.log(element)
+                                 
                                   var finishtime = new Date(element[5]["Date"]);
                                   var currentdate = new Date()
                                   var result;
 
-                                  
-                                  console.log("-------------")
-
-                                  console.log(otherprarmeter[index]["Pstatus"])
-                          
-                                  console.log("-------------")
-                                  
-                                  console.log(resultstatus);
                                   // 結案狀態
 
                                   // 結果參數
@@ -807,7 +791,7 @@
 
                                   })
                                   drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], varTochi, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], '.predictionArea', collectNum, Pmodel, PAR)
-
+                                  checkCollect();
                               });
 
 
@@ -1025,12 +1009,12 @@
                       .append("g")
                       .datum(myData)
                       .attr("class", "predictionLine here")
-                      .attr("transform", "translate(18,0)");   //折線
+                      .attr("transform", "translate(18,0)");   // 折線
                   preSvg
                       .append("g")
                       .attr("class", "x axis pre")
-                      .attr("transform", "translate(0," + preHeight + ")"); //X軸
-                  preSvg.append("g").attr("class", "y axis pre"); //Y軸
+                      .attr("transform", "translate(0," + preHeight + ")"); // X軸
+                  preSvg.append("g").attr("class", "y axis pre"); // Y軸
 
                   preSvg
                       .select("g.predictionLine.here")
@@ -1061,8 +1045,8 @@
                           .tickFormat(d3.format(".1f"))
                           .tickValues([minCPre - 10, d3.mean([minCPre, maxCPre]), maxCPre + 10]));
 
-                  //--點點--//
-                  //提示框
+                  // -- 點點 -- //
+                  // 提示框
                   var Tooltip = d3
                       .select(".forPrediction")
                       .append("div")
@@ -1084,7 +1068,7 @@
                           .style("left", d3.mouse(this)[0] + 20 + "px")
                           .style("top", d3.mouse(this)[1] + "px");
                   };
-                  //console.log($(".circleGroup"));
+                 
                   var mouseleave = function (d) {
                       Tooltip.style("opacity", 0);
                   };
@@ -1118,11 +1102,7 @@
                   function pointAni(index) {
                       var strokeC = (myData[5].Close > myData[4].Close) ? "#b84121" : "#69b3a2";
                       var fillC = preState == "已結案" ? strokeC : "white"
-
-                      //var fillC = (myData[5].Close > myData[4].Close) ? "#f77465" : "#cedba0";
-                      /*        console.log("strokeC:" + strokeC + "  fillC:" + fillC);*/
-
-                      d3.select(`.circleGroup${index} :last-child`)
+                          d3.select(`.circleGroup${index} :last-child`)
                           .attr("stroke", strokeC)
                           .style("stroke-width", 2)
                           .style("stroke-opacity", 1)
@@ -1203,11 +1183,11 @@
           checkCollect();
           function checkCollect() {
               // 檢視愛心狀態
-              setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
+              setTimeout(function () {    // 要抓剛 appen 上去的元素，所以設 timeout
 
                   d3.json(`/Home/cardCheck/${sessionStorage.getItem("LogAccount")}`, function (list) {
                       list.forEach(function (item, i) {
-                          //針對會員有按愛心的按鈕 變化
+                          // 針對會員有按愛心的按鈕變化
                           $(`#PID${parseInt(item)}`).text("♥").css({
                               color: "#87aeb4",
                           });
@@ -1229,7 +1209,7 @@
           setTimeout(function () {
               d3.json(`/Home/cardCheck/${sessionStorage.getItem("LogAccount")}`, function (list) {
                   list.forEach(function (item, i) {
-                      //針對會員有按愛心的按鈕 變化
+                      // 針對會員有按愛心的按鈕變化
                       $(`#PID${parseInt(item)}`).text("♥").css({
                           color: "#87aeb4",
                       });
@@ -1265,8 +1245,7 @@
 
               }
 
-              //console.log($(obj).text());
-              //
+              
               var content = $(obj).text();
               navigator.clipboard.writeText(content);
           }
@@ -1341,9 +1320,7 @@
                       $("#loading-ani").show();
                       $(".loading-info").css("display", "block");
                       $(".search-hint").hide();
-                      // jget("/StockModel/UpdateOneStock", ans).then(function (e) {
-                      //     document.location.href = `/Home/StockCharts/${ans}`;
-                      // });
+                      
                   }
               })
           }

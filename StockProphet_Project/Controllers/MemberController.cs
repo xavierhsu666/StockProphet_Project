@@ -218,7 +218,7 @@ namespace StockProphet_Project.Controllers
 
         }
 
-        //我的收藏頁面
+        // 我的收藏頁面
         [HttpGet]
         public IActionResult MyCollect2(string sessionMID)
         {
@@ -226,8 +226,6 @@ namespace StockProphet_Project.Controllers
             List<object> pidList = new List<object>();
 
 
-            //int MID = Convert.ToInt32(sessionMID);
-            //List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
             string sqlQuery = $@"SELECT MFavoriteModel
                                  FROM DB_Member
@@ -317,36 +315,36 @@ namespace StockProphet_Project.Controllers
             string sqlQuery;
             string searchTermNumber = ExtractNumberFromString(searchTerm); // 提取搜索字符串中的數字部分
 
-            // 使用提取的數字部分進行搜索
+            // 僅擷取數字部分作為搜尋條件
             sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-                 B.PBulidTime,B.Pvariable, B.PFinishTime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code,B.Pstatus, B.Pmodel, B.PAccuracyRatio, COUNT(c.PID) as collectNum
-         FROM DB_model AS B 
-         left join DB_Collect c on B.Pid = c.PID
-         OUTER APPLY (
-             SELECT TOP 5 *
-             FROM Stock
-             WHERE SN_code = B.Pstock
-                   AND ST_Date <= B.PBulidTime
-             ORDER BY ST_Date DESC
-         ) AS A 
-         WHERE B.Pstock = {searchTermNumber}
- GROUP BY 
- B.PAccount,
- B.Dummyblock,
- B.Plabel,
- B.PfinishTime,
- B.Pid,
- B.PbulidTime,
- B.Pvariable,
- B.Pstatus,
- B.Pmodel,
- B.PAccuracyRatio,
- B.Pstock,
- A.ST_Date,A.ste_Close,
- A.SN_Name,
- A.SN_Code,B.Pstatus,
- B.Pmodel,
- B.PAccuracyRatio"; // 使用數字部分作为搜尋條件
+                       B.PBulidTime,B.Pvariable, B.PFinishTime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code,B.Pstatus, B.Pmodel, B.PAccuracyRatio, COUNT(c.PID) as collectNum
+                       FROM DB_model AS B 
+                       left join DB_Collect c on B.Pid = c.PID
+                       OUTER APPLY (
+                       SELECT TOP 5 *
+                       FROM Stock
+                       WHERE SN_code = B.Pstock
+                       AND ST_Date <= B.PBulidTime
+                       ORDER BY ST_Date DESC
+                       ) AS A 
+                       WHERE B.Pstock = {searchTermNumber}
+                       GROUP BY 
+                       B.PAccount,
+                       B.Dummyblock,
+                       B.Plabel,
+                       B.PfinishTime,
+                       B.Pid,
+                       B.PbulidTime,
+                       B.Pvariable,
+                       B.Pstatus,
+                       B.Pmodel,
+                       B.PAccuracyRatio,
+                       B.Pstock,
+                       A.ST_Date,A.ste_Close,
+                       A.SN_Name,
+                       A.SN_Code,B.Pstatus,
+                       B.Pmodel,
+                       B.PAccuracyRatio"; 
 
             Console.WriteLine(sqlQuery);
             SqlConnection sqlconnect = new SqlConnection(connectionString);
@@ -411,7 +409,7 @@ namespace StockProphet_Project.Controllers
             return ans;
         }
 
-        //回傳股票名稱的陣列表
+        // 回傳股票名稱的陣列表
         public IActionResult stocksListAC()
         {
             var stocksList = (from obj in new ChoCSVReader<stocksCheck>("wwwroot\\stocksList.csv").WithFirstLineHeader()
@@ -441,15 +439,7 @@ namespace StockProphet_Project.Controllers
             return View();
         }
 
-        //已預測筆數-MyPredictResultCount
-        //[HttpPost]
-        //public bool MyPredictResultCount(string PIDCount)
-        //{
-
-        //}
-
-
-
+        
         [HttpGet]
         public IActionResult MyPredictResultBoris(string customername)
         {
