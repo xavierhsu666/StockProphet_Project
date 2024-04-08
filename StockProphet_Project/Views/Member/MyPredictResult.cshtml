@@ -2,8 +2,6 @@
 <script src="https://d3js.org/d3.v4.js"></script>
 <link rel="stylesheet" href="~/css/stockChartStyle.css" type="text/css" />
 
-<h1 class="text-">會員功能-我的預測結果</h1>
-
 <style>
     .x.axis.pre path {
         display: none;
@@ -41,10 +39,10 @@
         </div>
 
         <div id="afterLog">
-            <button id="Ongoing" class="btn-w-hover">追蹤中</button>
-            <button id="Finished" class="btn-w-hover">已結案</button>
-
             <b id="totalCountDisplay"></b>
+
+            <button id="Ongoing" class="btn-w-hover">追蹤中</button>
+            <button id="Finished" class="btn-w-hover">已結案</button>           
 
 
             @* 4.我的預測結果 *@
@@ -79,25 +77,6 @@
 
 
     $(function () {
-        //顯示我的預測筆數MyPredictResultCount
-        // $.ajax({
-        //     url: "/Member/MyPredictResultCount",
-        //     method: "get",
-        //     data: data,
-        //     success: function (e) {
-
-        //         var totalCount = e.length; // 收藏筆數
-        //         $('#totalCountDisplay').text(`(${totalCount}`);
-        //         // console.log(sessionStorage.getItem("LogMemberLevel"));
-        //         if (MidLevel == "一般會員") {
-        //             $('#totalCountDisplay').text(`( ${totalCount} / 5 ) 已收藏筆數`);
-        //         } else {
-        //             $('#totalCountDisplay').text(`( ${totalCount} / ∞ ) 已收藏筆數`);
-        //         }
-        //     }
-        // })
-
-
         //我的預測結果-資料整理
         var wordTable = JSON.parse($("#word-table").val());
         //將預測結果帶到前端
@@ -114,7 +93,7 @@
             data: data,
             success: function (e) {
 
-                console.log(e);
+                // console.log(e);
                 for (var i = 0; i < e.length; i += 5) {
                     // console.log("----------"+i)
                     var subArray = [];
