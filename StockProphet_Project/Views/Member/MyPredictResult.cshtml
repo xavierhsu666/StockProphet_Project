@@ -2,8 +2,6 @@
 <script src="https://d3js.org/d3.v4.js"></script>
 <link rel="stylesheet" href="~/css/stockChartStyle.css" type="text/css" />
 
-<h1 class="text-">會員功能-我的預測結果</h1>
-
 <style>
     .x.axis.pre path {
         display: none;
@@ -22,6 +20,15 @@
        
     }
 
+    #totalCountDisplay {
+
+        color: #73b5c5;
+        font-size: 20px;
+        position: absolute;
+        top: 200px;
+        right: 200px;
+    }
+
 </style>
 <img class="bg-chart" src="~/homePage/chart.png" />
 <img class="bg-line" src="~/homePage/chart2.png" />
@@ -33,10 +40,10 @@
         </div>
 
         <div id="afterLog">
-            <button id="Ongoing" class="btn-w-hover">追蹤中</button>
-            <button id="Finished" class="btn-w-hover">已結案</button>
-
             <b id="totalCountDisplay"></b>
+
+            <button id="Ongoing" class="btn-w-hover">追蹤中</button>
+            <button id="Finished" class="btn-w-hover">已結案</button>           
 
 
             @* 4.我的預測結果 *@
@@ -71,25 +78,6 @@
 
 
     $(function () {
-        //顯示我的預測筆數MyPredictResultCount
-        // $.ajax({
-        //     url: "/Member/MyPredictResultCount",
-        //     method: "get",
-        //     data: data,
-        //     success: function (e) {
-
-        //         var totalCount = e.length; // 收藏筆數
-        //         $('#totalCountDisplay').text(`(${totalCount}`);
-        //         // console.log(sessionStorage.getItem("LogMemberLevel"));
-        //         if (MidLevel == "一般會員") {
-        //             $('#totalCountDisplay').text(`( ${totalCount} / 5 ) 已收藏筆數`);
-        //         } else {
-        //             $('#totalCountDisplay').text(`( ${totalCount} / ∞ ) 已收藏筆數`);
-        //         }
-        //     }
-        // })
-
-
         //我的預測結果-資料整理
         var wordTable = JSON.parse($("#word-table").val());
         //將預測結果帶到前端
@@ -106,7 +94,7 @@
             data: data,
             success: function (e) {
 
-                console.log(e);
+                // console.log(e);
                 for (var i = 0; i < e.length; i += 5) {
                     // console.log("----------"+i)
                     var subArray = [];
@@ -130,6 +118,17 @@
                     });
                 }
                 console.log(plotarray); // 输出降序排列后的数组
+
+            var totalCount = plotarray.length // 我的預測筆數
+            var MidLevel = sessionStorage.getItem("LogMemberLevel");
+
+            $('#totalCountDisplay').text(`(${totalCount}`);
+            // console.log(sessionStorage.getItem("LogMemberLevel"));
+            if (MidLevel == "一般會員") {
+                $('#totalCountDisplay').text(`( ${totalCount} / 5 ) 已收藏筆數`);
+            } else {
+                $('#totalCountDisplay').text(`( ${totalCount} / ∞ ) 已收藏筆數`);
+            }
 
                 for (var w = 0; w < e.length; w += 5) {
                     var builddate3 = new Date(e[w]["PBuildTime"])
