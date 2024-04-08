@@ -571,10 +571,10 @@
                                   var result;
                                   var collectNum = e[0]["collectNum"];
                                   var Pstatus = e[0]["Pstatus"]; //狀態
-                                  console.log("-------------")
+                                  // console.log("-------------")
 
-                                  console.log(e[0]["Pstatus"])
-                                  console.log("-------------")
+                                  // console.log(e[0]["Pstatus"])
+                                  // console.log("-------------")
 
                                   var Pmodel = e[0]["Pmodel"];   //使用模型
                                   var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
@@ -688,7 +688,7 @@
                   for (var i = 0; i < resultstatus.length; i++) {
                       $(`.prediction-card.${DateList[i].index}`).css("order", i + 1);
                   }
-                  console.log(resultstatus);
+                 // console.log(resultstatus);
                   ($(`.prediction-card`) == null) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
               })
 
@@ -705,9 +705,9 @@
                       var plotarray = [];
                       var otherprarmeter = [];
                       resultstatus = [];
-                      var wordTable = JSON.parse($("#word-table").val());
+                      //var wordTable = JSON.parse($("#word-table").val());
 
-                      checkCollect();
+                      //checkCollect();
 
                       // 清空上一次搜索结果
                       $('.predictionArea').empty();
@@ -766,29 +766,32 @@
                                       PAcount: e[w]["PAcount"],
                                       SName: e[w]["SName"],
                                       SCode: e[w]["SCode"],
-                                      PFinsihTime: FinsihTime2
+                                      PFinsihTime: FinsihTime2,
+                                      Pstatus: e["Pstatus"],
+                                      Pmodel: e["Pmodel"],
+                                      PAccuracyRatio: e["PAccuracyRatio"]
                                   })
                               }
-
+                              console.log(otherprarmeter)
                               $.each(plotarray, function (index, element) {
 
                                   var finishtime = new Date(element[5]["Date"]);
                                   var currentdate = new Date()
                                   var result;
-                                  var collectNum = e[0]["collectNum"];
-                                  var Pstatus = e[0]["Pstatus"]; //狀態
-                                  var Pmodel = e[0]["Pmodel"];   //使用模型
+                                  var collectNum = e[index]["collectNum"];
+                                  var Pstatus = e[index]["Pstatus"]; //狀態
+                                  var Pmodel = e[index]["Pmodel"];   //使用模型
                                   var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
 
                                   console.log("-------------")
 
-                                  console.log(e[0]["Pstatus"])
+                                  console.log(e[index]["Pstatus"])
                                   console.log("-------------")
-                                  var PAR = e[0]['PAccuracyRatio'];
+                                  var PAR = e[index]['PAccuracyRatio'];
 
 
                                   resultstatus.push({ "index": index + 1, "result": result, "collectNum": collectNum });
-
+                                  console.log(resultstatus);
                                   // 結案狀態
 
                                   // 結果參數
