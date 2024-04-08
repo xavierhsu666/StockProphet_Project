@@ -4,6 +4,8 @@
 @* 引用+CSS *@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script src="https://unpkg.com/@@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
 <script src="~/js/indexSearch.js"></script>
 <style>
 	.appendTt {
@@ -39,11 +41,48 @@
 		}
 	}
 
-	#longterm, #shortterm{
+	#longterm{
 		margin-right:20px;
 	}
+
+	#selectmodel{
+		width:50%;
+		overflow-y:hidden;
+	}
+
+	.loadong-group{
+		z-index:20;
+		height:auto;
+/* 		position:absolute;
+		top:0; */
+		display:flex;
+		justify-items:center;
+		transform:translate(50px, 50%);
+		margin-bottom:40px;
+	}
+
+	#loading-ani2{
+		transform:translate(-60px,-30px);
+	}
+
+	.loading-info2{
+		margin:0;
+		animation: disAshow 3s infinite;
+	}
+
+	@@keyframes disAshow {
+		0%, 100% { 
+        opacity:0.7;
+		}
+		40%, 60% {
+        opacity:1;
+    }
+}
+
 </style>
 
+<img class="bg-chart" src="~/homePage/chart.png" />
+<img class="bg-line" src="~/homePage/chart2.png" />
 @* 驗證登入與否 *@
 <div id="beforeLog">
 	<b>請先登入會員</b>
@@ -64,6 +103,11 @@
 						<div id="stockname" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" readonly></div>
 					</div>
 				</div>
+				<div class="loadong-group">
+					<lottie-player id="loading-ani2" src="https://lottie.host/bcb2d26f-34c2-4453-94f6-4486d9c858f4/I0lNfS4CMf.json" background="transparent" speed="1" style="width: 70px; height: 70px" direction="1" mode="normal" loop autoplay></lottie-player>
+					<p class="loading-info2" style="display:none" >確認資料中，請稍後……</p>
+				</div>
+				
 			
 				
 			</div>
@@ -168,7 +212,9 @@
 					</tr>
 				</table>
 				<br>
-				<button id="predict1" class="btn-w-hover">建立模型</button>
+				<div class="text-center">
+					<button id="predict1" class="btn-w-hover">建立模型</button>
+				</div>
 				<br>
 				<div id="predictionResult1"></div>
 				<div class="progress">
@@ -253,7 +299,9 @@
 				</table>
 
 				<br>
+				<div class="text-center">
 				<button id="predict2" class="btn-w-hover">建立模型</button>
+				</div>
 				<br>
 				<div id="predictionResult2"></div>
 				<div class="progress">
@@ -265,7 +313,7 @@
 			@* xaiver model *@
 			<div id="kazuoform3">
 				<h3 class="display-6">第三步:設定參數並建置模型預測</h3>
-				<h4>變數選擇:</h4>
+				<h4>變數選擇</h4>
 				<div id="ksParaArea">
 					<div class="accordion accordion-flush" id="accordionFlushExample">
 						<div class="accordion-item">
@@ -359,11 +407,13 @@
 				</div>
 
 				<br>
-				<h5>參數選擇:</h5>
+				<h4><b>參數選擇</b></h4>
 				<div id="ModelParaInputArea">
 				</div>
 				<br>
-				<button id="ksOkbutton2" class="btn btn-outline-primary">Build</button>
+				<div class="text-center">
+					<button id="ksOkbutton2" class="btn-w-hover">建立模型</button>
+				</div>
 				<br>
 				<br>
 				<div id="predictionResult2"></div>
@@ -396,7 +446,7 @@
 		$("#kazuoform3, #kazuoform4").css("display", "none");
 		$("#longterm,#shortterm,#checkmodel,#selectmodel").prop("disabled", true);
 		$(".ParaArea>label").css("margin", "5px");
-		
+		$("#loading-ani2").hide();
 		
 		
 		$(document).ready(function () 
@@ -829,8 +879,8 @@
 					$("#selectmodel").prop("disabled", false);
 					$("#selectmodel option[value='1']").prop("selected", true);
 					$("#selectmodel option[value='2']").prop("selected", false);
-					$("#selectmodel option[value='3']").prop("selected", true);
-					$("#selectmodel option[value='4']").prop("selected", false);
+					$("#selectmodel option[value='3']").prop("selected", false);
+					$("#selectmodel option[value='4']").prop("selected", true);
 					$("#checkmodel").prop("disabled", false);
 					$(".progress").hide();
 					prefertype = 2;
@@ -847,8 +897,8 @@
 					$("#selectmodel").prop("disabled", false);
 					$("#selectmodel option[value='1']").prop("selected", false);
 					$("#selectmodel option[value='2']").prop("selected", true);
-					$("#selectmodel option[value='3']").prop("selected", false);
-					$("#selectmodel option[value='4']").prop("selected", true);
+					$("#selectmodel option[value='3']").prop("selected", true);
+					$("#selectmodel option[value='4']").prop("selected", false);
 
 					$("#checkmodel").prop("disabled", false);
 					$(".progress").hide();
@@ -1219,6 +1269,7 @@
 		}
 
 	}
+	
 
 	function fetchingData(url, stockId) {
 		return new Promise((resolve, reject) => {
@@ -1230,6 +1281,8 @@
 	}
 	//檢查股票並呼叫API
 	function stockinput() {
+		$("#loading-ani2").show()
+		$(".loading-info2").css("display", "block");
 		var stockId = ($("#stockid").val().split(' ').length > 1) ? $("#stockid").val().split(' ')[1] : $("#stockid").val();
 		async function jget(url, stockId) {
 			// Note: Below variable will hold the value of the resolved promise
@@ -1242,8 +1295,12 @@
 			if (e.stockname == "查無這支股票") {
 				alert("請選擇其他股票");
 				$("#longterm,#shortterm").prop("disabled", true);
+				$("#loading-ani2").hide()
+				$(".loading-info2").css("display", "none");
 
 			} else {
+				$("#loading-ani2").hide()
+				$(".loading-info2").css("display", "none");
 				$("div#step2").attr("hidden", false);
 				location.href = "#step2";
 				$("#longterm,#shortterm").prop("disabled", false);

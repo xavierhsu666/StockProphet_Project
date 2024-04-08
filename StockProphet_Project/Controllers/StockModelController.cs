@@ -944,6 +944,8 @@ namespace StockProphet_Project.Controllers {
 			Shape theShape = new Shape(rowcount, colcount, 1);
 			x = np.reshape(x, theShape);
 			var model = keras.Sequential();
+			//model.add(keras.layers.LSTM(64, keras.activations.Relu));
+
 			model.add(keras.layers.LSTM(64, keras.activations.Relu));
 
 			for (int i = 0; i < layer; i++) {
@@ -958,12 +960,12 @@ namespace StockProphet_Project.Controllers {
 			//Console.WriteLine("X NumPy array written to file: " + filePathx1);
 
 			//string xString2 = x.ToString();
-			//string filePathx2 = "x_array2.txt";
+			//string filePathx2 = "x_array3.txt";
 			//System.IO.File.WriteAllText(filePathx2, xString2);
 			//Console.WriteLine("X NumPy array written to file: " + filePathx2);
 
 			//string yString2 = y.ToString();
-			//string filePathy2 = "y_array2.txt";
+			//string filePathy2 = "y_array3.txt";
 			//System.IO.File.WriteAllText(filePathy2, yString2);
 			//Console.WriteLine("y NumPy array written to file: " + filePathy2);
 			//return Ok("Some result");

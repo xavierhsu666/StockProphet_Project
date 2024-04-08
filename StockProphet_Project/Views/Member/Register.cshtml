@@ -155,10 +155,10 @@
         flex-direction: column;
     }
 
-    .register-right {
-        display: flex;
-        flex-grow: 1;
-        background-color: #87aeb4;
+    .register-right{
+        display:flex;
+        flex-grow:1;
+        background-image: linear-gradient(to bottom, #dceaa7 0%, #57badb 100%);
         border-start-end-radius: 10px;
         border-bottom-right-radius: 10px;
     }
@@ -304,72 +304,98 @@
 </div>
 @* 儲值窗 *@
 <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">會員等級權益說明</h5>
-                <button type="button" id="closebtn" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="wrap">
-                    <div class="item">
-                        <div class="icon"><i class="fa-solid fa-chess-pawn" style="color: #73bbbf;"></i></div>
-                        <div class="txt" style="font-size: 1.2em;">
-                            <h3>訪客</h3>
-                            <ul>
-                                <li class="text-lg-right">可收藏預測筆數:無</li>
-                                <li class="text-lg-right">預測模型選擇:無</li>
-                                <li class="text-lg-right">預測模型數量:無</li>
-                                <li class="text-lg-right">Free</li>
-                            </ul>
+	<div class="modal-dialog modal-xl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">會員等級權益說明</h5>
+				<button type="button" id="closebtn" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="wrap">
+					<div class="item">
+                        <div class="icon"><i class="fa-solid fa-chess-pawn" style="color: white;"></i></div>
+						<div class="txt" style="font-size: 1.2em;">
+							<h3>訪客</h3>
+                            <table class="member-a-table">
+                                <tr>
+                                    <th>體驗預測</th>
+                                    <td><i class="fa-solid fa-check"></i></td>
+                                </tr>
+                                <tr class="x-mark-td">
+                                    <th>預測模型選擇</th>
+                                    <td>
+                                        迴歸 <i class="fa-solid fa-xmark"></i><br />
+                                        時間序列 <i class="fa-solid fa-xmark"></i><br />
+                                        LSTM <i class="fa-solid fa-xmark"></i><br />
+                                        FNN <i class="fa-solid fa-xmark"></i>
+                                    </td>
+                                </tr>
+                                <tr class="x-mark-td"><th>可收藏預測筆數</th><td><i class="fa-solid fa-xmark"></i></td></tr>
+                                <tr class="x-mark-td"><th>預測模型數量</th><td><i class="fa-solid fa-xmark"></i></td></tr>
+                                <tr class="member-price"><th>價格</th><td>free</td></tr>
+                            </table>
                         </div>
-                    </div>
-                    <div class="item">
-                        <div class="icon"><i class="fa-solid fa-chess-knight" style="color: #73b5c5;"></i></i></div>
-                        <div class="txt" style="font-size: 1.2em;">
-                            <h3>一般會員</h3>
-                            <ul>
-                                <li class="text-lg-right">可收藏預測筆數:5筆</li>
-                                <li class="text-lg-right">預測模型選擇:</li>
-                                <ul>
-                                    <li>迴歸</li>
-                                    <li>時間序列</li>
-                                </ul>
-                                <li class="text-lg-right">預測模型數量:5筆</li>
-                                <li class="text-lg-right">Free</li>
-                            </ul>
-                        </div>
-                    </div>
+					</div>
+					<div class="item">
+                        <div class="icon"><i class="fa-solid fa-chess-knight" style="color: white;"></i></i></div>
+						<div class="txt" style="font-size: 1.2em;">
+							<h3>一般會員</h3>
+                            <table class="member-a-table">
+                                <tr>
+                                    <th>體驗預測</th>
+                                    <td><i class="fa-solid fa-check"></i></td>
+                                </tr>
+                                <tr>
+                                    <th>預測模型選擇</th>
+                                    <td>
+                                        迴歸 <i class="fa-solid fa-check"></i><br />
+                                        時間序列 <i class="fa-solid fa-check"></i><br />
+                                        <p class="member-model">LSTM <i class="fa-solid fa-xmark"></i></p><br />
+                                        <p class="member-model">FNN <i class="fa-solid fa-xmark"></i></p>
+                                    </td>
+                                </tr>
+                                <tr><th>可收藏預測筆數</th><td>5筆</td></tr>
 
-                    <div class="item">
-                        <div class="icon"><i class="fa-solid fa-chess-king fa-bounce" style="color: #73b5c5;"></i></div>
-                        <div class="txt" style="font-size: 1.2em;">
-                            <h3>高級會員</h3>
-                            <ul>
-                                <li class="text-lg-right">可收藏預測筆數:不限</li>
-                                <li class="text-lg-right">
-                                    預測模型選擇:
-                                    <ul>
-                                        <li>迴歸</li>
-                                        <li>時間序列</li>
-                                        <li>LSTM</li>
-                                        <li>FNN</li>
-                                    </ul>
-                                </li>
-                                <li class="text-lg-right">預測模型數量:不限</li>
-                                <li class="text-lg-right">NTD$ 365/月</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                                <tr><th>預測模型數量</th><td>5筆</td></tr>
+                                <tr class="member-price"><th>價格</th><td>free</td></tr>
+                            </table>
+						</div>
+					</div>
 
-            </div>
+					<div class="item">
+                        <div class="icon"><i class="fa-solid fa-chess-king fa-bounce" style="color: white;"></i></div>
+						<div class="txt" style="font-size: 1.2em;">
+							<h3>高級會員</h3>
+                            <table class="member-a-table">
+                                <tr>
+                                    <th>體驗預測</th>
+                                    <td><i class="fa-solid fa-check"></i></td>
+                                </tr>
+                                <tr>
+                                    <th>預測模型選擇</th>
+                                    <td>
+                                        迴歸 <i class="fa-solid fa-check"></i><br />
+                                        時間序列 <i class="fa-solid fa-check"></i><br />
+                                        LSTM <i class="fa-solid fa-check"></i><br />
+                                        FNN <i class="fa-solid fa-check">
+                                    </td>
+                                </tr>
+                                <tr><th>可收藏預測筆數</th><td>無限制</td></tr>
+
+                                <tr><th>預測模型數量</th><td>無限制</td></tr>
+                                <tr class="member-price"><th>價格</th><td>NTD$ 365/月</td></tr>
+                            </table>
+						</div>
+					</div>
+				</div>
+
+			</div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="upgradeclose1">Close</button>
-                <button type="button" class="btn btn-primary" id="upgrade1">升級</button>
+                <button type="button" class="btn-w-hover" data-bs-dismiss="modal" id="upgradeclose1">Close</button>
+                <button type="button" class="btn-w-hover" id="upgrade1">升級</button>
             </div>
-        </div>
-    </div>
+		</div>
+	</div>
 </div>
 
 

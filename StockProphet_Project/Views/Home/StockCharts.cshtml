@@ -4,19 +4,20 @@
 
 <link rel="stylesheet" href="~/css/stockChartStyle.css" type="text/css" />
 <input id="word-table" value="@ViewBag.word" style="display:none"/>
-
+<img class="bg-chart" src="~/homePage/chart.png" />
+<img class="bg-line" src="~/homePage/chart2.png" />
 <div class="upArea">
 	<div class="upLayer">
 		<div class="ctrlBtn">
 
-			<button class="btnT changeMA" onclick="smaClick(this)">SMA5</button>
-			<button class="btnT changeMA" onclick="smaClick(this)">SMA30</button>
+			<button class="btnT changeMA btn-w-hover btn-sma5" onclick="smaClick(this)">隱藏SMA5</button>
+			<button class="btnT changeMA btn-w-hover btn-sma30" onclick="smaClick(this)">隱藏SMA30</button>
 		</div>
 		<div id="forKcandle" class="svgArea"></div>
 	</div>
 	<div class="upLayer">
 		<div class="ctrlBtn">
-			<button id="change" class="btnT">MACD</button>
+			<button id="change" class="btnT btn-w-hover">切換至MACD</button>
 		</div>
 		<div id="forIndicators" class="svgArea"></div>
 	</div>
@@ -64,14 +65,14 @@
 			<div class="member-logout" style="display:none">
 				<div class="member-btn-l">
 					<div><p style="font-size:28px; text-align:center;">登入會員後</p><p style="font-size:20px; text-align:center;">即可建立屬於自己的預測模型！</p></div>
-					<button class="member-btn" id="memberLogging">登入／建立會員</button>
+					<button class="member-btn btn-w-hover" id="memberLogging">登入／建立會員</button>
 				</div>
 			</div>
 			<div class="member-logging"  style="display:none">
 				<div><p style="font-size:28px; text-align:center;">會員專區</p></div>
 				<div class="member-btn-g">
-					<button class="member-btn" id="HomeMymodel">我的模型</button>
-					<button class="member-btn" id="HomeBuildmodel">建立模型</button>
+					<button class="member-btn btn-w-hover" id="HomeMymodel">我的模型</button>
+					<button class="member-btn btn-w-hover" id="HomeBuildmodel">建立模型</button>
 				</div>
 			</div>	
 		</div>
