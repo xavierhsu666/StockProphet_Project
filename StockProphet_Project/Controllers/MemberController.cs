@@ -147,6 +147,7 @@ namespace StockProphet_Project.Controllers
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
 
+
             string sqlQuery = 
                  $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
                  B.PBulidTime,B.Pvariable, B.PFinishTime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code,B.Pstatus,B.Pmodel,B.PAccuracyRatio, COUNT(c.PID) as collectNum
@@ -435,7 +436,7 @@ namespace StockProphet_Project.Controllers
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
             string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-                        B.PBulidTime,B.Pvariable, B.Pfinishtime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code,B.Pmodel,B.PAccuracyRatio
+                        B.PBulidTime,B.Pvariable, B.Pfinishtime,B.PStatus, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code,B.Pmodel,B.PAccuracyRatio
                         FROM DB_model AS B 
                         OUTER APPLY (
                             SELECT TOP 5 *
@@ -465,7 +466,8 @@ namespace StockProphet_Project.Controllers
                     PBuildTime = reader["PBulidTime"],
                     PFinsihTime = reader["Pfinishtime"],
                     SteClose = reader["Ste_Close"],
-                    PID = reader["Pid"],
+                    Pstatus = reader["Pstatus"],
+					PID = reader["Pid"],
                     preVariable = reader["Pvariable"],
                     SName = reader["SN_Name"],
                     SCode = reader["SN_Code"],

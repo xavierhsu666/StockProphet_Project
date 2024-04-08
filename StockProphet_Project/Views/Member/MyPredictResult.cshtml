@@ -137,6 +137,7 @@
 
                     var FinsihTime = new Date(e[w]["PFinsihTime"])
                     var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate()
+                    console.log(e[w])
                     otherprarmeter.push({
                         Buildtime: builddate4,
                         stockname: e[w]["PStock"],
@@ -147,9 +148,9 @@
                         SName: e[w]["SName"],
                         SCode: e[w]["SCode"],
                         PFinsihTime: FinsihTime2,
-                        Pstatus: e["Pstatus"],
-                        Pmodel: e["Pmodel"],
-                        PAccuracyRatio: e["PAccuracyRatio"]
+                        Pstatus: e[w]["Pstatus"],
+                        Pmodel: e[w]["Pmodel"],
+                        PAccuracyRatio: e[w]["PAccuracyRatio"]
                     })
                 }
               
@@ -157,10 +158,13 @@
                 
 
                 $.each(plotarray, function (index, element) {
+                    console.log(element)
+                    console.log("aaa")
                     var finishtime = new Date(element[5]["Date"]);
                     var currentdate = new Date()
                     var result;
                     var Pstatus = otherprarmeter[index]["Pstatus"]; //狀態
+                    // console.log(otherprarmeter[0])
                     var Pmodel = e[index]["Pmodel"];   //使用模型
                     var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
                     var PAR = e[index]['PAccuracyRatio'];
@@ -173,7 +177,7 @@
                     //     result = "結案"
                     // }
                     resultstatus.push(result);
-                    
+                    // console.log(resultstatus)
                     //在这里执行你的操作
                     //結案狀態
 
