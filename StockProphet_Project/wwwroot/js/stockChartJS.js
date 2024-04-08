@@ -506,7 +506,7 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             var model = Ddata[i].Pmodel;
             var PAR = Ddata[i].PAR;
 
-            console.log(Ddata);
+            //console.log(Ddata);
 
             var preState = (status == "Close") ? "已結案" : "追蹤中";
 
@@ -557,6 +557,7 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             
             })
             //console.log(varTochi);
+            console.log("搜尋欄|傳入的收藏數:" + collectNum);
             drawPre(preData, index, preState, preDate, PID, preBuildDate, varTochi, preDummy, pAccount, collectNum, model, PAR);
             //console.log(preState);
         }
@@ -622,7 +623,6 @@ $("#LikeNum2").on("click", function () {
 //畫圖資料,第n張卡片,卡片追蹤狀態,預測日,卡片ID,建立日,所選變數,結果評估,建立帳號,收藏數,使用模型,PAR
 function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy, pAccount, collect, model, PAR) {   
 
-    
     //console.log(preState);
 
     var prelist = "";
@@ -645,7 +645,7 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
     <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5].Close}</td></tr>
     <tr><th class="pre-th">準確率</th><td class="pre-td pre-date">${d3.format(".1f")(PAR)}</td></tr>
     </table>
-    <p class="collectNum card${PID}">${ collect > 0 ? collect : 0 }<p>
+    <p class="collectNum card${PID}">${ (collect > 0) ? collect : 0 }</p>
     <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♡</button>
     </div>
     <div class='card-back'>
@@ -653,6 +653,12 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
     </div></div></div>
     <div class="preVar">${prelist}</div>
     </label>`);
+
+    console.log("搜尋欄|接收的收藏數:" + collect);
+    console.log("PID:" + PID + "／塞進卡片後的text(): " + $(`.card${PID}`).text());
+    console.log("----------");
+
+
     //重新整理日期
     var dateList = [];
     for (var i = 0; i < myData.length; i++) {

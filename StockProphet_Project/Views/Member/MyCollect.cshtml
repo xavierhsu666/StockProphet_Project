@@ -486,6 +486,7 @@
               $('#Explore').on("click", function () {
                   $('#Search').show();
                   $('#MyFavorites').hide();
+                  $(".MyFavorite").empty();
                   checkCollect();
               });
 
@@ -585,6 +586,7 @@
                                       varTochi.push(wordTable[w]);
 
                                   })
+                                  console.log("收藏欄|傳入的收藏數:" + collectNum);
                                   drawPre(jsonforplot, number, result, otherprarmeter[0]["Buildtime"], otherprarmeter[0]["PID"], varTochi, parameter, otherprarmeter[0]["PAcount"], otherprarmeter[0]["SName"], otherprarmeter[0]["SCode"], otherprarmeter[0]["PFinsihTime"], '.MyFavorite', collectNum, Pmodel, PAR);
 
 
@@ -791,6 +793,8 @@
                                       varTochi.push(wordTable[w]);
 
                                   })
+                                  console.log("搜尋欄|傳入的收藏數:"+collectNum);
+                                  // console.log("PID:" + otherprarmeter[index]["PID"] + "/收藏數:" + collectNum);
                                   drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], varTochi, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], '.predictionArea', collectNum, Pmodel, PAR)
                                   checkCollect();
                               });
@@ -893,7 +897,7 @@
               // 開始
               // 生卡片
               function drawPre(myData, index, preState, preDate, PID, preVariable, parameter, PAcount, SName, SCode, PFinsihTime, targetSelector, collect, Pmodel, PAR) {
-                  console.log(myData);
+
                   var prelist = "";
 
                   if (preVariable[0] != null) {
@@ -905,29 +909,34 @@
 
 
                   $(targetSelector).prepend(`<label class='prediction-card ${index}'>
-                                                                                          <input type='checkbox' class='card-btn' />
-                                                                                          <div class='card-content'><div class='card-front'>
-                                                                                          <p class="pre-code" style="display:inline;">${SCode}</p>
-                                                                                          <p class="pre-name" style="display:inline;margin-left:10px;">${SName}</p>
-                                                                                          <button class="pre-state PS${PID} pre-state-member" style="display:inline;margin-left:10px;" onclick="cardDetail(this)">${preState}</button>
-                                                                                                    <table class="table-inside">
-                                                                                          <tr><th class="pre-th">建立者</th><td class="pre-td pre-date">${PAcount}</td></tr>
-                                                                                          <tr><th class="pre-th">使用模型</th><td class="pre-td pre-date">${Pmodel}</td></tr>
-                                                                                          <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
-                                                                                          <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${PFinsihTime}</td></tr>
-                                                                                          <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
-                                                                                          <tr><th class="pre-th">準確率</th><td class="pre-td">${PAR}</td></tr>
-                                                                                          </table>
-                                                                                                              <p class="collectNum card${PID}">${collect > 0 ? collect : 0}<p>
-                                                                                                    <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♡</button>
-                                                                                          </div>
+                <input type='checkbox' class='card-btn' />
+                <div class='card-content'><div class='card-front'>
+                <p class="pre-code" style="display:inline;">${SCode}</p>
+                <p class="pre-name" style="display:inline;margin-left:10px;">${SName}</p>
+                <button class="pre-state PS${PID} pre-state-member" style="display:inline;margin-left:10px;" onclick="cardDetail(this)">${preState}</button>
+                        <table class="table-inside">
+                <tr><th class="pre-th">建立者</th><td class="pre-td pre-date">${PAcount}</td></tr>
+                <tr><th class="pre-th">使用模型</th><td class="pre-td pre-date">${Pmodel}</td></tr>
+                <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
+                <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${PFinsihTime}</td></tr>
+                <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
+                <tr><th class="pre-th">準確率</th><td class="pre-td">${PAR}</td></tr>
+                </table>
+                                    <p class="collectNum card${PID}">${collect > 0 ? collect : 0}<p>
+                        <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♡</button>
+                </div>
 
-                                                                                          <div class='card-back'>
-                                                                                          <div class='forPrediction'>
-                                                                                          </div></div></div>
-                                                                                          <div class="preVar">${prelist}</div></label>`);
+                <div class='card-back'>
+                <div class='forPrediction'>
+                </div></div></div>
+                <div class="preVar">${prelist}</div></label>`);
 
 
+
+                  // console.log("PID:" + PID + "／接到的收藏數:" + collect);
+                  console.log("搜尋欄|接收的收藏數:" + collect);
+                  console.log("PID:" + PID + "／塞進卡片後的text(): " + $(`.card${PID}`).text());
+                  console.log("----------");
 
                   //重新整理日期
                   var dateList = [];
@@ -1144,25 +1153,34 @@
                           case "A": {
                               $(btn).text("♥").css("color", "#87aeb4");
                               console.log("新增一筆");
-                              sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                              // sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
                               sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
                               var nowNum = $(`.card${dataToServer.cardID}`).text();
-                              $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) + 1);
+                              // $(`.card${dataToServer.cardID}`).text("");    //拿到之後清空
+                              console.log("原:"+$(`.card${dataToServer.cardID}`).text());
+                              console.log("結果:" + (parseInt(nowNum) + 1));
+                              $(`.card${dataToServer.cardID}`).text((parseInt(nowNum) + 1));
                               $(btn).addClass("preBtn-click");
                               $(`.card${dataToServer.cardID}`).removeClass("collectNumAniDown");
                               $(`.card${dataToServer.cardID}`).addClass("collectNumAniUp");
+                              console.log("改:" + $(`.card${dataToServer.cardID}`).text());
                               break
                           }
                           case "D": {
                               $(btn).text("♡").css("color", "#87aeb4");
                               console.log("刪除一筆");
-                              sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                              // sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
                               sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
                               var nowNum = $(`.card${dataToServer.cardID}`).text();
-                              $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) - 1);
+                              // $(`.card${dataToServer.cardID}`).text(""); //拿到之後清空
+                              console.log("原:" + $(`.card${dataToServer.cardID}`).text());
+                              console.log("結果:" + (parseInt(nowNum) - 1));
+                              $(`.card${dataToServer.cardID}`).text((parseInt(nowNum) - 1));
+                              
                               $(btn).removeClass("preBtn-click");
                               $(`.card${dataToServer.cardID}`).removeClass("collectNumAniUp");
                               $(`.card${dataToServer.cardID}`).addClass("collectNumAniDown");
+                              console.log("改:" + $(`.card${dataToServer.cardID}`).text());
                               break;
                           }
                           case "R":
