@@ -126,7 +126,7 @@ namespace StockProphet_Project.Controllers
         }
 
 
-        
+
 
         public IActionResult MyCollect()
         {
@@ -146,6 +146,7 @@ namespace StockProphet_Project.Controllers
             int PID = Convert.ToInt32(sessionPID);
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
+
 
             string sqlQuery = 
                  $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
@@ -305,7 +306,7 @@ namespace StockProphet_Project.Controllers
         }
 
 
-       
+
 
         // 搜尋欄
         [HttpGet]
@@ -318,8 +319,9 @@ namespace StockProphet_Project.Controllers
 
             // 使用提取的數字部分進行搜索
             sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-                 B.PBulidTime,B.Pvariable, B.PFinishTime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code, B.Pmodel, B.PAccuracyRatio
+                 B.PBulidTime,B.Pvariable, B.PFinishTime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code,B.Pstatus, B.Pmodel, B.PAccuracyRatio, COUNT(c.PID) as collectNum
          FROM DB_model AS B 
+         left join DB_Collect c on B.Pid = c.PID
          OUTER APPLY (
              SELECT TOP 5 *
              FROM Stock
@@ -327,7 +329,24 @@ namespace StockProphet_Project.Controllers
                    AND ST_Date <= B.PBulidTime
              ORDER BY ST_Date DESC
          ) AS A 
-         WHERE B.Pstock = '{searchTermNumber}'"; // 使用數字部分作为搜尋條件
+         WHERE B.Pstock = {searchTermNumber}
+ GROUP BY 
+ B.PAccount,
+ B.Dummyblock,
+ B.Plabel,
+ B.PfinishTime,
+ B.Pid,
+ B.PbulidTime,
+ B.Pvariable,
+ B.Pstatus,
+ B.Pmodel,
+ B.PAccuracyRatio,
+ B.Pstock,
+ A.ST_Date,A.ste_Close,
+ A.SN_Name,
+ A.SN_Code,B.Pstatus,
+ B.Pmodel,
+ B.PAccuracyRatio"; // 使用數字部分作为搜尋條件
 
             Console.WriteLine(sqlQuery);
             SqlConnection sqlconnect = new SqlConnection(connectionString);
@@ -351,6 +370,7 @@ namespace StockProphet_Project.Controllers
                     preVariable = reader["PVariable"],
                     SName = reader["SN_Name"],
                     SCode = reader["SN_Code"],
+                    Pstatus = reader["Pstatus"],
                     Pmodel = reader["Pmodel"],
                     PAccuracyRatio = reader["PAccuracyRatio"]
                 });
@@ -435,7 +455,7 @@ namespace StockProphet_Project.Controllers
             List<object> results = new List<object>();
             string connectionString = _configuration.GetConnectionString("StocksConnstring");
             string sqlQuery = $@"SELECT B.Pid, B.PAccount, B.Pstock, B.Plabel, B.dummyblock, 
-                        B.PBulidTime,B.Pvariable, B.Pfinishtime, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code,B.Pmodel,B.PAccuracyRatio
+                        B.PBulidTime,B.Pvariable, B.Pfinishtime,B.PStatus, A.ST_Date, A.ste_Close, A.SN_Name, A.SN_Code,B.Pmodel,B.PAccuracyRatio
                         FROM DB_model AS B 
                         OUTER APPLY (
                             SELECT TOP 5 *
@@ -465,7 +485,8 @@ namespace StockProphet_Project.Controllers
                     PBuildTime = reader["PBulidTime"],
                     PFinsihTime = reader["Pfinishtime"],
                     SteClose = reader["Ste_Close"],
-                    PID = reader["Pid"],
+                    Pstatus = reader["Pstatus"],
+					PID = reader["Pid"],
                     preVariable = reader["Pvariable"],
                     SName = reader["SN_Name"],
                     SCode = reader["SN_Code"],
