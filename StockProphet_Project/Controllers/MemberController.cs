@@ -372,8 +372,9 @@ namespace StockProphet_Project.Controllers
                     SCode = reader["SN_Code"],
                     Pstatus = reader["Pstatus"],
                     Pmodel = reader["Pmodel"],
-                    PAccuracyRatio = reader["PAccuracyRatio"]
-                });
+                    PAccuracyRatio = reader["PAccuracyRatio"],
+					collectNum = reader["collectNum"]
+				});
             }
 
             return Json(results);

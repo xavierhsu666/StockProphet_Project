@@ -179,11 +179,8 @@
                     var finishtime = new Date(element[5]["Date"]);
                     var currentdate = new Date()
                     var result;
-                    var Pstatus = otherprarmeter[index]["Pstatus"]; //狀態
-                    // console.log(otherprarmeter[0])
 
-                    var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
-                    var PAR = e[index]['PAccuracyRatio'];
+                    
 
                     // console.log(finishtime)
                     // console.log(currentdate)
@@ -192,7 +189,7 @@
                     // } else {
                     //     result = "結案"
                     // }
-                    resultstatus.push(result);
+                    
                     // console.log(resultstatus)
                     //在这里执行你的操作
                     //結案狀態
@@ -203,6 +200,12 @@
                     var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
                     // console.log(Pmodel)
                     var Pmodel = otherprarmeter[index]["Pmodel"];   //使用模型
+                    var PAR = otherprarmeter[index]['PAccuracyRatio'];
+                    var Pstatus = otherprarmeter[index]["Pstatus"]; //狀態
+                    // console.log(otherprarmeter[0])
+
+                    var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
+                    resultstatus.push(result);
                     switch (Pmodel) { 
                         case "R":
                             Pmodel = "迴歸"
