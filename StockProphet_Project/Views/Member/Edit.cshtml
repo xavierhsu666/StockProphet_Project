@@ -4,7 +4,7 @@
 }
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
 <style>
-     /* radio標籤 */
+    /* radio標籤 */
     .radio-button {
         display: flex;
         gap: 10px;
@@ -12,7 +12,6 @@
         margin: 10px;
         position: relative;
         align-items: center;
-
     }
 
 
@@ -22,10 +21,11 @@
             /* accent-color: #87aeb4; */
         }
 
- .gender-input{
-        display:flex;
-        align-items:center;
+    .gender-input {
+        display: flex;
+        align-items: center;
     }
+
     .radio {
         position: relative;
         display: inline-block;
@@ -71,7 +71,6 @@
     }
 
     #checkEye2 {
-      
         position: absolute;
         top: 50%;
         right: 10px;
@@ -80,7 +79,7 @@
 
     .form-container {
         /* max-width: 500px; */
-        width:100%;
+        width: 100%;
         background-color: #fff;
         /* padding: 32px 24px; */
         font-size: 14px;
@@ -92,10 +91,10 @@
         box-sizing: border-box;
         border-radius: 10px;
         /* box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168); */
-    }   
+    }
 
-   #InvestYear, #MLevel{
-        margin-left:10px;
+    #InvestYear, #MLevel {
+        margin-left: 10px;
     }
 
     /* 下拉選單 */
@@ -114,9 +113,9 @@
         /* -moz-appearance: none; */
         /* -webkit-appearance: none; */
         /*  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), linear-gradient(#003d79, #003d79);
-                background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -webkit-linear-gradient(#003d79, #003d79);
-                background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -moz-linear-gradient(#003d79, #003d79);
-                */
+                                                background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -webkit-linear-gradient(#003d79, #003d79);
+                                                background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E"), -moz-linear-gradient(#003d79, #003d79);
+                                                */
         background-position: right 0.5em top 50%, 0 0;
         background-size: contain, cover;
         background-repeat: no-repeat, repeat;
@@ -135,7 +134,7 @@
         position: absolute;
     }
 
-    .edit-container{
+    .edit-container {
         width: 40%;
         background-color: white;
         box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
@@ -146,7 +145,7 @@
         padding: 40px;
         padding-top: 80px;
         padding-bottom: 80px;
-        position:relative;
+        position: relative;
     }
 
     .cancle-btn:hover {
@@ -159,7 +158,7 @@
         color: white;
     }
 
-    #MLevel{
+    #MLevel {
         background-color: #e9ecef;
         appearance: none
     }
@@ -179,28 +178,31 @@
                     </div> *@
 
                     <div class="form-floating mb-3">
-                        <input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword" id="Password" title="請輸入原始密碼" value="">
-                        <label class="form-label" for="Password">修改密碼:</label>
+                        <input class="form-control" type="password" pattern=@PasswordPattern maxlength="20" name="MPassword" id="Password" data-toggle="tooltip" title="請輸入原始密碼" value="">
+                        <label class="form-label" for="Password">若要更改，請先輸入原始密碼:</label>
                         <i id="checkEye1" class="fas fa-eye-slash"></i>
                         <span id="passwordError" style="color: red;"></span>
 
                     </div>
                     <div id="pass1" class="form-floating mb-3">
-                        <input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼" value="">
-                        <label class="form-label" for="Password">輸入新密碼:</label>
-
+                        <input class="form-control" type="password" pattern=@PasswordPattern maxlength="20" name="MPassword1" id="Password1" data-toggle="tooltip" title="至少包含一個特殊符號，且長度須超過8碼" value="">
+                        <label class="form-label" for="Password">新密碼:</label>
                         <i id="checkEye2" class="fas fa-eye-slash"></i>
-                        <span id="passwordError" style="color: red;"></span>
+                        <span id="passwordError1" style="color: red;"></span>
+
+
                     </div>
                     <div id="pass2" class="form-floating mb-3">
-                        <input class="form-control" type="password" pattern=@PasswordPattern size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="">
-                        <label class="form-label" for="Password">請再輸入一次新密碼:</label>
+                        <input class="form-control" type="password" pattern=@PasswordPattern maxlength="20" name="MPassword2" id="Password2" data-toggle="tooltip" title="請再輸入您剛才設定的密碼" value="">
+                        <label class="form-label" for="Password">請再次輸入新密碼:</label>
                         @* 再次輸入密碼不同時，顯示提示字 *@
-                        <span id="passwordError" style="color: red;"></span>
-                        <span id="pwdnoteword"><p style="color:red; ">您輸入的密碼不相同</p></span>
+                        <span id="passwordError2" style="color: red;"></span>
+                        <span id="pwdnoteword2"><p style="color:red; ">您輸入的密碼不相同</p></span>
                     </div>
+
+
                     <div class="form-floating mb-3">
-                        <input class="form-control" type="email" pattern=@MEmailPattern name="MEmail" id="Email" value="" required>
+                        <input class="form-control" type="email" pattern=@MEmailPattern name="MEmail" id="Email" value="">
                         <label class="form-label" for="Email">信箱:</label>
                         <span id="emailError" style="color: red;"></span>
                         <br>
@@ -211,28 +213,28 @@
                         <label class="form-label" for="UserName">姓名:</label>
                         <br>
                     </div>
-                                    
-                    <div class="form-floating mb-3">                    
-                    <input class="form-control" type="date" name="MBirthday" id="Birthday" value="">                        
+
+                    <div class="form-floating mb-3">
+                        <input class="form-control" type="date" name="MBirthday" id="Birthday" value="">
                         <label class="form-label" for="Birthday">生日:</label>
                     </div>
 
                     <div class="mb-3">
-                    <label for="MGender" required="required" class="gender-input">
-                        性別:
-                        <label class="radio-button">
-                            <input class="testtt" type="radio" name="MGender" id="Male" value="1" required>
-                            <span class="radio"></span>
-                            <label for="Male">男</label>
-                        </label>
+                        <label for="MGender" required="required" class="gender-input">
+                            性別:
+                            <label class="radio-button">
+                                <input class="testtt" type="radio" name="MGender" id="Male" value="1" required>
+                                <span class="radio"></span>
+                                <label for="Male">男</label>
+                            </label>
 
-                        <label class="radio-button">
-                            <input type="radio" name="MGender" id="Female" value="2" required>
-                            <span class="radio"></span>
-                            <label for="Female">女</label>
+                            <label class="radio-button">
+                                <input type="radio" name="MGender" id="Female" value="2" required>
+                                <span class="radio"></span>
+                                <label for="Female">女</label>
+                            </label>
                         </label>
-                    </label>
-                </div>
+                    </div>
 
                     <div class="mb-3 news-filter">
                         <label for="MInvestYear">您的投資年數:</label>
@@ -243,7 +245,7 @@
                             <option value="4">5年以上</option>
                         </select>
                         <br>
-                    </div>             
+                    </div>
 
                     <div class="news-filter mb-3">
                         <label for="MLevel">會員等級:</label>
@@ -253,7 +255,7 @@
                         </select>
                     </div>
 
-                    <button id="ReviseData" class="w-100 btn-w-hover mb-3 edit-btn">修改資料</button>
+                    <button id="ReviseData" class="w-100 btn-w-hover edit-btn">修改資料</button>
                     <button id="Reset" class="w-100 btn-w-hover cancle-btn">取消</button>
                 </form>
             </div>
@@ -288,7 +290,10 @@
     $('#pass2').css('display', 'none');
 
     $(function () {
-        //密碼欄位
+        //提示字
+        $('[data-toggle="tooltip"]').tooltip();
+
+        //密碼欄位-小眼睛
         $("#checkEye1").click(function () {
             if ($(this).hasClass('fa-eye-slash')) {
                 $("#Password").attr('type', 'text');
@@ -309,34 +314,34 @@
             $(this).toggleClass('fa-eye-slash').toggleClass('fa-eye');
         });
 
-       
+
         //將登入的會員資料帶到前台-不可修改的(帳號、生日、性別、會員等級)
         var LogAccount = sessionStorage.getItem("LogAccount");
         // $('#Account').append(`<label>${LogAccount}</label>`);
 
-        var LogMemberBirthday = sessionStorage.getItem("LogMemberBirthday");       
+        var LogMemberBirthday = sessionStorage.getItem("LogMemberBirthday");
         $('#Birthday').val(`${LogMemberBirthday}`);
-        $('#Birthday').prop("disabled",true);
-        
+        $('#Birthday').prop("disabled", true);
+
         var LogMemberGender = sessionStorage.getItem("LogMemberGender");
         // console.log(typeof(LogMemberGender))
         // console.log( "會員性別:"+ LogMemberGender)
-         $(`input[name='MGender'][value=${LogMemberGender}]`).prop("checked",true);
-         $("input[name='MGender']").prop("disabled",true);
+        $(`input[name='MGender'][value=${LogMemberGender}]`).prop("checked", true);
+        $("input[name='MGender']").prop("disabled", true);
 
-        var LogMemberLevel = sessionStorage.getItem("LogMemberLevel");        
-         $('select[name="MLevel"]').val(`${LogMemberLevel}`);
-         $('select[name="MLevel"]').prop("disabled",true);
+        var LogMemberLevel = sessionStorage.getItem("LogMemberLevel");
+        $('select[name="MLevel"]').val(`${LogMemberLevel}`);
+        $('select[name="MLevel"]').prop("disabled", true);
 
-        
+
         //將登入的會員資料帶到前台-可修改的(信箱、姓名、投資年數)
         var LogMemberEmail = sessionStorage.getItem("LogMemberEmail");
-        $('#Email').val(LogMemberEmail);
+        $('#Email').val(`${LogMemberEmail}`);
         var LogMemberName = sessionStorage.getItem("LogMemberName");
-        $('#UserName').val(LogMemberName);
+        $('#UserName').val(`${LogMemberName}`);
         var LogMemberInvestYear = sessionStorage.getItem("LogMemberInvestYear");
         // console.log(LogMemberInvestYear);
-        switch (LogMemberInvestYear) {
+        switch (`${LogMemberInvestYear}`) {
             case "1":
                 $("#InvestYear").val("1");
                 // console.log("1")
@@ -358,109 +363,125 @@
                 break;
         }
 
+        //變更密碼
         function RevisePassword() {
             //打開密碼欄位可以編輯
             $('#pass1').css('display', 'block');
             $('#pass2').css('display', 'block');
+            $('#pwdnoteword2').hide();
 
-            //檢查兩次輸入的密碼是否一致
-            $('#Password2').on("change", function () {
+            //檢查Password1與Password
+            //輸入的新密碼是否與舊密碼一致
+            //正則
+
+            $('#Password1').on("change", function () {
+                var MPassword = $('#Password').val();
                 var MPassword1 = $('#Password1').val();
                 var MPassword2 = $('#Password2').val();
-                if (MPassword2 == "") {
-                    $('#pwdnoteword').show();
-                    $('#pwdnoteword').text("必填")
+                var passwordValue = $(this).val();
+                var passwordPattern = new RegExp(@Html.Raw(Json.Serialize(PasswordPattern)));
+                if (MPassword1 == "" || MPassword1 == null) {
+                    $('#pwdnoteword1').show();
+                    $('#pwdnoteword1').text("必填");
+                } else if (!passwordPattern.test(passwordValue)) {
+                    $('#passwordError1').text('需至少包含一個特殊符號，且長度須超過8碼');
                 } else {
-                    if (MPassword1 != MPassword2) {
-                        $('#pwdnoteword').show();
-                    }
-                    else {
-                        $('#pwdnoteword').hide();
-                        console.log("ok");
+                    $('#passwordError1').text('');
+                    if (MPassword1 == MPassword) {
+                        $('#passwordError1').text('不可與原始密碼相同');
+                    } else if (MPassword1 != MPassword2) {
+                        $('#pwdnoteword2').show();
+                    } else {
+                        $('#pwdnoteword1').hide();
+                        alert('變更成功!');
                     }
                 }
             })
-            //+ 正則
-            $('#Password').on('change', function () {
+
+            //檢查Password1與Password2
+            //兩次輸入的密碼是否一致
+            //正則
+
+            $('#Password2').on("change", function () {
+                var MPassword = $('#Password').val();
+                var MPassword1 = $('#Password1').val();
+                var MPassword2 = $('#Password2').val();
                 var passwordValue = $(this).val();
                 var passwordPattern = new RegExp(@Html.Raw(Json.Serialize(PasswordPattern)));
-
-                // 检查输入值是否匹配正则表达式
-                if (!passwordPattern.test(passwordValue)) {
-                    $('#passwordError').text('密码格式不符合要求，"需至少包含一個特殊符號，且長度須超過8碼"');
+                if (MPassword2 == "" || MPassword2 == null) {
+                    $('#pwdnoteword2').show();
+                    $('#pwdnoteword2').text("必填");
+                } else if (!passwordPattern.test(passwordValue)) {
+                    $('#passwordError2').text("需至少包含一個特殊符號，且長度須超過8碼");
                 } else {
-                    $('#passwordError').text('');
+                    $('#passwordError2').text('');
+                    if (MPassword1 != MPassword2) {
+                        $('#pwdnoteword2').show();
+                    } else {
+                        $('#pwdnoteword2').hide();
+                        alert('變更成功!');
+                    }
                 }
-            });
-
-            $('#Password1').on('change', function () {
-                var passwordValue = $(this).val();
-                var passwordPattern = new RegExp(@Html.Raw(Json.Serialize(PasswordPattern)));
-
-                // 检查输入值是否匹配正则表达式
-                if (!passwordPattern.test(passwordValue)) {
-                    $('#passwordError').text('密码格式不符合要求，"需至少包含一個特殊符號，且長度須超過8碼"');
-                } else {
-                    $('#passwordError').text('');
-                }
-            });
-            $('#Password2').on('change', function () {
-                var passwordValue = $(this).val();
-                var passwordPattern = new RegExp(@Html.Raw(Json.Serialize(PasswordPattern)));
-
-                // 检查输入值是否匹配正则表达式
-                if (!passwordPattern.test(passwordValue)) {
-                    $('#passwordError').text('密码格式不符合要求，"需至少包含一個特殊符號，且長度須超過8碼"');
-                } else {
-                    $('#passwordError').text('');
-                }
-            });
+            })
         }
 
 
-        //(1).判斷該會員的舊密碼是否一致
+        //(1).判斷該會員的舊密碼是否正確
         //Yes =>可以修改
         //NO  =>不能修改
 
         $('#Password').on("change", function () {
-            var checkPassword = {
-                Account: LogAccount,
-                checkPassword: $('#Password').val()
+            var passwordValue = $(this).val();
+            var passwordPattern = new RegExp(@Html.Raw(Json.Serialize(PasswordPattern)));
+
+            // 检查输入值是否匹配正则表达式
+            if (passwordValue == null || passwordValue == "") {
+                console.log("不修改密碼")
+            } else if (!passwordPattern.test(passwordValue)) {
+                $('#passwordError').text("需至少包含一個特殊符號，且長度須超過8碼");
+            } else {
+                $('#passwordError').text("");
+                var checkPassword = {
+                    Account: LogAccount,
+                    checkPassword: $('#Password').val()
+                }
+                // console.log(checkPassword);
+
+                $.ajax({
+                    url: "/Member/checkPassword",
+                    method: "get",
+                    data: checkPassword,
+                    success: function (e) {
+                        // console.log(e)
+                        if (e) {
+                            // alert("舊密碼輸入正確");
+                            RevisePassword();
+                        }
+                        else {
+                            alert("密碼輸入錯誤")
+                        }
+                    }
+                })
             }
 
-            console.log(checkPassword);
-
-            $.ajax({
-                url: "/Member/checkPassword",
-                method: "get",
-                data: checkPassword,
-                success: function (e) {
-                    console.log(e)
-                    if (e) {
-                        RevisePassword();
-                        alert("舊密碼輸入正確");
-                    }
-                    else {
-                        alert("密碼輸入錯誤")
-                    }
-                }
-            })
         })
 
-
-        // (2).將修改的資料存回資料庫
-        $('#ReviseData').on("click", function () {
-
-            NewEmail = $('#Email').val(),
-                NewName = $('#UserName').val(),
-                NewInvestYear = $('#InvestYear').val()
-            //是否修改密碼
-            NewPassword = $('#Password2').val()
-            if (NewPassword != null) { NewPassword = $('#Password2').val() }
-            else {
-                NewPassword = $('#Password1').val()
+        //(2).信箱格式檢查
+        $('#Email').on('change', function () {
+            var emailValue = $(this).val();
+            var emailPattern = new RegExp(@Html.Raw(Json.Serialize(MEmailPattern)));
+            // 检查输入值是否匹配正则表达式
+            if (!emailPattern.test(emailValue)) {
+                $('#emailError').text('信箱格式錯誤');
+            } else {
+                $('#emailError').text('');
             }
+        });
 
+        //儲存修改後的資料至DB
+        //將修改後資料帶回頁面
+        function SaveReviseMemberData() {
+            var NewPassword = $('#Password1').val();
             var dataToServer = {
                 Account: `${LogAccount}`,
                 NewPassword: `${NewPassword}`,
@@ -468,35 +489,121 @@
                 NewName: $('#UserName').val(),
                 NewInvestYear: $('#InvestYear').val()
             }
-            console.log(dataToServer)
+            // console.log(dataToServer)
 
             $.ajax({
                 url: "/Member/SaveReviseMemberData",
                 method: "put",
                 data: dataToServer,
                 success: function (e) {
-                    console.log(e);
+                    // console.log(e);
+                  
+                    // alert("資料修改成功");
                     if (e) {
+                        // alert("帶回資料成功");
                         $.ajax({
                             url: "/Member/ReturnReviseMemberData",
-                            method: "get",
+                            method: "post",
                             data: { LogAccount },
                             success: function (e) {
-                                return e
+                                return e;
+                                // alert("資料修改成功");
+                                // console.log(e);                               
+                                window.location.href = "/Member/Edit";
                             }
                         })
-                        alert("資料修改成功");
-                        sessionStorage.setItem("LogMemberName", NewName);
-                        sessionStorage.setItem("LogMemberEmail", NewEmail);
-                        sessionStorage.setItem("LogMemberInvestYear", NewInvestYear);
-
-                        window.location.href = "/Member/Edit";
                     } else {
-                        alert("資料修改失敗");
+                        alert("帶回資料失敗");
                     }
-
                 }
             })
+        }
+
+        //(3).將修改的資料存回資料庫
+        $('#ReviseData').on("click", function () {
+            // console.log("24242")
+            //判斷是否修改密碼
+            var NewPassword = $('#Password1').val();
+            //判斷密碼格式
+            var Password = $('#Password').val();
+            var NewPasswords = $('#Password2').val();
+            var passwordPattern = new RegExp(@Html.Raw(Json.Serialize(PasswordPattern)));
+
+            //判斷信箱格式
+            var emailValue = $('#Email').val();
+            var emailPattern = new RegExp(@Html.Raw(Json.Serialize(MEmailPattern)));
+
+            //不修改密碼
+            if (NewPassword == null || NewPassword == "") {
+                if (!emailPattern.test(emailValue)) {
+                    alert("信箱格式錯誤");
+                    console.log('不改密碼' + '信箱格式錯誤')
+                } else {                   
+                    SaveReviseMemberData();
+                    console.log('不改密碼' + '修改成功')
+                    alert('修改成功!');
+                    sessionStorage.setItem("LogMemberName", $('#UserName').val());
+                    sessionStorage.setItem("LogMemberEmail", $('#Email').val());
+                    sessionStorage.setItem("LogMemberInvestYear", $('#InvestYear').val());
+                    event.preventDefault();
+                }
+            }
+            //變更密碼
+            else {
+
+                if (NewPassword != NewPasswords) {
+                    alert("輸入的密碼不相同");
+                    console.log('改密碼' + '密碼不相同')
+                } else if (!emailPattern.test(emailValue)) {
+                    alert("信箱格式錯誤");
+                    console.log('改密碼' + '信箱格式錯誤')
+                } else if (!passwordPattern.test(NewPassword)) {
+                    alert("密碼需至少包含一個特殊符號，且長度須超過8碼");
+                    console.log('改密碼' + '密碼格式錯誤')
+
+                } else if (!passwordPattern.test(NewPasswords)) {
+                    alert("密碼需至少包含一個特殊符號，且長度須超過8碼");
+                    console.log('改密碼' + '密碼格式錯誤')
+
+                } else {
+                    SaveReviseMemberData();
+                    console.log('改密碼' + '修改成功')
+                    alert('修改成功!');
+
+                    sessionStorage.setItem("LogMemberName", $('#UserName').val());
+                    sessionStorage.setItem("LogMemberEmail", $('#Email').val());
+                    sessionStorage.setItem("LogMemberInvestYear", $('#InvestYear').val());
+                    event.preventDefault();
+
+                }
+            }
+        })
+
+        //(4).取消
+        $('#Reset').on("click", function () {
+            $('#Email').val(`${LogMemberEmail}`);
+            $('#UserName').val(`${LogMemberName}`);
+            switch (`${LogMemberInvestYear}`) {
+                case "1":
+                    $("#InvestYear").val("1");
+                    // console.log("1")
+                    break;
+                case "2":
+                    $("#InvestYear").val("2");
+                    // console.log("2")
+                    break;
+                case "3":
+                    $("#InvestYear").val("3");
+                    // console.log("3")
+                    break;
+                case "4":
+                    $("#InvestYear option[value='4']").prop("selected", true);
+                    // console.log("5")
+                    break;
+                default:
+                    console.log("error");
+                    break;
+            }
         })
 
     })

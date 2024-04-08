@@ -2,8 +2,6 @@
 <script src="https://d3js.org/d3.v4.js"></script>
 <link rel="stylesheet" href="~/css/stockChartStyle.css" type="text/css" />
 
-<h1 class="text-">會員功能-我的預測結果</h1>
-
 <style>
     .x.axis.pre path {
         display: none;
@@ -22,6 +20,14 @@
        
     }
 
+    #totalCountDisplay {
+        color: #73b5c5;
+        font-size: 20px;
+        position: absolute;
+        top: 200px;
+        right: 200px;
+    }
+
 </style>
 <img class="bg-chart" src="~/homePage/chart.png" />
 <img class="bg-line" src="~/homePage/chart2.png" />
@@ -33,8 +39,11 @@
         </div>
 
         <div id="afterLog">
+            <b id="totalCountDisplay"></b>
+
             <button id="Ongoing" class="btn-w-hover">追蹤中</button>
-            <button id="Finished" class="btn-w-hover">已結案</button>
+            <button id="Finished" class="btn-w-hover">已結案</button>           
+
 
             @* 4.我的預測結果 *@
             <div id="FavoritesPage">
@@ -42,6 +51,7 @@
                 @* <!-- 自動畫卡片 --> *@
                 <div class="predictionArea"></div>
             </div>
+
 
         </div>
     </div>
@@ -67,28 +77,6 @@
 
 
     $(function () {
-        // // 1.點擊回到會員頁
-        // $('#showMemberIndex').on("click", function () {
-        // 	window.location.href = "/Member/Index";
-        // })
-        // // 2.點擊修改個人資料
-        // $('#showRevise').on("click", function () {
-        // 	window.location.href = "/Member/Edit";
-        // })
-        // // 3.點擊我的收藏
-        // $('#showFavoritesPage').on("click", function () {
-        // 	window.location.href = "/Member/MyCollect";
-        // })
-        // // 4.點擊我要預測
-        // $('#showPredictFunc').on("click", function () {
-        // 	window.location.href = "/StockModel/Predictindex";
-        // })
-        // // 5.點擊我的預測結果
-        // $('#showHistoryPage').on("click", function () {
-        // 	window.location.href = "/Member/MyPredictResult";
-        // })
-
-
         //我的預測結果-資料整理
         var wordTable = JSON.parse($("#word-table").val());
         //將預測結果帶到前端
@@ -105,7 +93,7 @@
             data: data,
             success: function (e) {
 
-                console.log(e);
+                // console.log(e);
                 for (var i = 0; i < e.length; i += 5) {
                     // console.log("----------"+i)
                     var subArray = [];
@@ -129,13 +117,23 @@
                     });
                 }
                 console.log(plotarray); // 输出降序排列后的数组
+                var totalCount = plotarray.length // 我的預測筆數
+                var MidLevel = sessionStorage.getItem("LogMemberLevel");
 
+                $('#totalCountDisplay').text(`(${totalCount}`);
+                // console.log(sessionStorage.getItem("LogMemberLevel"));
+                if (MidLevel == "一般會員") {
+                    $('#totalCountDisplay').text(`( ${totalCount} / 5 ) 已收藏筆數`);
+                } else {
+                    $('#totalCountDisplay').text(`( ${totalCount} / ∞ ) 已收藏筆數`);
+                }
                 for (var w = 0; w < e.length; w += 5) {
                     var builddate3 = new Date(e[w]["PBuildTime"])
                     var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate()
 
                     var FinsihTime = new Date(e[w]["PFinsihTime"])
                     var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate()
+                    console.log(e[w])
                     otherprarmeter.push({
                         Buildtime: builddate4,
                         stockname: e[w]["PStock"],
@@ -146,23 +144,22 @@
                         SName: e[w]["SName"],
                         SCode: e[w]["SCode"],
                         PFinsihTime: FinsihTime2,
-                        Pstatus: e["Pstatus"],
-                        Pmodel: e["Pmodel"],
-                        PAccuracyRatio: e["PAccuracyRatio"]
+                        Pstatus: e[w]["Pstatus"],
+                        Pmodel: e[w]["Pmodel"],
+                        PAccuracyRatio: e[w]["PAccuracyRatio"]
                     })
                 }
-              
-                console.log(e[0]['PAccuracyRatio']);
+
                 
 
                 $.each(plotarray, function (index, element) {
+                    console.log(element)
+                    console.log("aaa")
                     var finishtime = new Date(element[5]["Date"]);
                     var currentdate = new Date()
                     var result;
-                    var Pstatus = otherprarmeter[index]["Pstatus"]; //狀態
-                    var Pmodel = e[index]["Pmodel"];   //使用模型
-                    var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
-                    var PAR = e[index]['PAccuracyRatio'];
+
+                    
 
                     // console.log(finishtime)
                     // console.log(currentdate)
@@ -171,8 +168,8 @@
                     // } else {
                     //     result = "結案"
                     // }
-                    resultstatus.push(result);
                     
+                    // console.log(resultstatus)
                     //在这里执行你的操作
                     //結案狀態
 
@@ -181,7 +178,24 @@
                     //選擇變數
                     var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
                     // console.log(Pmodel)
+                    var Pmodel = otherprarmeter[index]["Pmodel"];   //使用模型
+                    var PAR = otherprarmeter[index]['PAccuracyRatio'];
+                    var Pstatus = otherprarmeter[index]["Pstatus"]; //狀態
+                    // console.log(otherprarmeter[0])
 
+                    var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
+                    resultstatus.push(result);
+                    switch (Pmodel) { 
+                        case "R":
+                            Pmodel = "迴歸"
+                            break;
+                        case "T":
+                            Pmodel = "時間序列"
+                            break;
+                        default:
+                            break;
+                    }
+                    
                     var varTochi = [];
 
                     preVariable.forEach(function (w) {
