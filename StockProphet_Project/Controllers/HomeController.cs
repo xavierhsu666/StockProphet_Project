@@ -242,7 +242,7 @@ namespace StockProphet_Project.Controllers {
 		public IActionResult Visitor() {
 
 			var q = from o in _context.DbModels.ToList()
-					where o.Pid == 12
+					//where o.Pid == 49
 					select o;
 			var mr = q.FirstOrDefault();
 			StockModelController stc = new StockModelController(null, _context);
