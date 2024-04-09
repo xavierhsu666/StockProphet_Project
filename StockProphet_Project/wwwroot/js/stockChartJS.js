@@ -307,7 +307,7 @@ function draw(data, volumeData) {
 
     //ticks(幾個刻度?縮放比例?) timeFormat(什麼樣的數值) tickSize(表格內的格線)
     svg.select("g.candlestick").call(candlestick).attr("clip-path", "url(#candlestickClip)");  //K棒
-    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 2).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
+    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 2).tickFormat(d3.timeFormat("%m-%d")).tickSize(-height, -height).tickPadding(10));   //X軸
     svg.selectAll("g.y.axis").call(yAxis.ticks(5).tickSize(-width, 0).tickPadding(10));   //Y軸
     svg.selectAll("g.y.axis.zoom").call(YzoomAxis.ticks(5).tickSize(-width, 0).tickPadding(10));   //Y軸
     svg.select("g.sma.ma-5").attr("clip-path", "url(#candlestickClip)").call(sma);
@@ -335,7 +335,7 @@ function drawMACD(data) {
     macdY.domain([(d3.min(macdList) - 1), (d3.max(macdList) + 1)]);     //找signal、macd跟difference的最大最小值，避免某一方超過軸度
 
     svgMACD.selectAll("g.macd.here").datum(macdData).call(macd);
-    svgMACD.selectAll("g.x.axis.macd").call(xAxisMacd.ticks(5).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));
+    svgMACD.selectAll("g.x.axis.macd").call(xAxisMacd.ticks(5).tickFormat(d3.timeFormat("%m-%d")).tickSize(-height, -height).tickPadding(10));
     svgMACD.selectAll("g.y.axis.macd").call(yAxisMacd.ticks(10).tickSize(-width, -width).tickPadding(10));
     svgMACD.select("g.crosshairMacd").call(crosshairMACD);  //十字線
 }
@@ -349,7 +349,7 @@ function drawKD(data) {
 
 
 
-    svgMACD.selectAll("g.x.axis.macd").call(xAxisMacd.ticks(5).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));
+    svgMACD.selectAll("g.x.axis.macd").call(xAxisMacd.ticks(5).tickFormat(d3.timeFormat("%m-%d")).tickSize(-height, -height).tickPadding(10));
     svgMACD.selectAll("g.y.axis.macd").call(yAxisMacd.ticks(10).tickSize(-width, -width).tickPadding(10));
 
     var lineK = d3.line()   //K線
@@ -726,7 +726,7 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
 
     preSvg.select("g.predictionLine.here").append("path").attr("class", "pathPre").attr("d", linePre(myData)).attr("fill", "none")
         .attr("stroke", "#bbbdbe").attr("stroke-width", 2);
-    preSvg.select("g.x.axis.pre").call(preAxisX.tickValues(dateList).tickFormat(d3.timeFormat("%m/%d")).tickPadding(10).tickSizeInner(-preHeight - 10, -preHeight))
+    preSvg.select("g.x.axis.pre").call(preAxisX.tickValues(dateList).tickFormat(d3.timeFormat("%m-%d")).tickPadding(10).tickSizeInner(-preHeight - 10, -preHeight))
         .selectAll("text")
         .style("text-anchor", "end")
         .attr("dx", "-.8em")

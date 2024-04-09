@@ -537,10 +537,10 @@
                                   jsonforplot.push({ Date: dateObject, Close: e[0].PLabel });
 
                                   var builddate3 = new Date(e[0].PBuildTime);
-                                  var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate();
+                                  var builddate4 = builddate3.getFullYear() + '-' + ("0" + (builddate3.getMonth() + 1)).slice(-2) + '-' + ("0" + builddate3.getDate()).slice(-2)
                                   var FinsihTime = new Date(e[0].PFinsihTime);
 
-                                  var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate();
+                                  var FinsihTime2 = FinsihTime.getFullYear() + '-' + ("0"+(FinsihTime.getMonth() + 1)).slice(-2) + '-' + ("0" + FinsihTime.getDate()).slice(-2)
 
                                   jsonforplot.sort(function (a, b) {
                                       var dateA = new Date(a.Date);
@@ -748,10 +748,10 @@
 
                               for (var w = 0; w < e.length; w += 5) {
                                   var builddate3 = new Date(e[w]["PBuildTime"])
-                                  var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate()
+                                  var builddate4 = builddate3.getFullYear() + '-' + ("0"+(builddate3.getMonth() + 1)).slice(-2) + '-' + ("0"+builddate3.getDate()).slice(-2)
 
                                   var FinsihTime = new Date(e[w]["PFinsihTime"])
-                                  var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate()
+                                  var FinsihTime2 = FinsihTime.getFullYear() + '-' + ("0"+(FinsihTime.getMonth() + 1)).slice(-2) + '-' + ("0"+FinsihTime.getDate()).slice(-2)
                                   otherprarmeter.push({
                                       Buildtime: builddate4,
                                       stockname: e[w]["PStock"],
@@ -1039,7 +1039,7 @@
                       .call(
                           preAxisX
                               .tickValues(dateList)
-                              .tickFormat(d3.timeFormat("%m/%d"))
+                              .tickFormat(d3.timeFormat("%m-%d"))
                               .tickPadding(10)
                               .tickSizeInner(-preHeight - 10, -preHeight)
                       )
