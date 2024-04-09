@@ -199,7 +199,7 @@
 <div class="area-container">
     <div class="register-container">
         <div id="RegisterData" class="form-container register-left">
-            <form autocomplete="on">
+            @* <form autocomplete="on"> *@
                 <div class="logo-container h5">註冊資料</div>
                 <div class="form-floating mb-3">
                     @* +正則 *@
@@ -297,7 +297,7 @@
 
                 <button class="w-100 btn-w-hover mb-3 reg-btn" type="submit" id="RegisterSubmit">立即註冊</button>
                 <button class="w-100 btn-w-hover cancle-btn" id="Reset">取消填寫</button>
-            </form>
+            @* </form> *@
         </div>
         <div class="register-right"></div>
     </div>
@@ -597,7 +597,7 @@
                     success: function (e) {
                         // console.log("註冊成功!");
                         // alert("註冊成功!");
-                        window.location.href = "/Member/Login";
+                        window.location.href = "/Member/Login"
                     }
                 })
                 // }
