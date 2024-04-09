@@ -204,11 +204,11 @@ d3.json(`/Home/showStocks/${stocksID}`, function (data) {
 
 
     //K棒X、Y軸
-    svg.append("g").attr("class", "y axis");
-    svg.append("g").attr("class", "y axis zoom");
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
+    svg.append("g").attr("class", "y axis");
+    svg.append("g").attr("class", "y axis zoom");
 
     //K棒區
     svg.append("g")
@@ -271,9 +271,9 @@ function draw(data, volumeData) {
     var clip = svg.append("defs").append("svg:clipPath")
         .attr("id", "clip")
         .append("svg:rect")
-        .attr("width", width)
+        .attr("width", width-1)
         .attr("height", height)
-        .attr("x", 0)
+        .attr("x", 1)
         .attr("y", 0);
     var candlestickClip = svg.append("defs").append("svg:clipPath")
         .attr("id", "candlestickClip")
@@ -332,10 +332,10 @@ function drawMACD(data) {
         dList.push(macdData[i].difference);
     }
     var macdList = sList.concat(mLisr).concat(dList);   //合併
-    macdY.domain([(d3.min(macdList) - 0.1), (d3.max(macdList) + 0.1)]);     //找signal、macd跟difference的最大最小值，避免某一方超過軸度
+    macdY.domain([(d3.min(macdList) - 1), (d3.max(macdList) + 1)]);     //找signal、macd跟difference的最大最小值，避免某一方超過軸度
 
     svgMACD.selectAll("g.macd.here").datum(macdData).call(macd);
-    svgMACD.selectAll("g.x.axis.macd").call(xAxisMacd.ticks(d3.timeMonth, 1).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));
+    svgMACD.selectAll("g.x.axis.macd").call(xAxisMacd.ticks(5).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));
     svgMACD.selectAll("g.y.axis.macd").call(yAxisMacd.ticks(10).tickSize(-width, -width).tickPadding(10));
     svgMACD.select("g.crosshairMacd").call(crosshairMACD);  //十字線
 }
@@ -505,7 +505,8 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             var status = Ddata[i].Status;   //是否結案
             var model = Ddata[i].Pmodel;
             var PAR = Ddata[i].PAR;
-            
+
+            console.log(Ddata);
 
             var preState = (status == "Close") ? "已結案" : "追蹤中";
 
@@ -828,13 +829,13 @@ function zooming() {
 
 function redraw() {
     svg.select("g.candlestick").call(candlestick);  //K棒
+    svg.selectAll("rect.volumeBar")
+        .attr("x", function (d) { return xVolume(d.date); })
+        .attr("width", (xVolume.bandwidth()));
     svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 2).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
     svg.selectAll("g.y.axis").call(yAxis.ticks(5).tickSize(-width, 0).tickPadding(10));   //Y軸
     svg.select("g.sma.ma-5").call(sma);
     svg.select("g.sma.ma-30").call(sma);
-    svg.selectAll("rect.volumeBar")
-        .attr("x", function (d) { return xVolume(d.date); })
-        .attr("width", (xVolume.bandwidth()));
 }
 
 
@@ -1021,7 +1022,7 @@ function changelist(btn) {
         //console.log("new click");
         $('html, body').animate({
             scrollTop: $('.middle-area').offset().top - 50
-        }, 500);
+        }, 10);
     }
     $(".change-list-btn").css({
         "color": "#87aeb4",

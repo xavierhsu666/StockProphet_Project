@@ -416,7 +416,7 @@ a.ui-button:active,
     width: 90%;
     /*border:3px solid pink;*/
     position: absolute;
-    bottom:0;
+    bottom:10px;
     /*top: 80%;*/
     overflow: hidden;
 }

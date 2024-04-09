@@ -12,16 +12,17 @@
 }
 
 .pre-container {
-    background-color: pink;
+
+    background-color: white;
     width: 80%;
     padding: 40px;
-    height: 10rem;
+    height: 12rem;
     background-color: white;
     box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
     border-radius: 10px;
     transition: all 0.5s;
     position:relative;
-    overflow:hidden;
+    /*overflow:hidden;*/
 }
 
 .input-group {
@@ -72,15 +73,7 @@ div[name='th'] {
     margin-left: auto;
     /* width:15%; */
 }
-@media screen and (max-width: 1200px) {
-    .pre-container {
-        width: 100%;
-    }
 
-    .input-group {
-        width: 100%;
-    }
-}
 
 #longterm {
     margin-right: 20px;
@@ -295,4 +288,20 @@ div[name='th'] {
 
 .resultBtnG {
     width: 40%;
+}
+
+/*---media---*/
+@media screen and (max-width: 1200px) {
+    .pre-container {
+        width: 100%;
+        margin-bottom: 50px;
+    }
+
+    .input-group {
+        width: 100%;
+    }
+
+    .arror-icon-content {
+        bottom: -50px;
+    }
 }
