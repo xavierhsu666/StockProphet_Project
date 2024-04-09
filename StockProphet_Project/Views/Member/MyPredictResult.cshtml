@@ -123,9 +123,9 @@
                 $('#totalCountDisplay').text(`(${totalCount}`);
                 // console.log(sessionStorage.getItem("LogMemberLevel"));
                 if (MidLevel == "一般會員") {
-                    $('#totalCountDisplay').text(`( ${totalCount} / 5 ) 已收藏筆數`);
+                    $('#totalCountDisplay').text(`( ${totalCount} / 5 ) 已預測筆數`);
                 } else {
-                    $('#totalCountDisplay').text(`( ${totalCount} / ∞ ) 已收藏筆數`);
+                    $('#totalCountDisplay').text(`( ${totalCount} / ∞ ) 已預測筆數`);
                 }
                 for (var w = 0; w < e.length; w += 5) {
                     var builddate3 = new Date(e[w]["PBuildTime"])
