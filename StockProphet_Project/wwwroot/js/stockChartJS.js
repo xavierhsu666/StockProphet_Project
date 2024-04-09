@@ -307,7 +307,7 @@ function draw(data, volumeData) {
 
     //ticks(幾個刻度?縮放比例?) timeFormat(什麼樣的數值) tickSize(表格內的格線)
     svg.select("g.candlestick").call(candlestick).attr("clip-path", "url(#candlestickClip)");  //K棒
-    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 2).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
+    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 2).tickFormat(d3.timeFormat("%m-%d")).tickSize(-height, -height).tickPadding(10));   //X軸
     svg.selectAll("g.y.axis").call(yAxis.ticks(5).tickSize(-width, 0).tickPadding(10));   //Y軸
     svg.selectAll("g.y.axis.zoom").call(YzoomAxis.ticks(5).tickSize(-width, 0).tickPadding(10));   //Y軸
     svg.select("g.sma.ma-5").attr("clip-path", "url(#candlestickClip)").call(sma);
@@ -335,7 +335,7 @@ function drawMACD(data) {
     macdY.domain([(d3.min(macdList) - 1), (d3.max(macdList) + 1)]);     //找signal、macd跟difference的最大最小值，避免某一方超過軸度
 
     svgMACD.selectAll("g.macd.here").datum(macdData).call(macd);
-    svgMACD.selectAll("g.x.axis.macd").call(xAxisMacd.ticks(5).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));
+    svgMACD.selectAll("g.x.axis.macd").call(xAxisMacd.ticks(5).tickFormat(d3.timeFormat("%m-%d")).tickSize(-height, -height).tickPadding(10));
     svgMACD.selectAll("g.y.axis.macd").call(yAxisMacd.ticks(10).tickSize(-width, -width).tickPadding(10));
     svgMACD.select("g.crosshairMacd").call(crosshairMACD);  //十字線
 }
@@ -349,7 +349,7 @@ function drawKD(data) {
 
 
 
-    svgMACD.selectAll("g.x.axis.macd").call(xAxisMacd.ticks(5).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));
+    svgMACD.selectAll("g.x.axis.macd").call(xAxisMacd.ticks(5).tickFormat(d3.timeFormat("%m-%d")).tickSize(-height, -height).tickPadding(10));
     svgMACD.selectAll("g.y.axis.macd").call(yAxisMacd.ticks(10).tickSize(-width, -width).tickPadding(10));
 
     var lineK = d3.line()   //K線
@@ -506,7 +506,7 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             var model = Ddata[i].Pmodel;
             var PAR = Ddata[i].PAR;
 
-            console.log(Ddata);
+            //console.log(Ddata);
 
             var preState = (status == "Close") ? "已結案" : "追蹤中";
 
@@ -557,6 +557,7 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             
             })
             //console.log(varTochi);
+            console.log("搜尋欄|傳入的收藏數:" + collectNum);
             drawPre(preData, index, preState, preDate, PID, preBuildDate, varTochi, preDummy, pAccount, collectNum, model, PAR);
             //console.log(preState);
         }
@@ -622,7 +623,6 @@ $("#LikeNum2").on("click", function () {
 //畫圖資料,第n張卡片,卡片追蹤狀態,預測日,卡片ID,建立日,所選變數,結果評估,建立帳號,收藏數,使用模型,PAR
 function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy, pAccount, collect, model, PAR) {   
 
-    
     //console.log(preState);
 
     var prelist = "";
@@ -645,7 +645,7 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
     <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5].Close}</td></tr>
     <tr><th class="pre-th">準確率</th><td class="pre-td pre-date">${d3.format(".1f")(PAR)}</td></tr>
     </table>
-    <p class="collectNum card${PID}">${ collect > 0 ? collect : 0 }<p>
+    <p class="collectNum card${PID}">${ (collect > 0) ? collect : 0 }</p>
     <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♡</button>
     </div>
     <div class='card-back'>
@@ -653,6 +653,12 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
     </div></div></div>
     <div class="preVar">${prelist}</div>
     </label>`);
+
+    console.log("搜尋欄|接收的收藏數:" + collect);
+    console.log("PID:" + PID + "／塞進卡片後的text(): " + $(`.card${PID}`).text());
+    console.log("----------");
+
+
     //重新整理日期
     var dateList = [];
     for (var i = 0; i < myData.length; i++) {
@@ -720,7 +726,7 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
 
     preSvg.select("g.predictionLine.here").append("path").attr("class", "pathPre").attr("d", linePre(myData)).attr("fill", "none")
         .attr("stroke", "#bbbdbe").attr("stroke-width", 2);
-    preSvg.select("g.x.axis.pre").call(preAxisX.tickValues(dateList).tickFormat(d3.timeFormat("%m/%d")).tickPadding(10).tickSizeInner(-preHeight - 10, -preHeight))
+    preSvg.select("g.x.axis.pre").call(preAxisX.tickValues(dateList).tickFormat(d3.timeFormat("%m-%d")).tickPadding(10).tickSizeInner(-preHeight - 10, -preHeight))
         .selectAll("text")
         .style("text-anchor", "end")
         .attr("dx", "-.8em")
