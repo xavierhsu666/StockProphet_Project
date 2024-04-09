@@ -58,13 +58,13 @@ path.candle {
 .ma-5 path.line {
     stroke: #1f77b4;
     fill: none;
-    stroke-width: 2;
+    stroke-width: 1;
 }
 
 .ma-30 path.line {
     stroke: #FF8000;
     fill: none;
-    stroke-width: 2;
+    stroke-width: 1;
 }
 
 /* 十字線 */
@@ -81,7 +81,7 @@ path.candle {
 
     /* 十字線左右顯示的文字底色? */
     .crosshair .axisannotation path {
-        fill: #DDDDDD;
+        fill: #cedba0;
     }
 
 /* 成交量 */
@@ -112,17 +112,17 @@ path.volume {
     }
 
     .crosshairMacd .axisannotation path {
-        fill: #DDDDDD;
+        fill: #cedba0;
     }
 
 
 
 path.macd {
-    stroke: #0000AA;
+    stroke: #73b5c5;
 }
 
 path.signal {
-    stroke: #FF9999;
+    stroke: #bd4221;
 }
 
 path.zero {
@@ -139,13 +139,13 @@ path.difference {
 /* ------KD線------ */
 .pathK {
     fill: none;
-    stroke: blue;
+    stroke: #73b5c5;
     stroke-width: 1;
 }
 
 .pathD {
     fill: none;
-    stroke: red;
+    stroke: #bd4221;
     stroke-width: 1;
 }
 

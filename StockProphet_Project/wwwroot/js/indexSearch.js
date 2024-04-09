@@ -10,12 +10,25 @@ setTimeout(function () {
 $("#search").on("keydown", function (e) {
     if (e.which == 13) changePage();
 });
+//$("#search").on({
+//    keydown: function (e) {
+//        if (e.which == 13) changePage();
+//},
+//    change: function () {
+//        $(".ui-menu-item").on("click", function () {
+//            changePage();
+//            console.log("HIIII");
+//        })
+//    }
+//})
+
 function changePage() {
     //if (!refreshStockDB($("#search").val())) {
     //    return false;
     //} else {
 
     //}
+    console.log($("#search").val());
     async function jget(url, stockId) {
         // Note: Below variable will hold the value of the resolved promise
         let response = await fetchingData(url, stockId);
@@ -55,7 +68,8 @@ $.widget("custom.catcomplete", $.ui.autocomplete, {
             }
             li = that._renderItemData(ul, item);
             if (item.category) {
-                li.attr("aria-label", item.category + " : " + item.label);  //內容
+                li.attr("aria-label", item.category + " : " + item.label)  //內容
+                    .attr("onClick", "autoSearch()");
             }
         });
     }
@@ -82,6 +96,12 @@ function fetchingData(url, stockId) {
             console.log(html);
         })
     })
+}
+
+function autoSearch() {
+    setTimeout(function () {
+        changePage();
+    }, 100);
 }
 //function refreshStockDB(string stockid) {
 
@@ -140,6 +160,11 @@ function fetchingData(url, stockId) {
 //叫loading動畫
 var baseUrl = window.location.origin;
 var animationPath = baseUrl + '/icon/loadingAni.json';
+
+//$(".ui-menu-item").on("click", function () {
+//    changePage();
+//    console.log("HIIII");
+//})
 
 //var loadingAni = lottie.loadAnimation({
 //    container: document.getElementById('loading-ani'),

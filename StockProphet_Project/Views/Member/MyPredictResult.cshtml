@@ -123,16 +123,16 @@
                 $('#totalCountDisplay').text(`(${totalCount}`);
                 // console.log(sessionStorage.getItem("LogMemberLevel"));
                 if (MidLevel == "一般會員") {
-                    $('#totalCountDisplay').text(`( ${totalCount} / 5 ) 已收藏筆數`);
+                    $('#totalCountDisplay').text(`( ${totalCount} / 5 ) 已預測筆數`);
                 } else {
-                    $('#totalCountDisplay').text(`( ${totalCount} / ∞ ) 已收藏筆數`);
+                    $('#totalCountDisplay').text(`( ${totalCount} / ∞ ) 已預測筆數`);
                 }
                 for (var w = 0; w < e.length; w += 5) {
                     var builddate3 = new Date(e[w]["PBuildTime"])
-                    var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate()
+                    var builddate4 = builddate3.getFullYear() + '-' + ("0" + (builddate3.getMonth() + 1)).slice(-2) + '-' + ("0" + builddate3.getDate()).slice(-2)
 
                     var FinsihTime = new Date(e[w]["PFinsihTime"])
-                    var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate()
+                    var FinsihTime2 = FinsihTime.getFullYear() + '-' + ("0" + (FinsihTime.getMonth() + 1)).slice(-2) + '-' + ("0" + FinsihTime.getDate()).slice(-2)
                     console.log(e[w])
                     otherprarmeter.push({
                         Buildtime: builddate4,
@@ -158,11 +158,8 @@
                     var finishtime = new Date(element[5]["Date"]);
                     var currentdate = new Date()
                     var result;
-                    var Pstatus = otherprarmeter[index]["Pstatus"]; //狀態
-                    // console.log(otherprarmeter[0])
 
-                    var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
-                    var PAR = e[index]['PAccuracyRatio'];
+                    
 
                     // console.log(finishtime)
                     // console.log(currentdate)
@@ -171,7 +168,7 @@
                     // } else {
                     //     result = "結案"
                     // }
-                    resultstatus.push(result);
+                    
                     // console.log(resultstatus)
                     //在这里执行你的操作
                     //結案狀態
@@ -182,6 +179,12 @@
                     var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
                     // console.log(Pmodel)
                     var Pmodel = otherprarmeter[index]["Pmodel"];   //使用模型
+                    var PAR = otherprarmeter[index]['PAccuracyRatio'];
+                    var Pstatus = otherprarmeter[index]["Pstatus"]; //狀態
+                    // console.log(otherprarmeter[0])
+
+                    var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
+                    resultstatus.push(result);
                     switch (Pmodel) { 
                         case "R":
                             Pmodel = "迴歸"
@@ -388,7 +391,7 @@
                 .call(
                     preAxisX
                         .tickValues(dateList)
-                        .tickFormat(d3.timeFormat("%m/%d"))
+                        .tickFormat(d3.timeFormat("%m-%d"))
                         .tickPadding(10)
                         .tickSizeInner(-preHeight - 10, -preHeight)
                 )

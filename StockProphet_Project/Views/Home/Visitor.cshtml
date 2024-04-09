@@ -178,10 +178,10 @@
 				<br>
 				<label><h4><b>選擇模型</b></h4></label>
 				<select class="form-select" id="selectmodel" multiple aria-label="multiple select example">
-					<option value="1" class="selectmodel-1">LSTM</option>
-					<option value="2" class="selectmodel-2">FNN</option>
 					<option value="3" class="selectmodel-3">迴歸</option>
 					<option value="4" class="selectmodel-4">時間序列</option>
+					<option value="1" class="selectmodel-1">LSTM</option>
+					<option value="2" class="selectmodel-2">FNN</option>
 				</select>
 			</div>
 
@@ -595,7 +595,7 @@
 					duration: 500,
 					complete: function(){
 						$(".part-one").hide();
-						$(".pre-container").css("height", "27rem");
+						$(".pre-container").css("height", "30rem");
 						setTimeout(function(){
 							$("#step2").addClass("showAni").show();
 							Bwidth = $(".btn-group").outerWidth();
@@ -983,19 +983,19 @@
 		PBY = $(obj).offset().top;
 		switch (obj) { 
 			case ".selectmodel-1": {
-				$(".describe2").text("LSTM具有良好的記憶能力，能夠處理時間序列數據中的時間依賴性，在具有明顯的時間趨勢和季節性的股價數據等情況下，通常會使用LSTM等模型來提供更準確的預測。");
+				$(".describe2").text("LSTM具有良好的記憶能力，能夠處理時間序列數據中的時間依賴性，在具有明顯的時間趨勢和季節性的股價數據等情況下，通常會使用LSTM等模型來提供更準確的預測");
 				break;
 			}
 			case ".selectmodel-2": {
-				$(".describe2").text("FNN能夠快速地計算輸入和輸出之間的映射關係，因此在一些簡單的迴歸問題中表現良好。")
+				$(".describe2").text("FNN能夠快速地計算輸入和輸出之間的映射關係，因此在一些簡單的迴歸問題中表現良好")
 				break;
 			}
 			case ".selectmodel-3": {
-				$(".describe2").text("迴歸模型的特點是能將多個預處理步驟和回歸模型串聯起來，相較其他模型，回歸可以簡單、快速的方計算各變數的權重，產生預測值。")
+				$(".describe2").text("迴歸模型的特點是能將多個預處理步驟和回歸模型串聯起來，相較其他模型，回歸可以簡單、快速的方計算各變數的權重，產生預測值")
 				break;
 			}
 			case ".selectmodel-4": {
-				$(".describe2").text("時間序列模型主要考慮時間的重要性，能夠捕捉股價隨時間變化的規律和趨勢，對於具有明顯的季節性和趨勢性的股價資料，時間序列模型通常能夠提供較為準確的預測。")
+				$(".describe2").text("時間序列模型主要考慮時間的重要性，能夠捕捉股價隨時間變化的規律和趨勢，對於具有明顯的季節性和趨勢性的股價資料，時間序列模型通常能夠提供較為準確的預測")
 				break;
 			}
 		}
@@ -1077,11 +1077,11 @@
 					complete: function(){
 						$("#kazuoform3").hide();
 						$(".arror-icon-content").hide();
-						$(".pre-container").css("height", "80rem");
+						$(".pre-container").css("min-height", "80rem");
 						setTimeout(function(){
 							$(".detail-box").addClass("showAni").show();
 							$(".mask-group").css("opacity", 1).show();
-							Bwidth = $(".resultBtnG").outerWidth();
+							Bwidth = ($(".resultBtn").outerWidth(true)) * 4;
 							PBheight = $(".resultBtnG").outerHeight();
 							PBX = $(".resultBtnG").offset().left;
 							PBY = $(".resultBtnG").offset().top;
@@ -1096,7 +1096,7 @@
 							})
 							$(".describe").text("提供四種詳細資訊");
 								$(".point-box").css({
-								"left": PBX + Bwidth -10,
+								"left": PBX + Bwidth +20,
 								"top": PBY - 20,
 								"width": "auto"
 							});
