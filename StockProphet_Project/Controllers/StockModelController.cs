@@ -1,48 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic.FileIO;
-using System.Globalization;
 using Tensorflow.NumPy;
 using static Tensorflow.KerasApi;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using Tensorflow.Keras.Layers;
-using Tensorflow.Keras.Engine;
 using Tensorflow;
-using Tensorflow.Train;
-using static Tensorflow.ApiDef.Types;
-using System.Security.Cryptography.Xml;
 using StockProphet_Project.Models;
-using System.Diagnostics;
-using Serilog;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using Tensorflow.NumPy.Pickle;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.ComponentModel;
-using Tensorflow.Keras.Callbacks;
-using Tensorflow.Keras;
-using Tensorflow.Keras.Layers;
-using Tensorflow.Keras.Models;
-using Tensorflow.Keras.ArgsDefinition;
-using Tensorflow.Keras.Datasets;
-using Tensorflow.Operations.Activation;
 using Microsoft.AspNetCore.Cors;
 using System.Text;
 using static StockProphet_Project.Models.WebAPI_Class;
 using ChoETL;
-using System.Security.Cryptography.X509Certificates;
-using System.Web;
-using Newtonsoft.Json;
-using NuGet.Protocol;
 using System.Reflection;
+using Tensorflow.Operations.Activation;
+using static Tensorflow.Keras.Activations;
+using Tensorflow.Keras.Callbacks;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
 
-namespace StockProphet_Project.Controllers {
+
+namespace StockProphet_Project.Controllers
+{
 	public class StockModelController : Controller {
 		private readonly StocksContext _context;
 		private readonly ILogger<HomeController> _logger;
@@ -725,46 +702,31 @@ namespace StockProphet_Project.Controllers {
 			Console.WriteLine("predictday2:" + predictday);
 			return predictday;
 		}
-		[HttpPost]
-		public IActionResult LSTMpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams, int iterationtime, int layer ) {
-			//測試區
-			// 在控制台輸出收到的資料以進行檢查
-			//Console.WriteLine("Received data:");
-			//Console.WriteLine("SN Code: " + sncode);	
-			//Console.WriteLine("Predict Day: " + predictday);
-			//Console.WriteLine("Selected Params:");
-			//foreach (var key in selectedParams.Keys)
-			//{
-			//    Console.WriteLine(key);
-			//}
-			//return Ok("Some result");
 
+
+
+        [HttpPost]
+		public IActionResult LSTMpredict(string sncode, int predictday, Dictionary<string, bool> selectedParams, int iterationtime, int layer)
+		{
+			// 撈出所選股票(全部區間)
+			var stockData = _context.Stock
+								.Where(x => x.SnCode == sncode)
+								.OrderBy(x => x.StDate)
+								.ToList();
 			float predictionResult;
 			int selsectedcount = selectedParams.Count;
 			string predictionResulttoString;
-			//撈出所選股票(全部區間)
-
-			var stockData = _context.Stock
-					.Where(x => x.SnCode == sncode)
-					.OrderBy(x => x.StDate)
-					.ToList();
 
 
-
-			////測試區
-			//foreach (var key in stockData) {
-
-			//    Console.WriteLine(key.SnCode);
-
-			//}
-			//return Ok("Some result");
-
-
+			// 將所選的特徵添加到特徵列表中
 			var features = new List<float[]>();
-			foreach (var item in selectedParams) {
-				if (item.Value) {
+			foreach (var item in selectedParams)
+			{
+				if (item.Value)
+				{
 					float[] featureColumn;
-					switch (item.Key) {
+					switch (item.Key)
+					{
 						case "SteOpen":
 							featureColumn = stockData.Select(data => Convert.ToSingle(data.SteOpen ?? 0)).ToArray();
 							features.Add(featureColumn);
@@ -882,129 +844,125 @@ namespace StockProphet_Project.Controllers {
 					}
 				}
 			}
+            ////測試區
+            //foreach (var feature in features)
+            //{
+            //	foreach (var value in feature)
+            //	{
+            //		Console.Write(value + " ");
+            //	}
+            //	Console.WriteLine();
+            //}
+            //return Ok("Some result");
+            //foreach (var item in features)
+            //{
+            //	System.Diagnostics.Debug.WriteLine("swith" + item);
 
-			////測試區
-			//foreach (var feature in features)
-			//{
-			//	foreach (var value in feature)
-			//	{
-			//		Console.Write(value + " ");
-			//	}
-			//	Console.WriteLine();
-			//}
-			//return Ok("Some result");
-
-
-			// 將數據轉換為 NumPy格式
-			int rowcount = stockData.Count;//資料庫總共有幾筆
-			int colcount = features.Count;//客人選中幾個參數
-
-			//測試區
-			//Console.WriteLine(rowcount);
-			//Console.WriteLine(colcount);
-			//return Ok("Some result");
-
-			// 創建 X 的 NumPy 數組，行數為股票數據的行數，列數為客戶選擇的特徵數量
-			var x = np.zeros(new Shape(rowcount, colcount), dtype: np.float32);
-
-			// 將客戶選擇的特徵添加到 X 的 NumPy 數組中
-			for (int i = 0; i < colcount; i++) {
-				var feature = features[i];
-				for (int j = 0; j < rowcount; j++) {
-					x[j, i] = feature[j]; // 將特徵數據填入 X 的 NumPy 數組中
-				}
-			}
-
-			// 測試Xnumpy的樣子
-			//string xString1 = x.ToString();
-			//string filePathx1 = "x_array1.txt";
-			//System.IO.File.WriteAllText(filePathx1, xString1);
-			//Console.WriteLine("X NumPy array written to file: " + filePathx1);
+            //}
 
 
+            // 將數據轉換為 NumPy格式
+            int rowcount = stockData.Count;//資料庫幾筆資料 8
+            int colcount = features.Count;//客人選中幾個參數
 
-			// Close 列作目標值 Y
-			var yList = new List<float>();
-			foreach (var data in stockData) {
-				if (data.SteClose.HasValue) {
-					yList.Add(Convert.ToSingle(data.SteClose));
-				} else {
-					continue;
-				}
-			}
-			var y = np.array(yList.ToArray());
+            //測試區
+            //Console.WriteLine(rowcount);
+            //Console.WriteLine(colcount);
 
-			//測試y
-			//string yString1 = y.ToString();
-			//string filePathy1 = "y_array1.txt";
-			//System.IO.File.WriteAllText(filePathy1, yString1);
-			//Console.WriteLine("y NumPy array written to file: " + filePathy1);
+            // 創建 X 的 NumPy 數組，行數為股票數據的行數，列數為客戶選擇的特徵數量
+            var x = np.zeros(new Shape(rowcount, colcount), dtype: np.float32);
 
-			// 模型構造
-			Shape theShape = new Shape(rowcount, colcount, 1);
+            // 將客戶選擇的特徵添加到 X 的 NumPy 數組中
+            for (int i = 0; i < colcount; i++)
+            {
+                var feature = features[i];
+                for (int j = 0; j < rowcount; j++)
+                {
+                    x[j, i] = feature[j]; // 將特徵數據填入 X 的 NumPy 數組中
+                }
+            }
+
+            // 測試Xnumpy的樣子
+            //string xString = x.ToString();
+            //string filePath = "x_array1.txt";
+            //System.IO.File.WriteAllText(filePath, xString);
+            //Console.WriteLine("X NumPy array written to file: " + filePath);
+
+
+
+            // Close 列作目標值 Y
+            var yList = new List<float>();
+            foreach (var data in stockData)
+            {
+                if (data.SteClose.HasValue)
+                {
+                    yList.Add(Convert.ToSingle(data.SteClose));
+                }
+                else
+                {
+                    continue;
+                }
+            }
+            var y = np.array(yList.ToArray());
+
+            //測試y
+            //string yString = y.ToString();
+            //string filePath = "y_array.txt";
+            //System.IO.File.WriteAllText(filePath, yString);
+            //Console.WriteLine("y NumPy array written to file: " + filePath);
+            //return Ok("Some result");
+            // 模型構造
+            Shape theShape = new Shape(rowcount, features.Count, 1);
 			x = np.reshape(x, theShape);
 			var model = keras.Sequential();
-			//model.add(keras.layers.LSTM(64, keras.activations.Relu));
+			model.add(keras.layers.LSTM(64, activation: keras.activations.Relu));
 
-			model.add(keras.layers.LSTM(64, keras.activations.Relu));
-
-			for (int i = 0; i < layer; i++) {
+			for (int i = 0; i < layer; i++)
+			{
 				model.add(keras.layers.Dense(64, activation: "relu"));
 			}
 			model.add(keras.layers.Dense(1));
 			model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
-			////測試Xnumpy的樣子
-			//string xString1 = x.ToString();
-			//string filePathx1 = "x_array1.txt";
-			//System.IO.File.WriteAllText(filePathx1, xString1);
-			//Console.WriteLine("X NumPy array written to file: " + filePathx1);
 
-			//string xString2 = x.ToString();
-			//string filePathx2 = "x_array3.txt";
-			//System.IO.File.WriteAllText(filePathx2, xString2);
-			//Console.WriteLine("X NumPy array written to file: " + filePathx2);
-
-			//string yString2 = y.ToString();
-			//string filePathy2 = "y_array3.txt";
-			//System.IO.File.WriteAllText(filePathy2, yString2);
-			//Console.WriteLine("y NumPy array written to file: " + filePathy2);
-			//return Ok("Some result");
-
-			//模型
-			var history = model.fit(x, y, epochs: iterationtime, verbose: 0);
-			// 獲取訓練過程中的 loss 值列表
+			// 模型訓練
+			var history = model.fit(x, y, epochs: iterationtime, verbose: 1,validation_split:0.2f);
 			var lossList = history.history["loss"];
-			//確認現在有幾層
+
 			int layerCount = model.Layers.Count;
 			Console.WriteLine($"The model has {layerCount} layers.");
-
-
-
-			// 最後一個 epoch 的 loss 值
 			var lastLoss = lossList.LastOrDefault();
 			string lastLosstostring = lastLoss.ToString();
-			// 打印最後一個 epoch 的 loss 值
 
 
+            string lossJson = JsonConvert.SerializeObject(history.history["loss"]);
+            string vallossJson = JsonConvert.SerializeObject(history.history["val_loss"]);
+
+            HttpContext.Session.SetString("LossJson", lossJson);
+            HttpContext.Session.SetString("ValLossList", vallossJson);
 
 
-			int stockDatafromtime = predictdatacount(sncode, predictday);
+            int stockDatafromtime = predictdatacount(sncode, predictday);
+
 
 
 
 			//提取最後 predictday 天的特徵 X 的數據進行預測
 
 			var lastData = new List<float[]>();
-			for (int i = stockData.Count - stockDatafromtime; i < stockData.Count; i++) {
+			for (int i = stockData.Count - stockDatafromtime; i < stockData.Count; i++)
+			{
 				float[] lastDataRow = new float[features.Count];
-				for (int j = 0; j < features.Count; j++) {
+				for (int j = 0; j < features.Count; j++)
+				{
 					lastDataRow[j] = features[j][i];
 				}
 				lastData.Add(lastDataRow);
 			}
 			var reshapedData = np.zeros(new Shape(stockDatafromtime, features.Count, 1), dtype: np.float32);
-			for (int i = 0; i < stockDatafromtime; i++) {
-				for (int j = 0; j < features.Count; j++) {
+			for (int i = 0; i < stockDatafromtime; i++)
+			{
+				for (int j = 0; j < features.Count; j++)
+				{
 					reshapedData[i, j, 0] = lastData[i][j];
 				}
 			}
@@ -1017,11 +975,41 @@ namespace StockProphet_Project.Controllers {
 			predictionResult = prediction[0].numpy()[0, 0];
 			predictionResulttoString = predictionResult.ToString();
 
-			return Content($"{predictionResulttoString},{lastLosstostring}");
+
+
+
+            return Content($"{predictionResulttoString},{lastLosstostring}");
 
 		}
+		[HttpGet]
+        public IActionResult LossChartdata()
+        {
 
-		[HttpPost]
+            string storedLossJson = HttpContext.Session.GetString("LossJson");
+            string storedValLossJson = HttpContext.Session.GetString("ValLossList");
+
+
+            var lossData = new
+            {
+				TrainLoss = storedLossJson,
+				ValLoss = storedValLossJson
+            };
+
+            return Json(lossData);
+        }
+        public IActionResult LossChart()
+        {
+
+            return View();
+		}
+
+
+
+    
+       
+       
+
+        [HttpPost]
 		public IActionResult FNNpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams, int iterationtime, int layer ) {
 			//測試區
 			// 在控制台輸出收到的資料以進行檢查
@@ -1265,6 +1253,11 @@ namespace StockProphet_Project.Controllers {
 			//確認現在有幾層
 			int layerCount = model.Layers.Count;
 			Console.WriteLine($"The model has {layerCount} layers.");
+
+
+
+
+
 
 			int stockDatafromtime = predictdatacount(sncode, predictday);
 
