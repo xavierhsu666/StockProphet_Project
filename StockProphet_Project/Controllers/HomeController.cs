@@ -156,6 +156,7 @@ namespace StockProphet_Project.Controllers {
 
 
 			var member = _context.DbMembers.SingleOrDefault(e => e.MaccoMnt == user);
+			//if(member.Mlevel == "一般會員")
 			Console.WriteLine("--------------" + user + "/" + cardID);
 			char[] delimiterChars = ['{', '}', ','];
 			string[] myCard = [];
@@ -181,7 +182,7 @@ namespace StockProphet_Project.Controllers {
 					change = "D";
 					SaveDataToCollect(user, cardID, change);
 				} else if (i == -1) {   //列表沒這個值
-					if (myCard.Length > 4) { //已超過五筆，拒絕新增
+					if (myCard.Length > 4 && member.Mlevel == "一般會員") { //已超過五筆，拒絕新增
 						saveChange = string.Join(",", myCard);
 						change = "R";
 					} else {

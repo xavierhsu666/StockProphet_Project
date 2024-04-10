@@ -242,9 +242,9 @@
                 LogAccount = sessionStorage.getItem("LogAccount");
                 LogMemberLevel = sessionStorage.getItem("LogMemberLevel");
                 if (LogMemberGender == 1) {
-                    $("#sayHi").append(`<li><i class="fa-solid fa-child" style="color: #3fcbd5;"></i>&nbsp&nbsp&nbsp<b>${LogMemberLevel}</b><p>Hi,${LogAccount}</p></li>`);
+                    $("#sayHi").append(`<li><i class="fa-solid fa-child" style="color: #3fcbd5;"></i>&nbsp&nbsp&nbsp<b>${LogMemberLevel}</b><p style="margin:0">Hi,${LogAccount}</p></li>`);
                 } else {
-                    $("#sayHi").append(`<li><i class="fa-solid fa-child-dress" style="color: #ca4e4e;"></i><b>${LogMemberLevel}</b><p>Hi,${LogAccount}</p></li>`);
+                    $("#sayHi").append(`<li><i class="fa-solid fa-child-dress" style="color: #ca4e4e;"></i><b>${LogMemberLevel}</b><p style="margin:0">Hi,${LogAccount}</p></li>`);
                 }
                    
                 $("#mynavgation-right").append(`<li b-vkyxnss9jg class="nav-item" id="myLogout"><a class="nav-link text-dark" id="logoutlink" href="/Home/Index">登出</a></li> `)
