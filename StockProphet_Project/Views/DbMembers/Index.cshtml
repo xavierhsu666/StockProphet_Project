@@ -14,7 +14,7 @@
 		content: "";
 		background-color: #f5f5f5;
 		width: 100%;
-		height: 175px;
+		height: 125px;
 	}
 
 	.wide-column {
@@ -40,11 +40,7 @@
 			<button class="btn-w-hover mg-btn" onclick="window.location.href='/stockmodel/UpdateModelResultsStatusAndRatio';">更新所有預測</button>
 		</div>
 		<br>
-		<p>
-			<a asp-action="Create" class="a-style">Create New</a>
-		</p>
-		<br>
-		<div class="d-xl-inline-flex">
+		<div class="d-xl-flex justify-content-center">
 			<canvas id="genderChart" width="300" height="300"></canvas>
 			<canvas id="preferChart" width="300" height="300"></canvas>
 			<canvas id="levelChart" width="300" height="300"></canvas>
@@ -52,6 +48,9 @@
 		<br>
 		<br>
 		<br>
+		<p>
+			<a asp-action="Create" class="a-style">Create New</a>
+		</p>
 		<div class="member-search form-floating mb-3" style="max-width: 300px;">
 			<input class="form-control" type="type" name="name" id="customerselect" value="" />
 			<label class="form-label">客戶名稱搜尋欄</label>
