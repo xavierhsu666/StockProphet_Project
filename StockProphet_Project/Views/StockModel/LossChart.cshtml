@@ -1,7 +1,29 @@
-﻿
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-
-<canvas id="lossChart" width="800" height="400"></canvas>
+﻿<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<div style="display: flex; flex-direction: column;">
+    <svg id="originalLineChart" width="800" height="400"></svg>
+    <div id="legendOriginal" style="display: flex; justify-content: center;">
+        <div style="display: flex; align-items: center; margin-right: 20px;">
+            <div style="width: 20px; height: 10px; background-color: red; margin-right: 5px;"></div>
+            <span>Original Train Loss</span>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <div style="width: 20px; height: 10px; background-color: blue; margin-right: 5px;"></div>
+            <span>Original Val Loss</span>
+        </div>
+    </div>
+    <svg id="filteredLineChart" width="800" height="400"></svg>
+    <div id="legendFiltered" style="display: flex; justify-content: center;">
+        <div style="display: flex; align-items: center; margin-right: 20px;">
+            <div style="width: 20px; height: 10px; background-color: green; margin-right: 5px;"></div>
+            <span>Filtered Train Loss</span>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <div style="width: 20px; height: 10px; background-color: purple; margin-right: 5px;"></div>
+            <span>Filtered Val Loss</span>
+        </div>
+    </div>
+</div>
 <script>
     $.ajax({
         url: "/StockModel/LossChartdata",
@@ -9,42 +31,98 @@
         success: function (e) {
             var trainLoss = JSON.parse(e.TrainLoss);
             var valLoss = JSON.parse(e.ValLoss);
+            console.log(trainLoss);
+            console.log(valLoss);
 
-            console.log(trainLoss)
-            console.log(valLoss)
+            // Function to remove extreme values
+            function removeExtremeValues(data) {
+                var len = data.length;
+                var lowerBound = Math.floor(len * 0.05); // remove 5% from the lower end
+                var upperBound = Math.floor(len * 0.95); // remove 5% from the upper end
+                return data.slice(lowerBound, upperBound);
+            }
 
-            var ctx = document.getElementById('lossChart').getContext('2d');
-            var chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    datasets: [{
-                        label: 'Training Loss',
-                        data: trainLoss,
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'Validation Loss',
-                        data: valLoss,
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'Loss'
-                            }
-                        }
-                    }
-                }
-            });
+            // Remove extreme values from trainLoss and valLoss
+            var filteredTrainLoss = removeExtremeValues(trainLoss);
+            var filteredValLoss = removeExtremeValues(valLoss);
+
+            // Set up original SVG
+            var originalSvg = d3.select("#originalLineChart"),
+                margin = 50,
+                width = +originalSvg.attr("width") - margin * 2,
+                height = +originalSvg.attr("height") - margin * 2;
+
+            // Create scales for original chart
+            var xScaleOriginal = d3.scaleLinear().domain([0, trainLoss.length - 1]).range([margin, width]),
+                yScaleOriginal = d3.scaleLinear().domain([0, d3.max(trainLoss.concat(valLoss))]).range([height, margin]);
+
+            // Create lines for original chart
+            var lineOriginal = d3.line()
+                .x(function (d, i) { return xScaleOriginal(i); })
+                .y(function (d) { return yScaleOriginal(d); });
+
+            // Append lines to original SVG
+            originalSvg.append("path")
+                .datum(trainLoss)
+                .attr("fill", "none")
+                .attr("stroke", "red")
+                .attr("stroke-width", 1.5)
+                .attr("d", lineOriginal);
+
+            originalSvg.append("path")
+                .datum(valLoss)
+                .attr("fill", "none")
+                .attr("stroke", "blue")
+                .attr("stroke-width", 1.5)
+                .attr("d", lineOriginal);
+
+            // Add x axis to original SVG
+            originalSvg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(xScaleOriginal));
+
+            // Add y axis to original SVG
+            originalSvg.append("g")
+                .attr("transform", "translate(" + margin + ",0)")
+                .call(d3.axisLeft(yScaleOriginal));
+
+            // Set up filtered SVG
+            var filteredSvg = d3.select("#filteredLineChart");
+
+            // Create scales for filtered chart
+            var xScaleFiltered = d3.scaleLinear().domain([0, filteredTrainLoss.length - 1]).range([margin, width]),
+                yScaleFiltered = d3.scaleLinear().domain([0, d3.max(filteredTrainLoss.concat(filteredValLoss))]).range([height, margin]);
+
+            // Create lines for filtered chart
+            var lineFiltered = d3.line()
+                .x(function (d, i) { return xScaleFiltered(i); })
+                .y(function (d) { return yScaleFiltered(d); });
+
+            // Append lines to filtered SVG
+            filteredSvg.append("path")
+                .datum(filteredTrainLoss)
+                .attr("fill", "none")
+                .attr("stroke", "green")
+                .attr("stroke-width", 1.5)
+                .attr("d", lineFiltered);
+
+            filteredSvg.append("path")
+                .datum(filteredValLoss)
+                .attr("fill", "none")
+                .attr("stroke", "purple")
+                .attr("stroke-width", 1.5)
+                .attr("d", lineFiltered);
+
+            // Add x axis to filtered SVG
+            filteredSvg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(xScaleFiltered));
+
+            // Add y axis to filtered SVG
+            filteredSvg.append("g")
+                .attr("transform", "translate(" + margin + ",0)")
+                .call(d3.axisLeft(yScaleFiltered));
+
         }
     })
 </script>
-

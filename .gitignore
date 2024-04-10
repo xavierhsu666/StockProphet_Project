@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /StockProphet_Project/wwwroot/js/stockChartJS.js
 /StockProphet_Project/Program.cs
+/StockProphet_Project/Views/StockModel/LossChart.cshtml
+/StockProphet_Project/Views/StockModel/LossChart.cshtml
