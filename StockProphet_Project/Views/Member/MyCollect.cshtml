@@ -539,9 +539,11 @@
 
                                   var builddate3 = new Date(e[0].PBuildTime);
                                   var builddate4 = builddate3.getFullYear() + '-' + ("0" + (builddate3.getMonth() + 1)).slice(-2) + '-' + ("0" + builddate3.getDate()).slice(-2)
+                                  // var builddate4 = builddate3.getFullYear() + '-' + ((builddate3.getMonth() + 1)) + '-' + (builddate3.getDate())
                                   var FinsihTime = new Date(e[0].PFinsihTime);
 
-                                  var FinsihTime2 = FinsihTime.getFullYear() + '-' + ("0"+(FinsihTime.getMonth() + 1)).slice(-2) + '-' + ("0" + FinsihTime.getDate()).slice(-2)
+                                  var FinsihTime2 = FinsihTime.getFullYear() + '-' + ("0" + (FinsihTime.getMonth() + 1)).slice(-2) + '-' + ("0" + FinsihTime.getDate()).slice(-2)
+                                  // var FinsihTime2 = FinsihTime.getFullYear() + '-' + ((FinsihTime.getMonth() + 1))+ '-' + ( FinsihTime.getDate())
 
                                   jsonforplot.sort(function (a, b) {
                                       var dateA = new Date(a.Date);
@@ -794,7 +796,7 @@
                                       varTochi.push(wordTable[w]);
 
                                   })
-                                  console.log("搜尋欄|傳入的收藏數:"+collectNum);
+                                  //console.log("搜尋欄|傳入的收藏數:"+collectNum);
                                   // console.log("PID:" + otherprarmeter[index]["PID"] + "/收藏數:" + collectNum);
                                   drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], varTochi, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], '.predictionArea', collectNum, Pmodel, PAR)
                                   checkCollect();

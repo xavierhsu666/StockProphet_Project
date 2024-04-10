@@ -1,0 +1,50 @@
+﻿
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
+<canvas id="lossChart" width="800" height="400"></canvas>
+<script>
+    $.ajax({
+        url: "/StockModel/LossChartdata",
+        method: "get",
+        success: function (e) {
+            var trainLoss = JSON.parse(e.TrainLoss);
+            var valLoss = JSON.parse(e.ValLoss);
+
+            console.log(trainLoss)
+            console.log(valLoss)
+
+            var ctx = document.getElementById('lossChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Training Loss',
+                        data: trainLoss,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Validation Loss',
+                        data: valLoss,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Loss'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    })
+</script>
+
