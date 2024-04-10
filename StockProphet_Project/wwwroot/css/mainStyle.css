@@ -290,3 +290,21 @@ main {
         background-color: #65250f;
     }*/
 
+#sayHi {
+    margin-right:15px;
+}
+
+#mynavgation-right {
+    display: flex;
+    align-items: center;
+}
+@media screen and (max-width: 576px) {
+    #mynavgation-right {
+        display:block;
+    }
+
+    #sayHi {
+        margin-left:10px;
+        margin-bottom:10px;
+    }
+}
