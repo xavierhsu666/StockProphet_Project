@@ -90,6 +90,7 @@ div[name='th'] {
     font-weight: bold;
     color: #87aeb4;
     animation: arrowAni 1s infinite;
+    z-index:20
 }
 
 .arror-icon-content {
