@@ -16,6 +16,11 @@ using static Tensorflow.Keras.Activations;
 using Tensorflow.Keras.Callbacks;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
+using Tensorflow.Keras.Layers;
+using OneOf.Types;
+using Tensorflow.Keras.Datasets;
+using Tensorflow.Keras;
+using System;
 
 
 namespace StockProphet_Project.Controllers
@@ -917,7 +922,7 @@ namespace StockProphet_Project.Controllers
 			var model = keras.Sequential();
 			model.add(keras.layers.LSTM(64, activation: keras.activations.Relu));
 
-			for (int i = 0; i < layer; i++)
+            for (int i = 0; i < layer; i++)
 			{
 				model.add(keras.layers.Dense(64, activation: "relu"));
 			}
