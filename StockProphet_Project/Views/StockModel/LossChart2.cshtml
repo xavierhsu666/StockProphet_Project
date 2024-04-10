@@ -1,8 +1,8 @@
 ﻿
 <style>
-    .lossChart2{
-        width:900px;
-        height:700px;
+    .lossChart2 {
+        width: 900px;
+        height: 700px;
     }
 
     .pathT {
@@ -17,18 +17,18 @@
         stroke-width: 2;
     }
 
-    .btnnn{
-        position:absolute;
+    .btnnn {
+        position: absolute;
         width: 100px;
         height: 30px;
     }
 
-    .btnT{
-        left:50%;
+    .btnT {
+        left: 50%;
     }
 
-    .btnV{
-        left:40%;
+    .btnV {
+        left: 40%;
     }
 
 </style>
@@ -37,12 +37,11 @@
 <button class="btnT btnnn" onclick="changeLine(this)">btnT</button>
 <button class="btnV btnnn" onclick="changeLine(this)">btnV</button>
 <div class="lossChart2">
-
 </div>
 
 <canvas id="lossChart" width="800" height="400" style="display:none"></canvas>
 <script>
-    function changeLine(btn) { 
+    function changeLine(btn) {
         switch (btn.innerText) {
             case "btnT": {
                 console.log("click T")
@@ -120,15 +119,15 @@
             Svg.append("g").attr("class", "loss here");
 
             Svg.selectAll("g.loss.here").append("path")
-                 .attr("class", "pathT")
+                .attr("class", "pathT")
                 .attr('d', line(DataOne))
 
-             Svg.selectAll("g.loss.here").append("path")
-                 .attr("class", "pathV")
+            Svg.selectAll("g.loss.here").append("path")
+                .attr("class", "pathV")
                 .attr('d', line(DataTwo))
 
 
-                //????
+            //????
             var Tooltip = d3.select(".lossChart2")
                 .append("div")
                 .style("opacity", 0)
@@ -145,12 +144,12 @@
             var mouseover = function (d) {
                 Tooltip.style("opacity", 1)
             }
-            
+
             //抓滑鼠位置，設定結果有點奇怪，可能要再調整嘉減多少
             var mousemove = function (d) {
                 Tooltip.html("值: " + d.y)
                     .style("left", (d3.mouse(this)[0] + 550) + "px")
-                    .style("top", (d3.mouse(this)[1]+95) + "px")
+                    .style("top", (d3.mouse(this)[1] + 95) + "px")
             }
             //console.log($(".circleGroup"));
             var mouseleave = function (d) {
