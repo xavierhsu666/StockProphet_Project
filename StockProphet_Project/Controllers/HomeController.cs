@@ -44,7 +44,7 @@ namespace StockProphet_Project.Controllers {
 		//網址傳資料|從資料庫抓股票資料
 		public IActionResult showStocks( string id ) {
 			var myDateNow = DateOnly.FromDateTime(DateTime.Now);
-			var myDate = DateOnly.FromDateTime(DateTime.Now.AddYears(-1));
+			var myDate = DateOnly.FromDateTime(DateTime.Now.AddYears(-1).AddDays(-1));
 			var viewModel = _context.Stock.ToList();
 			var query = from p in viewModel
 						where p.SnCode == id && p.StDate <= myDateNow && p.StDate >= myDate

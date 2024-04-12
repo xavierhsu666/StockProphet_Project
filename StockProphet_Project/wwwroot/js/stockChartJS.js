@@ -545,7 +545,7 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
                 preData[z] = { Date: parseDate(xData[z]), Close: yData[z] };
             }
             var index = i;
-            resultstatus.push({ "index": index, "result": preState, "collectNum": collectNum });
+            resultstatus.push({ "index": index, "result": preState, "collectNum": collectNum, "PID": PID });
             //整理字串
             var preVariable = JSON.parse(Ddata[i].Variable);    //所選變數
             var preDummy = JSON.parse(Ddata[i].Dummyblock);     //結果參數
@@ -557,7 +557,7 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             
             })
             //console.log(varTochi);
-            console.log("搜尋欄|傳入的收藏數:" + collectNum);
+            //console.log("搜尋欄|傳入的收藏數:" + collectNum);
             drawPre(preData, index, preState, preDate, PID, preBuildDate, varTochi, preDummy, pAccount, collectNum, model, PAR);
             //console.log(preState);
         }
@@ -572,7 +572,8 @@ $('#Ongoing2').on("click", function () {
     $(".prediction-card").show();
     $.each(resultstatus, function (index, element) {
         if (element.result == "已結案") {
-            $(`.prediction-card.${index}`).hide();
+            $(`.card${element.PID}`).parents("label").hide();
+            //$(`.prediction-card.${index}`).hide();
             count++;
         }
     });
@@ -586,8 +587,11 @@ $('#Finished2').on("click", function () {
     $.each(resultstatus, function (index, element) {
         //console.log(element.index)
         if (element.result == "追蹤中") {
-            $(`.prediction-card.${index}`).hide();
+            //$(`.prediction-card.${index}`).hide();
+            $(`.card${element.PID}`).parents("label").hide();
             count++;
+        } else {
+            //console.log($(`.card${element.PID}`).parents("label"));
         }
     });
     (count == resultstatus.length) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
@@ -654,9 +658,9 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
     <div class="preVar">${prelist}</div>
     </label>`);
 
-    console.log("搜尋欄|接收的收藏數:" + collect);
-    console.log("PID:" + PID + "／塞進卡片後的text(): " + $(`.card${PID}`).text());
-    console.log("----------");
+    //console.log("搜尋欄|接收的收藏數:" + collect);
+    //console.log("PID:" + PID + "／塞進卡片後的text(): " + $(`.card${PID}`).text());
+    //console.log("----------");
 
 
     //重新整理日期
@@ -1026,6 +1030,7 @@ $(".change-list-btn:first-child").css({
 function changelist(btn) {
     if (!($(btn).hasClass("selectChange"))) {
         //console.log("new click");
+        //$(document).scrollTop($('.middle-area').offset().top - 50);
         $('html, body').animate({
             scrollTop: $('.middle-area').offset().top - 50
         }, 10);
