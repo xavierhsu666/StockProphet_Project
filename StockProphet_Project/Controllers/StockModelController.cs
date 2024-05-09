@@ -1,45 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic.FileIO;
-using System.Globalization;
 using Tensorflow.NumPy;
 using static Tensorflow.KerasApi;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using Tensorflow.Keras.Layers;
-using Tensorflow.Keras.Engine;
 using Tensorflow;
-using Tensorflow.Train;
-using static Tensorflow.ApiDef.Types;
-using System.Security.Cryptography.Xml;
 using StockProphet_Project.Models;
-using System.Diagnostics;
-using Serilog;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using Tensorflow.NumPy.Pickle;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.ComponentModel;
-using Tensorflow.Keras.Callbacks;
-using Tensorflow.Keras;
-using Tensorflow.Keras.Layers;
-using Tensorflow.Keras.Models;
-using Tensorflow.Keras.ArgsDefinition;
-using Tensorflow.Keras.Datasets;
-using Tensorflow.Operations.Activation;
 using Microsoft.AspNetCore.Cors;
 using System.Text;
 using static StockProphet_Project.Models.WebAPI_Class;
 using ChoETL;
-using System.Security.Cryptography.X509Certificates;
+using System.Reflection;
+using Tensorflow.Operations.Activation;
+using static Tensorflow.Keras.Activations;
+using Tensorflow.Keras.Callbacks;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
+using Tensorflow.Keras.Layers;
+using OneOf.Types;
+using Tensorflow.Keras.Datasets;
+using Tensorflow.Keras;
+using System;
 
 
-namespace StockProphet_Project.Controllers {
+namespace StockProphet_Project.Controllers
+{
 	public class StockModelController : Controller {
 		private readonly StocksContext _context;
 		private readonly ILogger<HomeController> _logger;
@@ -52,7 +37,7 @@ namespace StockProphet_Project.Controllers {
 		// ------------------------------------------------------------------------------<KAZUO>------------------------------------------------------------------------------
 
 		// <參數區>改過需要調整的地方
-		public string InputLatestDate = DateTime.Parse("2024-3-8").ToString("yyyy-MM-dd");
+		public string InputLatestDate = DateTime.Now.ToString("yyyy-MM-dd");
 		public int InputMinCount = 30;
 		// <參數區>改過需要調整的地方
 
@@ -65,49 +50,47 @@ namespace StockProphet_Project.Controllers {
 
 		//}
 		public async Task<IActionResult> updateAllStock() {
-			var query = _context.Stock
+			var query = _context.Stock.ToList()
 				   .AsEnumerable()
 				   .GroupBy(o => o.SnCode)
 				   .Select(g => g.First());
 			string log;
+			var port = Request.Host.Port; // will get the port
 			log = "KS: Start Update all stock.\r\n";
 			int i = 0;
 			foreach (var item in query) {
-				CallPyApi cpa = new CallPyApi();
+				var q2 = from o in _context.Stock.ToList()
+						 where o.SnCode == item.SnCode
+						 orderby o.StDate descending
+						 select o;
+				if (q2.Count() <= 0)
+					break;
 				Console.WriteLine("KS: 呼叫UpdateOneStock(stockCode=" + item.SnCode + ")");
 				log += "_________________ " + i + " \"_________________ \"\r\n";
-				log += "KS: 呼叫UpdateOneStock(stockCode=" + item.SnCode + ") for "+i+" Time .\r\n";
-				string fedback = await cpa.UpdateOneStock(item.SnCode, InputLatestDate.Replace("-", ""));
-				log += "KS: Finished.\r\n";
+				log += q2.First().StUpdateDate.ToString("yyyy-MM-dd") + " vs " + DateTime.Now.ToString("yyyy-MM-dd") + " == " + (item.StUpdateDate.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd")).ToString() + "\r\n";
+				if (q2.First().StUpdateDate.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd")) {
+					log += "KS: 呼叫UpdateOneStock(stockCode=" + item.SnCode + ") for " + i + " Time .\r\n";
+					log += "KS: 已是最新.跳過webapi Finished.\r\n";
+
+				} else {
+					CallPyApi cpa = new CallPyApi();
+					log += "KS: 呼叫UpdateOneStock(stockCode=" + item.SnCode + ") for " + i + " Time .\r\n";
+					string fedback = await cpa.UpdateOneStock(item.SnCode, InputLatestDate.Replace("-", ""), port);
+					log += "KS: Finished.\r\n";
+
+				}
 				i++;
 			}
+			//UpdateModelResultsStatusAndRatio();
 			return Content(log);
 
 		}
 
-		public async Task<IActionResult> TestWepAPI() {
-			WebAPI_Class wac = new WebAPI_Class();
-			wac.stockCode = "2330";
-			wac.date = DateTime.Now.AddDays(-10);
-			wac.stockName = "台積電";
-			//List<Table3OBJ> result = await wac.ajax_3();
-			//List<Table1OBJ> result = await wac.ajax_1();
-			//List<Table2OBJ> result = await wac.ajax_2();
-			wac.run();
-
-			////// 使用 result 中的元素
-			//foreach (var item in result) {
-			//	Console.WriteLine($"Stock Code: {item.date}, " +
-			//		$"Stock date: {item.SB_PBRatio}, " +
-			//		$"Stock OpenPrice: {item.SB_Yield}, " +
-			//		$"Stock MaxPrice: {item.ST_Year_Quarter}, " +
-			//		$"Stock MinPrice: {item.STe_Dividend_Year}, " +
-			//		$"Stock ClosePrice: {item.SI_PE}"
-			//		);
-			//}
+		public IActionResult TestWebAPI() {
+			var q = from o in _context.DbCollect select o;
 
 
-			return Content("OK");
+			return Content(q.First().CAccount);
 		}
 		[EnableCors("MyAllowSpecificOrigins")]
 		[HttpGet]
@@ -144,6 +127,7 @@ namespace StockProphet_Project.Controllers {
 			}
 		}
 		public IActionResult TestBuild() {// 获取表单中的所有输入值
+			GetStockVarsMapTable();
 			return View();
 		}
 		public IActionResult Build( [FromForm] IFormCollection form ) {// 获取表单中的所有输入值
@@ -273,6 +257,10 @@ namespace StockProphet_Project.Controllers {
 
 		}
 		public double[] ModelOutputCheck( string stockCode, int userPrefer, float esti, float u = 0, float l = 0 ) {
+
+			esti = Math.Abs(esti);
+			u = Math.Abs(u);
+			l = Math.Abs(l);
 			if (userPrefer == 1) {
 				var q = from o in _context.Stock
 						where o.SnCode == stockCode
@@ -286,6 +274,8 @@ namespace StockProphet_Project.Controllers {
 				Console.WriteLine("esti/e = " + esti / e);
 				Console.WriteLine("u = " + u);
 				Console.WriteLine("l = " + l);
+				e = Math.Abs(e);
+
 				if (esti / e > 1.1 || esti / e < 0.9) {
 					var spread = esti / e;
 					if (spread > 1) {
@@ -305,12 +295,89 @@ namespace StockProphet_Project.Controllers {
 				return new double[] { esti, u, l };
 			}
 		}
+		public void UpdateModelResultsStatusAndRatio() {
+			string tmp = "";
+			var q = from o in _context.DbModels.ToList()
+					where o.Pstatus == "Tracing"
+					&& ((DateTime)o.PUpdateTime).ToString("yyyy-MM-dd-hh-mm") != DateTime.Now.ToString("yyyy-MM-dd-hh-mm")
+					select o;
 
+			if (q.Count() > 0) {
+				foreach (var item in q) {
+					var q2 = from o in _context.Stock.ToList()
+							 where o.SnCode == item.Pstock
+							 orderby o.StDate descending
+							 select o;
+					// 1. 更新預測狀態
+					item.Pstatus = (item.PfinishTime > DateTime.Now) ? "Tracing" : "Close";
+					// 2. 更新最近參考價、預測前參考價、預測走勢、實際走勢
+					bool IsNNModel = (item.Pmodel == "LSTM" || item.Pmodel == "FNN") ? true : false;
+					var finishdate = DateOnly.Parse(((DateTime)item.PfinishTime).ToString("yyyy-MM-dd"));
+					var BuildDate = DateOnly.Parse(((DateTime)item.PbulidTime).ToString("yyyy-MM-dd"));
+					decimal LatestPrice = 0;
+					decimal PrePredictPrice = 0;
+					string UorD, UorD2 = "";
+					decimal acc, normalized_acc, SpreadRatio = 0;
+					int finishdates = (int)((DateTime)item.PfinishTime).Subtract((DateTime)item.PbulidTime).TotalDays;
+					if (IsNNModel) {
+						// <finishdate 的最近close價格
+						LatestPrice = (decimal)q2.Where(x => x.StDate.CompareTo(finishdate) <= 0).OrderByDescending(x => x.StDate).FirstOrDefault().SteClose;
+						PrePredictPrice = (decimal)q2.Where(x => x.StDate.CompareTo(BuildDate) <= 0).OrderByDescending(x => x.StDate).FirstOrDefault().SteClose;
+						Console.WriteLine($"IsNNModel = {IsNNModel}, PID = {item.Pid}, LatestPrice = {LatestPrice},  PrePredictPrice = {PrePredictPrice}");
+					} else {
+						LatestPrice = Math.Round((decimal)q2.Where(x => x.StDate.CompareTo(finishdate) <= 0).OrderByDescending(x => x.StDate).Take(finishdates).OrderBy(x => x.StDate).Average(x => x.SteClose), 2);
+						PrePredictPrice = Math.Round((decimal)q2.Where(x => x.StDate.CompareTo(BuildDate) <= 0).OrderByDescending(x => x.StDate).Take(finishdates).OrderBy(x => x.StDate).Average(x => x.SteClose), 2);
+						Console.WriteLine($"IsNNModel = {IsNNModel}, PID = {item.Pid}, LatestPrice = {LatestPrice},  PrePredictPrice = {PrePredictPrice}");
+					}
+					item.PCurLabel = LatestPrice;
+					item.PreDictLabel = PrePredictPrice;
+
+					// 3. 更新預測走勢、實際走勢
+					item.PreTrend = (PrePredictPrice > item.Plabel) ? "看空" : "看多";
+					item.PActTrend = (LatestPrice > PrePredictPrice) ? "看多" : "看空";
+					item.PResult = (item.PreTrend == item.PActTrend) ? "成功" : "失敗";
+
+					// 4.更新指標(誤差、準確率)
+					acc = Math.Round(((decimal)item.Plabel) / ((decimal)LatestPrice) * 100, 1);
+					normalized_acc = (acc > 100) ? 100 - (acc - 100) : acc;
+					SpreadRatio = Math.Round((((decimal)item.Plabel) - ((decimal)LatestPrice)) / ((decimal)LatestPrice) * 100, 1);
+
+					item.PAccuracyRatio = Convert.ToDouble(normalized_acc);
+					item.PSpreadRatio = Convert.ToDouble(SpreadRatio);
+					item.PUpdateTime = DateTime.Now;
+					_context.DbModels.Update(item);
+					_context.SaveChanges();
+				}
+			}
+
+		}
+
+		public string GetStockVarsMapTable() {
+			//http://localhost:5271/stockmodel/testbuild
+			// 用法: 在呼叫頁面action時呼叫此function，就會往ViewBag.VarsTable存入map表(JSON字串，直接前台JS呼叫即可)
+			Type stockType = typeof(Stock);
+			PropertyInfo[] properties = stockType.GetProperties();
+			var keyValuePairs = new Dictionary<string, string>();
+
+			foreach (var property in properties) {
+				DisplayAttribute displayAttribute = property.GetCustomAttribute<DisplayAttribute>();
+
+				if (displayAttribute != null) {
+					string displayName = displayAttribute.Name;
+					//Console.WriteLine($"Property: {property.Name}, DisplayName: {displayName}");
+					keyValuePairs.Add(property.Name, displayName);
+				}
+			}
+			string VarsTable = JsonConvert.SerializeObject(keyValuePairs);
+			//Console.WriteLine(VarsTable);
+			ViewBag.VarsTable = VarsTable;
+			return VarsTable;
+		}
 		// <功能開發測試區>
 
 		// <WEB API 區>
 		public IActionResult stocksListACA() {
-			var stocksList = (from obj in new ChoCSVReader<stocksCheck>("wwwroot\\stocksListCode.csv").WithFirstLineHeader()
+			var stocksList = (from obj in new ChoCSVReader<stocksCheck>("wwwroot\\stocksList.csv").WithFirstLineHeader()
 							  select new {
 								  label = obj.Name,
 								  category = obj.type
@@ -319,17 +386,40 @@ namespace StockProphet_Project.Controllers {
 
 			return Json(stocksList);
 		}
+
 		[HttpGet]
 		public async Task<IActionResult> UpdateOneStock( string stockCode ) {
+			// 20240328_ CSV 確認輸入正確代碼 -> 判斷DB 有無今天更新的資料 ->
+			bool issame = false;
+			string stockName = "";
+			try {
+				var q = from o in _context.Stock
+						where o.SnCode == stockCode
+						orderby o.StUpdateDate descending
+						select o;
+				var r = q.First().StUpdateDate.ToString("yyyy-MM-dd");
+				stockName = q.First().SnName;
+				issame = r == DateTime.Now.ToString("yyyy-MM-dd");
+			} catch {
+			}
 			if (checkStockCodeIsRight(stockCode) == "Nah") {
-				var result = new { stockname = "查無這支股票", stockexist = false };
+				var result = new { stockname = "查無這支股票", stockexist = false, fedback = "csv找不到" };
+				Console.WriteLine("call UpdateOneStock: csv找不到");
+				return Json(result);
+			} else if (issame) {
+				Console.WriteLine("call UpdateOneStock:" + stockCode + " 資料庫有最新資料，不執行webapi");
+
+				var result = new { stockname = stockName, stockexist = true, fedback = "資料庫有最新資料，不執行webapi" };
 				return Json(result);
 			} else {
 
 
 				CallPyApi cpa = new CallPyApi();
-				Console.WriteLine("KS: 呼叫UpdateOneStock(stockCode=" + stockCode + ")");
-				string fedback = await cpa.UpdateOneStock(stockCode, InputLatestDate.Replace("-", ""));
+				var port = Request.Host.Port; // will get the port
+											  //Console.WriteLine("当前服务器端口号: " + port);
+
+				Console.WriteLine("call UpdateOneStock(stockCode=" + stockCode + ", time = " + InputLatestDate.Replace("-", "").Substring(0, 6) + "01" + ", port = " + port + ")");
+				string fedback = await cpa.UpdateOneStock(stockCode, InputLatestDate.Replace("-", "").Substring(0, 6) + "01", port);
 				var stockData = _context.Stock
 						.Where(x => x.SnCode == stockCode)
 						.OrderBy(x => x.StDate)
@@ -349,7 +439,7 @@ namespace StockProphet_Project.Controllers {
 				}
 				//stockname = "查無這支股票";
 				//stockexist = false;
-				var result = new { stockname = stockname, stockexist = stockexist };
+				var result = new { stockname = stockname, stockexist = stockexist, fedback = fedback };
 				return Json(result);
 			}
 		}
@@ -407,7 +497,8 @@ namespace StockProphet_Project.Controllers {
 				T_trainSize = wi.T_trainSize ?? -1,
 				T_confidenceLevel = wi.T_confidenceLevel ?? -1,
 				usingModel = wi.usingModel,
-				userPrefer = wi.userPrefer
+				userPrefer = wi.userPrefer,
+
 			};
 			// 摳算存
 
@@ -470,7 +561,6 @@ namespace StockProphet_Project.Controllers {
 					return Json(tmo);
 				default:
 					return Json(data);
-					break;
 			}
 
 
@@ -492,7 +582,10 @@ namespace StockProphet_Project.Controllers {
 				PbulidTime = buildTime,
 				PfinishTime = finishTime,
 				Dummyblock = mr.dummyblock,
-				Paccount = mr.Paccount
+				Paccount = mr.Paccount,
+				Pmodel = mr.Pmodel,
+				Pstatus = "Tracing",
+				PUpdateTime = DateTime.Parse("2000-01-01")
 			};
 			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
 			query.DbModels.Add(newdata);
@@ -504,7 +597,22 @@ namespace StockProphet_Project.Controllers {
 				_context.DbMembers.Update(user);
 				_context.SaveChanges();
 			}
-			return Json(newdata);
+			var NewDataWithPid = from o in _context.DbModels
+								 where o.Pprefer == mr.PPrefer &&
+								 o.Pstock == mr.PStock &&
+								 o.Pvariable == mr.PVariable &&
+								 o.Plabel == mr.PLabel &&
+								 o.Pprefer == mr.PPrefer &&
+								 o.PbulidTime == buildTime &&
+								 o.PfinishTime == finishTime &&
+								 o.Dummyblock == mr.dummyblock &&
+								 o.Paccount == mr.Paccount &&
+								 o.Pmodel == mr.Pmodel
+								 select o;
+			//Console.WriteLine("-----------------------------------");
+			//Console.WriteLine(NewDataWithPid.Count());
+			//Console.WriteLine("-----------------------------------");
+			return Json(NewDataWithPid.FirstOrDefault());
 		}
 
 		// <WEB API 區>
@@ -533,8 +641,12 @@ namespace StockProphet_Project.Controllers {
 			public string PfinishTime { get; set; }
 			public string dummyblock { get; set; }
 			public string Paccount { get; set; }
+			public string Pmodel { get; set; }
 		}
-
+		public IActionResult HomeStockData()
+		{
+			return View();
+		}
 		// <類別區>
 		// ------------------------------------------------------------------------------<KAZUO>------------------------------------------------------------------------------
 
@@ -542,50 +654,84 @@ namespace StockProphet_Project.Controllers {
 
 
 
-		// GET: Stockinfoes
-		public async Task<IActionResult> Index() {
+		//BorisPart
+		public async Task<IActionResult> Index()
+		{
 			return View(await _context.Stock.ToListAsync());
 		}
-		[HttpPost]
-		public IActionResult LSTMpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams, int iterationtime ) {
-			//測試區
-			// 在控制台輸出收到的資料以進行檢查
-			//Console.WriteLine("Received data:");
-			//Console.WriteLine("SN Code: " + sncode);	
-			//Console.WriteLine("Predict Day: " + predictday);
-			//Console.WriteLine("Selected Params:");
-			//foreach (var key in selectedParams.Keys)
-			//{
-			//    Console.WriteLine(key);
-			//}
-			//return Ok("Some result");
+		[HttpGet]
+		//依據股票代號尋找股票名稱
+		public IActionResult stocksnamewithcsv(string data)
+		{
 
+			var stocksList = (from obj in new ChoCSVReader<stocksCheck1>("wwwroot\\stocksList1.csv").WithFirstLineHeader()
+							  where obj.Code == data
+							  select new
+							  {
+								  label = obj.Name
+							  })
+				  .ToList();
+
+			return Json(stocksList);
+		}
+		//計算區間
+		private int predictdatacount(string sncode, int predictday)
+		{
+			Console.WriteLine("predictday1:" + predictday);
+			//DateTime now = DateTime.Now;
+			//string formattedNow = now.ToString("yyyy-MM-dd");
+			//DateTime currentday = DateTime.Parse(formattedNow);
+			DateTime currentday = DateTime.Parse("2024-03-25");
+			DateTime previousdateTime = currentday.AddDays(-predictday);
+			DateOnly previousdateOnly = DateOnly.Parse(previousdateTime.ToString("yyyy-MM-dd"));
+
+			//測試
+			Console.WriteLine("currentday:" + currentday);
+			Console.WriteLine("previousdateOnly:" + previousdateOnly);
+			Console.WriteLine("previousdateOnly:" + previousdateOnly);
+
+			var stockDatafromtime = _context.Stock.
+				Where(x => x.StDate > previousdateOnly)
+				.Where(x => x.SnCode == sncode)
+				.OrderBy(x => x.StDate)
+				.ToList();
+			//foreach (var w in stockDatafromtime)
+			//{
+
+
+			//	Console.WriteLine(w.StDate.ToString());
+			//	Console.WriteLine(w.SnName.ToString());
+			//}
+			//Console.WriteLine(stockDatafromtime.Count);
+			predictday = stockDatafromtime.Count;
+			Console.WriteLine("predictday2:" + predictday);
+			return predictday;
+		}
+
+
+
+        [HttpPost]
+		public IActionResult LSTMpredict(string sncode, int predictday, Dictionary<string, bool> selectedParams, int iterationtime, int layer)
+		{
+			// 撈出所選股票(全部區間)
+			var stockData = _context.Stock
+								.Where(x => x.SnCode == sncode)
+								.OrderBy(x => x.StDate)
+								.ToList();
 			float predictionResult;
 			int selsectedcount = selectedParams.Count;
 			string predictionResulttoString;
-			//撈出所選股票(全部區間)
-
-			var stockData = _context.Stock
-					.Where(x => x.SnCode == sncode)
-					.OrderBy(x => x.StDate)
-					.ToList();
 
 
-
-			////測試區
-			//foreach (var key in stockData) {
-
-			//    Console.WriteLine(key.SnCode);
-
-			//}
-			//return Ok("Some result");
-
-
+			// 將所選的特徵添加到特徵列表中
 			var features = new List<float[]>();
-			foreach (var item in selectedParams) {
-				if (item.Value) {
+			foreach (var item in selectedParams)
+			{
+				if (item.Value)
+				{
 					float[] featureColumn;
-					switch (item.Key) {
+					switch (item.Key)
+					{
 						case "SteOpen":
 							featureColumn = stockData.Select(data => Convert.ToSingle(data.SteOpen ?? 0)).ToArray();
 							features.Add(featureColumn);
@@ -703,118 +849,125 @@ namespace StockProphet_Project.Controllers {
 					}
 				}
 			}
+            ////測試區
+            //foreach (var feature in features)
+            //{
+            //	foreach (var value in feature)
+            //	{
+            //		Console.Write(value + " ");
+            //	}
+            //	Console.WriteLine();
+            //}
+            //return Ok("Some result");
+            //foreach (var item in features)
+            //{
+            //	System.Diagnostics.Debug.WriteLine("swith" + item);
 
-			////測試區
-			//foreach (var feature in features)
-			//{
-			//	foreach (var value in feature)
-			//	{
-			//		Console.Write(value + " ");
-			//	}
-			//	Console.WriteLine();
-			//}
-			//return Ok("Some result");
-
-
-			// 將數據轉換為 NumPy格式
-			int rowcount = stockData.Count;//資料庫幾筆資料 28
-			int colcount = features.Count;//客人選中幾個參數
-
-			//測試區
-			//Console.WriteLine(rowcount);
-			//Console.WriteLine(colcount);
-			//return Ok("Some result");
-
-			// 創建 X 的 NumPy 數組，行數為股票數據的行數，列數為客戶選擇的特徵數量
-			var x = np.zeros(new Shape(rowcount, colcount), dtype: np.float32);
-
-			// 將客戶選擇的特徵添加到 X 的 NumPy 數組中
-			for (int i = 0; i < colcount; i++) {
-				var feature = features[i];
-				for (int j = 0; j < rowcount; j++) {
-					x[j, i] = feature[j]; // 將特徵數據填入 X 的 NumPy 數組中
-				}
-			}
-
-			// 測試Xnumpy的樣子
-			//string xString1 = x.ToString();
-			//string filePathx1 = "x_array1.txt";
-			//System.IO.File.WriteAllText(filePathx1, xString1);
-			//Console.WriteLine("X NumPy array written to file: " + filePathx1);
+            //}
 
 
+            // 將數據轉換為 NumPy格式
+            int rowcount = stockData.Count;//資料庫幾筆資料 8
+            int colcount = features.Count;//客人選中幾個參數
 
-			// Close 列作目標值 Y
-			var yList = new List<float>();
-			foreach (var data in stockData) {
-				if (data.SteClose.HasValue) {
-					yList.Add(Convert.ToSingle(data.SteClose));
-				} else {
-					continue;
-				}
-			}
-			var y = np.array(yList.ToArray());
+            //測試區
+            //Console.WriteLine(rowcount);
+            //Console.WriteLine(colcount);
 
-			//測試y
-			//string yString1 = y.ToString();
-			//string filePathy1 = "y_array1.txt";
-			//System.IO.File.WriteAllText(filePathy1, yString1);
-			//Console.WriteLine("y NumPy array written to file: " + filePathy1);
+            // 創建 X 的 NumPy 數組，行數為股票數據的行數，列數為客戶選擇的特徵數量
+            var x = np.zeros(new Shape(rowcount, colcount), dtype: np.float32);
 
-			// 模型構造
-			Shape theShape = new Shape(rowcount, colcount, 1);
+            // 將客戶選擇的特徵添加到 X 的 NumPy 數組中
+            for (int i = 0; i < colcount; i++)
+            {
+                var feature = features[i];
+                for (int j = 0; j < rowcount; j++)
+                {
+                    x[j, i] = feature[j]; // 將特徵數據填入 X 的 NumPy 數組中
+                }
+            }
+
+            // 測試Xnumpy的樣子
+            //string xString = x.ToString();
+            //string filePath = "x_array1.txt";
+            //System.IO.File.WriteAllText(filePath, xString);
+            //Console.WriteLine("X NumPy array written to file: " + filePath);
+
+
+
+            // Close 列作目標值 Y
+            var yList = new List<float>();
+            foreach (var data in stockData)
+            {
+                if (data.SteClose.HasValue)
+                {
+                    yList.Add(Convert.ToSingle(data.SteClose));
+                }
+                else
+                {
+                    continue;
+                }
+            }
+            var y = np.array(yList.ToArray());
+
+            //測試y
+            //string yString = y.ToString();
+            //string filePath = "y_array.txt";
+            //System.IO.File.WriteAllText(filePath, yString);
+            //Console.WriteLine("y NumPy array written to file: " + filePath);
+            //return Ok("Some result");
+            // 模型構造
+            Shape theShape = new Shape(rowcount, features.Count, 1);
 			x = np.reshape(x, theShape);
 			var model = keras.Sequential();
-			model.add(keras.layers.LSTM(64, keras.activations.Relu));
-			model.add(keras.layers.Dense(64));
+			model.add(keras.layers.LSTM(64, activation: keras.activations.Relu));
+
+            for (int i = 0; i < layer; i++)
+			{
+				model.add(keras.layers.Dense(64, activation: "relu"));
+			}
 			model.add(keras.layers.Dense(1));
 			model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
-			////測試Xnumpy的樣子
-			//string xString1 = x.ToString();
-			//string filePathx1 = "x_array1.txt";
-			//System.IO.File.WriteAllText(filePathx1, xString1);
-			//Console.WriteLine("X NumPy array written to file: " + filePathx1);
 
-			//string xString2 = x.ToString();
-			//string filePathx2 = "x_array2.txt";
-			//System.IO.File.WriteAllText(filePathx2, xString2);
-			//Console.WriteLine("X NumPy array written to file: " + filePathx2);
-
-			//string yString2 = y.ToString();
-			//string filePathy2 = "y_array2.txt";
-			//System.IO.File.WriteAllText(filePathy2, yString2);
-			//Console.WriteLine("y NumPy array written to file: " + filePathy2);
-			//return Ok("Some result");
-
-			//模型
-			var history = model.fit(x, y, epochs: iterationtime, verbose: 0);
-			// 獲取訓練過程中的 loss 值列表
+			// 模型訓練
+			var history = model.fit(x, y, epochs: iterationtime, verbose: 1,validation_split:0.2f);
 			var lossList = history.history["loss"];
 
-			// 獲取最後一個 epoch 的 loss 值
+			int layerCount = model.Layers.Count;
+			Console.WriteLine($"The model has {layerCount} layers.");
 			var lastLoss = lossList.LastOrDefault();
 			string lastLosstostring = lastLoss.ToString();
-			// 打印最後一個 epoch 的 loss 值
+
+
+            string lossJson = JsonConvert.SerializeObject(history.history["loss"]);
+            string vallossJson = JsonConvert.SerializeObject(history.history["val_loss"]);
+
+            HttpContext.Session.SetString("LossJson", lossJson);
+            HttpContext.Session.SetString("ValLossList", vallossJson);
+
+
+            int stockDatafromtime = predictdatacount(sncode, predictday);
 
 
 
-			int stockDatafromtime = predictdatacount(sncode, predictday);
-
-			Console.WriteLine(stockDatafromtime);
 
 			//提取最後 predictday 天的特徵 X 的數據進行預測
 
 			var lastData = new List<float[]>();
-			for (int i = stockData.Count - stockDatafromtime; i < stockData.Count; i++) {
+			for (int i = stockData.Count - stockDatafromtime; i < stockData.Count; i++)
+			{
 				float[] lastDataRow = new float[features.Count];
-				for (int j = 0; j < features.Count; j++) {
+				for (int j = 0; j < features.Count; j++)
+				{
 					lastDataRow[j] = features[j][i];
 				}
 				lastData.Add(lastDataRow);
 			}
 			var reshapedData = np.zeros(new Shape(stockDatafromtime, features.Count, 1), dtype: np.float32);
-			for (int i = 0; i < stockDatafromtime; i++) {
-				for (int j = 0; j < features.Count; j++) {
+			for (int i = 0; i < stockDatafromtime; i++)
+			{
+				for (int j = 0; j < features.Count; j++)
+				{
 					reshapedData[i, j, 0] = lastData[i][j];
 				}
 			}
@@ -827,38 +980,42 @@ namespace StockProphet_Project.Controllers {
 			predictionResult = prediction[0].numpy()[0, 0];
 			predictionResulttoString = predictionResult.ToString();
 
-			return Content($"{predictionResulttoString},{lastLosstostring}");
+
+
+
+            return Content($"{predictionResulttoString},{lastLosstostring}");
 
 		}
+		[HttpGet]
+        public IActionResult LossChartdata()
+        {
 
-		private int predictdatacount( string sncode, int predictday ) {
-			DateTime currentday = DateTime.Parse("2024-03-08");
-			DateTime previousdateTime = currentday.AddDays(-predictday);
-			DateOnly previousdateOnly = DateOnly.Parse(previousdateTime.ToString("yyyy-MM-dd"));
-
-			//測試
-			Console.WriteLine("previousdateTime:" + previousdateTime);
-			Console.WriteLine("previousdateOnly:" + previousdateOnly);
-
-			var stockDatafromtime = _context.Stock.
-				Where(x => x.StDate > previousdateOnly)
-				.Where(x => x.SnCode == sncode)
-				.OrderBy(x => x.StDate)
-				.ToList();
-			//foreach (var w in stockDatafromtime)
-			//{
+            string storedLossJson = HttpContext.Session.GetString("LossJson");
+            string storedValLossJson = HttpContext.Session.GetString("ValLossList");
 
 
-			//	Console.WriteLine(w.StDate.ToString());
-			//	Console.WriteLine(w.SnName.ToString());
-			//}
-			//Console.WriteLine(stockDatafromtime.Count);
-			predictday = stockDatafromtime.Count;
-			return predictday;
+            var lossData = new
+            {
+				TrainLoss = storedLossJson,
+				ValLoss = storedValLossJson
+            };
+
+            return Json(lossData);
+        }
+        public IActionResult LossChart()
+        {
+
+            return View();
 		}
 
-		[HttpPost]
-		public IActionResult FNNpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams, int iterationtime ) {
+
+
+    
+       
+       
+
+        [HttpPost]
+		public IActionResult FNNpredict( string sncode, int predictday, Dictionary<string, bool> selectedParams, int iterationtime, int layer ) {
 			//測試區
 			// 在控制台輸出收到的資料以進行檢查
 			//Console.WriteLine("Received data:");
@@ -1017,20 +1174,21 @@ namespace StockProphet_Project.Controllers {
 				}
 			}
 
-			//測試區
+			////測試區
 			//foreach (var feature in features)
 			//{
-			//    foreach (var value in feature)
-			//    {
-			//        Console.Write(value + " ");
-			//    }
-			//    Console.WriteLine();
+			//	foreach (var value in feature)
+			//	{
+			//		Console.Write(value + " ");
+			//	}
+			//	Console.WriteLine();
 			//}
 			//return Ok("Some result");
-			foreach (var item in features) {
-				System.Diagnostics.Debug.WriteLine("swith" + item);
+			//foreach (var item in features)
+			//{
+			//	System.Diagnostics.Debug.WriteLine("swith" + item);
 
-			}
+			//}
 
 
 			// 將數據轉換為 NumPy格式
@@ -1081,7 +1239,9 @@ namespace StockProphet_Project.Controllers {
 			//Feedforward Neural Network
 			var model = keras.Sequential();
 			model.add(keras.layers.Dense(64, activation: "relu", input_shape: new Shape(colcount)));
-			model.add(keras.layers.Dense(64, activation: "relu", input_shape: new Shape(colcount)));
+			for (int i = 0; i < layer; i++) {
+				model.add(keras.layers.Dense(64, activation: "relu", input_shape: new Shape(colcount)));
+			}
 			model.add(keras.layers.Dense(1));
 			//編譯模型
 			model.compile(optimizer: keras.optimizers.Adam(), loss: keras.losses.MeanSquaredError());
@@ -1095,10 +1255,18 @@ namespace StockProphet_Project.Controllers {
 			string lastLosstostring = lastLoss.ToString();
 			// 打印最後一個 epoch 的 loss 值
 
+			//確認現在有幾層
+			int layerCount = model.Layers.Count;
+			Console.WriteLine($"The model has {layerCount} layers.");
+
+
+
+
+
 
 			int stockDatafromtime = predictdatacount(sncode, predictday);
 
-			Console.WriteLine(stockDatafromtime);
+			//Console.WriteLine(stockDatafromtime);
 
 			// 提取最後 predictday 天的特徵 X 的數據進行預測
 			var lastData = new List<float[]>();
@@ -1124,7 +1292,7 @@ namespace StockProphet_Project.Controllers {
 			// 輸出預測結果
 			predictionResult = prediction[0].numpy()[0, 0];
 			predictionResulttoString = predictionResult.ToString();
-
+	
 			return Content($"{predictionResulttoString},{lastLosstostring}");
 
 		}
@@ -1133,25 +1301,69 @@ namespace StockProphet_Project.Controllers {
 		public IActionResult predictindex() {
 			return View();
 		}
-		public IActionResult predictphoto( string predicteddata, string sncode, string predictedloss ) {
-			// 檢索資料庫中的資料筆數
-			int dataCount = _context.Stock.Where(x => x.SnCode == sncode).Count();
+	
+		public IActionResult predictphoto( int Pid ) {
+			var q = from o in _context.DbModels.ToList()
+					where o.Pid == Pid
+					select o;
+			var mr = q.FirstOrDefault();
+			if (q.Count() != 1) {
+				//ViewBag.result = new {
+				//	SnCode = "PID(" + Pid + ")大於一筆 or 不存在",
+				//	DataCount = 1,
+				//	PredictedData = 1,
+				//	PredictedLoss = 1,
+				//	ChartData = 1,
+				//	usingModel = 1
 
-			// 接收 predictedData 的值
-			//System.Diagnostics.Debug.WriteLine("lookhere"+predicteddata);
-			double predictedData = Convert.ToDouble(predicteddata);
-			//Console.WriteLine(predictedData);
+				//};
+
+				return View("~/Views/home/index.cshtml");
+			} else {
+
+				UpdateModelResultsStatusAndRatio();
+				GetStockVarsMapTable();
+				// 檢索資料庫中的資料筆數
+				int dataCount = _context.Stock.Where(x => x.SnCode == mr.Pstock).Count();
+
+				// 接收 predictedData 的值
+				//System.Diagnostics.Debug.WriteLine("lookhere"+predicteddata);
+				double predictedData = Convert.ToDouble(mr.Plabel);
+				//Console.WriteLine(predictedData);
+				// 檢索資料庫中的股票資料
+				var stockData = _context.Stock.Where(x => x.SnCode == mr.Pstock).ToList();
+				string usedModel = "";
+				switch (mr.Pmodel) {
+					case "LSTM":
+						usedModel = "LSTM";
+						break;
+					case "FNN":
+						usedModel = "FNN";
+						break;
+					case "R":
+						usedModel = "迴歸模型";
+						break;
+					case "T":
+						usedModel = "時間序列模型";
+						break;
+					default:
+						usedModel = "特殊模型";
+						break;
+				}
+
+				ViewBag.result = new {
+					DataCount = dataCount,
+					ChartData = stockData,
+					usingModel = usedModel,
+
+
+				};
+				return View(mr);
+			}
+
 
 			// 將資料傳遞到視圖
-			ViewBag.DataCount = dataCount;
-			ViewBag.PredictedData = predictedData;
-			ViewBag.PredictedLoss = predictedloss;
-			// 檢索資料庫中的股票資料
-			var stockData = _context.Stock.Where(x => x.SnCode == sncode).ToList();
-			// 將股票資料傳遞到視圖
-			ViewBag.ChartData = stockData;
 
-			return View();
 		}
 
 		//public IActionResult checkstock( string sncode ) {
@@ -1173,14 +1385,16 @@ namespace StockProphet_Project.Controllers {
 		//	return Json(result);
 		//}
 
+		//將預測存入資料庫並根據pid傳遞資訊給predictphoto
 		[HttpPost]
-		public IActionResult Predictsavedata( string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime, string PAccount, string Pparameter ) {
+		public IActionResult PredictSavedata( string Pmodel, string PStock, string PVariable, decimal PLabel, byte PPrefer, string PBuildTime, string PfinishTime, string PAccount, string Pparameter ) {
 			var query = new StocksContext();
 			DateTime buildTime = DateTime.Parse(PBuildTime);
 			DateTime finishTime = DateTime.Parse(PfinishTime);
 			//System.Diagnostics.Debug.WriteLine($"PLabel: {PLabel}");
-			System.Diagnostics.Debug.WriteLine($"Pparameter111111111111: {Pparameter}");
-			var parametertodb = $"{{\"MSE\":{Pparameter}}}";
+			//System.Diagnostics.Debug.WriteLine($"Pparameter111111111111: {Pparameter}");
+
+
 			var newdata = new DbModel {
 				Pstock = PStock,
 				Pvariable = PVariable,
@@ -1189,7 +1403,10 @@ namespace StockProphet_Project.Controllers {
 				PbulidTime = buildTime,
 				PfinishTime = finishTime,
 				Paccount = PAccount,
-				Dummyblock = parametertodb
+				Dummyblock = Pparameter,
+				Pmodel = Pmodel,
+				Pstatus = "Tracing",
+				PUpdateTime=DateTime.Parse("2000-01-01")
 			};
 			//System.Diagnostics.Debug.WriteLine($"PbulidTime: {buildTime}");
 			query.DbModels.Add(newdata);
@@ -1202,11 +1419,25 @@ namespace StockProphet_Project.Controllers {
 				_context.DbMembers.Update(user);
 				_context.SaveChanges();
 			}
-			return View();
+			var NewDataWithPid = from o in _context.DbModels
+								 where o.Pprefer == PPrefer &&
+								 o.Pstock == PStock &&
+								 o.Pvariable == PVariable &&
+								 o.Plabel == PLabel &&
+								 o.Pprefer == PPrefer &&
+								 o.PbulidTime == DateTime.Parse(PBuildTime) &&
+								 o.PfinishTime == DateTime.Parse(PfinishTime) &&
+								 o.Dummyblock == Pparameter &&
+								 o.Paccount == PAccount &&
+								 o.Pmodel == Pmodel
+								 select o;
+			return Json(NewDataWithPid.FirstOrDefault());
+			//return View();
 		}
 
+		//確認使用者的等級來回饋預測次數
 		[HttpGet]
-		public IActionResult countpredicttime( string accountname ) {
+		public IActionResult CountPredictTime( string accountname ) {
 			var query = _context.DbModels.Count(o => o.Paccount == accountname);
 			bool result;
 			if (query == 5) {
@@ -1217,5 +1448,7 @@ namespace StockProphet_Project.Controllers {
 			var Finalresult = new { resulttoformer = result };
 			return Json(Finalresult);
 		}
+
+
 	}
 }

@@ -1,0 +1,432 @@
+﻿/* 表格內線的顏色 */
+.x.axis line {
+    fill: none;
+    stroke: #edeae6;
+}
+
+.y.axis line {
+    fill: none;
+    stroke: #edeae6;
+}
+.x.axis.pre path {
+    display: none;
+}
+
+.y.axis.pre path {
+    display: none;
+}
+
+path {
+    fill: none;
+    stroke-width: 1;
+}
+
+/*翻轉卡片*/
+.prediction-card {
+    -webkit-perspective: 1000px;
+    perspective: 1000px;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    display: block;
+    width: 350px;
+    height: 250px;
+    cursor: pointer;
+    margin: 25px;
+    z-index: 1;
+}
+
+.card-content {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-transition: all 500ms;
+    transition: all 500ms;
+    z-index: 1;
+    animation: cardmoveLeft 0.5s forwards;
+}
+
+    .card-content div {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        background: #FFF;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+    }
+
+    .card-content .card-back {
+        -webkit-transform: rotateY(180deg);
+        transform: rotateY(180deg);
+        display: flex;
+        justify-content: center; /*上下置中*/
+        align-items: center; /*左右置中*/
+    }
+
+.prediction-card:hover .card-content {
+    box-shadow: 0 20px 20px rgba(50, 50, 50, 0.2);
+    animation: cardmoveRight 0.5s forwards;
+}
+
+@keyframes cardmoveRight {
+    0% {
+        right: 0;
+    }
+
+    100% {
+        right: -50px;
+    }
+}
+
+@keyframes cardmoveLeft {
+    0% {
+        right: -50px;
+    }
+
+    100% {
+        right: 0;
+    }
+}
+
+.card-btn {
+    display: none;
+}
+
+:checked + .card-content {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+}
+
+.prediction-card:hover :checked + .card-content {
+    box-shadow: 0 -20px 20px rgba(50, 50, 50, 0.2);
+}
+
+
+.forPre {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-48%, -50%);
+}
+
+/*預測股票的那點*/
+/*.myCircle:hover {
+    stroke: red;
+}*/
+
+.card-front {
+    padding: 20px;
+    z-index: 1;
+    right: 0px;
+}
+
+.pre-state {
+    font-size: 24px;
+    text-align: right
+}
+
+.pre-td {
+    padding-left: 10px;
+}
+
+.prediction-collect {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    z-index: 10;
+    font-size: 28px;
+    background-color: white;
+    border: 2px solid #87aeb4;
+    color: #87aeb4;
+    
+}
+
+.preBtn-click {
+    animation: preBtn-click 0.5s forwards;
+}
+@keyframes preBtn-click {
+    0% {
+        outline: 0px solid #87aeb4;
+    }
+    15% {
+        font-size: 20px;
+    }
+    30% {
+        font-size: 32px;
+    }
+    40% {
+        font-size: 28px;
+
+    }
+    80% {
+        
+    }
+    100% {
+        outline: 10px solid transparent;
+    }
+    
+}
+
+.preVar {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    width: 0px;
+    height: 250px;
+    background-color: #FCFCFC;
+    transition: all 0.5s;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    padding: 5px;
+    justify-items: center;
+}
+
+    .preVar::-webkit-scrollbar {
+        display: none;
+    }
+
+
+.pre-list-btn {
+    width: 100%;
+    height: 30px;
+    margin-bottom: 10px;
+    border: none;
+    background-color: #f3f2f1;
+    text-align: left;
+    margin-left: 5px;
+    position: relative;
+    font-size: 14px;
+    padding-left: 2px;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+    .pre-list-btn::before {
+        content: '複製成功';
+        padding-left: 10px;
+        top: 0px;
+        padding-top: 2px;
+        width: 0px;
+        position: absolute;
+        height: 30px;
+        background-color: #cedba0;
+        left: -10px;
+        overflow: hidden;
+        font-size: 16px;
+        transition: width 0.5s;
+    }
+
+.pre-list-btn-click::before {
+    animation: listCopy 1s;
+}
+
+@keyframes listCopy {
+    0% {
+        width: 0px;
+    }
+
+    40%,60% {
+        width: 100px;
+    }
+
+    100% {
+        width: 0px;
+    }
+}
+
+.pre-list-btn-click-again::before {
+    content: '已複製過';
+}
+
+.pre-list-btn-he {
+    background-color: #e3e1de;
+}
+
+.pre-list-btn-hl {
+    background-color: #f3f2f1;
+}
+
+.prediction-card:hover .preVar {
+    left: -50px;
+    width: 100px;
+}
+
+
+.copyAll {
+    background-color: white;
+    transform: translateX(1px);
+    border-radius: 25px;
+    height: 30px;
+    width: 90px;
+    border: 2px solid #cedba0;
+    color: #cedba0;
+    text-align: center;
+    margin-bottom: 10px;
+    margin-top: 5px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s;
+}
+/*全部複製按鈕的hover*/
+.copyAll-he {
+    color: black;
+}
+
+.copyAll-hl {
+    color: black;
+}
+
+.copyAllCopied::after {
+    content: "已複製全部";
+    left: 0;
+    top: 0;
+    background-color: #cedba0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    animation: copyAllCopiedAni 1s;
+    color: white;
+    overflow: hidden;
+}
+
+@keyframes copyAllCopiedAni {
+    0%,100% {
+        transform: translateX(-90px)
+    }
+
+    30%,60% {
+        transform: translateX(0)
+    }
+}
+
+.card-o {
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    left: 0;
+    /*cursor: none;*/
+    opacity: 1;
+    padding: 20px;
+    transition: all 0.3s;
+}
+
+.prediction-card:hover .card-o {
+    opacity: 0;
+}
+.table-inside {
+    position:absolute;
+    top:50%;
+    transform:translateY(-40%);
+}
+    .table-inside tbody tr{        
+        font-size:18px;
+    }
+    .table-inside tbody tr th{
+        padding-top:2px;
+    }
+
+    .collectNum {
+        position: absolute;
+        bottom: 12px;
+        right: 80px;
+        font-size: 22px;
+    }
+
+.collectNumAniUp {
+    animation: collectNumAniUp 0.3s forwards;
+}
+
+@keyframes collectNumAniUp {
+    0% {
+        bottom: 12px;
+        filter: blur(0px);
+        opacity:1;
+    }
+    40% {
+        bottom: 22px;
+        filter: blur(3px);
+        opacity: 0;
+    }
+    50% {
+        bottom: 2px;
+        filter: blur(3px);
+        opacity: 0;
+    }
+    100% {
+        bottom: 12px;
+        filter: blur(0px);
+        opacity: 1;
+    }
+}
+
+.collectNumAniDown {
+    animation: collectNumAniDown 0.3s forwards;
+}
+
+@keyframes collectNumAniDown {
+    0% {
+        bottom: 12px;
+        filter: blur(0px);
+        opacity: 1;
+    }
+
+    40% {
+        bottom: 2px;
+        filter: blur(3px);
+        opacity: 0;
+    }
+
+    50% {
+        bottom: 22px;
+        filter: blur(3px);
+        opacity: 0;
+    }
+
+    100% {
+        bottom: 12px;
+        filter: blur(0px);
+        opacity: 1;
+    }
+}
+
+/*追蹤中按鈕*/
+.pre-state {
+    position: absolute;
+    right: 20px;
+    font-size:24px;
+
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 2px solid #87aeb4;
+    background-color: white;
+    border-radius: 15px;
+    overflow:hidden;
+    z-index:10;
+}
+    .pre-state-member::before {
+        content: "查看細節";
+        position: absolute;
+        font-size: 18px;
+        width: 100px;
+        height:50px;
+        text-align:center;
+        padding:10px;
+        transform: translate(-120px, -7px);
+        background-color: #87aeb4;
+        color:white;
+        transition:all 0.5s;
+    }
+
+.pre-state-member:hover::before {
+    transform: translate(-13px, -7px);
+}
+
+.pre-state-member:active {
+    transform: scale(0.9);
+}

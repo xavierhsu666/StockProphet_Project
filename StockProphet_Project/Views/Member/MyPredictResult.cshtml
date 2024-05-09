@@ -1,502 +1,570 @@
-﻿@{	//修改會員資料
-	var MInvestYear = @Context.Session.GetString("MinvestYear")!;
-	var Mlevel = @Context.Session.GetString("Mlevel")!;
-}
+﻿
 <script src="https://d3js.org/d3.v4.js"></script>
+<link rel="stylesheet" href="~/css/stockChartStyle.css" type="text/css" />
 
 <style>
-	/*翻轉卡片*/
-	.prediction-card {
-		-webkit-perspective: 1000px;
-		perspective: 1000px;
-		-webkit-transform-style: preserve-3d;
-		transform-style: preserve-3d;
-		display: block;
-		width: 350px;
-		height: 250px;
-		cursor: pointer;
-		margin: 20px;
-	}
+    .x.axis.pre path {
+        display: none;
+    }
 
-	.card-content {
-		position: relative;
-		height: 100%;
-		width: 100%;
-		-webkit-transform-style: preserve-3d;
-		transform-style: preserve-3d;
-		-webkit-transition: all 500ms;
-		transition: all 500ms;
-	}
+    .y.axis.pre path {
+        display: none;
+    }
 
-		.card-content div {
-			position: absolute;
-			height: 100%;
-			width: 100%;
-			background: #fff;
-			-webkit-backface-visibility: hidden;
-			backface-visibility: hidden;
-		}
+    .pre-name, .pre-code {
+        font-size:24px;
+    }
 
-		.card-content .card-back {
-			-webkit-transform: rotateY(180deg);
-			transform: rotateY(180deg);
-			display: flex;
-			justify-content: center; /*上下置中*/
-			align-items: center; /*左右置中*/
-		}
+    #Ongoing, #Finished{
+        margin-right:10px;
+       
+    }
 
-	.prediction-card:hover .card-content {
-		box-shadow: 0 20px 20px rgba(50, 50, 50, 0.2);
-	}
-
-	.card-btn {
-		display: none;
-	}
-
-	:checked + .card-content {
-		transform: rotateY(180deg);
-		-webkit-transform: rotateY(180deg);
-	}
-
-	.prediction-card:hover :checked + .card-content {
-		box-shadow: 0 -20px 20px rgba(50, 50, 50, 0.2);
-	}
-
-	.prediction-collect {
-		position: absolute;
-		right: 20px;
-		bottom: 10px;
-		height: 3em;
-		width: 3em;
-		border-radius: 50%;
-		z-index: 10;
-	}
-
-	.forPre {
-		position: relative;
-		top: 50%;
-		left: 50%;
-		transform: translate(-48%, -50%);
-		transform: translate(-48%, -50%);
-	}
-
-	/*預測股票的那點*/
-	/*.myCircle:hover {
-				stroke: red;
-			}*/
-
-	.card-front {
-		padding: 20px;
-		z-index: 1;
-	}
-
-	.pre-state {
-		font-size: 32px;
-	}
-
-	.pre-td {
-		padding-left: 10px;
-	}
+    #totalCountDisplay {
+        color: #73b5c5;
+        font-size: 20px;
+        position: absolute;
+        top: 200px;
+        right: 200px;
+    }
 
 </style>
-<h1 class="text-">會員功能-我的預測結果</h1>
+<img class="bg-chart" src="~/homePage/chart.png" />
+<img class="bg-line" src="~/homePage/chart2.png" />
+<div class="area-container">
+    <input id="word-table" value="@ViewBag.word" style="display:none" />
+    <div class="default-container">
+        <div id="beforeLog">
+            <b>請先登入會員</b>
+        </div>
 
-<div class="row">
-	<div class="col-md-4">
-		<button id="showMemberIndex">回到會員頁</button><br>
-		<button id="showRevise">修改個人資料</button><br>
-		<button id="showFavoritesPage">我的收藏</button><br>
-		<button id="showPredictFunc">我要預測</button><br>
-		<button id="showHistoryPage">我的預測結果</button><br>
+        <div id="afterLog">
+            <b id="totalCountDisplay"></b>
 
-	</div>
-	<div class="col-md-8">		
+            <button id="Ongoing" class="btn-w-hover">追蹤中</button>
+            <button id="Finished" class="btn-w-hover">已結案</button>           
 
-		<div id="beforeLog">
-			<b>請先登入會員</b>
-		</div>
 
-		<div id="afterLog">
+            @* 4.我的預測結果 *@
+            <div id="FavoritesPage">
 
-			@* 4.我的預測結果 *@
-			<div id="FavoritesPage">			
+                @* <!-- 自動畫卡片 --> *@
+                <div class="predictionArea"></div>
+            </div>
 
-				@* <!-- 自動畫卡片 --> *@
-				<div class="predictionArea"></div>
-			</div>
 
-		</div>
-
-	</div>
+        </div>
+    </div>
 </div>
+  
+
+
+
+
 
 <script>
-	//判斷會員是否登入
-	var MID = sessionStorage.getItem("LogAccount")
+    //判斷會員是否登入
+    var MID = sessionStorage.getItem("LogAccount")
 
-	if (MID == null) {
-		$('#beforeLog').show();
-		$('#afterLog').hide();
-	} else {
-		$('#beforeLog').hide();
-		$('#afterLog').show();
-	}
-	console.log("顯示MID:" + MID);
-
-
-	$(function () {
-		// 1.點擊回到會員頁
-		$('#showMemberIndex').on("click", function () {
-			window.location.href = "/Member/Index";
-		})
-
-		// 2.點擊修改個人資料
-		$('#showRevise').on("click", function () {
-			window.location.href = "/Member/Edit";
-		})
-		// 3.點擊我的收藏
-		$('#showFavoritesPage').on("click", function () {
-			window.location.href = "/Member/MyCollect";
-		})
-
-		// 4.點擊我要預測
-		$('#showPredictFunc').on("click", function () {
-			window.location.href = "/StockModel/Predictindex";
-		})
-
-		// 5.點擊我的預測結果
-		$('#showHistoryPage').on("click", function () {
-			window.location.href = "/Member/MyPredictResult";
-		})
-
-		//預測資料
-		var data = { customername: sessionStorage.getItem("LogAccount") }
-		var jsonforplot;
-		var Pbuildate;
-		var plotarray = [];
-		var otherprarmeter=[];
-		$.ajax({
-			url: "/Member/MyPredictResultBoris",
-			method: "get",
-			data: data,
-			success: function (e) {
-				// console.log(e)
-				
-				for (var i = 0; i < e.length; i+=5) {
-					// console.log("----------"+i)
-					var subArray = [];
-					for (var j = 0; j < 5; j++) {
-						var historydate1 = new Date (e[j]["STdate"])
-						jsonforplot = ({ Date: historydate1, Close: e[j]["SteClose"] })
-						subArray.push(jsonforplot);
-					}
-					// console.log(jsonforplot)
-					var finishdate2 = new Date(e[i]["PFinsihTime"])
-					subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] })
-					plotarray.push(subArray)
-				}
-				// console.log(plotarray)
-				for (var w = 0; w< e.length; w += 5) {
-					var builddate3 = new Date(e[w]["PBuildTime"])
-					otherprarmeter.push({
-						Buildtime: builddate3,
-					stockname: e[w]["PStock"],
-					parameter: e[w]["Parameter"] })
-				}
-				
-				console.log(otherprarmeter)
-				
-				$.each(plotarray, function (index, element) {
-					var finishtime = new Date(element[5]["Date"]);
-					var currentdate = new Date()
-					var result;
-
-					// console.log(finishtime)
-					// console.log(currentdate)
-					if (finishtime > currentdate) {
-						result = "未結案"
-					} else {
-						result = "結案"
-					}					
-					//在这里执行你的操作
-					// console.log(element[])
-					//結案狀態
-					drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"])
-				});
-			}
-		})
-
-		// 抓預測資料-某某會員預測過XX股票的資料值
-
-		// var PAccount = sessionStorage.getItem("LogAccount");
-		// d3.json(`/Member/showAllStocks/${PAccount}`, function (Alldata) {
-		//     var dateList = []; //把所有日期資料整理成陣列
-		//     for (let i = 0; i < Alldata.length; i++) {
-		//         dateList.push(Alldata[i].Date);
-		//     }
-
-		//如果該會員有10筆預測資料，就要跑10次!!!
-		// d3.json(`/Member/${PID}`)
+    if (MID == null) {
+        $('#beforeLog').show();
+        $('#afterLog').hide();
+    } else {
+        $('#beforeLog').hide();
+        $('#afterLog').show();
+    }
+    // console.log("顯示MID:" + MID);
 
 
+    $(function () {
+        //我的預測結果-資料整理
+        var wordTable = JSON.parse($("#word-table").val());
+        //將預測結果帶到前端
+        var parseDate = d3.timeParse("%Y-%m-%d");
+        var data = { customername: sessionStorage.getItem("LogAccount") }
+        var jsonforplot;
+        var Pbuildate;
+        var plotarray = [];
+        var otherprarmeter = [];
+        var resultstatus = [];
+        $.ajax({
+            url: "/Member/MyPredictResultBoris",
+            method: "get",
+            data: data,
+            success: function (e) {
 
-		//抓所有資料，方便之後比對預測日的前五筆
-		// d3.json(`/Member/showPredictions/${stocksID}`, function (Ddata) {
-		//     //最新的資料在最前
-		//     for (let i = Ddata.length - 1; i >= 0; i--) {
-		//         var xData = [Ddata[i].FinishTime]; //預測日&前推五日
-		//         var yData = [Ddata[i].Label];
-		//         var preDate = xData[0];
-		//         //console.log("預測日: "+ xData)
-		//         var closestDate = dateList.reduce((prev, curr) => {
-		//             var prevDiff = Math.abs(new Date(xData) - new Date(prev));
-		//             var currDiff = Math.abs(new Date(xData) - new Date(curr));
+                // console.log(e);
+                for (var i = 0; i < e.length; i += 5) {
+                    // console.log("----------"+i)
+                    var subArray = [];
+                    for (var j = i; j < i + 5; j++) {
+                        var historydate1 = new Date(e[j]["STdate"])
+                        jsonforplot = ({ Date: historydate1, Close: e[j]["SteClose"] })
+                        subArray.push(jsonforplot);
+                    }
+                    //console.log(jsonforplot)
+                    var finishdate2 = new Date(e[i]["PFinsihTime"])
+                    subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] })
+                    plotarray.push(subArray)
+                }
+                for (var i = 0; i < plotarray.length; i++) {
+                    plotarray[i].sort(function (a, b) {
+                        // 获取当前子数组中每个对象的日期属性，并转换为日期对象
+                        var dateA = new Date(a.Date);
+                        var dateB = new Date(b.Date);
 
-		//             return currDiff < prevDiff ? curr : prev; //可能是最靠近，也可能是當日?
-		//         });
-		//         //console.log("最近近的日子: " + closestDate);
-		//         var preState;
-		//         if (closestDate == xData[0]) {
-		//             preState = "已結案";
-		//         } else {
-		//             preState = "追蹤中";
-		//         }
-		//         //找最接近的日子，並往回推5次紀錄
-		//         //先找資料中日期=最接近的日期
-		//         for (var j = 0; j < Alldata.length; j++) {
-		//             if (Alldata[j].Date == closestDate) {
-		//                 var endDate = j - (closestDate == xData[0] ? 1 : 0);
-		//                 for (var x = 0; x < 5; x++) {
-		//                     xData.unshift(Alldata[endDate - x].Date);
-		//                     yData.unshift(Alldata[endDate - x].Close);
-		//                 }
-		//                 break;
-		//             }
-		//         }
-		//         //
-		//         var preData = [];
-		//         for (var z = 0; z < xData.length; z++) {
-		//             preData[z] = { Date: parseDate(xData[z]), Close: yData[z] };
-		//         }
-		//         var index = i;
-		//         drawPre(preData, index, preState, preDate);
-		//     }
-		// });
-		// });
+                        return dateA - dateB; // 降序排列
+                    });
+                }
+                console.log(plotarray); // 输出降序排列后的数组
+                var totalCount = plotarray.length // 我的預測筆數
+                var MidLevel = sessionStorage.getItem("LogMemberLevel");
+
+                $('#totalCountDisplay').text(`(${totalCount}`);
+                // console.log(sessionStorage.getItem("LogMemberLevel"));
+                if (MidLevel == "一般會員") {
+                    $('#totalCountDisplay').text(`( ${totalCount} / 5 ) 已預測筆數`);
+                } else {
+                    $('#totalCountDisplay').text(`( ${totalCount} / ∞ ) 已預測筆數`);
+                }
+                for (var w = 0; w < e.length; w += 5) {
+                    var builddate3 = new Date(e[w]["PBuildTime"])
+                    var builddate4 = builddate3.getFullYear() + '-' + ("0" + (builddate3.getMonth() + 1)).slice(-2) + '-' + ("0" + builddate3.getDate()).slice(-2)
+
+                    var FinsihTime = new Date(e[w]["PFinsihTime"])
+                    var FinsihTime2 = FinsihTime.getFullYear() + '-' + ("0" + (FinsihTime.getMonth() + 1)).slice(-2) + '-' + ("0" + FinsihTime.getDate()).slice(-2)
+                    console.log(e[w])
+                    otherprarmeter.push({
+                        Buildtime: builddate4,
+                        stockname: e[w]["PStock"],
+                        parameter: e[w]["Parameter"],
+                        PID: e[w]["PID"],
+                        preVariable: e[w]["preVariable"],
+                        PAcount: e[w]["PAcount"],
+                        SName: e[w]["SName"],
+                        SCode: e[w]["SCode"],
+                        PFinsihTime: FinsihTime2,
+                        Pstatus: e[w]["Pstatus"],
+                        Pmodel: e[w]["Pmodel"],
+                        PAccuracyRatio: e[w]["PAccuracyRatio"]
+                    })
+                }
+
+                
+
+                $.each(plotarray, function (index, element) {
+                    console.log(element)
+                    console.log("aaa")
+                    var finishtime = new Date(element[5]["Date"]);
+                    var currentdate = new Date()
+                    var result;
+
+                    
+
+                    // console.log(finishtime)
+                    // console.log(currentdate)
+                    // if (finishtime > currentdate) {
+                    //     result = "追蹤中"
+                    // } else {
+                    //     result = "結案"
+                    // }
+                    
+                    // console.log(resultstatus)
+                    //在这里执行你的操作
+                    //結案狀態
+
+                    //結果參數
+                    var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
+                    //選擇變數
+                    var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
+                    // console.log(Pmodel)
+                    var Pmodel = otherprarmeter[index]["Pmodel"];   //使用模型
+                    var PAR = otherprarmeter[index]['PAccuracyRatio'];
+                    var Pstatus = otherprarmeter[index]["Pstatus"]; //狀態
+                    // console.log(otherprarmeter[0])
+
+                    var result = (Pstatus == "Close") ? "已結案" : "追蹤中";    //追蹤狀態
+                    resultstatus.push(result);
+                    switch (Pmodel) { 
+                        case "R":
+                            Pmodel = "迴歸"
+                            break;
+                        case "T":
+                            Pmodel = "時間序列"
+                            break;
+                        default:
+                            break;
+                    }
+                    
+                    var varTochi = [];
+
+                    preVariable.forEach(function (w) {
+                        varTochi.push(wordTable[w]);
+
+                    })
+                    drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], varTochi, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"], Pmodel, PAR)
+                });
+            }
+        })
+        
+        //條件篩選-追蹤中、已結案
+        $('#Ongoing').on("click", function () {
+            // alert('追蹤中')
+            console.log(resultstatus.length)
+            $("#Ongoing").css({
+                "color": "white",
+                "background": "#87aeb4"
+            })
+            $("#Finished").css({
+                "color": "#87aeb4",
+                "background": "transparent"
+            })
+            $.each(resultstatus, function (index, element) {
+            
+                if (element == "已結案") {
+                    $(`.prediction-card.${index + 1}`).hide();
+                    console.log(index+1)
+                    console.log("隱藏")
+                } else if (element == "追蹤中") {
+                    $(`.prediction-card.${index + 1}`).show();
+                }
+            })
+        })
+
+        $('#Finished').on("click", function () {
+            // alert('已結案')
+            $("#Finished").css({
+                "color": "white",
+                "background": "#87aeb4"
+            })
+            $("#Ongoing").css({
+                "color": "#87aeb4",
+                "background": "transparent"
+            })
+            console.log(resultstatus.length)
+            $.each(resultstatus, function (index, element) {
+
+                if (element == "追蹤中") {
+                    $(`.prediction-card.${index + 1}`).hide();
+                    console.log(index + 1)
+                    console.log("隱藏")
+                } else if (element == "已結案") {
+                    $(`.prediction-card.${index + 1}`).show();
+                }
+            })
+        })
 
 
-		//生卡片
-		function drawPre(myData, index, preState, preDate) {
-			// console.log(myData)
 
-			// console.log(index)
-			// console.log(preState)
-			// console.log(preDate)
-			$(".predictionArea").prepend(`<label class='prediction-card ${index}'>
-			<input type='checkbox' class='card-btn' />
-			<div class='card-content'><div class='card-front'><p class="pre-state">${preState}</p>
-			<table><tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
-					<tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
-			<tr><th class="pre-th">選擇參數</th><td class="pre-td">--</td></tr>
-			</table>
-			<button class='prediction-collect' id="PID${0}" onclick="btnTest(this)">♥</button>
-			</div>
-			<div class='card-back'>
-			<div class='forPrediction'>
+        //生卡片
+        function drawPre(myData, index, preState, preDate, PID, preVariable, parameter, PAcount, SName, SCode, PFinsihTime, Pmodel, PAccuracyRatio) {
+            // console.log(PAcount + "/" + SName + "/" + SCode)
+            console.log(PAccuracyRatio);
+            var prelist = "";
+            if (preVariable[0] != null) {
+                prelist += `<button class="copyAll" id="card${PID}" onclick="copyAllList(this)">複製全部</button>`;
+                for (var i = 0; i < preVariable.length; i++) {
+                    prelist += `<button class="pre-list-btn" onclick="copyList(this)">${preVariable[i]}</button>`
+                };
+            };
+            // console.log(index)
+            // console.log(preState)
+            // console.log(preDate)
+            $(".predictionArea").prepend(`<label class='prediction-card ${index}'>
+                <input type='checkbox' class='card-btn' />
+                <div class='card-content'><div class='card-front'>
+                        <p class="pre-code" style="display:inline;">${SCode}</p>
+                            <p class="pre-name" style="display:inline;margin-left:10px;">${SName}</p>
+                                        <button class="pre-state PS${PID} pre-state-member" style="display:inline;margin-left:10px;" onclick="cardDetail(this)">${preState}</button>
+                    <table class="table-inside">
+                <tr><th class="pre-th">建立者</th><td class="pre-td pre-date">${PAcount}</td></tr>
+                    <tr><th class="pre-th">使用模型</th><td class="pre-td pre-date">${Pmodel}</td></tr>
+                <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preDate}</td></tr>
+                <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${PFinsihTime}</td></tr>
+                <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5]["Close"]}</td></tr>
+                <tr><th class="pre-th">準確率</th><td class="pre-td">${d3.format(".2f")(PAccuracyRatio)}</td></tr>
+                </table>
 
-			</div></div></div></label>`);
-			//重新整理日期
-			var dateList = [];
-			for (var i = 0; i < myData.length; i++) {
-				dateList.push(myData[i].Date);
-			}
+                </div>
+                <div class='card-back'>
+                <div class='forPrediction'>
+                </div></div></div>
+                <div class="preVar">${prelist}</div></label>`);
+            //重新整理日期
+            var dateList = [];
+            for (var i = 0; i < myData.length; i++) {
+                dateList.push(myData[i].Date);
+            }
 
-			//圖表大小的設置
-			var preMargin = { top: 20, right: 50, bottom: 30, left: 50 },
-				preWidth = 325 - preMargin.left - preMargin.right,
-				preHeight = 200 - preMargin.top - preMargin.bottom;
+            //圖表大小的設置
+            var preMargin = { top: 20, right: 50, bottom: 30, left: 50 },
+                preWidth = 325 - preMargin.left - preMargin.right,
+                preHeight = 200 - preMargin.top - preMargin.bottom;
 
-			//X、Y軸scale
-			var preScaleX = d3.scaleBand().range([10, preWidth]).domain(dateList);
-			var preScaleY = d3
-				.scaleLinear()
-				.range([preHeight - 10, 0])
-				.domain(d3.extent(myData, (d) => d.Close));
+            //X、Y軸scale
+            var preScaleX = d3.scaleBand().range([10, preWidth]).domain(dateList);
+            var preScaleY = d3
+                .scaleLinear()
+                .range([preHeight - 35, 25])
+                .domain(d3.extent(myData, (d) => d.Close));
 
-			//X、Y軸
-			var preAxisX = d3.axisBottom(preScaleX);
-			var preAxisY = d3.axisLeft(preScaleY);
+            //X、Y軸
+            var preAxisX = d3.axisBottom(preScaleX);
+            var preAxisY = d3.axisLeft(preScaleY);
 
-			//生成線
-			var linePre = d3
-				.line()
-				.x((d) => preScaleX(d.Date))
-				.y((d) => preScaleY(d.Close));
-			/*.curve(d3.curveBasis);*/ //讓折線有弧度
+            //生成線
+            var linePre = d3
+                .line()
+                .x((d) => preScaleX(d.Date))
+                .y((d) => preScaleY(d.Close));
+            /*.curve(d3.curveBasis);*/ //讓折線有弧度
 
-			//生SVG
-			var preSvg = d3
-				.select(".forPrediction")
-				.append("svg")
-				.attr("class", "forPre")
-				.attr("width", preWidth + preMargin.left + preMargin.right)
-				.attr("height", preHeight + preMargin.top + preMargin.bottom)
-				.append("g")
-				.attr(
-					"transform",
-					"translate(" + preMargin.left + "," + preMargin.top + ")"
-				);
+            //生SVG
+            var preSvg = d3
+                .select(".forPrediction")
+                .append("svg")
+                .attr("class", "forPre")
+                .attr("width", preWidth + preMargin.left + preMargin.right)
+                .attr("height", preHeight + preMargin.top + preMargin.bottom)
+                .append("g")
+                .attr(
+                    "transform",
+                    "translate(" + preMargin.left + "," + preMargin.top + ")"
+                );
 
-			//顏色
-			var maxDPre = d3.max(myData, function (d) {
-				return +d.Date;
-			});
-			var maxCPre = d3.max(myData, function (d) {
-				return +d.Close;
-			});
-			var minCPre = d3.min(myData, function (d) {
-				return +d.Close;
-			});
+            //顏色
+            var maxDPre = d3.max(myData, function (d) {
+                return +d.Date;
+            });
+            var maxCPre = d3.max(myData, function (d) {
+                return +d.Close;
+            });
+            var minCPre = d3.min(myData, function (d) {
+                return +d.Close;
+            });
 
-			var colorX = d3.scaleLinear().domain([0, maxDPre]).range([preWidth, 0]);
+            var colorX = d3.scaleLinear().domain([0, maxDPre]).range([preWidth, 0]);
 
-			preSvg
-				.append("linearGradient")
-				.attr("id", "line-gradient")
-				.attr("gradientUnits", "userSpaceOnUse")
-				.attr("x1", colorX(0))
-				.attr("y1", 0)
-				.attr("x2", colorX(maxDPre))
-				.attr("y2", 0)
-				.selectAll("stop")
-				.data([
-					{ offset: "0%", color: "#51a1b7" },
-					{ offset: "100%", color: "#cedba0" },
-				])
-				.enter()
-				.append("stop")
-				.attr("offset", function (d) {
-					return d.offset;
-				})
-				.attr("stop-color", function (d) {
-					return d.color;
-				});
+            preSvg
+                .append("linearGradient")
+                .attr("id", "line-gradient")
+                .attr("gradientUnits", "userSpaceOnUse")
+                .attr("x1", colorX(0))
+                .attr("y1", 0)
+                .attr("x2", colorX(maxDPre))
+                .attr("y2", 0)
+                .selectAll("stop")
+                .data([
+                    { offset: "0%", color: "#51a1b7" },
+                    { offset: "100%", color: "#cedba0" },
+                ])
+                .enter()
+                .append("stop")
+                .attr("offset", function (d) {
+                    return d.offset;
+                })
+                .attr("stop-color", function (d) {
+                    return d.color;
+                });
 
-			preSvg
-				.append("g")
-				.datum(myData)
-				.attr("class", "predictionLine here")
-				.attr("transform", "translate(18,0)"); //折線
-			preSvg
-				.append("g")
-				.attr("class", "x axis pre")
-				.attr("transform", "translate(0," + preHeight + ")"); //X軸
-			preSvg.append("g").attr("class", "y axis pre"); //Y軸
+            preSvg
+                .append("g")
+                .datum(myData)
+                .attr("class", "predictionLine here")
+                .attr("transform", "translate(18,0)"); //折線
+            preSvg
+                .append("g")
+                .attr("class", "x axis pre")
+                .attr("transform", "translate(0," + preHeight + ")"); //X軸
+            preSvg.append("g").attr("class", "y axis pre"); //Y軸
 
-			preSvg
-				.select("g.predictionLine.here")
-				.append("path")
-				.attr("class", "pathPre")
-				.attr("d", linePre(myData))
-				.attr("fill", "none")
-				.attr("stroke", "url(#line-gradient)")
-				.attr("stroke-width", 2);
-			preSvg
-				.select("g.x.axis.pre")
-				.call(
-					preAxisX
-						.tickValues(dateList)
-						.tickFormat(d3.timeFormat("%m/%d"))
-						.tickPadding(10)
-						.tickSizeInner(-preHeight - 10, -preHeight)
-				)
-				.selectAll("text")
-				.style("text-anchor", "end")
-				.attr("dx", "-.8em")
-				.attr("dy", ".15em")
-				.attr("transform", "rotate(-25) translate(20, 10)");
+            preSvg
+                .select("g.predictionLine.here")
+                .append("path")
+                .attr("class", "pathPre")
+                .attr("d", linePre(myData))
+                .attr("fill", "none")
+                .attr("stroke", "#bbbdbe")
+                .attr("stroke-width", 2);
+            preSvg
+                .select("g.x.axis.pre")
+                .call(
+                    preAxisX
+                        .tickValues(dateList)
+                        .tickFormat(d3.timeFormat("%m-%d"))
+                        .tickPadding(10)
+                        .tickSizeInner(-preHeight - 10, -preHeight)
+                )
+                .selectAll("text")
+                .style("text-anchor", "end")
+                .attr("dx", "-.8em")
+                .attr("dy", ".15em")
+                .attr("transform", "rotate(-25) translate(20, 10)");
 
-			preSvg.select("g.y.axis.pre").call(
-				preAxisY
-					.tickSizeInner(-preWidth - 10, -preWidth)
-					.tickPadding(10)
-					.tickFormat(d3.format(".1f"))
-					.tickValues([minCPre, d3.mean([minCPre, maxCPre]), maxCPre])
-			);
+            preSvg.select("g.y.axis.pre")
+                .call(preAxisY.tickSizeInner(-preWidth - 10, -preWidth)
+                    .tickPadding(10).tickFormat(d3.format(".1f"))
+                    .tickValues([minCPre , d3.mean([minCPre, maxCPre]), maxCPre]));
 
-			//--點點--//
-			//提示框
-			var Tooltip = d3
-				.select(".forPrediction")
-				.append("div")
-				.style("opacity", 0)
-				.attr("class", "tooltip")
-				.style("background-color", "white")
-				.style("border", "solid")
-				.style("border-width", "2px")
-				.style("border-radius", "5px")
-				.style("padding", "5px")
-				.style("width", "100px")
-				.style("height", "33px")
-				.style("text-align", "center");
+            //--點點--//
+            //提示框
+            var Tooltip = d3
+                .select(".forPrediction")
+                .append("div")
+                .style("opacity", 0)
+                .attr("class", "tooltip")
+                .style("background-color", "white")
+                .style("border", "solid 2px #87aeb4")
+                .style("border-radius", "5px")
+                .style("padding", "5px")
+                .style("width", "100px")
+                .style("height", "33px")
+                .style("text-align", "center");
 
-			var mouseover = function (d) {
-				Tooltip.style("opacity", 1);
-			};
-			var mousemove = function (d) {
-				Tooltip.html("價格: " + d.Close)
-					.style("left", d3.mouse(this)[0] + 20 + "px")
-					.style("top", d3.mouse(this)[1] + "px");
-			};
-			//console.log($(".circleGroup"));
-			var mouseleave = function (d) {
-				Tooltip.style("opacity", 0);
-			};
-			//加圓點
-			preSvg
-				.append("g")
-				.attr("class", `circleGroup${index}`)
-				.attr("transform", "translate(18,0)")
-				.selectAll("dot")
-				.data(myData)
-				.enter()
-				.append("circle")
-				.attr("class", "myCircle")
-				.attr("cx", (d) => preScaleX(d.Date))
-				.attr("cy", (d) => preScaleY(d.Close))
-				.attr("r", 5)
-				.attr("stroke", "#69b3a2")
-				.attr("fill", "#FFF")
-				.on("mouseover", mouseover)
-				.on("mousemove", mousemove)
-				.on("mouseleave", mouseleave);
+            var mouseover = function (d) {
+                Tooltip.style("opacity", 1);
+            };
+            var mousemove = function (d) {
+                Tooltip.html("價格: " + d.Close)
+                    .style("left", d3.mouse(this)[0] + 20 + "px")
+                    .style("top", d3.mouse(this)[1] + "px");
+            };
+            //console.log($(".circleGroup"));
+            var mouseleave = function (d) {
+                Tooltip.style("opacity", 0);
+            };
+            //加圓點
+            preSvg.append("g")
+                .attr("class", `circleGroup${index}`)
+                .attr("transform", "translate(18,0)")
+                .selectAll("dot")
+                .data(myData)
+                .enter()
+                .append("circle")
+                .attr("class", "myCircle")
+                .attr("cx", d => preScaleX(d.Date))
+                .attr("cy", d => preScaleY(d.Close))
+                .attr("r", 5)
+                .attr("stroke", "#cedba0")
+                .attr("fill", "#cedba0")
+                .on("mouseover", mouseover)
+                .on("mousemove", mousemove)
+                .on("mouseleave", mouseleave);
 
-			//動畫?
-			pointAni(index);
-			function pointAni(index) {
-				var strokeC = myData[5].Close > myData[4].Close ? "#b84121" : "#69b3a2";
-				var fillC = myData[5].Close > myData[4].Close ? "#f77465" : "#cedba0";
-				/*        console.log("strokeC:" + strokeC + "  fillC:" + fillC);*/
 
-				d3.select(`.circleGroup${index} :last-child`)
-					.attr("stroke", strokeC)
-					.style("stroke-width", 3)
-					.style("stroke-opacity", 1)
-					.style("r", 5);
+            d3.selectAll(".prediction-card")
+                .each(function () {
+                    var lastTick = d3.select(this).selectAll(".x.axis.pre .tick:last-child");
+                    lastTick.select("line").style("stroke-dasharray", "6,6");
+                });
 
-				d3.select(`.circleGroup${index} :last-child`)
-					.attr("fill", fillC)
-					.transition()
-					.duration(1000)
-					.style("stroke-width", 10)
-					.style("stroke-opacity", 0)
-					.style("r", 7)
-					.on("end", function () {
-						pointAni(index);
-					});
-			}
-		}
-	})
+            //動畫?
+            pointAni(index);
+            function pointAni(index) {
+                var strokeC = (myData[5].Close > myData[4].Close) ? "#b84121" : "#69b3a2";
+                var fillC = preState == "已結案" ? strokeC : "white"
+                //var fillC = (myData[5].Close > myData[4].Close) ? "#f77465" : "#cedba0";
+                /*        console.log("strokeC:" + strokeC + "  fillC:" + fillC);*/
 
+                d3.select(`.circleGroup${index} :last-child`)
+                    .attr("stroke", strokeC)
+                    .style("stroke-width", 2)
+                    .style("stroke-opacity", 1)
+                    .style("r", 5)
+
+                d3.select(`.circleGroup${index} :last-child`)
+                    .attr("fill", fillC)
+                .transition()
+                .duration(1000)
+                .style("stroke-width", 10)
+                .style("stroke-opacity", 0)
+                .style("r", 7)
+                .on("end", function () { pointAni(index) });
+            }
+        }
+    })
+    function copyList(obj) {
+        var myList = $(".var-tag .var-tag-a");
+        var copyAlready = false;
+        if (myList[0] != null) {
+            for (var i = 0; i < myList.length; i++) {
+                if (myList[i].innerText == $(obj).text()) {
+                    copyAlready = true;
+                    $(obj).addClass("pre-list-btn-click-again");
+                    $(obj).addClass("pre-list-btn-click");
+                    setTimeout(function () {
+                        $(obj).removeClass("pre-list-btn-click")
+                    }, 1000);
+                    break;
+                }
+            }
+        }
+        if (!copyAlready) {
+            $(".var-tag").append(`<div class="var-tag-a" id="${$(obj).text()}" onClick="tagClick(this)">${$(obj).text()}</div>`);
+            saveTag();
+            $(obj).removeClass("pre-list-btn-click-again");
+            $(obj).addClass("pre-list-btn-click");
+            setTimeout(function () {
+                $(obj).removeClass("pre-list-btn-click")
+                $(obj).addClass("pre-list-btn-click-again");
+            }, 1000);
+
+        }
+
+        //console.log($(obj).text());
+        //
+        var content = $(obj).text();
+        navigator.clipboard.writeText(content);
+    }
+
+    function copyAllList(obj) {
+        $(obj).addClass("copyAllCopied");
+        setTimeout(function () {
+            $(obj).removeClass("copyAllCopied");
+        }, 1000)
+        var thisCard = $(obj).attr("id");
+        var thisCardList = $(`#${thisCard} ~ .pre-list-btn`);
+
+        var content = "";
+        for (var i = 0; i < thisCardList.length; i++) {
+            if (i != 0) content += ",";
+            content += thisCardList[i].innerText;
+        }
+        navigator.clipboard.writeText(content);
+
+
+    }
+
+    setTimeout(function () {
+        $(".pre-list-btn").on({
+            mouseenter: function () {
+                $(this).removeClass("pre-list-btn-he");
+                $(this).removeClass("pre-list-btn-hl");
+                $(this).addClass("pre-list-btn-he");
+            },
+            mouseleave: function () {
+                $(this).addClass("pre-list-btn-hl");
+            }
+        })
+    }, 500);
+
+    var tagforSession = "";
+    function saveTag() {
+        tagforSession = "";
+        var myList = $(".var-tag .var-tag-a");
+        console.log(myList);
+
+        if (myList[0] != null) {
+            for (var i = 0; i < myList.length; i++) {
+                if (i != 0) tagforSession += ",";
+                tagforSession += myList[i].innerText;
+            }
+        }
+        sessionStorage.setItem("VarTag", tagforSession);
+    }
+
+    function cardDetail(card) {
+        var cardNum = $(card).attr('class').split(' ')[1].substring(2)
+        window.location.href = `/StockModel/predictphoto?Pid=${cardNum}`
+    }
 </script>
-

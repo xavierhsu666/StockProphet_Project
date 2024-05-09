@@ -1,0 +1,194 @@
+﻿
+<style>
+    .lossChart2 {
+        width: 900px;
+        height: 700px;
+    }
+
+    .pathT {
+        fill: none;
+        stroke: #73b5c5;
+        stroke-width: 2;
+    }
+
+    .pathV {
+        fill: none;
+        stroke: #bd4221;
+        stroke-width: 2;
+    }
+
+    .btnnn {
+        position: absolute;
+        width: 100px;
+        height: 30px;
+    }
+
+    .btnT {
+        left: 50%;
+    }
+
+    .btnV {
+        left: 40%;
+    }
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
+<button class="btnT btnnn" onclick="changeLine(this)">btnT</button>
+<button class="btnV btnnn" onclick="changeLine(this)">btnV</button>
+<div class="lossChart2">
+</div>
+
+<canvas id="lossChart" width="800" height="400" style="display:none"></canvas>
+<script>
+    function changeLine(btn) {
+        switch (btn.innerText) {
+            case "btnT": {
+                console.log("click T")
+                if ($(".pathT").is(":hidden")) {
+                    $(".pathT, .circleGroup").show();
+                } else {
+                    $(".pathT, .circleGroup").hide();
+                }
+                break;
+            }
+
+            case "btnV": {
+                console.log("click V")
+                // $(".ma-30").toggleClass("hideElem");
+                if ($(".pathV").is(":hidden")) {
+                    $(".pathV, .circleGroup2").show();
+                } else {
+                    $(".pathV, .circleGroup2").hide();
+                }
+                break;
+            }
+        }
+    }
+
+    console.log("???");
+    $.ajax({
+        url: "/StockModel/LossChartdata",
+        method: "get",
+        success: function (e) {
+            var trainLoss = JSON.parse(e.TrainLoss);
+            var valLoss = JSON.parse(e.ValLoss);
+
+            console.log(trainLoss)
+            console.log(valLoss)
+
+            var DataOne = [], DataTwo = [];
+            for (var i = 0; i < 50; i++) {
+                DataOne.push({ x: i + 1, y: trainLoss[i] })
+                DataTwo.push({ x: i + 1, y: valLoss[i] })
+            }
+
+            var Margin = { top: 20, right: 50, bottom: 30, left: 50 },
+                Width = 900 - Margin.left - Margin.right,
+                Height = 700 - Margin.top - Margin.bottom;
+
+            var ScaleX = d3.scaleLinear().range([25, Width]).domain([1, 50]);
+
+            var Ylist = trainLoss.concat(valLoss);
+            var ScaleY = d3.scaleLinear().range([Height - 35, 25]).domain([(d3.min(Ylist)), (d3.max(Ylist))]);
+            console.log(d3.min(Ylist), d3.max(Ylist))
+
+            var AxisX = d3.axisBottom(ScaleX)
+            var AxisY = d3.axisLeft(ScaleY)
+
+            console.log(DataOne);
+            console.log(DataOne[1].x);
+
+            //抓線的資料
+            var line = d3.line()
+                .x(d => ScaleX(d.x))
+                .y(d => ScaleY(d.y));
+
+            var Svg = d3.select(".lossChart2").append("svg")
+                .attr("class", "losschartCard")
+                .attr("width", Width + Margin.left + Margin.right)
+                .attr("height", Height + Margin.top + Margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + Margin.left + "," + Margin.top + ")");
+
+            Svg.append("g").attr("class", "x axis loss").attr("transform", "translate(0," + Height + ")");     //X軸
+            Svg.append("g").attr("class", "y axis loss");     //Y軸
+            Svg.selectAll("g.x.axis.loss").call(AxisX);
+            Svg.selectAll("g.y.axis.loss").call(AxisY);
+
+            Svg.append("g").attr("class", "loss here");
+
+            Svg.selectAll("g.loss.here").append("path")
+                .attr("class", "pathT")
+                .attr('d', line(DataOne))
+
+            Svg.selectAll("g.loss.here").append("path")
+                .attr("class", "pathV")
+                .attr('d', line(DataTwo))
+
+
+            //????
+            var Tooltip = d3.select(".lossChart2")
+                .append("div")
+                .style("opacity", 0)
+                .attr("class", "tooltip")
+                .style("background-color", "white")
+                .style("border", "solid 2px #87aeb4")
+                .style("border-radius", "5px")
+                .style("padding", "5px")
+                .style("width", "150px")
+                .style("height", "33px")
+                .style("text-align", "center")
+
+
+            var mouseover = function (d) {
+                Tooltip.style("opacity", 1)
+            }
+
+            //抓滑鼠位置，設定結果有點奇怪，可能要再調整嘉減多少
+            var mousemove = function (d) {
+                Tooltip.html("值: " + d.y)
+                    .style("left", (d3.mouse(this)[0] + 550) + "px")
+                    .style("top", (d3.mouse(this)[1] + 95) + "px")
+            }
+            //console.log($(".circleGroup"));
+            var mouseleave = function (d) {
+                Tooltip.style("opacity", 0)
+            }
+            //加圓點
+            Svg.append("g")
+                .attr("class", "circleGroup")
+                .selectAll("dot")
+                .data(DataOne)
+                .enter()
+                .append("circle")
+                .attr("class", "myCircle")
+                .attr("cx", d => ScaleX(d.x))
+                .attr("cy", d => ScaleY(d.y))
+                .attr("r", 5)
+                .attr("stroke", "#73b5c5")
+                .attr("fill", "#73b5c5")
+                .on("mouseover", mouseover)
+                .on("mousemove", mousemove)
+                .on("mouseleave", mouseleave);
+
+            Svg.append("g")
+                .attr("class", "circleGroup2")
+                .selectAll("dot")
+                .data(DataTwo)
+                .enter()
+                .append("circle")
+                .attr("class", "myCircle")
+                .attr("cx", d => ScaleX(d.x))
+                .attr("cy", d => ScaleY(d.y))
+                .attr("r", 5)
+                .attr("stroke", "#bd4221")
+                .attr("fill", "#bd4221")
+                .on("mouseover", mouseover)
+                .on("mousemove", mousemove)
+                .on("mouseleave", mouseleave);
+
+        }
+    })
+</script>
+

@@ -1,0 +1,213 @@
+﻿@model StockProphet_Project.Models.Stock
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="area-container">
+    <div class="manager-modify">
+        <h1>Create</h1>
+
+        <h4>Stock</h4>
+        <hr />
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SPk" class="control-label"></label>
+                        <input asp-for="SPk" class="form-control" />
+                        <span asp-validation-for="SPk" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="StDate" class="control-label"></label>
+                        <input asp-for="StDate" class="form-control" />
+                        <span asp-validation-for="StDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="StYearQuarter" class="control-label"></label>
+                        <input asp-for="StYearQuarter" class="form-control" />
+                        <span asp-validation-for="StYearQuarter" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="StQuarter" class="control-label"></label>
+                        <input asp-for="StQuarter" class="form-control" />
+                        <span asp-validation-for="StQuarter" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="StYear" class="control-label"></label>
+                        <input asp-for="StYear" class="form-control" />
+                        <span asp-validation-for="StYear" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SnCode" class="control-label"></label>
+                        <input asp-for="SnCode" class="form-control" />
+                        <span asp-validation-for="SnCode" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SnName" class="control-label"></label>
+                        <input asp-for="SnName" class="form-control" />
+                        <span asp-validation-for="SnName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SteOpen" class="control-label"></label>
+                        <input asp-for="SteOpen" class="form-control" />
+                        <span asp-validation-for="SteOpen" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SteClose" class="control-label"></label>
+                        <input asp-for="SteClose" class="form-control" />
+                        <span asp-validation-for="SteClose" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SteMax" class="control-label"></label>
+                        <input asp-for="SteMax" class="form-control" />
+                        <span asp-validation-for="SteMax" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SteMin" class="control-label"></label>
+                        <input asp-for="SteMin" class="form-control" />
+                        <span asp-validation-for="SteMin" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SteSpreadRatio" class="control-label"></label>
+                        <input asp-for="SteSpreadRatio" class="form-control" />
+                        <span asp-validation-for="SteSpreadRatio" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SteTradeMoney" class="control-label"></label>
+                        <input asp-for="SteTradeMoney" class="form-control" />
+                        <span asp-validation-for="SteTradeMoney" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SteTradeQuantity" class="control-label"></label>
+                        <input asp-for="SteTradeQuantity" class="form-control" />
+                        <span asp-validation-for="SteTradeQuantity" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SteTransActions" class="control-label"></label>
+                        <input asp-for="SteTransActions" class="form-control" />
+                        <span asp-validation-for="SteTransActions" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SteDividendYear" class="control-label"></label>
+                        <input asp-for="SteDividendYear" class="form-control" />
+                        <span asp-validation-for="SteDividendYear" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SbYield" class="control-label"></label>
+                        <input asp-for="SbYield" class="form-control" />
+                        <span asp-validation-for="SbYield" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SbPbratio" class="control-label"></label>
+                        <input asp-for="SbPbratio" class="form-control" />
+                        <span asp-validation-for="SbPbratio" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SbEps" class="control-label"></label>
+                        <input asp-for="SbEps" class="form-control" />
+                        <span asp-validation-for="SbEps" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SbBussinessIncome" class="control-label"></label>
+                        <input asp-for="SbBussinessIncome" class="form-control" />
+                        <span asp-validation-for="SbBussinessIncome" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SiMovingAverage5" class="control-label"></label>
+                        <input asp-for="SiMovingAverage5" class="form-control" />
+                        <span asp-validation-for="SiMovingAverage5" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SiMovingAverage30" class="control-label"></label>
+                        <input asp-for="SiMovingAverage30" class="form-control" />
+                        <span asp-validation-for="SiMovingAverage30" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SiRsv5" class="control-label"></label>
+                        <input asp-for="SiRsv5" class="form-control" />
+                        <span asp-validation-for="SiRsv5" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SiRsv30" class="control-label"></label>
+                        <input asp-for="SiRsv30" class="form-control" />
+                        <span asp-validation-for="SiRsv30" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SiK5" class="control-label"></label>
+                        <input asp-for="SiK5" class="form-control" />
+                        <span asp-validation-for="SiK5" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SiK30" class="control-label"></label>
+                        <input asp-for="SiK30" class="form-control" />
+                        <span asp-validation-for="SiK30" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SiD5" class="control-label"></label>
+                        <input asp-for="SiD5" class="form-control" />
+                        <span asp-validation-for="SiD5" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SiD30" class="control-label"></label>
+                        <input asp-for="SiD30" class="form-control" />
+                        <span asp-validation-for="SiD30" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SiLongEma" class="control-label"></label>
+                        <input asp-for="SiLongEma" class="form-control" />
+                        <span asp-validation-for="SiLongEma" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SiShortEma" class="control-label"></label>
+                        <input asp-for="SiShortEma" class="form-control" />
+                        <span asp-validation-for="SiShortEma" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SiDif" class="control-label"></label>
+                        <input asp-for="SiDif" class="form-control" />
+                        <span asp-validation-for="SiDif" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SiMacd" class="control-label"></label>
+                        <input asp-for="SiMacd" class="form-control" />
+                        <span asp-validation-for="SiMacd" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SiOsc" class="control-label"></label>
+                        <input asp-for="SiOsc" class="form-control" />
+                        <span asp-validation-for="SiOsc" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SiPe" class="control-label"></label>
+                        <input asp-for="SiPe" class="form-control" />
+                        <span asp-validation-for="SiPe" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="SiMa" class="control-label"></label>
+                        <input asp-for="SiMa" class="form-control" />
+                        <span asp-validation-for="SiMa" class="text-danger"></span>
+                    </div>
+                    <div class="form-group  mb-3">
+                        <label asp-for="StUpdateDate" class="control-label"></label>
+                        <input asp-for="StUpdateDate" class="form-control" />
+                        <span asp-validation-for="StUpdateDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary btn-w-hover mb-3" />
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div>
+            <a asp-action="Index" class="a-style">Back to List</a>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

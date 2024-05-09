@@ -1,0 +1,412 @@
+﻿@model IEnumerable<StockProphet_Project.Models.DbMember>
+
+@{
+	ViewData["Title"] = "管理者頁面-Member資訊";
+}
+<style>
+	.manager-container {
+		width: 80%;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.myTable thead tr::after {
+		content: "";
+		background-color: #f5f5f5;
+		width: 100%;
+		height: 125px;
+	}
+
+	.wide-column {
+		width: 150px;
+	}
+
+</style>
+<div class="area-container">
+	<div class="manager-container">
+		<h1>管理者頁面(Member)</h1>
+		<br>
+		<div class="btn-area">
+			<button class="btn-w-hover mg-btn" id="memberbtn1" onclick="loadModel('DbMembers')">會員頁</button>
+			<button class="btn-w-hover mg-btn" onclick="loadModel('DbModels')">模型頁</button>
+			<button class="btn-w-hover mg-btn" onclick="loadModel('DbCollects')">會員收藏</button>
+			<button class="btn-w-hover mg-btn" onclick="loadModel('Stocks')">股票資料</button>
+
+		</div>
+
+		<br>
+		<div class="btn-area">
+			<button class="btn-w-hover mg-btn" onclick="window.location.href='/stockmodel/updateAllStock';">更新股票DB</button>
+			<button class="btn-w-hover mg-btn" onclick="window.location.href='/stockmodel/UpdateModelResultsStatusAndRatio';">更新所有預測</button>
+		</div>
+		<br>
+		<div class="d-xl-flex justify-content-center">
+			<canvas id="genderChart" width="300" height="300"></canvas>
+			<canvas id="preferChart" width="300" height="300"></canvas>
+			<canvas id="levelChart" width="300" height="300"></canvas>
+		</div>
+		<br>
+		<br>
+		<br>
+		<p>
+			<a asp-action="Create" class="a-style">Create New</a>
+		</p>
+		<div class="member-search form-floating mb-3" style="max-width: 300px;">
+			<input class="form-control" type="type" name="name" id="customerselect" value="" />
+			<label class="form-label">客戶名稱搜尋欄</label>
+
+		</div>
+
+		<div class="myTable">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.MaccoMnt)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.Mpassword)
+						</th>
+						<th class="wide-column">
+							@Html.DisplayNameFor(model => model.MtrueName)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.Mgender)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.Mbirthday)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.MinvestYear)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.Memail)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.Mlevel)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.Mprefer)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.MregisterTime)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.MlastLoginTime)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.MfavoriteModel)
+						</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody id="membertable" class="table-row-hover">
+					@foreach (var item in Model)
+					{
+						<tr>
+							<td>
+								@Html.DisplayFor(modelItem => item.MaccoMnt)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.Mpassword)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.MtrueName)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.Mgender)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.Mbirthday)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.MinvestYear)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.Memail)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.Mlevel)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.Mprefer)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.MregisterTime)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.MlastLoginTime)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.MfavoriteModel)
+							</td>
+							<td>
+								<a class="a-style" asp-action="Edit" asp-route-id="@item.Mid">Edit</a>
+								<a class="a-style" asp-action="Details" asp-route-id="@item.Mid">Details</a>
+								<a class="a-style" asp-action="Delete" asp-route-id="@item.Mid">Delete</a>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+	function loadModel(model) {
+		window.location.href = `/${model}/Index`;
+	}
+	var genders = [];
+	var prefers = [];
+	var levels = [];
+	$("#customerselect").on("change", function () {
+		if ($("#customerselect").val() == "") {
+			location.reload();
+		}
+		else {
+			$.ajax({
+				url: "/DbMembers/selectcustomername",
+				method: "get",
+				data: { data: $("#customerselect").val() },
+				success: function (e) {
+					$("#membertable").empty();
+					$.each(e, function (index, item) {
+						var editUrl = '@Url.Action("Edit", "ControllerName")' + '?id=' + item.Mid;
+						var detailsUrl = '@Url.Action("Details", "ControllerName")' + '?id=' + item.Mid;
+						var deleteUrl = '@Url.Action("Delete", "ControllerName")' + '?id=' + item.Mid;
+						var row = "<tr>" +
+							"<td>" + item.MaccoMnt + "</td>" +
+							"<td>" + item.Mpassword + "</td>" +
+							"<td>" + item.MtrueName + "</td>" +
+							"<td>" + item.Mgender + "</td>" +
+							"<td>" + item.Mbirthday + "</td>" +
+							"<td>" + item.MinvestYear + "</td>" +
+							"<td>" + item.Memail + "</td>" +
+							"<td>" + item.Mlevel + "</td>" +
+							"<td>" + item.Mprefer + "</td>" +
+							"<td>" + item.MregisterTime + "</td>" +
+							"<td>" + item.MlastLoginTime + "</td>" +
+							"<td>" + item.MfavoriteModel + "</td>" +
+							"<td>" +
+							"<a class='a-style' href='" + editUrl + "'>Edit</a> |" +
+							"<a class='a-style' href='" + detailsUrl + "'>Details</a> |" +
+							"<a class='a-style' href='" + deleteUrl + "'>Delete</a>" +
+							"</td>" +
+							"</tr>";
+						$("#membertable").append(row);
+					});
+				}
+			});
+		}
+	});
+	$.ajax({
+		url: "/DbMembers/piechart",
+		method: "get",
+		success: function (e) {
+
+			$.each(e, function (index, element) {
+				if (element["Mgender"] === null || element["Mprefer"] === null || element["Mgender"] === 'NA' || element["Mlevel"] === '管理者') {
+					return;
+				}
+				genders.push(element["Mgender"].trim())
+				prefers.push(element["Mprefer"])
+				levels.push(element["Mlevel"].trim())
+
+
+			})
+			generateCharts();
+			preferCharts();
+			levelCharts();
+
+		}
+
+
+	})
+	// console.log(genders)
+	// console.log(prefers)
+	// console.log(levels)
+	// 生成性別圓餅圖
+	function generateCharts() {
+		var genderCount = genders.reduce(function (obj, val) {
+			obj[val] = obj[val] ? obj[val] + 1 : 1;
+			return obj;
+		}, {});
+
+		var genderChartCtx = document.getElementById('genderChart').getContext('2d');
+		var genderChart = new Chart(genderChartCtx, {
+			type: 'pie',
+			data: {
+				labels: Object.keys(genderCount).map(function (key) {
+					return (key === '1') ? '男' : '女';
+				}),
+				datasets: [{
+					label: 'Gender Distribution',
+					data: Object.values(genderCount),
+					backgroundColor: [
+						'rgba(54, 162, 235, 0.5)', // 將原本的'rgba(255, 99, 132, 0.5)'改為藍色
+						'rgba(255, 99, 132, 0.5)', // 將原本的'rgba(54, 162, 235, 0.5)'改為紅色
+						'rgba(255, 206, 86, 0.5)',
+					],
+					borderColor: [
+						'rgba(54, 162, 235, 1)', // 將原本的'rgba(255, 99, 132, 1)'改為藍色
+						'rgba(255, 99, 132, 1)', // 將原本的'rgba(54, 162, 235, 1)'改為紅色
+						'rgba(255, 206, 86, 1)',
+					],
+					borderWidth: 1
+				}]
+			},
+			options: {
+				responsive: false,
+				plugins: {
+					title: {
+						display: true,
+						text: '男女分布',
+						align: 'center'
+					},
+					legend: {
+						position: 'bottom',
+					},
+					tooltip: {
+						callbacks: {
+							label: function (context) {
+								var label = context.label,
+									currentValue = context.raw,
+									total = context.chart._metasets[context.datasetIndex].total;
+
+								var percentage = parseFloat((currentValue / total * 100).toFixed(1));
+
+								return label + ": " + currentValue + ' (' + percentage + '%)';
+							}
+						}
+					}
+				}
+			}
+		});
+	}
+
+	// 生成偏好圓餅圖
+	function preferCharts() {
+		var preferCount = prefers.reduce(function (obj, val) {
+			obj[val] = obj[val] ? obj[val] + 1 : 1;
+			return obj;
+		}, {});
+
+		var preferChartCtx = document.getElementById('preferChart').getContext('2d');
+		var preferChart = new Chart(preferChartCtx, {
+			type: 'pie',
+			data: {
+				labels: Object.keys(preferCount).map(function (key) {
+					// 將標籤1/2轉換為短期/長期
+					return (key === '1') ? '短期' : '長期';
+				}),
+				datasets: [{
+					label: 'Preference Distribution',
+					data: Object.values(preferCount),
+					backgroundColor: [
+						'rgba(54, 162, 235, 0.5)',
+						'rgba(255, 99, 132, 0.5)',
+						'rgba(255, 206, 86, 0.5)',
+					],
+					borderColor: [
+						'rgba(54, 162, 235, 1)',
+						'rgba(255, 99, 132, 1)',
+						'rgba(255, 206, 86, 1)',
+					],
+					borderWidth: 1
+				}]
+			},
+			options: {
+				responsive: false,
+				plugins: {
+					title: {
+						display: true,
+						text: '長短期比例',
+						align: 'center'
+					},
+					legend: {
+						position: 'bottom',
+					},
+					tooltip: {
+						callbacks: {
+							label: function (context) {
+								var label = context.label,
+									currentValue = context.raw,
+									total = context.chart._metasets[context.datasetIndex].total;
+
+								var percentage = parseFloat((currentValue / total * 100).toFixed(1));
+
+								return label + ": " + currentValue + ' (' + percentage + '%)';
+							}
+						}
+					}
+				}
+			}
+
+		});
+	}
+	function levelCharts() {
+		// 生成等級圓餅圖
+		var levelCount = levels.reduce(function (obj, val) {
+			obj[val] = obj[val] ? obj[val] + 1 : 1;
+			return obj;
+		}, {});
+
+		var levelChartCtx = document.getElementById('levelChart').getContext('2d');
+		var levelChart = new Chart(levelChartCtx, {
+			type: 'pie',
+			data: {
+				labels: Object.keys(levelCount),
+				datasets: [{
+					label: 'Level Distribution',
+					data: Object.values(levelCount),
+					backgroundColor: [
+						'rgba(54, 162, 235, 0.5)',
+						'rgba(255, 99, 132, 0.5)',
+						'rgba(255, 206, 86, 0.5)',
+					],
+					borderColor: [
+						'rgba(54, 162, 235, 1)',
+						'rgba(255, 99, 132, 1)',
+						'rgba(255, 206, 86, 1)',
+					],
+					borderWidth: 1
+				}]
+			},
+			options: {
+				responsive: false,
+				plugins: {
+					title: {
+						display: true,
+						text: '會員等級比例',
+						align: 'center'
+					},
+					legend: {
+						position: 'bottom',
+					},
+					tooltip: {
+						callbacks: {
+							label: function (context) {
+								var label = context.label,
+									currentValue = context.raw,
+									total = context.chart._metasets[context.datasetIndex].total;
+
+								var percentage = parseFloat((currentValue / total * 100).toFixed(1));
+
+								return label + ": " + currentValue + ' (' + percentage + '%)';
+							}
+						}
+					}
+				}
+			}
+		})
+	}
+
+
+			$("#memberbtn1").css({
+				"color": "white",
+				"background-color": "#87aeb4"
+			})
+</script>

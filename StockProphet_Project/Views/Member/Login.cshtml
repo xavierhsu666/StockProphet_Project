@@ -1,43 +1,126 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@* <h1>會員登入頁面</h1><hr> *@
-@* 占版面1/3 *@
-<div class="row">
-	<div class="col-md-4">
+﻿<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
+<style>
+	#checkEye {
+		position: absolute;
+		top: 50%;
+		right: 10px;
+		transform: translateY(-50%);
+	}
 
-		<div id="LoginForm">
-			<h2>歡迎登入</h2>
-			<p id="WrongMsg" style="color:red">帳號/密碼 輸入錯誤</p>
-			<div class="form-floating mb-3">
-				@* 想要讓使用者在登入時，可以輸入帳號名稱/Email，這個欄位的name??  MAccoMnt MEmail*@
-				<input id="Account" class="form-control" aria-required="true" name="MAccoMnt" value="" />
-				<label class="form-label">帳號名稱/Email</label>
-			</div>
-			<div class="form-floating mb-3">
-				<input id="Password" class="form-control" aria-required="true" name="MPassword" value="" />
-				<label class="form-label">密碼</label>
-			</div>
-			<div>
-				<div id="LoginSubmit" class="w-100 btn btn-lg btn-primary" rel="prev">登入</div>
-			</div>
-			<div>
-				<a href="~/Member/ForgotPassword">忘記密碼?</a>&nbsp&nbsp&nbsp
-				<a href="~/Member/Register">我要註冊</a>
+	/* 登入面板的容器 */
+	.login-container{
+		/* height:80%; */
+		width:70%;
+		background-color:white;
+		box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.084), 0px 2px 3px rgba(0, 0, 0, 0.168);
+		border-radius: 10px;
+		display:flex;
+		min-width:400px;
+	}
+
+	.login-left, .login-right{
+		padding: 40px;
+		padding-top:100px;
+		padding-bottom:100px;
+		width:50%;
+		/* border:2px solid black; */
+	}
+
+	.login-left{
+		background-image: linear-gradient(to bottom, #dceaa7 0%, #57badb 100%);
+		border-start-start-radius: 10px;
+		border-bottom-left-radius:10px;
+	}
+
+	.login-right{
+		position:relative;
+		display:flex;
+		flex-direction:column;
+	}
+	h2{
+		text-align:center;
+		margin-bottom:50px;
+	}
+
+	.login-btn{
+		width:100%;
+	}
+
+	.FR-div{
+		margin-top: 20px;
+	}
+	
+
+	@@media screen and (max-width: 1200px) {
+		.login-left {
+			display:none;
+		}
+
+		.login-right {
+			width:100%;
+		}
+    }
+
+
+</style>
+@* <script src="wwwroot/icon"></script> *@
+
+<img class="bg-chart" src="~/homePage/chart.png" />
+<img class="bg-line" src="~/homePage/chart2.png" />
+<div class="area-container">
+	<div class="login-container">
+		<div class="login-left"></div>
+		<div class ="login-right">
+			<div id="LoginForm">
+				<h2>歡迎登入</h2>
+				<p id="WrongMsg" style="color:red">帳號/密碼 輸入錯誤</p>
+				<div class="form-floating mb-3">
+					<input id="Account" class="form-control" aria-required="true" name="MAccoMnt" value="" />
+					<label class="form-label">帳號名稱/Email</label>
+				</div>
+				<div class="form-floating mb-3">
+					<input type="password" id="Password" class="form-control" aria-required="true" name="MPassword" value="" />
+					<label class="form-label">密碼</label>
+					<i id="checkEye" class="fas fa-eye-slash"></i>
+
+				</div>
+				<div>
+					<button id="LoginSubmit" class="btn-w-hover login-btn">登入</button>
+				</div>
+				<div class="text-center FR-div">
+					<a href="~/Member/ForgotPassword" class="a-style">忘記密碼?</a>
+					<span class="divider-vertical"></span>
+					<a href="~/Member/Register" class="a-style">我要註冊</a>
+				</div>
 			</div>
 		</div>
-
+		
 	</div>
 
-
 </div>
+
+
+
+
+
+
+
+
 
 <script>
 	$('#WrongMsg').hide();
 
 	$(function () {
+		//密碼欄位
+		$("#checkEye").click(function () {
+			if ($(this).hasClass('fa-eye-slash')) {
+				$("#Password").attr('type', 'text');
+		}else{				
+				$("#Password").attr('type', 'password');
+		}
+			$(this).toggleClass('fa-eye-slash').toggleClass('fa-eye');
+		});
+
 		//按下登入按鈕需驗證身分別
 		$('#LoginSubmit').on("click", function () {
 			var Account = $('#Account').val()
@@ -62,35 +145,37 @@
 						else {
 
 							var LogMember = JSON.parse(e);
-
                             //使用sessionStorage進行跨頁面傳值
                             sessionStorage.setItem("LogAccount", LogMember.MaccoMnt);
                             sessionStorage.setItem("LogMemberLevel", LogMember.Mlevel);
                             //供修改會員使用
-                            sessionStorage.setItem("LogMemderId", LogMember.Mid);
+                            sessionStorage.setItem("LogMemberId", LogMember.Mid);
                             sessionStorage.setItem("LogMemberEmail", LogMember.Memail);
                             sessionStorage.setItem("LogMemberName", LogMember.MtrueName);
                             sessionStorage.setItem("LogMemberBirthday", LogMember.Mbirthday);
                             sessionStorage.setItem("LogMemberGender", LogMember.Mgender);
                             sessionStorage.setItem("LogMemberInvestYear", LogMember.MinvestYear);
                             sessionStorage.setItem("LogMemberfavoriteModel", LogMember.MfavoriteModel);
-                            if (sessionStorage.getItem("LogMemberName") == "管理者") {
-                                window.location.href = "/Admin/Index";
-                            } else {
+                           
+							if (sessionStorage.getItem("LogMemberName") == "管理者") {
+								window.location.href = "/DbMembers/Index";
+							} else {
+								window.location.href = "/home/index";
+								
+								//     try {
+								//     var para1 = new URL(window.location.href).searchParams.toString().split('&')[0].split('=')[1];
+								//     var para2 = new URL(window.location.href).searchParams.toString().split('&')[1].split('=')[1];
+								// } catch (e) {
 
-                                try {
-                                var para1 = new URL(window.location.href).searchParams.toString().split('&')[0].split('=')[1];
-                                var para2 = new URL(window.location.href).searchParams.toString().split('&')[1].split('=')[1];
-                            } catch (e) {
-                                
-                            }
-                          
-                            if (para1 == null)
-                                window.location.href = "/home/index";
-                            else
-                                window.location.href = "/" + para1 + "/" + para2;
+								// }
 
-                            }
+								// if (para1 == null)
+								//     window.location.href = "/home/index";
+								// else
+								//     window.location.href = "/" + para1 + "/" + para2;
+
+								// }
+							}
                         }
                     }
                 })

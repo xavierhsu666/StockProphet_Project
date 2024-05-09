@@ -1,0 +1,40 @@
+﻿@model StockProphet_Project.Models.DbCollect
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="area-container">
+    <div class="manager-modify">
+<h1>Details</h1>
+
+<div>
+    <h4>DbCollect</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2 mb-3">
+            @Html.DisplayNameFor(model => model.PID)
+        </dt>
+                <dd class="col-sm-10 mb-3">
+            @Html.DisplayFor(model => model.PID)
+        </dd>
+                <dt class="col-sm-2 mb-3">
+            @Html.DisplayNameFor(model => model.CAccount)
+        </dt>
+                <dd class="col-sm-10 mb-3">
+            @Html.DisplayFor(model => model.CAccount)
+        </dd>
+                <dt class="col-sm-2 mb-3">
+            @Html.DisplayNameFor(model => model.CDate)
+        </dt>
+                <dd class="col-sm-10 mb-3">
+            @Html.DisplayFor(model => model.CDate)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.CID" class="a-style">Edit</a> |
+    <a asp-action="Index" class="a-style">Back to List</a>
+</div>
+</div>
+</div>

@@ -3,7 +3,136 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace StockProphet_Project.Models;
-public class StockDB {
+
+public partial class Stock
+{
+	[Key]
+	[Display(Name = "PK")]
+	public string SPk { get; set; } = null!;
+
+	[Display(Name = "日期")]
+	public DateOnly StDate { get; set; }
+
+	[Display(Name = "年季")]
+	public string? StYearQuarter { get; set; }
+
+	[Display(Name = "季")]
+	public string? StQuarter { get; set; }
+
+	[Display(Name = "年")]
+	public string? StYear { get; set; }
+
+	[Display(Name = "股票代號")]
+	public string SnCode { get; set; } = null!;
+
+	[Display(Name = "股票名稱")]
+	public string? SnName { get; set; }
+
+	[Display(Name = "開盤價")]
+	public decimal? SteOpen { get; set; }
+
+	[Display(Name = "收盤價")]
+	public decimal? SteClose { get; set; }
+
+	[Display(Name = "最高價")]
+	public decimal? SteMax { get; set; }
+
+	[Display(Name = "最低價")]
+	public decimal? SteMin { get; set; }
+
+	[Display(Name = "震幅")]
+	[DisplayFormat(DataFormatString = "{0:0.00}")]
+	public double? SteSpreadRatio { get; set; }
+
+	[Display(Name = "交易額")]
+	public long? SteTradeMoney { get; set; }
+
+	[Display(Name = "交易量")]
+	public int? SteTradeQuantity { get; set; }
+
+	[Display(Name = "交易動作")]
+	public int? SteTransActions { get; set; }
+
+	[Display(Name = "拆分年")]
+	public byte? SteDividendYear { get; set; }
+
+	[Display(Name = "營收")]
+	public decimal? SbYield { get; set; }
+
+	[Display(Name = "PBR比例")]
+	public double? SbPbratio { get; set; }
+
+	[Display(Name = "EPS")]
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SbEps { get; set; }
+
+	[Display(Name = "業內收入")]
+	public long? SbBussinessIncome { get; set; }
+
+	[Display(Name = "5日移動平均")]
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiMovingAverage5 { get; set; }
+
+	[Display(Name = "30日移動平均")]
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiMovingAverage30 { get; set; }
+
+	[Display(Name = "5日RSV")]
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiRsv5 { get; set; }
+
+	[Display(Name = "30日RSV")]
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiRsv30 { get; set; }
+
+	[Display(Name = "5日K")]
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiK5 { get; set; }
+
+	[Display(Name = "30日K")]
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiK30 { get; set; }
+
+	[Display(Name = "5日D")]
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiD5 { get; set; }
+
+	[Display(Name = "30日D")]
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiD30 { get; set; }
+
+	[Display(Name = "長期EMA")]
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiLongEma { get; set; }
+
+	[Display(Name = "短期EMA")]
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiShortEma { get; set; }
+
+	[Display(Name = "DIF")]
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiDif { get; set; }
+
+	[Display(Name = "MACD")]
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiMacd { get; set; }
+
+	[Display(Name = "OSC")]
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiOsc { get; set; }
+
+	[Display(Name = "PE")]
+    [DisplayFormat(DataFormatString = "{0:0.00}")]
+    public double? SiPe { get; set; }
+
+	[Display(Name = "MA")]
+    [DisplayFormat(DataFormatString = "{0:0.00}")]	
+    public double? SiMa { get; set; }
+	[Display(Name = "上次更新時間")]
+	public DateOnly StUpdateDate { get; set; }
+}
+public class StockDB
+{
 	// 根據SCRIPT，新的
 	[Key]
 	[Display(Name = "PK")]
@@ -76,78 +205,6 @@ public class StockDB {
 	public double SI_PE { get; set; }
 	[Display(Name = "MA")]
 	public double SI_MA { get; set; }
-}
-public partial class Stock
-{
-    public string SPk { get; set; } = null!;
-
-    public DateOnly StDate { get; set; }
-
-    public string? StYearQuarter { get; set; }
-
-    public string? StQuarter { get; set; }
-
-    public string? StYear { get; set; }
-
-    public string SnCode { get; set; } = null!;
-
-    public string? SnName { get; set; }
-
-    public decimal? SteOpen { get; set; }
-
-    public decimal? SteClose { get; set; }
-
-    public decimal? SteMax { get; set; }
-
-    public decimal? SteMin { get; set; }
-
-    public double? SteSpreadRatio { get; set; }
-
-    public long? SteTradeMoney { get; set; }
-
-    public int? SteTradeQuantity { get; set; }
-
-    public int? SteTransActions { get; set; }
-
-    public byte? SteDividendYear { get; set; }
-
-    public decimal? SbYield { get; set; }
-
-    public double? SbPbratio { get; set; }
-
-    public double? SbEps { get; set; }
-
-    public long? SbBussinessIncome { get; set; }
-
-    public double? SiMovingAverage5 { get; set; }
-
-    public double? SiMovingAverage30 { get; set; }
-
-    public double? SiRsv5 { get; set; }
-
-    public double? SiRsv30 { get; set; }
-
-    public double? SiK5 { get; set; }
-
-    public double? SiK30 { get; set; }
-
-    public double? SiD5 { get; set; }
-
-    public double? SiD30 { get; set; }
-
-    public double? SiLongEma { get; set; }
-
-    public double? SiShortEma { get; set; }
-
-    public double? SiDif { get; set; }
-
-    public double? SiMacd { get; set; }
-
-    public double? SiOsc { get; set; }
-
-    public double? SiPe { get; set; }
-
-    public double? SiMa { get; set; }
 }
 public class StockDBA {
 	// 根據SCRIPT，新的

@@ -4,15 +4,22 @@ var logging;
 var user;
 if (MID == null) {
     console.log("沒有登入");
+    $(".member-logging").css("display", "none");
+    $(".member-logout").css("display", "block");
     logging = false;
 } else {
     console.log("顯示MID:" + MID);
     user = MID;
+    $(".member-logout").css("display", "none");
+    $(".member-logging").css("display", "block");
     logging = true;
 }
 
 var stocksID = $("#stocks-id").text();
 
+$("#memberLogging").on("click", function () {
+    window.location.href = "/Member/Login"
+})
 //圖表大小的設置
 var margin = { top: 20, right: 50, bottom: 30, left: 50 },
     width = 600 - margin.left - margin.right,
@@ -161,6 +168,7 @@ var yScaleKD = d3.scaleLinear()
 var dataAll;
 
 d3.json(`/Home/showStocks/${stocksID}`, function (data) {
+    //console.log(data);
     $(".td-tittle").text(data[0].StockName) //股票名稱
     data = data.map(function (d) {
         return {
@@ -184,6 +192,7 @@ d3.json(`/Home/showStocks/${stocksID}`, function (data) {
         };
     })
     dataAll = data;
+    defultStockInfo();  //預設股票資料
     //成交量的data
     var volumeData = data.map(function (d) {
         return {
@@ -192,12 +201,14 @@ d3.json(`/Home/showStocks/${stocksID}`, function (data) {
         }
     });
 
+
+
     //K棒X、Y軸
-    svg.append("g").attr("class", "y axis");
-    svg.append("g").attr("class", "y axis zoom");
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
+    svg.append("g").attr("class", "y axis");
+    svg.append("g").attr("class", "y axis zoom");
 
     //K棒區
     svg.append("g")
@@ -260,9 +271,9 @@ function draw(data, volumeData) {
     var clip = svg.append("defs").append("svg:clipPath")
         .attr("id", "clip")
         .append("svg:rect")
-        .attr("width", width)
+        .attr("width", width-1)
         .attr("height", height)
-        .attr("x", 0)
+        .attr("x", 1)
         .attr("y", 0);
     var candlestickClip = svg.append("defs").append("svg:clipPath")
         .attr("id", "candlestickClip")
@@ -296,7 +307,7 @@ function draw(data, volumeData) {
 
     //ticks(幾個刻度?縮放比例?) timeFormat(什麼樣的數值) tickSize(表格內的格線)
     svg.select("g.candlestick").call(candlestick).attr("clip-path", "url(#candlestickClip)");  //K棒
-    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 2).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
+    svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 2).tickFormat(d3.timeFormat("%m-%d")).tickSize(-height, -height).tickPadding(10));   //X軸
     svg.selectAll("g.y.axis").call(yAxis.ticks(5).tickSize(-width, 0).tickPadding(10));   //Y軸
     svg.selectAll("g.y.axis.zoom").call(YzoomAxis.ticks(5).tickSize(-width, 0).tickPadding(10));   //Y軸
     svg.select("g.sma.ma-5").attr("clip-path", "url(#candlestickClip)").call(sma);
@@ -321,10 +332,10 @@ function drawMACD(data) {
         dList.push(macdData[i].difference);
     }
     var macdList = sList.concat(mLisr).concat(dList);   //合併
-    macdY.domain([(d3.min(macdList) - 0.1), (d3.max(macdList) + 0.1)]);     //找signal、macd跟difference的最大最小值，避免某一方超過軸度
+    macdY.domain([(d3.min(macdList) - 1), (d3.max(macdList) + 1)]);     //找signal、macd跟difference的最大最小值，避免某一方超過軸度
 
     svgMACD.selectAll("g.macd.here").datum(macdData).call(macd);
-    svgMACD.selectAll("g.x.axis.macd").call(xAxisMacd.ticks(d3.timeMonth, 1).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));
+    svgMACD.selectAll("g.x.axis.macd").call(xAxisMacd.ticks(5).tickFormat(d3.timeFormat("%m-%d")).tickSize(-height, -height).tickPadding(10));
     svgMACD.selectAll("g.y.axis.macd").call(yAxisMacd.ticks(10).tickSize(-width, -width).tickPadding(10));
     svgMACD.select("g.crosshairMacd").call(crosshairMACD);  //十字線
 }
@@ -338,7 +349,7 @@ function drawKD(data) {
 
 
 
-    svgMACD.selectAll("g.x.axis.macd").call(xAxisMacd.ticks(5).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));
+    svgMACD.selectAll("g.x.axis.macd").call(xAxisMacd.ticks(5).tickFormat(d3.timeFormat("%m-%d")).tickSize(-height, -height).tickPadding(10));
     svgMACD.selectAll("g.y.axis.macd").call(yAxisMacd.ticks(10).tickSize(-width, -width).tickPadding(10));
 
     var lineK = d3.line()   //K線
@@ -365,8 +376,25 @@ function enter() {
 }
 
 function out() {
-    $(".tb-content").text("-");
-    $(".td-date").css('display', 'none')
+    //$(".tb-content").text("-");
+    //$(".td-date").css('display', 'none')
+    defultStockInfo();
+}
+
+function defultStockInfo(){
+    //預設資料顯示
+    $(".tb-open").text(dataAll[dataAll.length - 1].open);
+    $(".tb-close").text(dataAll[dataAll.length - 1].close);
+    $(".tb-SR").text(d3.format(".2f")(dataAll[dataAll.length - 1].spreadRatio) + "%");
+    $(".tb-max").text(dataAll[dataAll.length - 1].high);
+    $(".tb-min").text(dataAll[dataAll.length - 1].low);
+    $(".tb-TM").text(d3.format(",")(dataAll[dataAll.length - 1].tradeMoney));
+    $(".tb-TQ").text(d3.format(",")(dataAll[dataAll.length - 1].tradeQuantity));
+    $(".tb-EPS").text(d3.format(".2f")(dataAll[dataAll.length - 1].eps));
+    $(".tb-BI").text(d3.format(",")(dataAll[dataAll.length - 1].bussinessIncome));
+    $(".td-date").text(d3.timeFormat('%Y-%m-%d')(dataAll[dataAll.length - 1].date));
+    //
+
 }
 
 function move(coords) {
@@ -382,8 +410,6 @@ function move(coords) {
             $(".tb-TQ").text(d3.format(",")(dataAll[i].tradeQuantity));
             $(".tb-EPS").text(d3.format(".2f")(dataAll[i].eps));
             $(".tb-BI").text(d3.format(",")(dataAll[i].bussinessIncome));
-            //$(".tb-NBI").text(d3.format(",")(dataAll[i].nonBussinessIncome));
-            //$(".tb-NBIR").text(d3.format(".0%")(dataAll[i].nonBussinessIncomeRatio));
             $(".td-date").text(d3.timeFormat('%Y-%m-%d')(dataAll[i].date));
         }
     }
@@ -402,27 +428,63 @@ $("#change").on("click", function () {
     svgMACD.append('g').attr("class", "crosshairMacd")
     if (!SIchange) {
         drawMACD(dataAll);
-        this.innerText = "KD"
+        this.innerText = "切換至KD"
         SIchange = true;
     } else {
         drawKD(dataAll);
-        this.innerText = "MACD"
+        this.innerText = "切換至MACD"
         SIchange = false;
     }
 })
 
 function smaClick(btn) {
-    switch (btn.innerText) {
-        case "SMA5":
+    console.log((btn.innerText).substring(1));
+    switch ((btn.innerText).substring(2)) {
+        case "SMA5": {
             $(".ma-5").toggleClass("hideElem");
-            break;
+            if ($(".ma-5").hasClass("hideElem")) {
+                $(".btn-sma5").css({
+                    "background-color": "white",
+                    "color": "#1f77b4"
+                })
+                btn.innerText = "顯示SMA5"
+            } else {
+                $(".btn-sma5").css({
+                    "background-color": "#1f77b4",
+                    "color": "white"
+                })
+                btn.innerText = "隱藏SMA5"
+            }
 
-        case "SMA30":
-            $(".ma-30").toggleClass("hideElem");
             break;
+        }
+
+        case "SMA30": {
+            $(".ma-30").toggleClass("hideElem");
+            if ($(".ma-30").hasClass("hideElem")) {
+                $(".btn-sma30").css({
+                    "background-color": "white",
+                    "color": "#ff8000"
+                })
+                btn.innerText = "顯示SMA30"
+            } else {
+                $(".btn-sma30").css({
+                    "background-color": "#ff8000",
+                    "color": "white"
+                })
+                btn.innerText = "隱藏SMA30"
+            }
+            break;
+        }
     }
 }
 
+
+var wordTable = JSON.parse($("#word-table").val());
+//console.log(wordTable);
+
+var resultstatus = [];
+var finishCard = false;
 //撈預測區資料
 d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
 
@@ -439,31 +501,37 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
             var yData = [Ddata[i].Label];
             var preDate = xData[0]; //預測日 懶人傳值
             var preBuildDate = Ddata[i].BuildTime;
+            var collectNum = Ddata[i].NumCount;  //按愛心數
+            var status = Ddata[i].Status;   //是否結案
+            var model = Ddata[i].Pmodel;
+            var PAR = Ddata[i].PAR;
+
+            //console.log(Ddata);
+
+            var preState = (status == "Close") ? "已結案" : "追蹤中";
+
+            //var comDate = (status == "Close") ? preDate : preBuildDate; 
+            var comDate = preDate;
+
+            //console.log("已結案:" + preDate + "追蹤中" + preBuildDate);
 
             //console.log("預測日: "+ xData)
             //用BuildDate去找列表中最近的日子(closestDate)，closestDate可能等於BuildDate，也可能是前一天
-            var closestDate = dateList.reduce((prev, curr) => {
-                var prevDiff = Math.abs(new Date(preBuildDate) - new Date(prev));
-                var currDiff = Math.abs(new Date(preBuildDate) - new Date(curr));
+            var closestDate = dateList.reduce((prev, curr) => {     //動態追蹤
+                var prevDiff = Math.abs(new Date(comDate) - new Date(prev));
+                var currDiff = Math.abs(new Date(comDate) - new Date(curr));
 
                 return currDiff < prevDiff ? curr : prev;
             })
             /*            console.log("最近近的日子: " + closestDate);*/
 
             var Today = (new Date()).toISOString().split('T')[0];
-            var preState;   //判斷結案狀態
-            if (Today >= preDate) {
-                preState = "已結案"
-
-            } else {
-                preState = "追蹤中"
-            }
-
+            
             //找最接近的日子，並往回推5次紀錄
             for (var j = 0; j < Alldata.length; j++) {
                 if (Alldata[j].Date == closestDate) {
                     //最近的那天是建立那天嗎？（根據那張卡片對於使用者是當天or之前建立的）
-                    var endDate = j - (closestDate == preBuildDate ? 1 : 0);
+                    var endDate = j - (closestDate >= preDate ? 1 : 0);
                     for (var x = 0; x < 5; x++) {
                         xData.unshift((Alldata[endDate - x]).Date);
                         yData.unshift((Alldata[endDate - x]).Close);
@@ -477,20 +545,89 @@ d3.json(`/Home/showAllStocks/${stocksID}`, function (Alldata) {
                 preData[z] = { Date: parseDate(xData[z]), Close: yData[z] };
             }
             var index = i;
-
+            resultstatus.push({ "index": index, "result": preState, "collectNum": collectNum, "PID": PID });
             //整理字串
             var preVariable = JSON.parse(Ddata[i].Variable);    //所選變數
             var preDummy = JSON.parse(Ddata[i].Dummyblock);     //結果參數
+            var pAccount = Ddata[i].Account;
+            var varTochi = [];
 
-            drawPre(preData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy);
+            preVariable.forEach(function (w) {
+                varTochi.push(wordTable[w]);
+            
+            })
+            //console.log(varTochi);
+            //console.log("搜尋欄|傳入的收藏數:" + collectNum);
+            drawPre(preData, index, preState, preDate, PID, preBuildDate, varTochi, preDummy, pAccount, collectNum, model, PAR);
+            //console.log(preState);
         }
     })
 })
 
-function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy ) {
 
-    
-    //console.log(preDummy);
+
+// 條件篩選-追蹤中、已結案
+$('#Ongoing2').on("click", function () {
+    var count = 0;
+    $(".prediction-card").show();
+    $.each(resultstatus, function (index, element) {
+        if (element.result == "已結案") {
+            $(`.card${element.PID}`).parents("label").hide();
+            //$(`.prediction-card.${index}`).hide();
+            count++;
+        }
+    });
+
+        (count == resultstatus.length) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
+})
+
+$('#Finished2').on("click", function () {
+    $(".prediction-card").show();
+    var count = 0;
+    $.each(resultstatus, function (index, element) {
+        //console.log(element.index)
+        if (element.result == "追蹤中") {
+            //$(`.prediction-card.${index}`).hide();
+            $(`.card${element.PID}`).parents("label").hide();
+            count++;
+        } else {
+            //console.log($(`.card${element.PID}`).parents("label"));
+        }
+    });
+    (count == resultstatus.length) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
+})
+
+$("#AllCard2").on("click", function () {
+    $(".prediction-card").show();
+    function compare(a, b) {
+        return b.index -a.index
+    }
+    var DateList = resultstatus.sort(compare);
+    for (var i = 0; i < resultstatus.length; i++) {
+        $(`.prediction-card.${DateList[i].index}`).css("order", i + 1);
+    }
+    //console.log(resultstatus);
+    ($(`.prediction-card`) == null) ? $(".pre-warn").css("display", "block") : $(".pre-warn").css("display", "none")
+})
+
+$("#LikeNum2").on("click", function () {
+    $(".prediction-card").show();
+    function compare(a, b) {
+        return b.collectNum - a.collectNum
+    }
+    var likeList = resultstatus.sort(compare);
+    for (var i = 0; i < resultstatus.length; i++) {
+        $(`.prediction-card.${likeList[i].index}`).css("order", i + 1);
+    }
+
+})
+
+
+
+//畫圖資料,第n張卡片,卡片追蹤狀態,預測日,卡片ID,建立日,所選變數,結果評估,建立帳號,收藏數,使用模型,PAR
+function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariable, preDummy, pAccount, collect, model, PAR) {   
+
+    //console.log(preState);
 
     var prelist = "";
     if (preVariable[0] != null) {
@@ -502,19 +639,30 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
     /*console.log(prelist);*/
     $(".predictionArea").prepend(`<label class='prediction-card ${index}'>
     <input type='checkbox' class='card-btn' />
-    <div class='card-content'><div class='card-front'><p class="pre-state">${preState}+${PID}</p>
-    <table><tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preBuildDate}</td></tr>
+    <div class='card-content'><div class='card-front'>
+    <button class="pre-state PS${PID} ${(logging) ? "pre-state-member":""}" onclick="cardDetail(this)">${preState}</button>
+    <table class="table-inside">
+    <tr><th class="pre-th">建立者</th><td class="pre-td pre-date">${pAccount}</td></tr>
+    <tr><th class="pre-th">使用模型</th><td class="pre-td pre-date">${model}</td></tr>
+    <tr><th class="pre-th">建立日期</th><td class="pre-td pre-date">${preBuildDate}</td></tr>
     <tr><th class="pre-th">預測日期</th><td class="pre-td pre-date">${preDate}</td></tr>
     <tr><th class="pre-th">預測價格</th><td class ="pre-td">${myData[5].Close}</td></tr>
-    <tr><th class="pre-th">結果參數</th><td class="pre-td">MSE:${preDummy.MSE}</td></tr>
+    <tr><th class="pre-th">準確率</th><td class="pre-td pre-date">${d3.format(".1f")(PAR)}</td></tr>
     </table>
-    <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♥</button>
+    <p class="collectNum card${PID}">${ (collect > 0) ? collect : 0 }</p>
+    <button class='prediction-collect' id="PID${PID}" onclick="btnTest(this)">♡</button>
     </div>
     <div class='card-back'>
     <div class='forPrediction'>
     </div></div></div>
     <div class="preVar">${prelist}</div>
     </label>`);
+
+    //console.log("搜尋欄|接收的收藏數:" + collect);
+    //console.log("PID:" + PID + "／塞進卡片後的text(): " + $(`.card${PID}`).text());
+    //console.log("----------");
+
+
     //重新整理日期
     var dateList = [];
     for (var i = 0; i < myData.length; i++) {
@@ -528,7 +676,7 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
     
     //X、Y軸scale
     var preScaleX = d3.scaleBand().range([10, preWidth]).domain(dateList);
-    var preScaleY = d3.scaleLinear().range([preHeight - 10, 0]).domain(d3.extent(myData, d => d.Close));
+    var preScaleY = d3.scaleLinear().range([preHeight - 35, 25]).domain(d3.extent(myData, d => d.Close));
 
     //X、Y軸
     var preAxisX = d3.axisBottom(preScaleX)
@@ -575,13 +723,14 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
         .attr("offset", function (d) { return d.offset; })
         .attr("stop-color", function (d) { return d.color; });
 
-    preSvg.append("g").datum(myData).attr("class", "predictionLine here").attr("transform", "translate(18,0)");   //折線
+    
     preSvg.append("g").attr("class", "x axis pre").attr("transform", "translate(0," + preHeight + ")");     //X軸
     preSvg.append("g").attr("class", "y axis pre");     //Y軸
+    preSvg.append("g").datum(myData).attr("class", "predictionLine here").attr("transform", "translate(18,0)");   //折線
 
     preSvg.select("g.predictionLine.here").append("path").attr("class", "pathPre").attr("d", linePre(myData)).attr("fill", "none")
-        .attr("stroke", "url(#line-gradient)").attr("stroke-width", 2);
-    preSvg.select("g.x.axis.pre").call(preAxisX.tickValues(dateList).tickFormat(d3.timeFormat("%m/%d")).tickPadding(10).tickSizeInner(-preHeight - 10, -preHeight))
+        .attr("stroke", "#bbbdbe").attr("stroke-width", 2);
+    preSvg.select("g.x.axis.pre").call(preAxisX.tickValues(dateList).tickFormat(d3.timeFormat("%m-%d")).tickPadding(10).tickSizeInner(-preHeight - 10, -preHeight))
         .selectAll("text")
         .style("text-anchor", "end")
         .attr("dx", "-.8em")
@@ -597,8 +746,7 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
         .style("opacity", 0)
         .attr("class", "tooltip")
         .style("background-color", "white")
-        .style("border", "solid")
-        .style("border-width", "2px")
+        .style("border", "solid 2px #87aeb4")
         .style("border-radius", "5px")
         .style("padding", "5px")
         .style("width", "100px")
@@ -630,23 +778,29 @@ function drawPre(myData, index, preState, preDate, PID, preBuildDate, preVariabl
         .attr("cx", d => preScaleX(d.Date))
         .attr("cy", d => preScaleY(d.Close))
         .attr("r", 5)
-        .attr("stroke", "#69b3a2")
-        .attr("fill", "#FFF")
+        .attr("stroke", "#cedba0")
+        .attr("fill", "#cedba0")
         .on("mouseover", mouseover)
         .on("mousemove", mousemove)
         .on("mouseleave", mouseleave);
 
+    d3.selectAll(".prediction-card")
+        .each(function () {
+            var lastTick = d3.select(this).selectAll(".x.axis.pre .tick:last-child");
+            lastTick.select("line").style("stroke-dasharray", "6,6");
+        });
 
     //動畫?
     pointAni(index);
     function pointAni(index) {
-        var strokeC = (myData[5].Close > myData[4].Close) ? "#b84121" : "#69b3a2";
-        var fillC = (myData[5].Close > myData[4].Close) ? "#f77465" : "#cedba0";
+        var strokeC = (myData[5].Close >= myData[4].Close) ? "#b84121" : "#69b3a2";
+        var fillC = preState == "已結案" ? strokeC : "white"
+        //var fillC = (myData[5].Close > myData[4].Close) ? "#f77465" : "#cedba0";
     /*        console.log("strokeC:" + strokeC + "  fillC:" + fillC);*/
 
         d3.select(`.circleGroup${index} :last-child`)
             .attr("stroke", strokeC)
-            .style("stroke-width", 3)
+            .style("stroke-width", 2)
             .style("stroke-opacity", 1)
             .style("r", 5)
 
@@ -685,13 +839,13 @@ function zooming() {
 
 function redraw() {
     svg.select("g.candlestick").call(candlestick);  //K棒
+    svg.selectAll("rect.volumeBar")
+        .attr("x", function (d) { return xVolume(d.date); })
+        .attr("width", (xVolume.bandwidth()));
     svg.selectAll("g.x.axis").call(xAxis.ticks(d3.timeMonth, 2).tickFormat(d3.timeFormat("%m/%d")).tickSize(-height, -height).tickPadding(10));   //X軸
     svg.selectAll("g.y.axis").call(yAxis.ticks(5).tickSize(-width, 0).tickPadding(10));   //Y軸
     svg.select("g.sma.ma-5").call(sma);
     svg.select("g.sma.ma-30").call(sma);
-    svg.selectAll("rect.volumeBar")
-        .attr("x", function (d) { return xVolume(d.date); })
-        .attr("width", (xVolume.bandwidth()));
 }
 
 
@@ -709,18 +863,30 @@ function btnTest(btn) {
             method: "POST",
             data: dataToServer,
             success: function (e) {
-                console.log(e);
-                switch (e.substring(0,1)) {
+                //console.log(e);
+                switch (e.substring(0, 1)) {
                     case "A": {
-                        $(btn).css("color", "red");
+                        $(btn).text("♥").css("color", "#87aeb4");
                         console.log("新增一筆");
                         sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                        var nowNum = $(`.card${dataToServer.cardID}`).text();
+                        $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) + 1);
+                        $(btn).addClass("preBtn-click");
+                        $(`.card${dataToServer.cardID}`).removeClass("collectNumAniDown");
+                        $(`.card${dataToServer.cardID}`).addClass("collectNumAniUp");
+
                         break
                     }
                     case "D": {
-                        $(btn).css("color", "black");
+                        $(btn).text("♡").css("color", "#87aeb4");
                         console.log("刪除一筆");
                         sessionStorage.setItem("LogMemberfavoriteModel", e.substring(1));
+                        var nowNum = $(`.card${dataToServer.cardID}`).text();
+                        $(`.card${dataToServer.cardID}`).text(parseInt(nowNum) - 1);
+                        $(btn).removeClass("preBtn-click");
+                        $(`.card${dataToServer.cardID}`).removeClass("collectNumAniUp");
+                        $(`.card${dataToServer.cardID}`).addClass("collectNumAniDown");
+
                         break;
                     }
                     case "R":
@@ -752,9 +918,8 @@ setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
         d3.json(`/Home/cardCheck/${user}`, function (list) {
             list.forEach(function (item, i) {
                 //針對會員有按愛心的按鈕 變化
-                $(`#PID${parseInt(item)}`).css({
-                    color: "red",
-                    /* fontSize: "32px" */
+                $(`#PID${parseInt(item)}`).text("♥").css({
+                    color: "#87aeb4",
                 });
             })
         });
@@ -769,13 +934,34 @@ setTimeout(function () {    //要抓剛appen上去的元素，所以設timeout
 
 
 function copyList(obj) {
-    $(obj).addClass("pre-list-btn-click");
-    setTimeout(function () {
-        $(obj).removeClass("pre-list-btn-click")
-        $(obj).addClass("pre-list-btn-click-again");
-    }, 1000);
+    var myList = $(".var-tag .var-tag-a");
+    var copyAlready = false;
+    if (myList[0] != null) {
+        for (var i = 0; i < myList.length; i++) {
+            if (myList[i].innerText == $(obj).text()) {
+                copyAlready = true;
+                $(obj).addClass("pre-list-btn-click-again");
+                $(obj).addClass("pre-list-btn-click");
+                setTimeout(function () {
+                    $(obj).removeClass("pre-list-btn-click")
+                }, 1000);
+                break;
+            }
+        }
+    }
+    if (!copyAlready) {
+        $(".var-tag").append(`<div class="var-tag-a" id="${$(obj).text()}" onClick="tagClick(this)">${$(obj).text()}</div>`);
+        saveTag();
+        $(obj).removeClass("pre-list-btn-click-again");
+        $(obj).addClass("pre-list-btn-click");
+        setTimeout(function () {
+            $(obj).removeClass("pre-list-btn-click")
+            $(obj).addClass("pre-list-btn-click-again");
+        }, 1000);
+       
+    }
 
-    console.log($(obj).text());
+    //console.log($(obj).text());
     //
     var content = $(obj).text();
     navigator.clipboard.writeText(content);
@@ -815,4 +1001,46 @@ setTimeout(function () {
     })
 }, 500);
 
-console.log("wTF");
+var tagforSession = "";
+function saveTag() {
+    tagforSession = "";
+    var myList = $(".var-tag .var-tag-a");
+    //console.log(myList);
+    
+    if (myList[0] != null) {
+        for (var i = 0; i < myList.length; i++) {
+            if (i != 0) tagforSession += ",";
+            tagforSession += myList[i].innerText;
+        }
+    }
+    sessionStorage.setItem("VarTag", tagforSession);
+}
+
+function cardDetail(card) {
+    if (logging) {
+        var cardNum = $(card).attr('class').split(' ')[1].substring(2)
+        window.location.href = `/StockModel/predictphoto?Pid=${cardNum}`
+    }
+}
+
+$(".change-list-btn:first-child").css({
+    "color": "white",
+    "background-color": "#87aeb4"
+}).addClass("selectChange");
+function changelist(btn) {
+    if (!($(btn).hasClass("selectChange"))) {
+        //console.log("new click");
+        //$(document).scrollTop($('.middle-area').offset().top - 50);
+        $('html, body').animate({
+            scrollTop: $('.middle-area').offset().top - 50
+        }, 10);
+    }
+    $(".change-list-btn").css({
+        "color": "#87aeb4",
+        "background-color": "#f5f5f5"
+    }).removeClass("selectChange")
+    $(btn).css({
+        "color": "white",
+        "background-color": "#87aeb4"
+    }).addClass("selectChange")
+}

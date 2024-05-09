@@ -5,7 +5,7 @@
 }
 /*mainArea是新增的*/
 .mainArea {
-    background-color: #f3f2f1;
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -39,25 +39,9 @@ path.candle {
         stroke: #b84121;
     }
 
-/* 表格內線的顏色 */
-.x.axis line {
-    fill: none;
-    stroke: #edeae6;
-}
-
-.y.axis line {
-    fill: none;
-    stroke: #edeae6;
-}
 
 /* --- */
-.x.axis.pre path {
-    display: none;
-}
 
-.y.axis.pre path {
-    display: none;
-}
 
 .y.annotation.left path {
     fill: #00AA00;
@@ -74,13 +58,13 @@ path.candle {
 .ma-5 path.line {
     stroke: #1f77b4;
     fill: none;
-    stroke-width: 2;
+    stroke-width: 1;
 }
 
 .ma-30 path.line {
     stroke: #FF8000;
     fill: none;
-    stroke-width: 2;
+    stroke-width: 1;
 }
 
 /* 十字線 */
@@ -97,7 +81,7 @@ path.candle {
 
     /* 十字線左右顯示的文字底色? */
     .crosshair .axisannotation path {
-        fill: #DDDDDD;
+        fill: #cedba0;
     }
 
 /* 成交量 */
@@ -128,43 +112,40 @@ path.volume {
     }
 
     .crosshairMacd .axisannotation path {
-        fill: #DDDDDD;
+        fill: #cedba0;
     }
 
-path {
-    fill: none;
-    stroke-width: 1;
+
+
+path.macd {
+    stroke: #73b5c5;
 }
 
-    path.macd {
-        stroke: #0000AA;
-    }
+path.signal {
+    stroke: #bd4221;
+}
 
-    path.signal {
-        stroke: #FF9999;
-    }
+path.zero {
+    stroke: #BBBBBB;
+    stroke-dasharray: 0;
+    stroke-opacity: 0.5;
+}
 
-    path.zero {
-        stroke: #BBBBBB;
-        stroke-dasharray: 0;
-        stroke-opacity: 0.5;
-    }
-
-    path.difference {
-        fill: #BBBBBB;
-        opacity: 0.5;
-    }
+path.difference {
+    fill: #BBBBBB;
+    opacity: 0.5;
+}
 
 /* ------KD線------ */
 .pathK {
     fill: none;
-    stroke: blue;
+    stroke: #73b5c5;
     stroke-width: 1;
 }
 
 .pathD {
     fill: none;
-    stroke: red;
+    stroke: #bd4221;
     stroke-width: 1;
 }
 
@@ -189,18 +170,26 @@ path {
 
 .btnT {
     margin-right: 5px;
-    width: 100px;
-    height: 30px;
+    width: 80px;
+    height: 35px;
+    padding: 0px;
+    min-height:0;
+    transform:translateY(10px);
+    font-weight:500;
 }
 
-.upArea {
-    max-width: 1800px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center; /*上下置中*/
-    padding-top: 50px;
-    flex-wrap: wrap;
-}
+    .btnT:hover {
+        transform: translateY(8px);
+    }
+
+    .upArea {
+        max-width: 1800px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center; /*上下置中*/
+        padding-top: 50px;
+        flex-wrap: wrap;
+    }
 
 .upLayer {
     width: 600px;
@@ -290,7 +279,7 @@ path {
     position: relative;
     height: 250px;
     width: 420px;
-    background-color: blanchedalmond;
+    /*background-color: blanchedalmond;*/
     border-radius: 20px;
     display: flex;
     flex-direction: column;
@@ -312,141 +301,31 @@ path {
 }
 
 .member-btn {
+    margin-top:10px;
     margin-left: 8px;
     margin-right: 8px;
     width: auto;
     height: 50px;
 }
-
+/*個股頁要調整距離*/
+.prediction-card {
+    margin-left:55px;
+    margin-right:55px;
+}
 .predictionArea {
-    min-width: 600px;
+    min-height:100px;
     max-width: 1400px;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     flex-wrap: wrap;
-    margin-top: 50px;
+    /*margin-top: 50px;*/
     margin-bottom: 20px;
-}
-
-/*翻轉卡片*/
-.prediction-card {
-    -webkit-perspective: 1000px;
-    perspective: 1000px;
-    -webkit-transform-style: preserve-3d;
-    transform-style: preserve-3d;
-    display: block;
-    width: 350px;
-    height: 250px;
-    cursor: pointer;
-    margin: 25px;
-    z-index: 1;
-}
-
-.card-content {
-    position: relative;
-    height: 100%;
-    width: 100%;
-    -webkit-transform-style: preserve-3d;
-    transform-style: preserve-3d;
-    -webkit-transition: all 500ms;
-    transition: all 500ms;
-    z-index: 1;
-    animation: cardmoveLeft 0.5s forwards;
-}
-
-    .card-content div {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        background: #FFF;
-        -webkit-backface-visibility: hidden;
-        backface-visibility: hidden;
-
-    }
-
-    .card-content .card-back {
-        -webkit-transform: rotateY(180deg);
-        transform: rotateY(180deg);
-        display: flex;
-        justify-content: center; /*上下置中*/
-        align-items: center; /*左右置中*/
-        
-    }
-
-.prediction-card:hover .card-content {
-    box-shadow: 0 20px 20px rgba(50, 50, 50, 0.2);
-    animation: cardmoveRight 0.5s forwards;
-}
-@keyframes cardmoveRight {
-    0% {
-        right:0;
-    }
-    100% {
-        right:-50px;
-    }
-}
-
-@keyframes cardmoveLeft {
-    0% {
-        right: -50px;
-    }
-
-    100% {
-        right: 0;
-    }
-}
-
-.card-btn {
-    display: none;
-}
-
-:checked + .card-content {
-    transform: rotateY(180deg);
-    -webkit-transform: rotateY(180deg);
-}
-
-.prediction-card:hover :checked + .card-content {
-    box-shadow: 0 -20px 20px rgba(50, 50, 50, 0.2);
+    /*    padding-left: 20px;
+    padding-right: 20px;*/
 }
 
 
-.forPre {
-    position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translate(-48%, -50%);
-}
-
-/*預測股票的那點*/
-/*.myCircle:hover {
-    stroke: red;
-}*/
-
-.card-front {
-    padding: 20px;
-    z-index: 1;
-    right:0px;
-}
-
-.pre-state {
-    font-size: 32px;
-}
-
-.pre-td {
-    padding-left: 10px;
-}
-
-.prediction-collect {
-    position: absolute;
-    right: 20px;
-    bottom: 10px;
-    height: 50px;
-    width: 50px;
-    border-radius: 50%;
-    z-index: 10;
-    font-size:30px;
-}
 
 .collectBtnStart::after {
     position: absolute;
@@ -455,7 +334,7 @@ path {
     font-size: 20px;
     width: 200px;
     height: 80px;
-    background-color: pink;
+    background-color: #87aeb4;
     top: -100px;
     left: -80px;
     display: flex;
@@ -463,6 +342,8 @@ path {
     justify-content: center;
     animation: visitorAlert 0.5s;
     pointer-events: none;
+    color:white;
+    border-radius:15px;
 }
 
 .collectBtnStart::before {
@@ -470,20 +351,32 @@ path {
     content: '';
     width: 30px;
     height: 30px;
-    background-color: pink;
+    background-color: #87aeb4;
     top: -45px;
     left: 7px;
     animation: visitorAlert-D 0.3s 0.1s forwards;
     opacity: 0;
     pointer-events: none;
 }
+.pre-warn {
+    position:absolute;
+    top:100%;
+    z-index:20;
+    left:50%;
+    transform:translateX(-50%);
+    display:none;
+}
 
+.wordTable {
+    overflow:hidden;
+
+}
 @keyframes visitorAlert {
     0% {
         transform: translateY(30px);
-        opacity:0;
-
+        opacity: 0;
     }
+
     70% {
         opacity: 1;
     }
@@ -499,6 +392,7 @@ path {
         opacity: 0;
         /*transform: rotateZ(45deg);*/
     }
+
     100% {
         transform: translateY(0);
         opacity: 1;
@@ -518,144 +412,96 @@ path {
     0% {
         transform: translateY(0);
     }
+
     50% {
         opacity: 1;
     }
+
     100% {
         transform: translateY(30px);
-        opacity:0;
+        opacity: 0;
     }
 }
-
-@keyframes visitorAlert-DLeave {
+ visitorAlert-DLeave {
     0% {
         opacity: 1;
         transform: rotateZ(45deg);
     }
+
     80% {
         opacity: 0;
         transform: rotateZ(45deg);
     }
 }
-
-
-.preVar {
-    position: absolute;
-    top: 0px;
-    left: 0;
-    width: 0px;
-    height: 250px;
-    background-color: #FCFCFC;
-    transition: all 0.5s;
-    overflow-x: hidden;
-    overflow-y:scroll;
-    padding: 5px;
-    justify-items: center;
+.middle-area {
+    display: flex;
+    margin-top: 60px;
+    width:100%;
+    max-width:1400px;
+    position:relative;
+    
 }
+    .middle-area button {
+        /*width: 100px;*/
+        font-size:18px;
+        padding:0;
+        height:20px !important;
+        padding-left: 15px;
+        padding-right: 15px;
+        margin-right: 30px;
+        min-width: 70px;
+        background-color: #f5f5f5;
+        outline: 5px solid #f5f5f5;
+        border: none;
+       
+    }
+        .middle-area button:hover {
+            outline:none; 
+            
+        }
+        .middle-area::after {
+            content: "";
+            height: 2px;
+            background-color: #87aeb4;
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            z-index: -5;
+        }
 
-    .preVar::-webkit-scrollbar {
-        display: none;
+
+    .middle-area::before {
+        background-color: black;
+        height: 5px;
+        width: 100%;
     }
 
-
-.pre-list-btn {
-    width: 100%;
-    height: 30px;
-    margin-bottom: 10px;
-    border: none;
-    background-color: #f3f2f1;
-    text-align: left;
-    margin-left: 5px;
-    position: relative;
-    transition: all 0.2s
+.btn-sma5 {
+    border: 2px solid #1f77b4;
+    background-color: #1f77b4;
+    color:white;
+    width:100px;
 }
 
-    .pre-list-btn::before {
-        content: '複製成功';
-        padding-left: 10px;
-        top:0px;
-        padding-top: 2px;
-        width: 0px;
-        position: absolute;
-        height: 30px;
-        background-color: #cedba0;
-        left: -10px;
-        overflow: hidden;
-        font-size: 16px;
-        transition: width 0.5s;
-    }
-.pre-list-btn-click::before {
-    animation: listCopy 1s;
-}
-@keyframes listCopy {
-    0% {
-        width: 0px;
-    }
-    40%,60% {
-        width: 100px;
-    }
-    100% {
-        width: 0px;
+.btn-sma5:hover {
+    border: 2px solid #1f77b4;
+    background-color: #1f77b4;
+    color: white;
 
-    }
 }
-.pre-list-btn-click-again::before {
-    content: '已複製過';
-}
-.pre-list-btn-he {
-    background-color: #e3e1de;
-}
-.pre-list-btn-hl {
-    background-color: #f3f2f1;
-}
-.prediction-card:hover .preVar {
-    left: -50px;
+.btn-sma30 {
+    border: 2px solid #ff8000;
+    background-color: #ff8000;
+    color: white;
     width: 100px;
 }
 
-
-.copyAll {
-    background-color: white;
-    transform: translateX(1px);
-    border-radius: 25px;
-    height: 30px;
-    width: 90px;
-    border: 2px solid #cedba0;
-    color: #cedba0;
-    text-align: center;
-    margin-bottom: 10px;
-    margin-top: 5px;
-    position: relative;
-    overflow: hidden;
-    transition:all 0.5s;
-}
-/*全部複製按鈕的hover*/
-.copyAll-he {
-    color:black;
-}
-.copyAll-hl {
-    color: black;
-}
-
-.copyAllCopied::after {
-    content: "已複製全部";
-    left: 0;
-    top: 0;
-    background-color: #cedba0;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    animation: copyAllCopiedAni 1s;
+.btn-sma30:hover {
+    border: 2px solid #ff8000;
+    background-color: #ff8000;
     color: white;
-    overflow: hidden;
 }
 
-@keyframes copyAllCopiedAni {
-    0%,100% {      
-        transform:translateX(-90px)
-    }
-    30%,60% {
-        transform: translateX(0)
-    }
-
+#change {
+    width:120px;
 }

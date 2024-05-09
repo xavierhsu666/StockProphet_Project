@@ -1,0 +1,136 @@
+﻿@import url("https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500;700;900&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Noto Sans TC", sans-serif;
+}
+
+/*html,
+body {
+    height: 100%;
+}*/
+
+
+
+.wrap {
+    display: flex;
+    width: 90%;
+    margin: 100px auto;
+    padding-top: 75px;
+}
+
+.item {
+    width: 30%;
+    margin: 0 auto;
+    text-align: center;
+    border: 2px solid #87aeb4;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px #bbbdbe, 0px 10px 3px #87aeb4;
+    position:relative;
+}
+
+.icon {
+    width: 130px;
+    height: 130px;
+    background-color: white;
+    margin: -75px auto 0;
+    font-size: 4rem;
+    /* 用來幫icon設定垂直居中 */
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    color: #f9cec2;
+    position: absolute;
+}
+
+    .icon::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        /*        border-top: 3px solid #87aeb4;
+        border-right: 3px solid #87aeb4;
+        border-bottom: 3px solid transparent;
+        border-left: 3px solid transparent;*/
+        left: 0;
+        top: -10px;
+        border-radius: 50%;
+        transform: rotate(-45deg);
+        background-color: #87aeb4;
+        z-index: -1;
+        box-shadow: 0px 0px 5px #87aeb4;
+    }
+
+.txt {
+    padding: 55px 20px 2rem;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+.item ul {
+    padding-left:0;
+}
+.item li {
+    margin: 15px;
+    list-style: none;
+    text-align:center;
+    position:relative;
+}
+    .item li::after {
+
+    }
+}
+.item h3 {
+    color: #403f3d;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+
+.item p {
+    color: dimgrey;
+    text-align: justify;
+    line-height: 1.8;
+}
+
+.item:hover {
+    animation: shake 0.5s linear infinite alternate;
+}
+
+.member-a-table {
+    width:100%;
+    font-size:18px;
+}
+
+    .member-a-table tr {
+        width: 100%;
+        border-bottom: 2px solid #f3f2f1;
+    }
+    .member-a-table th {
+        width: 55%;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left:5px;
+        text-align: start;
+        vertical-align: top;
+    }
+    .member-a-table td {
+        width: 45%;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 5px;
+        text-align: end;
+    }
+
+.x-mark-td {
+    color: #bbbdbe;
+    /*background-color: #f3f2f1;*/
+    /*border: 2px solid white;*/
+}
+.member-price{
+    border-bottom:none !important;
+}
+

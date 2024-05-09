@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace StockProphet_Project.Models;
 
@@ -19,13 +20,28 @@ public partial class StocksContext : DbContext
 	public virtual DbSet<DbModel> DbModels { get; set; }
 
     public virtual DbSet<Stock> Stock { get; set; }
+	public virtual DbSet<DbCollect> DbCollect { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=(local);Database=StockProphet;Integrated Security=true;Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+		modelBuilder.Entity<DbCollect>(entity =>
+		{
+			entity.HasKey(e => e.CID).HasName("CID");
+			entity.Property(e => e.CID)
+				.HasMaxLength(50)
+				.HasColumnName("CID");
+			entity.ToTable("DB_Collect");
+
+			entity.Property(e => e.PID).HasColumnName("PID");
+			entity.Property(e => e.CAccount)
+				.HasMaxLength(30)
+				.HasColumnName("CAccount");
+			entity.Property(e => e.CDate).HasColumnName("CDate");
+		});
 		modelBuilder.Entity<DbMember>(entity =>
 		{
 			entity.HasKey(e => e.Mid).HasName("PK_Member");
@@ -99,11 +115,13 @@ public partial class StocksContext : DbContext
 
         modelBuilder.Entity<Stock>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("Stock");
+            entity.HasKey(e => e.SPk);
 
-            entity.Property(e => e.SPk)
+
+
+		   entity.ToTable("Stock");
+
+			entity.Property(e => e.SPk)
                 .HasMaxLength(50)
                 .HasColumnName("S_PK");
             entity.Property(e => e.SbBussinessIncome).HasColumnName("SB_BussinessIncome");
@@ -134,7 +152,8 @@ public partial class StocksContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("SN_Name");
             entity.Property(e => e.StDate).HasColumnName("ST_Date");
-            entity.Property(e => e.StQuarter)
+			entity.Property(e => e.StUpdateDate).HasColumnName("ST_UpdateDate");
+			entity.Property(e => e.StQuarter)
                 .HasMaxLength(20)
                 .HasColumnName("ST_Quarter");
             entity.Property(e => e.StYear)

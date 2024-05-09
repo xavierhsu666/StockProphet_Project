@@ -1,332 +1,100 @@
-﻿
-<h1 class="text-">會員功能-主頁</h1>
+﻿<button id="Ongoing">追蹤中</button>
+<button id="Finished">已結案</button>
 
-<div class="row">
-    <div class="col-md-4">
-        <button id="showMemberIndex">回到會員頁</button><br>
-        <button id="showRevise">修改個人資料</button><br>
-        <button id="showFavoritesPage">我的收藏</button><br>
-        <button id="showPredictFunc">我要預測</button><br>
-        <button id="showMyPredictResult">我的預測結果</button><br>
-    </div>
-    <div class="col-md-8">
+<div id="FavoritesPage">
 
-        <div id="beforeLog">
-            <b>請先登入會員</b>
-        </div>
-
-        <div id="afterLog">
-
-            @* 1.會員主頁 *@
-            <div id="MemberIndex">
-
-                <div>
-                    顯示會員的歷史預測結果圖1
-                </div>
-                <div>
-                    顯示會員的歷史預測結果圖2
-                </div>
-                <div>
-                    顯示會員的歷史預測結果圖3
-                </div>
-
-            </div>
-
-            @* 2.修改個人資料 *@
-
-            <div id="Revise">
-                <div>
-                    <label for="Account" id="Account">帳號:</label>
-                </div>
-
-                <div>
-                    <label for="Password">舊密碼:</label>
-                    <input type="password" pattern="" size="20" minlength="20" name="MPassword" id="Password" title="請輸入原始密碼" value="">
-                </div>
-
-                <div>
-                    <label for="Password">輸入新密碼:</label>
-                    <input type="password" pattern="" size="20" minlength="20" name="MPassword1" id="Password1" title="至少包含一個特殊符號，且長度須超過8碼" value="">
-                </div>
-                <div>
-                    <label for="Password">請再輸入一次新密碼:</label>
-                    <input type="password" pattern="" size="20" minlength="20" name="MPassword2" id="Password2" title="請再輸入您剛才設定的密碼" value="">
-                    @* 再次輸入密碼不同時，顯示提示字 *@
-                    <div id="pwdnoteword"><p style="color:red; ">您輸入的密碼不相同</p></div>
-                </div>
-
-                <label for="Email">信箱:</label>
-                <input type="email" pattern="" name="MEmail" id="Email" value="">
-                <br>
-
-                <label for="UserName">姓名:</label>
-                <input type="text" name="MTrueName" id="UserName" value="">
-                <br>
-
-                <label for="Birthday" id="Birthday">生日:</label>
-                <br>
-
-                <label for="MGender" id="MGender">性別:</label>
-                <br>
-
-                <label for="MInvestYear">您的投資年數:</label>
-                <select name="MInvestYear" id="InvestYear">
-                    <option value="1">未滿1年</option>
-                    <option value="2">1-3年</option>
-                    <option value="3">3-5年</option>
-                    <option value="4">5年以上</option>
-                </select>
-                <br>
-
-                <label for="MLevel" id="MLevel">會員等級:</label>
-
-
-                <br>
-
-                <button id="ReviseData">修改資料</button>
-                <button id="Reset">取消</button>
-
-            </div>
-
-            @* 3.我的收藏 *@
-            <div id="FavoritesPage">
-
-                我的收藏
-
-            </div>
-            @* 4.我要預測 *@
-            <div id="PredictFunc">
-            </div>
-
-            @* 5.我的預測結果 *@
-            <div id="MyPredictResult">
-
-                我的預測結果
-
-            </div>
-
-        </div>
-
-    </div>
+    @* <!-- 自動畫卡片 --> *@
+    <div class="predictionArea"></div>
 </div>
 
 <script>
-    //判斷會員是否登入
-    var MID = sessionStorage.getItem("LogAccount")
-    console.log(MID)
-    if (MID == null) {
-        $('#beforeLog').show();
-        $('#afterLog').hide();
-    } else {
-        $('#beforeLog').hide();
-        $('#afterLog').show();
-    }
+    //將預測結果帶到前端
+    var parseDate = d3.timeParse("%Y-%m-%d");
+    var data = { customername: sessionStorage.getItem("LogAccount") }
+    var jsonforplot;
+    var Pbuildate;
+    var plotarray = [];
+    var otherprarmeter = [];
+    $.ajax({
+        url: "/Member/MyPredictResultBoris",
+        method: "get",
+        data: data,
+        success: function (e) {
 
-
-    // 隱藏不同按鈕顯示的畫面
-    $('#Revise').hide();
-    $('#FavoritesPage').hide();
-    $('#PredictFunc').hide();
-    $('#MyPredictResult').hide();
-
-    // 重新設定密碼的提示字
-    $('#pwdnoteword').hide();
-
-    //輸入正確舊密碼前不能修改
-    $('#Password1').prop("disabled", true);
-    $('#Password2').prop("disabled", true);
-
-
-    $(function () {
-        // 1.點擊回到會員頁
-        $('#showMemberIndex').on("click", function () {
-            $('#Revise').hide();
-            $('#FavoritesPage').hide();
-            $('#PredictFunc').hide();
-            $('#MyPredictResult').hide();
-            $('#MemberIndex').show();
-
-        })
-
-        // 2.點擊修改個人資料
-        $('#showRevise').on("click", function () {
-            $('#Revise').show();
-            $('#FavoritesPage').hide();
-            $('#PredictFunc').hide();
-            $('#MyPredictResult').hide();
-            $('#MemberIndex').hide();
-
-            //將登入的會員資料帶到前台-不可修改的(帳號、生日、性別、會員等級)
-            var LogAccount = sessionStorage.getItem("LogAccount");
-            $('#Account').append(`<label>${LogAccount}</label>`);
-            var LogMemberBirthday = sessionStorage.getItem("LogMemberBirthday");
-            $('#Birthday').append(`<label>${LogMemberBirthday}</label>`);
-            var LogMemberGender = sessionStorage.getItem("LogMemberGender");
-            $('#MGender').append(`<label>${LogMemberGender}</label>`);
-            var LogMemberLevel = sessionStorage.getItem("LogMemberLevel");
-            // console.log(LogMemberLevel);
-            switch (LogMemberLevel) {
-
-                case "normal":
-                    $("#MLevel").append("<label>一般會員</label>");
-                    break;
-                case "一般會員":
-                    $("#MLevel").append("<label>一般會員</label>");
-                    break;
-                case "high":
-                    $("#MLevel").append("<label>高級會員</label>");
-                    break;
-                case "高級會員":
-                    $("#MLevel").append("<label>高級會員</label>");
-                    break;
-                case "管理者":
-                    $("#MLevel").append("<label>管理者</label>");
-                    break;
-                default:
-                    break;
-            }
-
-            //將登入的會員資料帶到前台-可修改的(信箱、姓名、投資年數)
-
-            var LogMemberEmail = sessionStorage.getItem("LogMemberEmail");
-            $('#Email').val(LogMemberEmail);
-            var LogMemberName = sessionStorage.getItem("LogMemberName");
-            $('#UserName').val(LogMemberName);
-            var LogMemberInvestYear = sessionStorage.getItem("LogMemberInvestYear");
-            console.log(LogMemberInvestYear);
-            switch (LogMemberInvestYear) {
-
-                case "1":
-                    $("#InvestYear").val("1");
-                    // console.log("1")
-                    break;
-                case "2":
-                    $("#InvestYear").val("2");
-                    // console.log("2")
-                    break;
-                case "3":
-                    $("#InvestYear").val("3");
-                    // console.log("3")
-                    break;
-                case "4":
-                    $("#InvestYear option[value='4']").prop("selected", true);
-                    // console.log("5")
-                    break;
-                default:
-                    console.log("error");
-                    break;
-            }
-
-            function RevisePassword() {
-                //打開密碼欄位可以編輯
-                $('#Password1').prop("disabled", false);
-                $('#Password2').prop("disabled", false);
-
-                //檢查兩次輸入的密碼是否一致
-                $('#Password2').on("change", function () {
-                    var MPassword1 = $('#Password1').val();
-                    var MPassword2 = $('#Password2').val();
-                    if (MPassword1 != MPassword2) {
-                        $('#pwdnoteword').show();
-                    }
-                    else {
-                        $('#pwdnoteword').hide();
-                        console.log("ok");
-                    }
-                    if (MPassword2 == "") {
-                        $('#pwdnoteword').hide();
-                    }
-                })
-            }
-            //(1).判斷該會員的舊密碼是否一致
-            //Yes =>可以修改
-            //NO  =>不能修改
-
-            $('#Password').on("change", function () {
-                var checkPassword = $('#Password').val()
-                console.log(checkPassword);
-
-                $.ajax({
-                    url: "/Member/checkPassword",
-                    method: "get",
-                    data: { checkPassword },
-                    success: function (e) {
-                        console.log(e)
-                        if (e) {
-                            RevisePassword();
-                            alert("舊密碼輸入正確");
-                        }
-                        else {
-                            alert("密碼輸入錯誤")
-                        }
-                    }
-                })
-            })
-
-            // (2).將修改的資料存回資料庫
-            $('#ReviseData').on("click", function () {
-                // var Email = $('#Email').val();
-                // if (Email == null) {
-                //     Email = LogMemberEmail;
-                // }
-                // else {
-                //     Email = $('#Email').val()
-                // }
-                var dataToServer = {
-                    Account: `${LogAccount}`,
-                    NewPassword: $('#Password1').val(),
-                    NewEmail: `${Email}`,
-                    NewName: $('#UserName').val(),
-                    NewInvestYear: $('#InvestYear').val()
+            console.log(e);
+            for (var i = 0; i < e.length; i += 5) {
+                // console.log("----------"+i)
+                var subArray = [];
+                for (var j = i; j < i + 5; j++) {
+                    var historydate1 = new Date(e[j]["STdate"])
+                    jsonforplot = ({ Date: historydate1, Close: e[j]["SteClose"] })
+                    subArray.push(jsonforplot);
                 }
-                console.log(dataToServer)
+                //console.log(jsonforplot)
+                var finishdate2 = new Date(e[i]["PFinsihTime"])
+                subArray.push({ Date: finishdate2, Close: e[i]["PLabel"] })
+                plotarray.push(subArray)
+            }
+            for (var i = 0; i < plotarray.length; i++) {
+                plotarray[i].sort(function (a, b) {
+                    // 获取当前子数组中每个对象的日期属性，并转换为日期对象
+                    var dateA = new Date(a.Date);
+                    var dateB = new Date(b.Date);
 
-                $.ajax({
-                    url: "/Member/SaveReviseMemberData",
-                    method: "put",
-                    data: dataToServer,
-                    success: function (e) {
-                        console.log(e);
-                        window.location.href = "/Member/Edit";
-                    }
+                    return dateA - dateB; // 降序排列
+                });
+            }
+            console.log(plotarray); // 输出降序排列后的数组
+
+            for (var w = 0; w < e.length; w += 5) {
+                var builddate3 = new Date(e[w]["PBuildTime"])
+                var builddate4 = builddate3.getFullYear() + '-' + (builddate3.getMonth() + 1) + '-' + builddate3.getDate()
+
+                var FinsihTime = new Date(e[w]["PFinsihTime"])
+                var FinsihTime2 = FinsihTime.getFullYear() + '-' + (FinsihTime.getMonth() + 1) + '-' + FinsihTime.getDate()
+                otherprarmeter.push({
+                    Buildtime: builddate4,
+                    stockname: e[w]["PStock"],
+                    parameter: e[w]["Parameter"],
+                    PID: e[w]["PID"],
+                    preVariable: e[w]["preVariable"],
+                    PAcount: e[w]["PAcount"],
+                    SName: e[w]["SName"],
+                    SCode: e[w]["SCode"],
+                    PFinsihTime: FinsihTime2
                 })
+            }
+
+            $.each(plotarray, function (index, element) {
+                var finishtime = new Date(element[5]["Date"]);
+                var currentdate = new Date()
+                var result;
+
+                // console.log(finishtime)
+                // console.log(currentdate)
+                if (finishtime > currentdate) {
+                    result = "追蹤中"
+                } else {
+                    result = "結案"
+                }
+                //在这里执行你的操作
+                //結案狀態
+
+                //結果參數
+                var parameter = JSON.parse(otherprarmeter[index]["parameter"]);
+                //選擇變數
+                var preVariable = JSON.parse(otherprarmeter[index]["preVariable"]);
+                // console.log((otherprarmeter[index]["Buildtime"]))
+                drawPre(element, index + 1, result, otherprarmeter[index]["Buildtime"], otherprarmeter[index]["PID"], preVariable, parameter, otherprarmeter[index]["PAcount"], otherprarmeter[index]["SName"], otherprarmeter[index]["SCode"], otherprarmeter[index]["PFinsihTime"])
+            });
+        }
+
+        //條件篩選-追蹤中、已結案
+            $('#Ongoing').on("click", function () { 
+            
             })
 
-            // 3.點擊我的收藏
-            $('#showFavoritesPage').on("click", function () {
-                $('#Revise').hide();
-                $('#FavoritesPage').show();
-                $('#PredictFunc').hide();
-                $('#MyPredictResult').hide();
-                $('#MemberIndex').hide();
 
-            })
-
-            // 4.點擊我要預測
-            $('#showPredictFunc').on("click", function () {
-                $('#Revise').hide();
-                $('#FavoritesPage').hide();
-                $('#PredictFunc').show();
-                $('#MyPredictResult').hide();
-                $('#MemberIndex').hide();
-                window.location.href = "/StockModel/Predictindex";
-            })
-
-            // 5.點擊我的預測結果
-            $('#showMyPredictResult').on("click", function () {
-                $('#Revise').hide();
-                $('#FavoritesPage').hide();
-                $('#PredictFunc').hide();
-                $('#MyPredictResult').show();
-                $('#MemberIndex').hide();
-
-            })
-        })
     })
 
-
 </script>
-
-
-
-

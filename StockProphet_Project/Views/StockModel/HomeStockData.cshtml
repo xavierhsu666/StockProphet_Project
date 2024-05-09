@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Fetch Table Data</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <input type="file" id="csvFileInput">
+    <button id="fetchDataBtn">Fetch Table Data</button>
+    <div id="tableContainer"></div>
+
+    <script>
+        document.getElementById("fetchDataBtn").addEventListener("click", function () {
+            var fileInput = document.getElementById("csvFileInput");
+            var file = fileInput.files[0];
+
+            if (!file) {
+                console.error("No file selected.");
+                return;
+            }
+
+            var reader = new FileReader();
+
+            reader.onload = function (event) {
+                var csvData = event.target.result;
+                var tableHtml = parseCsvToHtmlTable(csvData);
+                document.getElementById("tableContainer").innerHTML = tableHtml;
+                console.log(tableHtml);
+            };
+
+            reader.onerror = function (event) {
+                console.error("Error reading file:", event.target.error);
+            };
+
+            reader.readAsText(file, 'utf-8');
+        });
+
+        function parseCsvToHtmlTable(csvData) {
+            var rows = csvData.split("\n");
+            var tableHtml = "<table>";
+
+            rows.forEach(function (row) {
+                var cells = row.split(",");
+                tableHtml += "<tr>";
+
+                cells.forEach(function (cell) {
+                    tableHtml += "<td>" + cell.trim() + "</td>";
+                });
+
+                tableHtml += "</tr>";
+            });
+
+            tableHtml += "</table>";
+            return tableHtml;
+        }
+    </script>
+</body>
+</html>
